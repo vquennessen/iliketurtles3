@@ -9,7 +9,7 @@ setwd("~/Projects/iliketurtles3/code")
 library(NicheMapR)
 # remotes::install_github("ilyamaclean/microclima")
 library(microclima)
-# remotes::install_github("dklinges9/mcera5") # - not on CRAN
+# remotes::install_github("dklinges9/mcera5") 
 library(mcera5)
 library(ecmwfr)
 library(lubridate)
@@ -19,8 +19,11 @@ library(tidync)
 ##### get ERA5 data with package mcera5 (only need to run once) ################
 # assign your credentials 
 # (register here: https://cds.climate.copernicus.eu/user/register)
+uid <- "######"
 uid <- "191215"
+cds_api_key <- "#########-#####-####-####-############"
 cds_api_key <- "7db05286-e777-4548-a5d5-d94a734a3ac1"
+
 ecmwfr::wf_set_key(user = uid, key = cds_api_key, service = "cds")
 
 # bounding coordinates
@@ -31,7 +34,7 @@ ymx <- -32.4
 
 # temporal extent
 st_time <- lubridate::ymd("2019:12:31")
-en_time <- lubridate::ymd("2023:03:31")
+en_time <- lubridate::ymd("2023:03:29")
 
 # file name and location for downloaded .nc files
 file_prefix <- "era5"
@@ -50,12 +53,16 @@ request_era5(request = req, uid = uid, out_path = op, overwrite = TRUE)
 # your .nc files)
 
 dstart <- "31/12/2019"
-dfinish <- "31/03/2023"
+dfinish <- "29/03/2023"
 loc <- c(-3.86, -32.43) # Praia do Leao, Fernando de Noronha
 micro <- micro_era5(loc = loc, 
                     dstart = dstart, 
                     dfinish = dfinish, 
-                    spatial = 'c:/Spatial_Data/era5')
+                    spatial = '../data/Spatial_Data/era5', 
+                    run.gads = 2)
+
+# save micro as object in data folder
+save(micro, '../data/micro.Rdata')
 
 ##### run NicheMapR ############################################################
 
