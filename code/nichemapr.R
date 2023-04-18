@@ -19,9 +19,9 @@ library(tidync)
 ##### get ERA5 data with package mcera5 (only need to run once) ################
 # assign your credentials 
 # (register here: https://cds.climate.copernicus.eu/user/register)
-uid <- "######"
+# uid <- "######"
 uid <- "191215"
-cds_api_key <- "#########-#####-####-####-############"
+# cds_api_key <- "#########-#####-####-####-############"
 cds_api_key <- "7db05286-e777-4548-a5d5-d94a734a3ac1"
 
 ecmwfr::wf_set_key(user = uid, key = cds_api_key, service = "cds")
@@ -48,6 +48,12 @@ req <- build_era5_request(xmin = xmn, xmax = xmx,
                           outfile_name = file_prefix)
 str(req)
 request_era5(request = req, uid = uid, out_path = op, overwrite = TRUE)
+
+# help
+# https://rdrr.io/github/mrke/NicheMapR/man/micro_era5.html
+# https://rdrr.io/github/mrke/NicheMapR/src/R/micro_era5.R - documentation
+# https://github.com/mrke/NicheMapR/blob/master/R/micro_era5.R - other doc?
+# 
 
 # run micro_era5 for a location (make sure it's within the bounds of 
 # your .nc files)
