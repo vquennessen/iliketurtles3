@@ -5,12 +5,12 @@
 setwd("~/Projects/iliketurtles3/code")
 
 # load libraries
-# remotes::install_github("mrke/NicheMapR")
-library(NicheMapR)
-# remotes::install_github("ilyamaclean/microclima")
-library(microclima)
 # remotes::install_github("dklinges9/mcera5") 
 library(mcera5)
+# remotes::install_github("ilyamaclean/microclima")
+library(microclima)
+# remotes::install_github("mrke/NicheMapR")
+library(NicheMapR)
 library(ecmwfr)
 library(lubridate)
 library(dplyr)
@@ -57,14 +57,18 @@ request_era5(request = req, uid = uid, out_path = op, overwrite = TRUE)
 
 # run micro_era5 for a location (make sure it's within the bounds of 
 # your .nc files)
-
-dstart <- "31/12/2019"
-dfinish <- "29/03/2023"
-loc <- c(-3.86, -32.43) # Praia do Leao, Fernando de Noronha
-micro <- micro_era5(loc = loc, 
-                    dstart = dstart, 
-                    dfinish = dfinish, 
-                    spatial = '../data/Spatial_Data/era5', 
+micro <- micro_era5(loc = c(-3.86, -32.43), # Praia do Leao, Fernando de Noronha
+                    dstart = "31/12/2019",    # start date
+                    dfinish = "29/03/2023",   # end date
+                    zmin = 2,       # minimum elevation over sea level in meters
+                    slope = 1,      # slope in degrees
+                    aspect = 210,   # aspect of beach in degrees, north = 0
+                                    # soil depths in cm
+                    DEP = c(0, 2.5,  5,  10,  15,  20,  30,  50,  100,  200), 
+                    minshade = 0,   # assumed no shade
+                    runshade = 0,   # only run once, for minimum shade value
+                                    # folder with spatial data from mcera5 pkg
+                    spatial = "../data/Spatial_Data/era5", 
                     run.gads = 2)
 
 # save micro as object in data folder
