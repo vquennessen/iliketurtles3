@@ -102,7 +102,8 @@ micro_era5 <- function(
     cad.effects = TRUE) #{ 
   ##### end function parameters ################################################
   
-  ##### test parameters ########################################################
+  
+##### test parameters ########################################################
   
   loc = c(-3.86, -32.43) # Praia do Leao, Fernando de Noronha
   dstart = "31/12/2019"    # start date
@@ -127,7 +128,7 @@ micro_era5 <- function(
   ZH1 = 0
   ZH2 = 0
   runshade = 0 # only run once, for minimum shade value
-  run.gads = 1
+  run.gads = 0
   solonly = 0
   Soil_Init = NA
   write_input = 0
@@ -191,7 +192,7 @@ micro_era5 <- function(
   fail = nyears * 24 * 365
   # folder with spatial data from mcera5 pkg
   spatial = "../data/Spatial_Data/era5"
-  save = 0
+  save = 1
   snowcond = 0
   intercept = max(maxshade) / 100 * 0.3
   grasshade = 0
@@ -556,11 +557,16 @@ micro_era5 <- function(
               hourlydata.i <- mcera5::extract_clim(nc = paste0(spatial, '_', years[i], '.nc'), long = loc[1], lat = loc[2],
                                                    start_time = as.Date(paste(years[i],'01','01', sep='-')),
                                                    end_time = en_time)
+              
+              ##### error in this line, from extract_clim function
+              
               hourlydata <- dplyr::bind_rows(hourlydata, hourlydata.i)
             }
           }
         }
       }
+      
+      ##########################################################################
       # gather daily precipitation
       if(is.logical(dailyprecip)){
         if(length(years)==1){
@@ -1116,7 +1122,329 @@ micro_era5 <- function(
     cat(paste('running microclimate model for ', ndays, ' days from ', tt[1], ' to ', tt[length(tt)], ' at site ', location, '\n'))
     cat('Note: the output column `SOLR` in metout and shadmet is for unshaded solar radiation adjusted for slope, aspect and horizon angle \n')
     ptm <- proc.time() # Start timing
-    microut<-microclimate(micro)
+    
+      ##########################################################################
+      # gather daily precipitation
+      if(is.logical(dailyprecip)){
+        if(length(years)==1){
+          dailyprecip <- mcera5::extract_precip(nc = paste0(spatial, '_', years, '.nc'), long = loc[1], lat = loc[2],
+                                                start_time = st_time,
+                                                end_time = en_time)
+        }else{
+          for(i in 1:length(years)){
+            if(i==1){
+              dailyprecip <- mcera5::extract_precip(nc = paste0(spatial, '_', years[i], '.nc'), long = loc[1], lat = loc[2],
+                                                    start_time = st_time,
+                                                    end_time = as.Date(paste(years[i],'12','31', sep='-')))
+            }
+            if(i!=1 & i!=length(years)){
+              dailyprecip.i <- mcera5::extract_precip(nc = paste0(spatial, '_', years[i], '.nc'), long = loc[1], lat = loc[2],
+                                                      start_time = as.Date(paste(years[i],'01','01', sep='-')),
+                                                      end_time = as.Date(paste(years[i],'12','31', sep='-')))
+              dailyprecip <- c(dailyprecip, dailyprecip.i)
+            }
+            if(i==length(years)){
+              dailyprecip.i <- mcera5::extract_precip(nc = paste0(spatial, '_', years[i], '.nc'), long = loc[1], lat = loc[2],
+                                                      start_time = as.Date(paste(years[i],'01','01', sep='-')),
+                                                      end_time = en_time)
+              dailyprecip <- c(dailyprecip, dailyprecip.i)
+            }
+          }
+        }
+      }
+      cat("computing radiation and elevation effects with package microclima \n")
+      microclima.out <- microclima::microclimaforNMR(lat = longlat[2], 
+                                                     long = longlat[1], 
+                                                     dstart = dstart, 
+                                                     dfinish = dfinish, 
+                                                     l = mean(microclima.LAI), 
+                                                     x = LOR, 
+                                                     coastal = coastal, 
+                                                     hourlydata = as.data.frame(hourlydata), 
+                                                     dailyprecip = dailyprecip, 
+                                                     dem = dem, 
+                                                     demmeso = dem2, 
+                                                     albr = 0, 
+                                                     resolution = 30, 
+                                                     slope = slope, 
+                                                     aspect = aspect, 
+                                                     windthresh = 4.5, 
+                                                     emthresh = 0.78, 
+                                                     reanalysis2 = TRUE, 
+                                                     difani = FALSE, 
+                                                     weather.elev = weather.elev, 
+                                                     cad.effects = cad.effects, 
+                                                     zmin = zmin)
+      
+      
+      hourlyradwind <- microclima.out$hourlyradwind
+      SLOPE <- hourlyradwind$slope[1]
+      ASPECT <- hourlyradwind$aspect[1]
+      tref <- microclima.out$tref
+      ZENhr <- hourlydata$szenith
+      ZENhr[ZENhr > 90] <- 90
+      HORIZON <- hori
+      if(save == 1){
+        save(SLOPE, file = 'SLOPE.Rda')
+        save(ASPECT, file = 'ASPECT.Rda')
+        save(HORIZON, file = 'HORIZON.Rda')
+      }
+      # NB units for rad = MJ / m^2 / hr (divide by 0.0036 to get to W / m^2)
+      # Skyviewfact (time invariant, 1 = complete hemisphere in view)
+      # canopyfact (proportion of isotropic radiation blocked out, 1 = no radiation gets in)
+      if(save == 1){
+        save(tref, file = 'tref.Rda')
+      }
+      # tref (original hourly ERA5)
+      # telev (elevation-corrected temperature)
+      # tcad (delta temperature due to cold air drainage)
+      elev <- tref$elev[1] # m
+      ALTT <- elev
+      TAIRhr <- tref$telev + tref$tcad # reference Tair corrected for lapse rate and cold air drainage
+      if(scenario != 0){
+        TAIRhr_orig <- TAIRhr
+        yearstodo <- seq(ystart, yfinish)
+        nyears <- yfinish - ystart + 1
+        if(yfinish > 2015){
+          ystart_terra <- 2015 - nyears + 1
+          yfinish_terra <- 2015
+          message(paste0("terraclimate climate change scenarios are for 1985 to 2015 - using ", ystart, "-", yfinish), '\n')
+        }else{
+          ystart_terra <- ystart
+          yfinish_terra <- yfinish
+        }
+        leapyears <- seq(1900, 2060, 4)
+        message("generate climate change scenario", '\n')
+        # diff spline function
+        getdiff <- function(diffs){
+          diff1 <- (unlist(diffs[1]) + unlist(diffs[length(diffs)])) / 2
+          # generate list of days
+          leapcount <- 0
+          for(ys in 1:nyears){
+            if(ys == 1){
+              if(nyears == 1){
+                if(yearstodo[ys] %in% leapyears){
+                  leapcount <- leapcount + 1
+                  day<-c(1, 15.5, 45.5, 75.5, 106, 136.5, 167, 197.5, 228.5, 259, 289.5, 320, 350.5, 366)
+                }else{
+                  day<-c(1, 15.5, 45, 74.5, 105, 135.5, 166, 196.5, 227.5, 258, 288.5, 319, 349.5, 365)
+                }
+              }else{
+                if(yearstodo[ys] %in% leapyears){
+                  leapcount <- leapcount + 1
+                  day<-c(1, 15.5, 45.5, 75.5, 106, 136.5, 167, 197.5, 228.5, 259, 289.5, 320, 350.5)
+                }else{
+                  day<-c(1, 15.5, 45, 74.5, 105, 135.5, 166, 196.5, 227.5, 258, 288.5, 319, 349.5)
+                }
+              }
+            }else{
+              if(ys == nyears){
+                if(yearstodo[ys] %in% leapyears){
+                  leapcount <- leapcount + 1
+                  day<-c(15.5, 45.5, 75.5, 106, 136.5, 167, 197.5, 228.5, 259, 289.5, 320, 350.5, 366)
+                }else{
+                  day<-c(15.5, 45, 74.5, 105, 135.5, 166, 196.5, 227.5, 258, 288.5, 319, 349.5, 365)
+                }
+              }else{
+                if(yearstodo[ys] %in% leapyears){
+                  leapcount <- leapcount + 1
+                  day<-c(15.5, 45.5, 75.5, 106, 136.5, 167, 197.5, 228.5, 259, 289.5, 320, 350.5)
+                }else{
+                  day<-c(15.5, 45, 74.5, 105, 135.5, 166, 196.5, 227.5, 258, 288.5, 319, 349.5)
+                }
+              }
+            }
+            if(ys == 1){
+              days2 <- day
+              days <- day
+            }else{
+              if(yearstodo[ys] %in% leapyears){
+                days2 <- c(days2, (day + 366 * (ys - 1)) + leapcount)
+              }else{
+                days2 <- c(days2, (day + 365 * (ys - 1)) + leapcount)
+              }
+              days <- c(days, day)
+            }
+          }
+          
+          diffs3 <- c(diff1, diffs, diff1)
+          days_diffs <- data.frame(matrix(NA, nrow = nyears * 12 + 2, ncol = 3))
+          days_diffs[, 1] <- days
+          days_diffs[, 3] <- days2
+          days_diffs[, 2] <- diffs3
+          colnames(days_diffs) <- c("days", "diffs", "new_day")
+          
+          # interpolate monthly differences
+          f <- approxfun(x = days_diffs$new_day, y = days_diffs$diffs)
+          xx <- seq(1, max(days2), 1)
+          sp_diff <- f(xx)
+          return(sp_diff)
+        }
+        
+        terra <- as.data.frame(get_terra(x = loc, ystart = ystart_terra, yfinish = yfinish_terra, source = terra_source))
+        if(is.infinite(max(terra))){
+          message("no TerraClimate data available", '\n')
+          stop()
+        }
+        if(scenario == 4){
+          terra_cc <- as.data.frame(get_terra(x = loc, ystart = ystart_terra, yfinish = yfinish_terra, scenario = 4, source = terra_source))
+        }
+        if(scenario == 2){
+          terra_cc <- as.data.frame(get_terra(x = loc, ystart = ystart_terra, yfinish = yfinish_terra, scenario = 2, source = terra_source))
+        }
+        tmin_diffs <- terra_cc$TMINN - terra$TMINN
+        tmax_diffs <- terra_cc$TMAXX - terra$TMAXX
+        precip_diffs <- terra_cc$RAINFALL / terra$RAINFALL
+        srad_diffs <- terra_cc$SRAD / terra$SRAD
+        vpd_diffs <- terra_cc$VPD / terra$VPD
+        srad_diffs[is.na(srad_diffs)] <- 1
+        vpd_diffs[is.na(vpd_diffs)] <- 1
+        precip_diffs[is.na(precip_diffs)] <- 1
+        srad_diffs[is.infinite(srad_diffs)] <- 1
+        vpd_diffs[is.infinite(vpd_diffs)] <- 1
+        precip_diffs[is.infinite(precip_diffs)] <- 1
+        
+        TMINN_diff <- getdiff(tmin_diffs)
+        TMAXX_diff <- getdiff(tmax_diffs)
+        VPD_diff <- getdiff(vpd_diffs)
+        SOLAR_diff <- getdiff(srad_diffs)
+        RAIN_diff <- getdiff(precip_diffs)
+        
+        TMINN_diff <- rep(TMINN_diff, each=24)[1:length(TAIRhr)]
+        TMAXX_diff <- rep(TMAXX_diff, each=24)[1:length(TAIRhr)]
+        VPD_diff <- rep(VPD_diff, each=24)[1:length(TAIRhr)]
+        SOLAR_diff <- rep(SOLAR_diff, each=24)[1:length(TAIRhr)]
+        
+        
+        # code to apply changes in min and max air temperature to hourly air temperature data
+        
+        # find times of maxima and minima
+        mins <- aggregate(TAIRhr, by = list(format(tt, "%Y-%m-%d")), FUN = min)$x
+        maxs <- aggregate(TAIRhr, by = list(format(tt, "%Y-%m-%d")), FUN = max)$x
+        mins <- rep(mins, each=24)
+        maxs <- rep(maxs, each=24)
+        mins2 <- TAIRhr / mins[1:length(TAIRhr)]
+        maxs2 <- TAIRhr / maxs
+        mins2[mins2 != 1] <- 0
+        maxs2[maxs2 != 1] <- 0
+        
+        # construct weightings so that changes in min and max air temp can be applied
+        minweight <- rep(NA, length(mins2))
+        maxweight <- minweight
+        minweight[mins2 == 1] <- 1
+        minweight[maxs2 == 1] <- 0
+        maxweight[mins2 == 1] <- 0
+        maxweight[maxs2 == 1] <- 1
+        minweight <- zoo::na.approx(minweight, na.rm = FALSE)
+        maxweight <- zoo::na.approx(maxweight, na.rm = FALSE)
+        minweight[is.na(minweight)] <- 0.5
+        maxweight[is.na(maxweight)] <- 0.5
+        minweight[minweight > 1] <- 1
+        minweight[minweight < 0] <- 0
+        maxweight[maxweight > 1] <- 1
+        maxweight[maxweight < 0] <- 0
+        
+        # construct final weighted correction factor and apply
+        diff <- TMINN_diff * minweight + TMAXX_diff * maxweight
+        TAIRhr <- TAIRhr + diff
+      }
+      SOLRhr <- hourlyradwind$swrad / 0.0036
+      if(scenario != 0){
+        SOLRhr <- SOLRhr * SOLAR_diff
+      }
+      SOLRhr <- hourlyradwind$swrad / 0.0036
+      SOLRhr[SOLRhr < 0] <- 0
+      SOLRhr <- zoo::na.approx(SOLRhr)
+      cloudhr <- hourlydata$cloudcover
+      IRDhr <- hourlydata$downlong / 0.0036
+      if(IR != 2){
+        IRDhr <- IRDhr * 0 + -1 # make negative so computed internally in the microclimate model
+      }
+      CLDhr <- hourlydata$cloudcover
+      if(scenario != 0){
+        CLDhr <- CLDhr * (1 + 1 - SOLAR_diff)
+      }
+      CLDhr[CLDhr < 0] <- 0
+      CLDhr[CLDhr > 100] <- 100
+      RHhr <- suppressWarnings(humidityconvert(h = hourlydata$humidity, intype = 'specific', p = hourlydata$pressure, tc = TAIRhr)$relative)
+      RHhr[RHhr > 100] <- 100
+      RHhr[RHhr < 0] <- 0
+      if(scenario != 0){
+        VPDhr <- WETAIR(db = TAIRhr_orig, rh = 100)$e - WETAIR(db = TAIRhr_orig, rh = RHhr)$e
+        VPDhr <- VPDhr - mean(VPD_diff) # note using mean here because otherwise can lead to unrealistically low RH which then stronly affects TSKY
+        e <- WETAIR(db = TAIRhr, rh = 100)$e - VPDhr
+        es <- WETAIR(db = TAIRhr, rh = 100)$esat
+        RHhr <- (e / es) * 100
+        RHhr[RHhr > 100] <- 100
+        RHhr[RHhr < 0] <- 0
+      }
+      WNhr <- hourlyradwind$windspeed
+      WNhr[is.na(WNhr)] <- 0.1
+      if(rainhourly == 0){
+        RAINhr = rep(0, 24 * ndays)
+      }else{
+        RAINhr = rainhour
+      }
+      PRESShr <- hourlydata$pressure
+      RAINFALL <- dailyprecip
+      if(scenario != 0){
+        RAINFALL <- RAINFALL * RAIN_diff
+      }
+      RAINFALL[RAINFALL < 0.1] <- 0
+      
+      if(rainhourly == 0){ # putting daily rainfall on midnight (account for local solar time)
+        midnight <- which(microclima.out$hourlydata$szenith[1:24] == max(microclima.out$hourlydata$szenith[1:24]))
+        if(midnight < 24){
+          midnights <- seq(midnight, length(RAINhr / 24) - 1, 24)
+        }else{
+          midnights <- seq(midnight, length(RAINhr / 24), 24)
+        }
+        RAINhr[midnights] <- RAINFALL
+        rainhourly <- 1
+      }
+      ZENhr2 <- ZENhr
+      ZENhr2[ZENhr2!=90] <- 0
+      dmaxmin <- function(x, fun) {
+        dx <- t(matrix(x, nrow = 24))
+        apply(dx, 1, fun)
+      }
+      TMAXX <- dmaxmin(TAIRhr, max)
+      TMINN <- dmaxmin(TAIRhr, min)
+      CCMAXX <- dmaxmin(CLDhr, max)
+      CCMINN <- dmaxmin(CLDhr, min)
+      RHMAXX <- dmaxmin(RHhr, max)
+      RHMINN <- dmaxmin(RHhr, min)
+      WNMAXX <- dmaxmin(WNhr, max)
+      WNMINN <- dmaxmin(WNhr, min)
+      PRESS <- dmaxmin(PRESShr, min)
+      
+      if(save == 1){
+        cat("saving met data for later \n")
+        save(CCMAXX, file = 'CCMAXX.Rda')
+        save(CCMINN, file = 'CCMINN.Rda')
+        save(WNMAXX, file = 'WNMAXX.Rda')
+        save(WNMINN, file = 'WNMINN.Rda')
+        save(TMAXX, file = 'TMAXX.Rda')
+        save(TMINN, file = 'TMINN.Rda')
+        save(RHMAXX, file = 'RHMAXX.Rda')
+        save(RHMINN, file = 'RHMINN.Rda')
+        save(RAINFALL, file = 'RAINFALL.Rda')
+        save(PRESS, file = 'PRESS.Rda')
+        save(CLDhr, file = 'CLDhr.Rda')
+        save(WNhr, file = 'WNhr.Rda')
+        save(TAIRhr, file = 'TAIRhr.Rda')
+        save(RHhr, file = 'RHhr.Rda')
+        save(RAINhr, file = 'RAINhr.Rda')
+        save(SOLRhr, file = 'SOLRhr.Rda')
+        save(ZENhr, file = 'ZENhr.Rda')
+        save(IRDhr, file = 'IRDhr.Rda')
+        save(microclima.out, file = 'microclima.out.Rda')
+      }
+    
+    ############################################################################
+    microut<-NicheMapR::microclimate(micro) ##### ERROR: RAINFALL has an NA in it
+    ############################################################################
+    
     print(proc.time() - ptm) # Stop the clock
     
     metout <- microut$metout # retrieve above ground microclimatic conditions, min shade
@@ -1181,3 +1509,5 @@ micro_era5 <- function(
     }
   } # end error trapping
 } # end of micro_era5 function
+
+################################################################################
