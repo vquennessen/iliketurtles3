@@ -34,7 +34,7 @@ ymx <- -32.4
 
 # temporal extent
 st_time <- lubridate::ymd("2019:12:31")
-en_time <- lubridate::ymd("2023:03:29")
+en_time <- lubridate::ymd("2022:12:31")
 
 # file name and location for downloaded .nc files
 file_prefix <- "era5"
@@ -58,18 +58,18 @@ request_era5(request = req, uid = uid, out_path = op, overwrite = TRUE)
 # run micro_era5 for a location (make sure it's within the bounds of 
 # your .nc files)
 micro <- micro_era5(loc = c(-3.86, -32.43), # Praia do Leao, Fernando de Noronha
-                    dstart = "31/12/2019",    # start date
-                    dfinish = "29/03/2023",   # end date
+                    dstart = st_time,    # start date
+                    dfinish = en_time,   # end date
                     zmin = 2,       # minimum elevation over sea level in meters
-                    slope = 1,      # slope in degrees
-                    aspect = 210,   # aspect of beach in degrees, north = 0
-                                    # soil depths in cm
+                    slope = 1,           # slope in degrees
+                    aspect = 210,        # aspect of beach in degrees, north = 0
+                                         # soil depths in cm
                     DEP = c(0, 2.5,  5,  10,  15,  20,  30,  50,  100,  200), 
-                    minshade = 0,   # assumed no shade
-                    runshade = 0,   # only run once, for minimum shade value
-                                    # folder with spatial data from mcera5 pkg
+                    minshade = 0,        # assumed no shade
+                    runshade = 0,     # only run once, for minimum shade value
+                                      # folder with spatial data from mcera5 pkg
                     spatial = "../data/Spatial_Data/era5", 
-                    run.gads = 2)
+                    run.gads = 0)
 
 # save micro as object in data folder
 save(micro, '../data/micro.Rdata')

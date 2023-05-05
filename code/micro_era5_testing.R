@@ -102,7 +102,6 @@ micro_era5 <- function(
     cad.effects = TRUE) #{ 
   ##### end function parameters ################################################
   
-  
 ##### test parameters ########################################################
   
   loc = c(-3.86, -32.43) # Praia do Leao, Fernando de Noronha

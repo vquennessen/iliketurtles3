@@ -56,30 +56,6 @@
 #' @return data frame of longitude, latitude, xy distance and inverse weight of
 #' each neighbouring point
 #' @noRd
-focal_dist <- function(long, lat) {
-  
-  # round to nearest 0.25
-  x_r <- plyr::round_any(long, .25)
-  y_r <- plyr::round_any(lat, .25)
-  # work out locations of the four neighbour points in the ERA5 dataset
-  if(long >= x_r) {
-    focal_x <- c(x_r, x_r, x_r + 0.25, x_r + 0.25) } else {
-      focal_x <- c(x_r - 0.25, x_r - 0.25, x_r, x_r)
-    }
-  if(lat >= y_r) {
-    focal_y <- c(y_r, y_r + 0.25, y_r, y_r + 0.25) } else {
-      focal_y <- c(y_r - 0.25, y_r, y_r - 0.25, y_r)
-    }
-  # work out weighting based on dist between input & 4 surrounding points
-  x_dist <- abs(long - focal_x)
-  y_dist <- abs(lat - focal_y)
-  xy_dist <- sqrt(x_dist^2 + y_dist^2)
-  
-  focal <- data.frame(x = focal_x, y = focal_y, xy_dist) %>%
-    dplyr::mutate(., inverse_weight = 1/sum(1/(1/sum(xy_dist) * xy_dist)) * 1/(1/sum(xy_dist) * xy_dist))
-  return(focal)
-}
-
 
 extract_clim <- function(nc, long, lat, start_time, end_time, d_weight = TRUE,
                          dtr_cor = TRUE, dtr_cor_fac = 1.285) {
@@ -170,9 +146,12 @@ extract_clim <- function(nc, long, lat, start_time, end_time, d_weight = TRUE,
   
   # yes distance weighting - dtr_cor passed to processing function
   if(d_weight == TRUE) {
-    focal <- NicheMapR::focal_dist(long, lat)
+    focal <- focal_dist(long, lat)
     # collector per weighted neighbour
     focal_collect <- list()
+    
+    ##### error here ###########################################################
+    
     for(j in 1:nrow(focal)) {
       # applies DTR correction if TRUE
       f_dat <- nc_to_df(nc, focal$x[j], focal$y[j], start_time, end_time,
@@ -180,6 +159,9 @@ extract_clim <- function(nc, long, lat, start_time, end_time, d_weight = TRUE,
         dplyr::mutate(inverse_weight = focal$inverse_weight[j])
       focal_collect[[j]] <- f_dat
     }
+    
+    ############################################################################
+    
     # create single weighted dataframe
     dat <- dplyr::bind_rows(focal_collect, .id = "neighbour") %>%
       dplyr::group_by(obs_time)%>%
