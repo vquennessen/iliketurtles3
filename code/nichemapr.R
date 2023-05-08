@@ -95,10 +95,10 @@ micro <- micro_era5(
   D0 = 0,                                 # default
   EC = 0.0167238,                         # default
   SLE = 0.96,                             # Kearney et al. 2014
-  Thcond = 8.8,                           # Kearney et al. 2014
-  Density = 2660,                         # Kearney et al. 2014
-  SpecHeat = 800,                         # Kearney et al. 2014
-  BulkDensity = 1300,                     # Kearney et al. 2014
+  Thcond = 2.5,                           # Bentley et al. 2020
+  Density = 2560,                         # Bentley et al. 2020
+  SpecHeat = 870,                         # Bentley et al. 2020
+  BulkDensity = 1400,                     # Bentley et al. 2020
   PCTWET = 0.1,                           # Kearney et al. 2014
   rainwet = 1.5,                          # default
   cap = 1,                                # default
