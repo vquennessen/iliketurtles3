@@ -4,7 +4,7 @@
 micro_era5 <- function(
     loc = c(-3.86, -32.43), # Praia do Leao, Fernando de Noronha
     dstart = "31/12/2019",    # start date
-    dfinish = "29/03/2023",   # end date
+    dfinish = "31/12/2022",   # end date
     dem = NA,
     dem2 = dem,
     dem.res = 30,
@@ -106,7 +106,7 @@ micro_era5 <- function(
   
   loc = c(-3.86, -32.43) # Praia do Leao, Fernando de Noronha
   dstart = "31/12/2019"    # start date
-  dfinish = "29/03/2023"   # end date
+  dfinish = "31/12/2022"   # end date
   dem = NA
   dem2 = dem
   dem.res = 30
