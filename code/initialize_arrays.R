@@ -11,6 +11,11 @@ initialize_arrays <- function(start_year, end_year, A, Y,
   # years
   years <- seq(from = start_year, to = end_year)
   
+  # initialize population size array
+  # dimensions = sexes * ages * scenarios * years
+  N <- array(rep(0, times = 2 * A * length(scenarios) * Y), 
+                  dim = c(2, A, length(scenarios), Y))  
+  
   # initialize hatching success
   # determine hatching success
   if (hatch_success_stochasticity == TRUE) {
@@ -22,9 +27,8 @@ initialize_arrays <- function(start_year, end_year, A, Y,
   }
   
   # initialize temperature scenarios
-  temperatures <- rep(NA, 
-                      times = Y*length(scenarios), 
-                      dim = c(Y, length(scenarios)))
+  temperatures <- array(rep(NA, times = length(scenarios)*Y), 
+                        dim = c(length(scenarios), Y))
   
   # for each scenario
   for (i in 1:length(scenarios)) {
@@ -36,10 +40,10 @@ initialize_arrays <- function(start_year, end_year, A, Y,
     if (climate_stochasticity == TRUE) {
       
       # generate stochastic temperatures from means given temp_sd
-      temperatures[, i] <- rnorm(n = Y, mean = temp_mus, sd = temp_sd)
+      temperatures[i, ] <- rnorm(n = Y, mean = temp_mus, sd = temp_sd)
       
       # if not, the temperatures are just the means
-    } else { temperatures[, i] <- temp_mus }
+    } else { temperatures[i, ] <- temp_mus }
     
   }
   
@@ -78,8 +82,10 @@ initialize_arrays <- function(start_year, end_year, A, Y,
   #                                   hatch_success = hatch_success_mu, 
   #                                   f_Leslie, m_Leslie)
   
-  N <- initialize_population2(temp_mu, logit_a, logit_b, A, Y, 
-                              F_survival, M_survival)
+  init_N <- initialize_population2(temp_mu, logit_a, logit_b, A, Y, 
+                                   F_survival, M_survival)
+  
+  N <- 
   
   # output
   output <- list(years, hatch_success, temperatures, N, 

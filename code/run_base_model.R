@@ -37,6 +37,7 @@ run_base_model <- function(num_sims, scenario, beta) {
   # model parameters
   start_year <- 2023                              # first year to simulate
   end_year <- 2100                                # last year to simulate
+  scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4)  # total temp increases
   
   # dimensions
   A <- max_age
@@ -67,7 +68,7 @@ run_base_model <- function(num_sims, scenario, beta) {
                          eggs_mu, eggs_sd, hatch_success_mu, hatch_success_a, 
                          hatch_success_b, hatch_success_stochasticity, 
                          logit_a, logit_b, temp_mu, temp_sd, 
-                         climate_stochasticity, start_year, end_year, scenario, 
+                         climate_stochasticity, start_year, end_year, scenarios, 
                          A, Y)
     
     # save the N and abundance arrays 

@@ -20,7 +20,8 @@ initialize_population2 <- function(temp_mu, logit_a, logit_b, A, Y,
   init_males <- floor(init_hatchlings*props_male)
   
   # initialize population size array by age class and sex
-  init_N <- array(rep(0, times = 2 * A * Y), dim = c(2, A, Y))  
+  init_N <- array(rep(0, times = 2 * A * Y), 
+                  dim = c(2, A, Y))  
   
   # first age class
   init_N[1, 1, 1] <- init_females[1]
