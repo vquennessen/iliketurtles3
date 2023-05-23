@@ -2,10 +2,11 @@
 
 initialize_arrays <- function(start_year, end_year, A, Y, 
                               hatch_success_stochasticity, hatch_success_a, 
-                              hatch_success_b, hatch_success_mu, scenario, 
+                              hatch_success_b, hatch_success_mu, scenarios, 
                               F_survival_years, F_survival_values, 
                               M_survival_years, M_survival_values, 
-                              temp_mu, logit_a, logit_b) {
+                              temp_mu, climate_stochasticity, 
+                              logit_a, logit_b) {
   
   # years
   years <- seq(from = start_year, to = end_year)
@@ -21,59 +22,26 @@ initialize_arrays <- function(start_year, end_year, A, Y,
   }
   
   # initialize temperature scenarios
-  temperatures <- rep(NA, Y)
+  temperatures <- rep(NA, 
+                      times = Y*length(scenarios), 
+                      dim = c(Y, length(scenarios)))
   
-  # other scenarios
-  # TODO 
-  
-  if (scenario == 'SSP1-1.9') {
+  # for each scenario
+  for (i in 1:length(scenarios)) {
     
-    temp1 <- temp_mu + 0.65
-    temp2 <- temp1 + 0.1
-    temp3 <- temp2 - 0.2
+    # generate mean temperature values that go up linearly 
+    temp_mus <- seq(from = temp_mu, to = temp_mu + scenarios[i], length = Y)
     
-  } else if (scenario == 'SSP1-2.6') {
-    
-    temp1 <- temp_mu + 0.65
-    temp2 <- temp1 + 0.2
-    temp3 <- temp2 + 0.1
-    
-  } else if (scenario == 'SSP2-4.5') {
-    
-    temp1 <- temp_mu + 0.65
-    temp2 <- temp1 + 0.5
-    temp3 <- temp2 + 0.7
-    
-  } else if (scenario == 'SSP3-7.0') {
-    
-    temp1 <- temp_mu + 0.65
-    temp2 <- temp1 + 0.6
-    temp3 <- temp2 + 1.5
-    
-  } else if (scenario == 'SSP5-8.5') {
-    
-    temp1 <- temp_mu + 0.75
-    temp2 <- temp1 + 0.8
-    temp3 <- temp2 + 2
+    # if we're including climate stochasticity in the model
+    if (climate_stochasticity == TRUE) {
+      
+      # generate stochastic temperatures from means given temp_sd
+      temperatures[, i] <- rnorm(n = Y, mean = temp_mus, sd = temp_sd)
+      
+      # if not, the temperatures are just the means
+    } else { temperatures[, i] <- temp_mus }
     
   }
-  
-  # years in IPCC climate report Table SPM.1  
-  year1 <- 2040
-  year2 <- 2060
-  year3 <- 2100
-  
-  index1 <- which(years == year1)
-  temperatures[1:index1] <- seq(from = temp_mu, to = temp1, 
-                                length = (index1))
-  
-  index2 <- which(years == year2)
-  temperatures[(index1 + 1):index2] <- seq(from = temp1, to = temp2,
-                                           length = index2 - index1)
-  
-  index3 <- which(years == year3)
-  temperatures[(index2 + 1):index3] <- seq(from = temp2, to = temp3,
-                                           length = index3 - index2)
   
   # survival values vector - females
   F_survival <- rep(F_survival_values, times = F_survival_years)
