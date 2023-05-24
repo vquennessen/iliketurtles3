@@ -1,8 +1,9 @@
 # initialize arrays
 
-initialize_arrays <- function(start_year, end_year, A, Y, 
-                              hatch_success_stochasticity, hatch_success_a, 
-                              hatch_success_b, hatch_success_mu, scenarios, 
+initialize_arrays <- function(max_age, start_year, end_year, scenarios, 
+                              betas, hatch_success_stochasticity, 
+                              hatch_success_a, hatch_success_b, 
+                              hatch_success_mu, 
                               F_survival_years, F_survival_values, 
                               M_survival_years, M_survival_values, 
                               temp_mu, climate_stochasticity, 
@@ -11,10 +12,16 @@ initialize_arrays <- function(start_year, end_year, A, Y,
   # years
   years <- seq(from = start_year, to = end_year)
   
+  # dimensions
+  A <- max_age
+  Y <- length(start_year:end_year)
+  S <- length(scenarios)
+  B <- length(betas)
+  
   # initialize population size array
   # dimensions = sexes * ages * scenarios * years
-  N <- array(rep(0, times = 2 * A * length(scenarios) * Y), 
-                  dim = c(2, A, length(scenarios), Y))  
+  N <- array(rep(0, times = 2 * A * Y * S * B), 
+             dim = c(2, A, Y, S, B))  
   
   # initialize hatching success
   # determine hatching success
@@ -27,8 +34,8 @@ initialize_arrays <- function(start_year, end_year, A, Y,
   }
   
   # initialize temperature scenarios
-  temperatures <- array(rep(NA, times = length(scenarios)*Y), 
-                        dim = c(length(scenarios), Y))
+  temperatures <- array(rep(NA, times = Y*S), 
+                        dim = c(Y, S))
   
   # for each scenario
   for (i in 1:length(scenarios)) {
@@ -40,10 +47,10 @@ initialize_arrays <- function(start_year, end_year, A, Y,
     if (climate_stochasticity == TRUE) {
       
       # generate stochastic temperatures from means given temp_sd
-      temperatures[i, ] <- rnorm(n = Y, mean = temp_mus, sd = temp_sd)
+      temperatures[, i] <- rnorm(n = Y, mean = temp_mus, sd = temp_sd)
       
       # if not, the temperatures are just the means
-    } else { temperatures[i, ] <- temp_mus }
+    } else { temperatures[, i] <- temp_mus }
     
   }
   
@@ -73,7 +80,7 @@ initialize_arrays <- function(start_year, end_year, A, Y,
   # make male leslie matrix for survival
   m_matrix <- matrix(diag(M_survival[1:(A - 1)]), ncol = A - 1)
   m_Leslie <- rbind(rep(0, A), cbind(m_matrix, rep(0, A - 1)))
-  #
+  
   # # initialize population size array by age class and sex
   # N_output <- initialize_population(ages, no_betas, betas, no_scenarios, 
   #                                   scenarios, a, temp_mu, age_maturity, 
@@ -85,10 +92,14 @@ initialize_arrays <- function(start_year, end_year, A, Y,
   init_N <- initialize_population2(temp_mu, logit_a, logit_b, A, Y, 
                                    F_survival, M_survival)
   
-  N <- 
+  for (b in 1:B) {
+    for (s in 1:S) {
+      N[, , , s, b] <- init_N
+    }
+  }
   
   # output
-  output <- list(years, hatch_success, temperatures, N, 
+  output <- list(A, Y, S, B, years, hatch_success, temperatures, N, 
                  F_survival, M_survival, f_Leslie, m_Leslie)
   
   return(output)

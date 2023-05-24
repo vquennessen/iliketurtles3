@@ -1,8 +1,8 @@
 run_base_model <- function(num_sims, scenario, beta) {
   
   # add start time to progress.txt file to track progress of runs
-  start_time <- paste('Start time: ', Sys.time(), ' - ', scenario, ' - beta ', 
-                      beta, ' - ', num_sims, ' sims', sep = '')
+  start_time <- paste('Start time: ', Sys.time(), ' - ', num_sims, ' sims', 
+                      sep = '')
   
   write(start_time, file = 'progress.txt', append = TRUE)
   
@@ -38,24 +38,27 @@ run_base_model <- function(num_sims, scenario, beta) {
   start_year <- 2023                              # first year to simulate
   end_year <- 2100                                # last year to simulate
   scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4)  # total temp increases
+  betas <- c(1, 2, 3, 5, 10, 20, 50, 100)
   
   # dimensions
   A <- max_age
   Y <- length(start_year:end_year)
+  S <- length(scenarios)
+  B <- length(betas)
   
   ##############################################################################
   
   # initialize yield and biomass arrays
   
   # initialize population size array by age class and sex
-  sims_N <- array(rep(NA, times = 2 * A * Y * num_sims), 
-                  dim = c(2, A, Y, num_sims))
+  sims_N <- array(rep(NA, times = 2 * A * Y * S * num_sims), 
+                  dim = c(2, A, Y, S, num_sims))
   
-  sims_abundance <- array(rep(NA, times = Y * num_sims), 
-                          dim = c(Y, num_sims))  
+  sims_abundance <- array(rep(NA, times = Y * S * num_sims), 
+                          dim = c(Y, S, num_sims))  
   
-  sims_mature_abundance <- array(rep(NA, times = Y * num_sims), 
-                                 dim = c(Y, num_sims))  
+  sims_mature_abundance <- array(rep(NA, times = Y * S *num_sims), 
+                                 dim = c(Y, S, num_sims))  
   
   ##############################################################################
   
@@ -64,22 +67,20 @@ run_base_model <- function(num_sims, scenario, beta) {
     
     output <- base_model(max_age, F_survival_years, F_survival_values, 
                          M_survival_years, M_survival_values, age_maturity, 
-                         beta, remigration_int, nests_mu, nests_sd, 
+                         betas, remigration_int, nests_mu, nests_sd, 
                          eggs_mu, eggs_sd, hatch_success_mu, hatch_success_a, 
                          hatch_success_b, hatch_success_stochasticity, 
                          logit_a, logit_b, temp_mu, temp_sd, 
-                         climate_stochasticity, start_year, end_year, scenarios, 
-                         A, Y)
+                         climate_stochasticity, start_year, end_year, scenarios)
     
     # save the N and abundance arrays 
-    sims_N[, , , i]            <- output[[1]]
-    sims_abundance[, i]        <- output[[2]]
-    sims_mature_abundance[, i] <- output[[3]]
+    sims_N[, , , , i]            <- output[[1]]
+    sims_abundance[, , i]        <- output[[2]]
+    sims_mature_abundance[, , i] <- output[[3]]
     
     # write to progress text file
-    if (i == num_sims) {
-      update <- paste(Sys.time(), ' - ', scenario, ' - beta ', beta, 
-                      ' - 100% done!', sep = '')
+    if (i %% (numsims/10) == 0) {
+      update <- paste(Sys.time(), ' - ', i/numsims*100, '% done!', sep = '')
       write(update, file = 'progress.txt', append = TRUE)
     }
     
