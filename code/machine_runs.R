@@ -1,7 +1,7 @@
 # machine runs
 
 # set working directory
-setwd('~/Projects/iliketurtles/code')
+setwd('~/Projects/iliketurtles3/code')
 
 # source needed functions
 source('run_base_model.R')
@@ -11,24 +11,16 @@ source('initialize_population2.R')
 source('reproduction.R')
 
 # model parameters
-num_sims <- c(10000)
+num_sims <- 10000
+scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4)  # total temp increases
 betas <- c(1, 2, 3, 5, 10, 20, 50, 100)
-# betas <- c(20, 50, 100)
-scenarios <- c('SSP1-1.9', 'SSP1-2.6', 'SSP2-4.5', 'SSP3-7.0', 'SSP5-8.5')
 
-for (ns in 1:length(num_sims)) {
+for (s in 1:length(scenarios)) {
   
   for (b in 1:length(betas)) {
     
-    for (s in 1:length(scenarios)) {
-    
-    run_base_model(num_sims = num_sims[ns], 
-                   scenario = scenarios[s], 
-                   beta = betas[b])
-    
-    }
-    
+    run_base_model(num_sims, scenarios[s], betas[b])
+
   }
   
 }
-
