@@ -16,6 +16,7 @@ reproduction <- function(N, age_maturity, max_age, remigration_int, beta,
   if (n_breeding_F > 0 & n_breeding_M > 0) {
     
     # proportion of males
+    # multiply by 2 to get BSR from 0 to 1 instead of 0 to 0.5
     BSR <- 2*(n_breeding_M / (n_breeding_M + n_breeding_F))
     
     # relate prop_males to breeding success via mating function
