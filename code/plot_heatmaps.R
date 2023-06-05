@@ -23,14 +23,15 @@ DF <- data.frame(Scenario = NULL,
                  Probability = NULL)
 
 # Scenarios
-Scenarios <- paste(seq(from = 0.5, to = 4, by = 0.5), 'C', sep = '')
+temps <- paste(seq(from = 0.5, to = 4, by = 0.5), 'C', sep = '')
+Scenarios <- factor(temps, levels = temps)
 
 # Betas
-Betas <- c(1, 2, 3, 5, 10, 20, 50, 100)
+Betas <- c(1, 1.12, 1.71, 3.46, 6.93, 11.54, 17.29, 34.49)
 Beta_axis_labels <- beta_axis_labels(Betas)
 
 # data output folder
-output_folder <- '2023_05_26_base'
+output_folder <- '2023_06_02_new_betas'
 
 for (i in 1:length(years_to_plot)) {
   
@@ -72,7 +73,7 @@ fig <- ggplot(data = DF, aes(x = as.factor(Beta), y = Scenario, fill = Probabili
                        limits = c(0, 1)) +
   guides(fill = guide_colourbar(title = "Probability")) +
   xlab('Percent of males lost before reproductive success is 50%') +
-  ylab('Climate Scenario') +
+  ylab('Increase in sand temperature (C) by 2100') +
   ggtitle(paste('Probability of population persistence to ', years_to_plot[i], 
                 sep = '')) +
   theme(panel.background = element_blank()) 
