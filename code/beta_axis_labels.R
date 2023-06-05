@@ -35,7 +35,7 @@ beta_axis_labels <- function(betas) {
     mutate(Acceptable_loss = (1 - Breeding_Sex_Ratio)*100) %>%
     select(Acceptable_loss)
   
-  output <- as.character(acceptable_loss_of_males$Acceptable_loss)
+  output <- as.character(round(acceptable_loss_of_males$Acceptable_loss))
   
   return(output)
   
