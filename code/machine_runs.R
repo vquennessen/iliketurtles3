@@ -13,7 +13,7 @@ source('reproduction.R')
 # model parameters
 num_sims <- 10000
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4)  # total temp increases
-betas <- c(1, 2, 3, 5, 10, 20, 50, 100)
+betas <- c(1, 1.12, 1.71, 3.46, 6.93, 11.54, 17.29, 34.49)
 
 for (s in 1:length(scenarios)) {
   
