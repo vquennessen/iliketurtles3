@@ -15,6 +15,7 @@ run_base_model <- function(num_sims, scenario, beta) {
   F_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - F
   M_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - M
   M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
+  demographic_stochasticity <- TRUE                     # demographic stochasticity
   age_maturity <- 23                                    # age at first reproduction
   remigration_int <- 5.557                              # remigration interval
   nests_mu <- 4.94209                                   # mean number of nests per female per season
@@ -62,10 +63,12 @@ run_base_model <- function(num_sims, scenario, beta) {
   # run the model for each simulation
   for (i in 1:num_sims) {
     
-    output <- base_model(max_age, F_survival_years, F_survival_values, 
-                         M_survival_years, M_survival_values, age_maturity, 
-                         beta, remigration_int, nests_mu, nests_sd, 
-                         eggs_mu, eggs_sd, hatch_success_mu, hatch_success_a, 
+    output <- base_model(max_age, demographic_stochasticity, 
+                         F_survival_years, F_survival_values, 
+                         M_survival_years, M_survival_values, 
+                         age_maturity, beta, remigration_int, 
+                         nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                         hatch_success_mu, hatch_success_a, 
                          hatch_success_b, hatch_success_stochasticity, 
                          logit_a, logit_b, temp_mu, temp_sd, 
                          climate_stochasticity, start_year, end_year, scenario)
@@ -76,10 +79,10 @@ run_base_model <- function(num_sims, scenario, beta) {
     sims_mature_abundance[, i] <- output[[3]]
     
     # write to progress text file
-    # if (i %% (num_sims/10) == 0) {
-    #   update <- paste(Sys.time(), ' - ', i/num_sims*100, '% done!', sep = '')
-    #   write(update, file = 'progress.txt', append = TRUE)
-    # }
+    if (i %% (num_sims/10) == 0) {
+      update <- paste(Sys.time(), ' - ', i/num_sims*100, '% done!', sep = '')
+      write(update, file = 'progress.txt', append = TRUE)
+    }
     
   }
   
@@ -94,5 +97,5 @@ run_base_model <- function(num_sims, scenario, beta) {
   save(sims_N, file = filepath1)
   save(sims_abundance, file = filepath2)
   save(sims_mature_abundance, file = filepath3)
-
+  
 }

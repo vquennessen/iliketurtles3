@@ -16,8 +16,8 @@ initialize_population2 <- function(temp_mu, logit_a, logit_b, A, Y,
   init_hatchlings <- sample(x = 10000:18500, size = A)
   
   # initial female and male hatchlings
-  init_females <- floor(init_hatchlings*(1 - props_male))
-  init_males <- floor(init_hatchlings*props_male)
+  init_females <- round(init_hatchlings*(1 - props_male))
+  init_males <- round(init_hatchlings*props_male)
   
   # initialize population size array by age class and sex
   init_N <- array(rep(0, times = 2 * A * Y), 
@@ -31,10 +31,10 @@ initialize_population2 <- function(temp_mu, logit_a, logit_b, A, Y,
   for (i in 2:A) {
     
     # females
-    init_N[1, i, 1] <- floor(init_females[i]*prod(F_survival[1:i]))
+    init_N[1, i, 1] <- round(init_females[i]*prod(F_survival[1:i]))
     
     # males
-    init_N[2, i, 1] <- floor(init_males[i]*prod(M_survival[1:i]))
+    init_N[2, i, 1] <- round(init_males[i]*prod(M_survival[1:i]))
     
   }
   

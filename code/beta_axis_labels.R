@@ -32,10 +32,9 @@ beta_axis_labels <- function(betas) {
     group_by(Beta) %>%
     filter(Reproductive_Success <= 0.5) %>%
     filter(Breeding_Sex_Ratio == max(Breeding_Sex_Ratio)) %>%
-    mutate(Acceptable_loss = (1 - Breeding_Sex_Ratio)*100) %>%
-    select(Acceptable_loss)
+    mutate(M = round((Breeding_Sex_Ratio/2*100)))
   
-  output <- as.character(round(acceptable_loss_of_males$Acceptable_loss))
+  output <- as.character(round(acceptable_loss_of_males$M))
   
   return(output)
   

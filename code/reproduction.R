@@ -23,7 +23,7 @@ reproduction <- function(N, age_maturity, max_age, remigration_int, beta,
     breeding_success <- pbeta(BSR, shape1 = 1, shape2 = beta)
     
     # number of nests per female
-    nests <- floor(rnorm(n = n_breeding_F, mean = nests_mu, sd = nests_sd))
+    nests <- round(rnorm(n = n_breeding_F, mean = nests_mu, sd = nests_sd))
     
     # replace any zeros or -1 with +1
     nests[which(nests < 1)] <- 1
@@ -34,7 +34,7 @@ reproduction <- function(N, age_maturity, max_age, remigration_int, beta,
     # number of eggs per nest
     for (f in 1:n_breeding_F) {
       
-      eggs[f] <- sum(floor(rnorm(n = nests[f], mean = eggs_mu, sd = eggs_sd)))
+      eggs[f] <- sum(round(rnorm(n = nests[f], mean = eggs_mu, sd = eggs_sd)))
       
     }
     
@@ -52,8 +52,8 @@ reproduction <- function(N, age_maturity, max_age, remigration_int, beta,
     prop_male <- exp(logit_a + logit_b*temperature) / (1 + exp(logit_a + logit_b*temperature))
     
     # number of male and female hatchlings
-    female_hatchlings <- floor(hatchlings * (1 - prop_male))
-    male_hatchlings <- floor(hatchlings * prop_male)
+    female_hatchlings <- round(hatchlings * (1 - prop_male))
+    male_hatchlings <- round(hatchlings * prop_male)
     
   } else { 
     
