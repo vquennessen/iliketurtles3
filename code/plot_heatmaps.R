@@ -10,6 +10,13 @@ library(viridis)
 # source functions
 source('code/beta_axis_labels.R')
 
+# data output folder
+output_folder <- '2023_06_09_no_floors'
+
+# Betas
+Betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
+Beta_axis_labels <- beta_axis_labels(Betas)
+
 # if year1 is 2022, calculate year indices for 2040, 2060, and 2100
 start_year <- 2023
 end_year <- 2100
@@ -25,13 +32,6 @@ DF <- data.frame(Scenario = NULL,
 # Scenarios
 temps <- paste(seq(from = 0.5, to = 4, by = 0.5), 'C', sep = '')
 Scenarios <- factor(temps, levels = temps)
-
-# Betas
-Betas <- c(1, 1.12, 1.71, 3.46, 6.93, 11.54, 17.29, 34.49)
-Beta_axis_labels <- beta_axis_labels(Betas)
-
-# data output folder
-output_folder <- '2023_06_02_new_betas'
 
 for (i in 1:length(years_to_plot)) {
   
