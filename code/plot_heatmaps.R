@@ -11,7 +11,7 @@ library(viridis)
 source('code/beta_axis_labels.R')
 
 # data output folder
-output_folder <- '2023_06_09_no_floors'
+output_folder <- '2023_06_21_demographic_stochasticity'
 
 # Betas
 Betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
@@ -43,7 +43,7 @@ for (i in 1:length(years_to_plot)) {
   for (b in 1:length(Betas)) {
     
     # load in appropriate output file
-    load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
+    load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
                output_folder, '/', Scenarios[s], '/beta', Betas[b], 
                '/10000_abundance.Rda', sep = ''))
     
