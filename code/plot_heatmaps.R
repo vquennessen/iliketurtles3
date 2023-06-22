@@ -11,7 +11,7 @@ library(viridis)
 source('code/beta_axis_labels.R')
 
 # data output folder
-output_folder <- '2023_06_09_no_floors'
+output_folder <- '2023_06_21_demographic_stochasticity'
 
 # Betas
 Betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
@@ -48,7 +48,7 @@ for (i in 1:length(years_to_plot)) {
                '/10000_abundance.Rda', sep = ''))
     
     DF2 <- data.frame(Scenario = Scenarios[s],
-                      Beta = Beta_axis_labels[b], 
+                      Beta = Beta_axis_labels[b],
                       Survive_to = years_to_plot, 
                       Probability = c(sum(sims_abundance[index, ] > 0) / 10000))
     
@@ -56,7 +56,9 @@ for (i in 1:length(years_to_plot)) {
     
   }
   
-}
+  }
+  
+  DF$Beta <- factor(DF$Beta, levels = Beta_axis_labels)
 
 # heatmap for survival to all three years - horizontal
 fig <- ggplot(data = DF, aes(x = as.factor(Beta), y = Scenario, fill = Probability)) +
