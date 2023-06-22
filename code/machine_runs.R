@@ -13,11 +13,11 @@ source('pop_dynamics.R')
 
 # model parameters
 num_sims <- 10000
+scenarios <- c(3.5)  # total temp increases
 # scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4)  # total temp increases
-scenarios <- c(0.5)  # total temp increases
 
 # betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
-betas <- c(16.94, 34.14)
+betas <- c(34.14)
 
 for (s in 1:length(scenarios)) {
   
