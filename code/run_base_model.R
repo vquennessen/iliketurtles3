@@ -38,7 +38,7 @@ run_base_model <- function(num_sims, scenario, beta) {
   
   # model parameters
   start_year <- 2023                              # first year to simulate
-  end_year <- 2100                                # last year to simulate
+  end_year <- 2177                                # last year to simulate
   
   # dimensions
   A <- max_age
