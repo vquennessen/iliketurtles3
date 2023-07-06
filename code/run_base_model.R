@@ -18,14 +18,14 @@ run_base_model <- function(num_sims, scenario, beta) {
   demographic_stochasticity <- TRUE                     # demographic stochasticity
   age_maturity <- 23                                    # age at first reproduction
   remigration_int <- 5.557                              # remigration interval
-  nests_mu <- 4.94209                                   # mean number of nests per female per season
-  nests_sd <- 1.94                                      # sd of number of nests per female per season
-  eggs_mu <- 102.4625                                   # mean number of eggs per nest
-  eggs_sd <- 20.1344                                    # sd of number of eggs per nest
-  hatch_success_mu <- 0.8110467                         # mean of hatching success
-  hatch_success_a <- 2.197689                           # beta CDF shape 1 parameter for hatching success
-  hatch_success_b <- 0.5120056                          # beta CDF shape 2 parameter for hatching success
-  hatch_success_stochasticity <- FALSE                  # whether or not there is stochasticity in hatching success
+  nests_mu <- 4.945312                                  # mean number of nests per female per season
+  nests_sd <- 2.089752                                  # sd of number of nests per female per season
+  eggs_mu <- 100.6486                                   # mean number of eggs per nest
+  eggs_sd <- 23.08206                                   # sd of number of eggs per nest
+  hatch_success_mu <- 0.8241024                         # mean of hatching success
+  hatch_success_a <- 2.089414                           # beta CDF shape 1 parameter for hatching success
+  hatch_success_b <- 0.4496393                          # beta CDF shape 2 parameter for hatching success
+  hatch_success_stochasticity <- TRUE                   # whether or not there is stochasticity in hatching success
   pivotal_temp <- 29.3                                  # pivotal temperature 
   TRT <- c(27.6, 31.4)                                  # Transitional range of temperatures
   logit_a <- 41.362228                                  # temp -> proportion of males a
