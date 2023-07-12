@@ -81,7 +81,9 @@ base_model <- function(max_age, demographic_stochasticity,
   ##### output #################################################################
   
   # create abundance array
-  abundance <- colSums(N, dims = 2)
+  abundance_F <- colSums(N[1, , , ], dims = 2)
+  abundance_M <- colSums(N[2, , , ], dims = 2)
+  abundance_total <- colSums(N, dims = 2)
   mature_abundance <- colSums(N[, age_maturity:max_age, ], dims = 2)
   
   # output N and abundance arrays
