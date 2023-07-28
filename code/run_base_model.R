@@ -33,13 +33,13 @@ run_base_model <- function(scenarios, num_sims, betas) {
   logit_b <- -1.415462                                  # temp -> proportion of males b
   
   # climate data
-  temp_mu <- 31.54639                               # base incubation temp mean
-  temp_sd <- 1.42                                   # base incubation temp sd
-  climate_stochasticity <- FALSE                    # whether or not to add in
+  temp_mu <- 31.80387                                # base incubation temp mean
+  temp_sd <- 0.841012                                # base incubation temp sd
+  climate_stochasticity <- FALSE                     # whether or not to add in
   
   # model parameters
   start_year <- 2023                              # first year to simulate
-  end_year <- 2177                                # last year to simulate
+  end_year <- start_year + 3*max_age              # last year to simulate
   
   # dimensions
   A <- max_age
@@ -65,8 +65,14 @@ run_base_model <- function(scenarios, num_sims, betas) {
       sims_N <- array(rep(NA, times = 2 * A * Y * num_sims), 
                       dim = c(2, A, Y, num_sims))
       
-      sims_abundance <- array(rep(NA, times = Y * num_sims), 
+      sims_abundance_F <- array(rep(NA, times = Y * num_sims), 
                               dim = c(Y, num_sims))  
+      
+      sims_abundance_M <- array(rep(NA, times = Y * num_sims), 
+                                dim = c(Y, num_sims)) 
+      
+      sims_abundance_total <- array(rep(NA, times = Y * num_sims), 
+                                dim = c(Y, num_sims)) 
       
       sims_mature_abundance <- array(rep(NA, times = Y * num_sims), 
                                      dim = c(Y, num_sims))  
@@ -87,9 +93,11 @@ run_base_model <- function(scenarios, num_sims, betas) {
                              climate_stochasticity, start_year, end_year, scenario)
         
         # save the N and abundance arrays 
-        sims_N[, , , i]            <- output[[1]]
-        sims_abundance[, i]        <- output[[2]]
-        sims_mature_abundance[, i] <- output[[3]]
+        sims_N[, , , i]             <- output[[1]]
+        sims_abundance_F[, i]       <- output[[2]]
+        sims_abundance_M[, i]       <- output[[3]]
+        sims_abundance_total[, i]   <- output[[4]]
+        sims_mature_abundance[, i]  <- output[[5]]
         
         # write to progress text file
         if (i %% (num_sims/10) == 0) {
@@ -104,13 +112,19 @@ run_base_model <- function(scenarios, num_sims, betas) {
       filepath1 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
                         '_N.Rda', sep = '')
       filepath2 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
-                        '_abundance.Rda', sep = '')
+                        '_abundance_F.Rda', sep = '')
       filepath3 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
+                        '_abundance_M.Rda', sep = '')
+      filepath4 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
+                        '_abundance_total.Rda', sep = '')
+      filepath5 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
                         '_mature_abundance.Rda', sep = '')
       # save objects
       save(sims_N, file = filepath1)
-      save(sims_abundance, file = filepath2)
-      save(sims_mature_abundance, file = filepath3)
+      save(sims_abundance_F, file = filepath2)
+      save(sims_abundance_M, file = filepath3)
+      save(sims_abundance_total, file = filepath4)
+      save(sims_mature_abundance, file = filepath5)
       
     }
   

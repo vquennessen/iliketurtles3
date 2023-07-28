@@ -11,14 +11,15 @@ base_model <- function(max_age, demographic_stochasticity,
   
   ##### source initialized arrays ##############################################
   
-  init_output <- initialize_arrays(max_age, start_year, end_year, scenario, 
+  init_output <- initialize_arrays(max_age, age_maturity, remigration_int,
+                                   start_year, end_year, scenario, 
                                    beta, hatch_success_stochasticity, 
                                    hatch_success_a, hatch_success_b, 
                                    hatch_success_mu, 
                                    F_survival_years, F_survival_values, 
                                    M_survival_years, M_survival_values, 
                                    temp_mu, climate_stochasticity, 
-                                   logit_a, logit_b)
+                                   logit_a, logit_b, nests_mu, eggs_mu)
   
   A <- init_output[[1]]               # number of ages
   Y <- init_output[[2]]               # number of years
@@ -81,13 +82,13 @@ base_model <- function(max_age, demographic_stochasticity,
   ##### output #################################################################
   
   # create abundance array
-  abundance_F <- colSums(N[1, , , ], dims = 2)
-  abundance_M <- colSums(N[2, , , ], dims = 2)
+  abundance_F <- colSums(N[1, , ], dims = 1)
+  abundance_M <- colSums(N[2, , ], dims = 1)
   abundance_total <- colSums(N, dims = 2)
   mature_abundance <- colSums(N[, age_maturity:max_age, ], dims = 2)
   
   # output N and abundance arrays
-  output <- list(N, abundance, mature_abundance)
+  output <- list(N, abundance_F, abundance_M, abundance_total, mature_abundance)
   
   return(output)
   

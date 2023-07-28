@@ -1,13 +1,14 @@
 # initialize arrays
 
-initialize_arrays <- function(max_age, start_year, end_year, scenario, 
+initialize_arrays <- function(max_age, age_maturity, remigration_int,
+                              start_year, end_year, scenario, 
                               beta, hatch_success_stochasticity, 
                               hatch_success_a, hatch_success_b, 
                               hatch_success_mu, 
                               F_survival_years, F_survival_values, 
                               M_survival_years, M_survival_values, 
                               temp_mu, climate_stochasticity, 
-                              logit_a, logit_b) {
+                              logit_a, logit_b, nests_mu, eggs_mu) {
   
   # years
   years <- seq(from = start_year, to = end_year)
@@ -17,7 +18,7 @@ initialize_arrays <- function(max_age, start_year, end_year, scenario,
   Y <- length(start_year:end_year)
   
   # initialize population size array
-  # dimensions = sexes * ages * scenarios * years
+  # dimensions = sexes * ages  * years
   N <- array(rep(0, times = 2 * A * Y), 
              dim = c(2, A, Y))  
   
@@ -74,15 +75,27 @@ initialize_arrays <- function(max_age, start_year, end_year, scenario,
   m_Leslie <- rbind(rep(0, A), cbind(m_matrix, rep(0, A - 1)))
   
   # # initialize population size array by age class and sex
-  # N_output <- initialize_population(ages, no_betas, betas, no_scenarios, 
-  #                                   scenarios, a, temp_mu, age_maturity, 
-  #                                   burn_in = 150, max_age, remigration_int, 
-  #                                   nests_mu, nests_sd, eggs_mu, eggs_sd,
-  #                                   hatch_success = hatch_success_mu, 
-  #                                   f_Leslie, m_Leslie)
+  # N <- initialize_population2(temp_mu, logit_a, logit_b, A, Y, 
+  #                             F_survival, M_survival)
   
-  N <- initialize_population2(temp_mu, logit_a, logit_b, A, Y, 
-                              F_survival, M_survival)
+  SAD <- initialize_population(beta, burn_in = 1000, 
+                               max_age, age_maturity, remigration_int, 
+                               nests_mu, eggs_mu, hatch_success_mu, 
+                               logit_a, logit_b, temp_mu,
+                               f_Leslie, m_Leslie)
+  
+  # separate by sex
+  F_SAD <- filter(SAD, Sex == 'Female')
+  M_SAD <- filter(SAD, Sex == 'Male')
+  
+  # set first timestep to SAD times a value to get at least 30 adult males
+  # and 170 adult females
+  f_min <- 170 / sum(F_SAD$N[age_maturity:max_age])
+  m_min <- 30 / sum(M_SAD$N[age_maturity:max_age])
+  multiplicator <- max(m_min, f_min)
+  
+  N[1, , 1] <- round(F_SAD$N * multiplicator)
+  N[2, , 1] <- round(M_SAD$N * multiplicator)
   
   # output
   output <- list(A, Y, years, hatch_success, temperatures, N, 
