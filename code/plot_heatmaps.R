@@ -8,10 +8,10 @@ library(ggplot2)
 library(viridis)
 
 # source functions
-source('code/beta_axis_labels.R')
+source('code/mating function/beta_axis_labels.R')
 
 # data output folder
-output_folder <- '2023_06_21_demographic_stochasticity'
+output_folder <- '2023_07_21_newdata_3gen'
 
 # Betas
 Betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
@@ -19,9 +19,12 @@ Beta_axis_labels <- beta_axis_labels(Betas)
 
 # if year1 is 2022, calculate year indices for 2040, 2060, and 2100
 start_year <- 2023
-end_year <- 2100
+end_year <- 2023 + 3*85
 years <- start_year:end_year
-years_to_plot <- c(2040, 2060, 2080, 2100)
+years_to_plot <- c(2023 + 85, 2023 + 2*85, 2023 + 3*85)
+
+# clear DF object
+rm(DF)
 
 # pull out number of simulations where population survived to 2040, 2060, 2100
 DF <- data.frame(Scenario = NULL, 
@@ -30,7 +33,7 @@ DF <- data.frame(Scenario = NULL,
                  Probability = NULL)
 
 # Scenarios
-temps <- paste(seq(from = 0.5, to = 4, by = 0.5), 'C', sep = '')
+temps <- paste(seq(from = 1.5, to = 12, by = 1.5), 'C', sep = '')
 Scenarios <- factor(temps, levels = temps)
 
 for (i in 1:length(years_to_plot)) {
@@ -39,52 +42,71 @@ for (i in 1:length(years_to_plot)) {
   index <- which(years == years_to_plot[i])
   
   for (s in 1:length(Scenarios)) {
-  
-  for (b in 1:length(Betas)) {
     
-    # load in appropriate output file
-    load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
-               output_folder, '/', Scenarios[s], '/beta', Betas[b], 
-               '/10000_abundance.Rda', sep = ''))
-    
-    DF2 <- data.frame(Scenario = Scenarios[s],
-                      Beta = Beta_axis_labels[b],
-                      Survive_to = years_to_plot, 
-                      Probability = c(sum(sims_abundance[index, ] > 0) / 10000))
-    
-    DF <- rbind(DF, DF2)
+    for (b in 1:length(Betas)) {
+      
+      # load in appropriate output file
+      
+      # if the file exists:
+      if (file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
+                            output_folder, '/', Scenarios[s], '/beta', Betas[b], 
+                            '/10000_abundance_total.Rda', sep = ''))) {
+        
+        load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
+                   output_folder, '/', Scenarios[s], '/beta', Betas[b], 
+                   '/10000_abundance_total.Rda', sep = ''))
+        
+        DF2 <- data.frame(Scenario = Scenarios[s],
+                          Beta = Beta_axis_labels[b],
+                          Survive_to = years_to_plot, 
+                          Probability = c(sum(sims_abundance_total[index, ] > 0) / 10000))
+        
+      } else {
+        
+        
+        DF2 <- data.frame(Scenario = Scenarios[s],
+                          Beta = Beta_axis_labels[b],
+                          Survive_to = years_to_plot, 
+                          Probability = NA)
+        
+      }
+      
+      
+      
+      DF <- rbind(DF, DF2)
+      
+    }
     
   }
   
-  }
+  DF$Beta <- factor(DF$Beta, levels = rev(Beta_axis_labels))
   
-  DF$Beta <- factor(DF$Beta, levels = Beta_axis_labels)
-
-# heatmap for survival to all three years - horizontal
-fig <- ggplot(data = DF, aes(x = as.factor(Beta), y = Scenario, fill = Probability)) +
-  geom_tile(color = "white",
-            lwd = 1.5,
-            linetype = 1) +
-  # coord_fixed() +
-  # facet_wrap(vars(Survive_to)) +
-  scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
-                       mid = hcl.colors(5, "viridis")[3], 
-                       high = hcl.colors(5, "viridis")[5], #colors in the scale
-                       midpoint = 0.5,    #same midpoint for plots (mean of the range)
-                       breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
-                       limits = c(0, 1)) +
-  guides(fill = guide_colourbar(title = "Probability")) +
-  xlab('Percent of males lost before reproductive success is 50%') +
-  ylab('Increase in sand temperature (C) by 2100') +
-  ggtitle(paste('Probability of population persistence to ', years_to_plot[i], 
-                sep = '')) +
-  theme(panel.background = element_blank()) 
+  # heatmap for survival to all three years - horizontal
+  fig <- ggplot(data = DF, aes(x = Beta, y = Scenario, fill = Probability)) +
+    geom_tile(color = "white",
+              lwd = 1.5,
+              linetype = 1) +
+    # coord_fixed() +
+    # facet_wrap(vars(Survive_to)) +
+    scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
+                         mid = hcl.colors(5, "viridis")[3], 
+                         high = hcl.colors(5, "viridis")[5], #colors in the scale
+                         midpoint = 0.5,    #same midpoint for plots (mean of the range)
+                         breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
+                         limits = c(0, 1), 
+                         na.value = 'gray') +
+    guides(fill = guide_colourbar(title = "Probability")) +
+    xlab('Percent of males that can support 50% maximum reproduction') +
+    ylab('Increase in sand temperature (C) by 2278') +
+    ggtitle(paste('Probability of population persistence to ', years_to_plot[i], 
+                  sep = '')) +
+    theme(panel.background = element_blank()) 
   
-
-# save to file
-ggsave(plot = fig, 
-       filename = paste(years_to_plot[i], '_persistence_heatmap.png', sep = ''),
-       path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 3.5)
-
+  
+  # save to file
+  ggsave(plot = fig, 
+         filename = paste(years_to_plot[i], '_persistence_heatmap.png', sep = ''),
+         path = '~/Projects/iliketurtles3/figures/',
+         width = 8, height = 3.5)
+  
 }
