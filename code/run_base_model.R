@@ -55,79 +55,83 @@ run_base_model <- function(scenarios, num_sims, betas) {
       
       beta = betas[b]
       
-      # write to progress text file
-      update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', num_sims, ' sims', sep = '')
-      write(update, file = 'progress.txt', append = TRUE)
-      
-      # initialize yield and biomass arrays
-      
-      # initialize population size array by age class and sex
-      sims_N <- array(rep(NA, times = 2 * A * Y * num_sims), 
-                      dim = c(2, A, Y, num_sims))
-      
-      sims_abundance_F <- array(rep(NA, times = Y * num_sims), 
-                              dim = c(Y, num_sims))  
-      
-      sims_abundance_M <- array(rep(NA, times = Y * num_sims), 
-                                dim = c(Y, num_sims)) 
-      
-      sims_abundance_total <- array(rep(NA, times = Y * num_sims), 
-                                dim = c(Y, num_sims)) 
-      
-      sims_mature_abundance <- array(rep(NA, times = Y * num_sims), 
-                                     dim = c(Y, num_sims))  
-      
-      ##############################################################################
-      
-      # run the model for each simulation
-      for (i in 1:num_sims) {
-        
-        output <- base_model(max_age, demographic_stochasticity, 
-                             F_survival_years, F_survival_values, 
-                             M_survival_years, M_survival_values, 
-                             age_maturity, beta, remigration_int, 
-                             nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                             hatch_success_mu, hatch_success_a, 
-                             hatch_success_b, hatch_success_stochasticity, 
-                             logit_a, logit_b, temp_mu, temp_sd, 
-                             climate_stochasticity, start_year, end_year, scenario)
-        
-        # save the N and abundance arrays 
-        sims_N[, , , i]             <- output[[1]]
-        sims_abundance_F[, i]       <- output[[2]]
-        sims_abundance_M[, i]       <- output[[3]]
-        sims_abundance_total[, i]   <- output[[4]]
-        sims_mature_abundance[, i]  <- output[[5]]
+      for (n in 1:length(num_sims)) {
         
         # write to progress text file
-        if (i %% (num_sims/10) == 0) {
-          update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', i/num_sims*100, '% done!', sep = '')
-          write(update, file = 'progress.txt', append = TRUE)
+        update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', num_sims[n], ' sims', sep = '')
+        write(update, file = 'progress.txt', append = TRUE)
+        
+        # initialize yield and biomass arrays
+        
+        # initialize population size array by age class and sex
+        sims_N <- array(rep(NA, times = 2 * A * Y * num_sims[n]), 
+                        dim = c(2, A, Y, num_sims[n]))
+        
+        sims_abundance_F <- array(rep(NA, times = Y * num_sims[n]), 
+                                  dim = c(Y, num_sims[n]))  
+        
+        sims_abundance_M <- array(rep(NA, times = Y * num_sims[n]), 
+                                  dim = c(Y, num_sims[n])) 
+        
+        sims_abundance_total <- array(rep(NA, times = Y * num_sims[n]), 
+                                      dim = c(Y, num_sims[n])) 
+        
+        sims_mature_abundance <- array(rep(NA, times = Y * num_sims[n]), 
+                                       dim = c(Y, num_sims[n]))  
+        
+        ##############################################################################
+        
+        # run the model for each simulation
+        for (i in 1:num_sims[n]) {
+          
+          output <- base_model(max_age, demographic_stochasticity, 
+                               F_survival_years, F_survival_values, 
+                               M_survival_years, M_survival_values, 
+                               age_maturity, beta, remigration_int, 
+                               nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                               hatch_success_mu, hatch_success_a, 
+                               hatch_success_b, hatch_success_stochasticity, 
+                               logit_a, logit_b, temp_mu, temp_sd, 
+                               climate_stochasticity, start_year, end_year, scenario)
+          
+          # save the N and abundance arrays 
+          sims_N[, , , i]             <- output[[1]]
+          sims_abundance_F[, i]       <- output[[2]]
+          sims_abundance_M[, i]       <- output[[3]]
+          sims_abundance_total[, i]   <- output[[4]]
+          sims_mature_abundance[, i]  <- output[[5]]
+          
+          # write to progress text file
+          if (i %% (num_sims/10) == 0) {
+            update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', i/num_sims[n]*100, '% done!', sep = '')
+            write(update, file = 'progress.txt', append = TRUE)
+            
+          }
           
         }
         
+        # get filepaths to save objects to
+        filepath1 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+                          '_N.Rda', sep = '')
+        filepath2 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+                          '_abundance_F.Rda', sep = '')
+        filepath3 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+                          '_abundance_M.Rda', sep = '')
+        filepath4 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+                          '_abundance_total.Rda', sep = '')
+        filepath5 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+                          '_mature_abundance.Rda', sep = '')
+        # save objects
+        save(sims_N, file = filepath1)
+        save(sims_abundance_F, file = filepath2)
+        save(sims_abundance_M, file = filepath3)
+        save(sims_abundance_total, file = filepath4)
+        save(sims_mature_abundance, file = filepath5)
+        
       }
       
-      # get filepaths to save objects to
-      filepath1 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
-                        '_N.Rda', sep = '')
-      filepath2 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
-                        '_abundance_F.Rda', sep = '')
-      filepath3 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
-                        '_abundance_M.Rda', sep = '')
-      filepath4 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
-                        '_abundance_total.Rda', sep = '')
-      filepath5 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims, 
-                        '_mature_abundance.Rda', sep = '')
-      # save objects
-      save(sims_N, file = filepath1)
-      save(sims_abundance_F, file = filepath2)
-      save(sims_abundance_M, file = filepath3)
-      save(sims_abundance_total, file = filepath4)
-      save(sims_mature_abundance, file = filepath5)
-      
     }
-  
+    
   }
   
 }
