@@ -14,10 +14,15 @@ library(lubridate)
 setwd('~/Projects/iliketurtles3/code/field data')
 
 # import data
-S1 <- read.csv("../../data/2019_2020_FDN_nesting.csv")                   # season 1
-S2 <- read.csv("../../data/2020_2021_nesting_Season_2.csv")              # season 2
-S3 <- read.csv("../../data/2021_2022_Nesting_Season_3.csv")              # season 3
-S4 <- read.csv("../../data/2022_2023_Nesting_Season_4.csv")              # season 4
+S1 <- read.csv("../../data/2019_2020_FDN_nesting.csv")              # season 1
+S2 <- read.csv("../../data/2020_2021_nesting_Season_2.csv")         # season 2
+S3 <- read.csv("../../data/2021_2022_Nesting_Season_3.csv")         # season 3
+S4 <- read.csv("../../data/2022_2023_Nesting_Season_4.csv")         # season 4
+
+# S1 <- read.csv("../../data/2019_2020_FDN_nesting - check.csv")        # season 1
+# S2 <- read.csv("../../data/2020_2021_nesting_Season_2 - check.csv")   # season 2
+# S3 <- read.csv("../../data/2021_2022_Nesting_Season_3 - check.csv")   # season 3
+# S4 <- read.csv("../../data/2022_2023_Nesting_Season_4 - check.csv")   # season 4
 
 # clean up datasets - only keep columns we want, and add season column
 new_S1 <- S1 %>%
