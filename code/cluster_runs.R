@@ -15,7 +15,7 @@ source('reproduction.R')
 source('pop_dynamics.R')
 
 # number of simulations to run
-num_sims <- 300
+num_sims <- c(50, 100, 150, 200, 250)
 
 # number of cores to run
 mc <- 24
@@ -23,7 +23,7 @@ mc <- 24
 # scenarios <- c(3.5)  # total temp increases
 scenarios <- c(1.5)  # total temp increases
 
-betas <- c(8.31, 11.19, 16.94, 34.14)
+betas <- c(16.94, 34.14)
 # betas <- c(34.14)
 
 ########### do the runs ########################################################
