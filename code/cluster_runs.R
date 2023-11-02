@@ -14,24 +14,38 @@ source('initialize_population.R')
 source('reproduction.R')
 source('pop_dynamics.R')
 
-# number of simulations to run
-num_sims <- c(50, 100, 150, 200, 250)
-
-# number of cores to run
-mc <- 24
-
 # scenarios <- c(3.5)  # total temp increases
 scenarios <- c(1.5)  # total temp increases
 
 betas <- c(16.94, 34.14)
 # betas <- c(34.14)
 
+# number of simulations to run
+num_sims <- c(12, 23, 32, 42, 52, 62, 72, 82, 92, 102)
+
+#make dataframe of all combinations of arguments
+DF <- expand.grid(scenarios, betas, num_sims)
+
+# initialize empty arguments list
+arguments <- list()
+
+# fill in arguments list with dataframe rows
+for (i in 1:nrow(DF)) {
+  
+  arguments[i] <- list(as.numeric(DF[i, ]))
+  
+}
+
 ########### do the runs ########################################################
-mclapply(X = scenarios, 
+mclapply(X = arguments, 
          FUN = run_base_model, 
-         mc.cores = mc, 
-         num_sims, 
-         betas)  
+         mc.cores = 24)
+
+# mclapply(X = scenarios, 
+#          FUN = run_base_model, 
+#          mc.cores = mc, 
+#          num_sims, 
+#          betas)  
 
 ##### MS thesis version of cluster runs ########################################
 

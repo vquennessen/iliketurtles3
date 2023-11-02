@@ -1,12 +1,8 @@
 # run_base_model <- function(scenario) {
 
-run_base_model <- function(scenarios, num_sims, betas) {
+# run_base_model <- function(scenarios, num_sims, betas) {
+run_base_model <- function(arguments) {
   
-  # beta values
-  # betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
-  
-  # number of simulations
-  # num_sims <- 10000
   
   ###### model inputs ##########################################################
   
@@ -16,21 +12,21 @@ run_base_model <- function(scenarios, num_sims, betas) {
   F_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - F
   M_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - M
   M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
-  demographic_stochasticity <- TRUE                     # demographic stochasticity
-  age_maturity <- 23                                    # age at first reproduction
-  remigration_int <- 5.557                              # remigration interval
-  nests_mu <- 4.945312                                  # mean number of nests per female per season
-  nests_sd <- 2.089752                                  # sd of number of nests per female per season
-  eggs_mu <- 100.6486                                   # mean number of eggs per nest
-  eggs_sd <- 23.08206                                   # sd of number of eggs per nest
-  hatch_success_mu <- 0.8241024                         # mean of hatching success
-  hatch_success_a <- 2.089414                           # beta CDF shape 1 parameter for hatching success
-  hatch_success_b <- 0.4496393                          # beta CDF shape 2 parameter for hatching success
-  hatch_success_stochasticity <- TRUE                   # whether or not there is stochasticity in hatching success
-  pivotal_temp <- 29.3                                  # pivotal temperature 
-  TRT <- c(27.6, 31.4)                                  # Transitional range of temperatures
-  logit_a <- 41.362228                                  # temp -> proportion of males a
-  logit_b <- -1.415462                                  # temp -> proportion of males b
+  demographic_stochasticity <- TRUE                 # demographic stochasticity
+  age_maturity <- 23                                # age at first reproduction
+  remigration_int <- 5.557                          # remigration interval
+  nests_mu <- 4.945312                              # mean # of nests/F/season
+  nests_sd <- 2.089752                              # sd of # of nests/F/season
+  eggs_mu <- 100.6486                               # mean number of eggs/nest
+  eggs_sd <- 23.08206                               # sd of number of eggs/nest
+  hatch_success_mu <- 0.8241024                     # mean of hatching success
+  hatch_success_a <- 2.089414                       # beta CDF shape 1 par -> HS
+  hatch_success_b <- 0.4496393                      # beta CDF shape 2 par -> HS
+  hatch_success_stochasticity <- TRUE               # stochasticity in HS?
+  pivotal_temp <- 29.3                              # pivotal temperature 
+  TRT <- c(27.6, 31.4)                              # Transitional range temps
+  logit_a <- 41.362228                              # temp -> prop of males a
+  logit_b <- -1.415462                              # temp -> prop of males b
   
   # climate data
   temp_mu <- 31.80387                                # base incubation temp mean
@@ -47,42 +43,49 @@ run_base_model <- function(scenarios, num_sims, betas) {
   
   ##############################################################################
   
-  for (s in 1:length(scenarios)) {
-    
-    scenario = scenarios[s] 
-    
-    for (b in 1:length(betas)) {
-      
-      beta = betas[b]
-      
-      for (n in 1:length(num_sims)) {
-        
+  # for (s in 1:length(scenarios)) {
+  #   
+  #   scenario <- scenarios[s] 
+  #   
+  #   for (b in 1:length(betas)) {
+  #     
+  #     beta <- betas[b]
+  #     
+  #     for (n in 1:length(num_sims)) {
+  #       
+  #       nsims <- num_sims[n]
+
+  scenario <- arguments[[1]]
+  beta     <- arguments[[2]]
+  nsims    <- arguments[[3]]
+  
         # write to progress text file
-        update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', num_sims[n], ' sims', sep = '')
+        update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', 
+                        nsims, ' sims', sep = '')
         write(update, file = 'progress.txt', append = TRUE)
         
         # initialize yield and biomass arrays
         
         # initialize population size array by age class and sex
-        sims_N <- array(rep(NA, times = 2 * A * Y * num_sims[n]), 
-                        dim = c(2, A, Y, num_sims[n]))
+        sims_N <- array(rep(NA, times = 2 * A * Y * nsims), 
+                        dim = c(2, A, Y, nsims))
         
-        sims_abundance_F <- array(rep(NA, times = Y * num_sims[n]), 
-                                  dim = c(Y, num_sims[n]))  
+        sims_abundance_F <- array(rep(NA, times = Y * nsims), 
+                                  dim = c(Y, nsims))  
         
-        sims_abundance_M <- array(rep(NA, times = Y * num_sims[n]), 
-                                  dim = c(Y, num_sims[n])) 
+        sims_abundance_M <- array(rep(NA, times = Y * nsims), 
+                                  dim = c(Y, nsims)) 
         
-        sims_abundance_total <- array(rep(NA, times = Y * num_sims[n]), 
-                                      dim = c(Y, num_sims[n])) 
+        sims_abundance_total <- array(rep(NA, times = Y * nsims), 
+                                      dim = c(Y, nsims)) 
         
-        sims_mature_abundance <- array(rep(NA, times = Y * num_sims[n]), 
-                                       dim = c(Y, num_sims[n]))  
+        sims_mature_abundance <- array(rep(NA, times = Y * nsims), 
+                                       dim = c(Y, nsims))  
         
-        ##############################################################################
+        ########################################################################
         
         # run the model for each simulation
-        for (i in 1:num_sims[n]) {
+        for (i in 1:nsims) {
           
           output <- base_model(max_age, demographic_stochasticity, 
                                F_survival_years, F_survival_values, 
@@ -92,7 +95,8 @@ run_base_model <- function(scenarios, num_sims, betas) {
                                hatch_success_mu, hatch_success_a, 
                                hatch_success_b, hatch_success_stochasticity, 
                                logit_a, logit_b, temp_mu, temp_sd, 
-                               climate_stochasticity, start_year, end_year, scenario)
+                               climate_stochasticity, start_year, end_year, 
+                               scenario)
           
           # save the N and abundance arrays 
           sims_N[, , , i]             <- output[[1]]
@@ -102,8 +106,10 @@ run_base_model <- function(scenarios, num_sims, betas) {
           sims_mature_abundance[, i]  <- output[[5]]
           
           # write to progress text file
-          if (i %% (num_sims/10) == 0) {
-            update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', i/num_sims[n]*100, '% done!', sep = '')
+          if (i %% (nsims/10) == 0) {
+            update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, 
+                            ' - ', 'nsims', ' sims - ', i/nsims*100, '% done!', 
+                            sep = '')
             write(update, file = 'progress.txt', append = TRUE)
             
           }
@@ -111,15 +117,15 @@ run_base_model <- function(scenarios, num_sims, betas) {
         }
         
         # get filepaths to save objects to
-        filepath1 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+        filepath1 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
                           '_N.Rda', sep = '')
-        filepath2 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+        filepath2 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
                           '_abundance_F.Rda', sep = '')
-        filepath3 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+        filepath3 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
                           '_abundance_M.Rda', sep = '')
-        filepath4 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+        filepath4 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
                           '_abundance_total.Rda', sep = '')
-        filepath5 = paste('../output/', scenario, 'C/beta', beta, '/',  num_sims[n], 
+        filepath5 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
                           '_mature_abundance.Rda', sep = '')
         # save objects
         save(sims_N, file = filepath1)
@@ -130,8 +136,8 @@ run_base_model <- function(scenarios, num_sims, betas) {
         
       }
       
-    }
-    
-  }
-  
-}
+#     }
+#     
+#   }
+#   
+# }
