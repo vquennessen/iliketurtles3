@@ -23,7 +23,7 @@ betas <- c(16.94, 34.14)
 # betas <- c(1, 1.35)
 
 # number of simulations to run
-num_sims <- c(12, 22, 32, 42, 52, 62, 72, 82, 92, 102)
+num_sims <- c(1:9, 11:15)
 
 # make dataframe of all combinations of arguments
 DF <- expand.grid(scenarios, betas, num_sims)
