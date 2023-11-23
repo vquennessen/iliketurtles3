@@ -48,11 +48,11 @@ for (i in 1:length(years_to_plot)) {
       # load in appropriate output file
       
       # if the file exists:
-      if (file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
+      if (file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
                             output_folder, '/', Scenarios[s], '/beta', Betas[b], 
                             '/10000_abundance_total.Rda', sep = ''))) {
         
-        load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
+        load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/', 
                    output_folder, '/', Scenarios[s], '/beta', Betas[b], 
                    '/10000_abundance_total.Rda', sep = ''))
         
@@ -86,8 +86,6 @@ for (i in 1:length(years_to_plot)) {
     geom_tile(color = "white",
               lwd = 1.5,
               linetype = 1) +
-    # coord_fixed() +
-    # facet_wrap(vars(Survive_to)) +
     scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
                          mid = hcl.colors(5, "viridis")[3], 
                          high = hcl.colors(5, "viridis")[5], #colors in the scale

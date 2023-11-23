@@ -17,11 +17,11 @@ source('pop_dynamics.R')
 # scenarios <- c(3.5)  # total temp increases
 scenarios <- c(1.5)  # total temp increases
 
-betas <- c(16.94, 34.14)
+betas <- c(34.14)
 # betas <- c(34.14)
 
 # number of simulations to run
-num_sims <- c(10)
+num_sims <- c(10, 13, 20, 30, 40, 50, 60, 70)
 
 #make dataframe of all combinations of arguments
 DF <- expand.grid(scenarios, betas, num_sims)
