@@ -17,7 +17,7 @@ setwd("C:/Users/vique/Documents/Projects/iliketurtles3/code/")
 
 # set number of sims
 num_sims <- 10000
-num_variances <- 1000
+num_medians <- 100
 scenarios <- c(1.5, 3)
 betas <- c(11.19, 6.57)
 
@@ -47,18 +47,18 @@ for (s in 1:length(scenarios)) {
   for (i in 1:length(sample_size)) {
     
     # reset variances vector
-    variances <- rep(0, num_variances)
+    medians <- rep(0, num_medians)
 
-    for (j in 1:num_variances) {
+    for (j in 1:num_medians) {
       
-      indices <- sample(1:num_sims, sample_size[i])
-      variances[j] <- var(sims_abundance_total[256, indices])
+      indices <- sample(1:num_sims, sample_size[i], replace = TRUE)
+      medians[j] <- median(sims_abundance_total[256, indices])
 
     }
     
     # calculate median
     index <- (s - 1)*length(sample_size) + i
-    variance_df$Variance[index] <- median(variances)
+    variance_df$Variance[index] <- var(medians)
 
   }
   
