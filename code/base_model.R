@@ -7,7 +7,8 @@ base_model <- function(max_age, demographic_stochasticity,
                        eggs_mu, eggs_sd, hatch_success_mu, hatch_success_a, 
                        hatch_success_b, hatch_success_stochasticity, 
                        logit_a, logit_b, temp_mu, temp_sd, 
-                       climate_stochasticity, start_year, end_year, scenario) {
+                       climate_stochasticity, start_year, end_year, scenario, 
+                       F_initial, M_initial, evolution) {
   
   ##### source initialized arrays ##############################################
   
@@ -19,7 +20,8 @@ base_model <- function(max_age, demographic_stochasticity,
                                    F_survival_years, F_survival_values, 
                                    M_survival_years, M_survival_values, 
                                    temp_mu, climate_stochasticity, 
-                                   logit_a, logit_b, nests_mu, eggs_mu)
+                                   logit_a, logit_b, nests_mu, eggs_mu, 
+                                   F_initial, M_initial, evolution)
   
   A <- init_output[[1]]               # number of ages
   Y <- init_output[[2]]               # number of years

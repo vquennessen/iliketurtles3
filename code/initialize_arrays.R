@@ -8,7 +8,8 @@ initialize_arrays <- function(max_age, age_maturity, remigration_int,
                               F_survival_years, F_survival_values, 
                               M_survival_years, M_survival_values, 
                               temp_mu, climate_stochasticity, 
-                              logit_a, logit_b, nests_mu, eggs_mu) {
+                              logit_a, logit_b, nests_mu, eggs_mu, 
+                              F_initial, M_initial, evolution) {
   
   # years
   years <- seq(from = start_year, to = end_year)
@@ -62,8 +63,9 @@ initialize_arrays <- function(max_age, age_maturity, remigration_int,
   
   # males
   if (length(M_survival) < A) {
-    M_survival <- c(M_survival, rep(M_survival_values[length(M_survival_values)], 
-                                    A - length(M_survival)))
+    M_survival <- c(M_survival, 
+                    rep(M_survival_values[length(M_survival_values)], 
+                        A - length(M_survival)))
   }
   
   # make female leslie matrix for survival
@@ -90,12 +92,15 @@ initialize_arrays <- function(max_age, age_maturity, remigration_int,
   
   # set first timestep to SAD times a value to get at least 30 adult males
   # and 170 adult females
-  f_min <- 170 / sum(F_SAD$N[age_maturity:max_age])
-  m_min <- 30 / sum(M_SAD$N[age_maturity:max_age])
+  f_min <- F_initial / sum(F_SAD$N[age_maturity:max_age])
+  m_min <- M_initial / sum(M_SAD$N[age_maturity:max_age])
   multiplicator <- max(m_min, f_min)
   
   N[1, , 1] <- round(F_SAD$N * multiplicator)
   N[2, , 1] <- round(M_SAD$N * multiplicator)
+  
+  # if evolution is turned on, turn pivotal temperature and TRT into arrays
+  
   
   # output
   output <- list(A, Y, years, hatch_success, temperatures, N, 

@@ -23,19 +23,23 @@ run_base_model <- function(arguments) {
   hatch_success_a <- 2.089414                       # beta CDF shape 1 par -> HS
   hatch_success_b <- 0.4496393                      # beta CDF shape 2 par -> HS
   hatch_success_stochasticity <- TRUE               # stochasticity in HS?
-  pivotal_temp <- 29.3                              # pivotal temperature 
+  T_piv <- 29.3                                     # pivotal temperature mean
+  T_piv_sd <- 
   TRT <- c(27.6, 31.4)                              # Transitional range temps
   logit_a <- 41.362228                              # temp -> prop of males a
   logit_b <- -1.415462                              # temp -> prop of males b
+  F_initial <- 170                                  # initial adult F
+  M_initial <- 30                                   # initial adult M
   
   # climate data
-  temp_mu <- 31.80387                                # base incubation temp mean
-  temp_sd <- 0.841012                                # base incubation temp sd
-  climate_stochasticity <- FALSE                     # whether or not to add in
+  temp_mu <- 31.80387                               # base incubation temp mean
+  temp_sd <- 0.841012                               # base incubation temp sd
+  climate_stochasticity <- FALSE                    # whether or not to add in
   
   # model parameters
-  start_year <- 2023                              # first year to simulate
-  end_year <- start_year + 3*max_age              # last year to simulate
+  start_year <- 2023                                # first year to simulate
+  end_year <- start_year + 3*max_age                # last year to simulate
+  evolution <- TRUE                                 # whether evolution is turned on
   
   # dimensions
   A <- max_age
