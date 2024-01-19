@@ -23,7 +23,7 @@ run_base_model <- function(arguments) {
   hatch_success_a <- 2.089414                       # beta CDF shape 1 par -> HS
   hatch_success_b <- 0.4496393                      # beta CDF shape 2 par -> HS
   hatch_success_stochasticity <- TRUE               # stochasticity in HS?
-  T_piv <- 29.3                                     # pivotal temperature mean
+  T_piv <- 29.2                                     # pivotal temperature mean
   T_piv_sd <- 
   TRT <- c(27.6, 31.4)                              # Transitional range temps
   logit_a <- 41.362228                              # temp -> prop of males a
