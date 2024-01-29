@@ -14,7 +14,7 @@ run_base_model <- function(arguments) {
   M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
   demographic_stochasticity <- TRUE                 # demographic stochasticity
   age_maturity <- 23                                # age at first reproduction
-  remigration_int <- 5.557                          # remigration interval
+  remigration_int <- 3.8701                          # remigration interval
   nests_mu <- 4.945312                              # mean # of nests/F/season
   nests_sd <- 2.089752                              # sd of # of nests/F/season
   eggs_mu <- 100.6486                               # mean number of eggs/nest
