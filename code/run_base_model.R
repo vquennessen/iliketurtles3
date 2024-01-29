@@ -12,34 +12,37 @@ run_base_model <- function(arguments) {
   F_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - F
   M_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - M
   M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
-  demographic_stochasticity <- TRUE                 # demographic stochasticity
-  age_maturity <- 23                                # age at first reproduction
-  remigration_int <- 3.8701                          # remigration interval
-  nests_mu <- 4.945312                              # mean # of nests/F/season
-  nests_sd <- 2.089752                              # sd of # of nests/F/season
-  eggs_mu <- 100.6486                               # mean number of eggs/nest
-  eggs_sd <- 23.08206                               # sd of number of eggs/nest
-  hatch_success_mu <- 0.8241024                     # mean of hatching success
-  hatch_success_a <- 2.089414                       # beta CDF shape 1 par -> HS
-  hatch_success_b <- 0.4496393                      # beta CDF shape 2 par -> HS
-  hatch_success_stochasticity <- TRUE               # stochasticity in HS?
-  T_piv <- 29.2                                     # pivotal temperature mean
+  demographic_stochasticity <- TRUE         # demographic stochasticity
+  age_maturity <- 23                        # age at first reproduction
+  remigration_int <- 3.8701                 # remigration interval
+  nests_mu <- 4.945312                      # mean # of nests/F/season
+  nests_sd <- 2.089752                      # sd of # of nests/F/season
+  eggs_mu <- 100.6486                       # mean number of eggs/nest
+  eggs_sd <- 23.08206                       # sd of number of eggs/nest
+  hatch_success_mode <- 'polynomial'        # other options = logistic, static
+  hatch_success_mu <- 0.8241024             # mean of hatching success
+  hatch_success_a <- 2.089414               # stochastic beta CDF shape 1 par
+  hatch_success_b <- 0.4496393              # stochastic beta CDF shape 2 par
+  hatch_success_A <- 0.86                   # logistic by temp - A
+  hatch_success_beta <- -1.7                # logistic by temp - beta
+  hatch_success_t0 <- 32.7                  # logistic by temp - t0
+  T_piv <- 29.2                             # pivotal temperature mean
   T_piv_sd <- 
-  TRT <- c(27.6, 31.4)                              # Transitional range temps
-  logit_a <- 41.362228                              # temp -> prop of males a
-  logit_b <- -1.415462                              # temp -> prop of males b
-  F_initial <- 170                                  # initial adult F
-  M_initial <- 30                                   # initial adult M
+  TRT <- c(27.6, 31.4)                      # Transitional range temps
+  logit_a <- 41.362228                      # temp -> prop of males a
+  logit_b <- -1.415462                      # temp -> prop of males b
+  F_initial <- 170                          # initial adult F
+  M_initial <- 30                           # initial adult M
   
   # climate data
-  temp_mu <- 31.80387                               # base incubation temp mean
-  temp_sd <- 0.841012                               # base incubation temp sd
-  climate_stochasticity <- FALSE                    # whether or not to add in
+  temp_mu <- 31.80387                       # base incubation temp mean
+  temp_sd <- 0.841012                       # base incubation temp sd
+  climate_stochasticity <- FALSE            # whether or not to add in
   
   # model parameters
-  start_year <- 2023                                # first year to simulate
-  end_year <- start_year + 3*max_age                # last year to simulate
-  evolution <- TRUE                                 # whether evolution is turned on
+  start_year <- 2023                        # first year to simulate
+  end_year <- start_year + 3*max_age        # last year to simulate
+  evolution <- TRUE                         # whether evolution is turned on
   
   # dimensions
   A <- max_age
