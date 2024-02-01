@@ -49,7 +49,7 @@ years <- c(2020, 2021, 2022, 2023)
 
 for (s in 1:length(seasons)) {
   
-  setwd(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/temperature files/', 
+  setwd(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/temperature files/', 
               seasons[s], sep = ''))
   
   # season 4 are .csv files, all others are .xlsx files
@@ -190,7 +190,7 @@ summary(mod2)
 # F-statistic: 15.22 on 4 and 200 DF,  p-value: 6.988e-11
 
 x1 <- seq(from = min(data2$CTE), to = max(data2$CTE), by = 0.01)
-y1 <- (0.79709 + 0.77817*x - 1.11916*x^2 + 0.25160*x^3 - 0.32112*x^4) / 100 
+y1 <- (0.79709 + 0.77817*x1 - 1.11916*x1^2 + 0.25160*x1^3 - 0.32112*x1^4) / 100 
 
 prd <- data.frame(CTE = seq(from = range(data2$CTE)[1], to = range(data2$CTE)[2], 
                             length.out = 100))
@@ -199,15 +199,6 @@ err <- predict(mod2, newdata = prd, se.fit = TRUE)
 prd$lci <- err$fit - 1.96 * err$se.fit
 prd$fit <- err$fit
 prd$uci <- err$fit + 1.96 * err$se.fit
-
-
-# laloe et al. 2017
-A <- 0.86
-beta <- 1.7
-t0 <- 32.7
-x2 <- seq(from = min(data2$CTE_all), to = max(data2$CTE_all), by = 0.01)
-y2 <- A / (1 + exp(beta * (x2 - t0)))
-laloe <- data.frame(CTE = x2, hatch_success = y2)
 
 ggplot(prd, aes(x = CTE, y = fit)) +
   theme_bw() +
@@ -218,12 +209,36 @@ ggplot(prd, aes(x = CTE, y = fit)) +
   xlab('Middle third average incubation temperature (C)') +
   ggtitle("Howard et al. 2015")
 
+# laloe et al. 2017 - whole incubation period
+A <- 0.86
+beta <- -1.7
+t0 <- 32.7
+x2 <- seq(from = min(data2$CTE_all), to = max(data2$CTE_all), by = 0.01)
+y2 <- A / (1 + exp(-beta * (x2 - t0)))
+laloe <- data.frame(CTE = x2, hatch_success = y2)
+
 ggplot(data2, aes(x = CTE_all, y = hatch_success)) +
   theme_bw() +
   geom_point() +
   geom_line(data = laloe, aes(x = CTE, y = hatch_success), 
             lwd = 2) +
   ylab('Hatching Success') +
-  xlab('Average incubation temperature (C)')
+  xlab('Average incubation temperature (C)') +
   ggtitle("Laloe et al. 2017")
 
+# laloe et al. 2017 - middle third of incubation 
+A <- 0.86
+beta <- -1.7
+t0 <- 32.7
+x3 <- seq(from = min(data2$CTE), to = max(data2$CTE), by = 0.01)
+y3 <- A / (1 + exp(-beta * (x3 - t0)))
+laloe2 <- data.frame(CTE = x3, hatch_success = y3)
+
+ggplot(data2, aes(x = CTE, y = hatch_success)) +
+  theme_bw() +
+  geom_point() +
+  geom_line(data = laloe2, aes(x = CTE, y = hatch_success), 
+            lwd = 2) +
+  ylab('Hatching Success') +
+  xlab('Middle third average incubation temperature (C)') +
+  ggtitle("Laloe et al. 2017")
