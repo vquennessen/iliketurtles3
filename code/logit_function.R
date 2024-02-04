@@ -9,7 +9,7 @@ library(ggplot2)
 library(dplyr)
 
 # load in data
-logit <- read.csv("C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/Dr Ana Caldas Patricio/logit_points.csv")
+logit <- read.csv("C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/Dr Ana Caldas Patricio/logit_points.csv")
 
 # pivotal temperature
 diff <- abs(logit$p_males - 0.50)
