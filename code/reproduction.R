@@ -1,17 +1,19 @@
 # reproduction
 
-reproduction <- function(N, age_maturity, max_age, remigration_int, beta,
+reproduction <- function(N, y, beta, age_maturity, max_age, 
+                         F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
                          hatch_success, climate_stochasticity, 
-                         temp, temp_sd, logit_a, logit_b, y) {
+                         temp, temp_sd, T_piv, k) {
   
   # calculate number of breeding adults
-  # females only breed every remigration_int years
+  # females only breed every F_remigration_int years
   n_breeding_F <- round(sum(N[1, age_maturity:max_age, y - 1], 
-                            na.rm = TRUE) / remigration_int)
+                            na.rm = TRUE) / F_remigration_int)
   
-  # males mate every year???
-  n_breeding_M <- sum(N[2, age_maturity:max_age, y - 1], na.rm = TRUE)
+  # males only breed every M_remigration_int years
+  n_breeding_M <- round(sum(N[2, age_maturity:max_age, y - 1], 
+                            na.rm = TRUE) / M_remigration_int)  
   
   if (n_breeding_F > 0 & n_breeding_M > 0) {
     
@@ -19,7 +21,7 @@ reproduction <- function(N, age_maturity, max_age, remigration_int, beta,
     # multiply by 2 to get BSR from 0 to 1 instead of 0 to 0.5
     BSR <- 2*(n_breeding_M / (n_breeding_M + n_breeding_F))
     
-    # relate prop_males to breeding success via mating function
+    # calculate reproductive success
     breeding_success <- pbeta(BSR, shape1 = 1, shape2 = beta)
     
     # number of nests per female
@@ -49,7 +51,7 @@ reproduction <- function(N, age_maturity, max_age, remigration_int, beta,
     }
     
     # determine proportion of male hatchlings based on temperature
-    prop_male <- exp(logit_a + logit_b*temperature) / (1 + exp(logit_a + logit_b*temperature))
+    prop_male <- 1/(1 + exp(k*(temperature-T_piv)))
     
     # number of male and female hatchlings
     female_hatchlings <- round(hatchlings * (1 - prop_male))
