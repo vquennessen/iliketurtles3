@@ -1,5 +1,6 @@
 initialize_population <- function(beta, burn_in,
-                                  max_age, age_maturity, remigration_int,
+                                  max_age, age_maturity, 
+                                  F_remigration_int, M_remigration_int,
                                   nests_mu, eggs_mu, hatch_success_mu,
                                   logit_a, logit_b, temp_mu,
                                   f_Leslie, m_Leslie) {
@@ -60,12 +61,13 @@ initialize_population <- function(beta, burn_in,
     ##### reproduction
     
     # calculate number of breeding adults
-    # females only breed every remigration_int years
+    # females only breed every F_remigration_int years
     n_breeding_F <- round(sum(N[1, age_maturity:max_age, y - 1], 
-                              na.rm = TRUE) / remigration_int)
+                              na.rm = TRUE) / F_remigration_int)
     
-    # males mate every year???
-    n_breeding_M <- sum(N[2, age_maturity:max_age, y - 1], na.rm = TRUE)
+    # males only breed every M_remigration_int years
+    n_breeding_F <- round(sum(N[2, age_maturity:max_age, y - 1], 
+                              na.rm = TRUE) / M_remigration_int) 
     
     if (n_breeding_F > 0 & n_breeding_M > 0) {
       
