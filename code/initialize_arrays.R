@@ -1,15 +1,16 @@
 # initialize arrays
 
-initialize_arrays <- function(max_age, age_maturity, remigration_int,
-                              start_year, end_year, scenario, 
-                              beta, hatch_success_stochasticity, 
-                              hatch_success_a, hatch_success_b, 
-                              hatch_success_mu, 
+initialize_arrays <- function(max_age, age_maturity, 
                               F_survival_years, F_survival_values, 
                               M_survival_years, M_survival_values, 
-                              temp_mu, climate_stochasticity, 
-                              logit_a, logit_b, nests_mu, eggs_mu, 
-                              F_initial, M_initial, evolution) {
+                              F_remigration_int, M_remigration_int,
+                              nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                              hatch_success_mu, hatch_success_a, 
+                              hatch_success_b, T_piv, k, temp_mu, temp_sd,  
+                              start_year, end_year, scenario, beta, 
+                              demographic_stochasticity, 
+                              climate_stochasticity, 
+                              evolution) {
   
   # years
   years <- seq(from = start_year, to = end_year)
@@ -23,15 +24,15 @@ initialize_arrays <- function(max_age, age_maturity, remigration_int,
   N <- array(rep(0, times = 2 * A * Y), 
              dim = c(2, A, Y))  
   
-  # initialize hatching success
-  # determine hatching success
-  if (hatch_success_stochasticity == TRUE) {
-    hatch_success <- rbeta(n = Y, 
-                           shape1 = hatch_success_a, 
-                           shape2 = hatch_success_b)
-  } else {
-    hatch_success <- rep(hatch_success_mu, times = Y)
-  }
+  # # initialize hatching success
+  # # determine hatching success
+  # if (hatch_success_stochasticity == TRUE) {
+  #   hatch_success <- rbeta(n = Y, 
+  #                          shape1 = hatch_success_a, 
+  #                          shape2 = hatch_success_b)
+  # } else {
+  #   hatch_success <- rep(hatch_success_mu, times = Y)
+  # }
   
   # initialize temperature scenarios
   temperatures <- rep(NA, times = Y)
@@ -81,7 +82,8 @@ initialize_arrays <- function(max_age, age_maturity, remigration_int,
   #                             F_survival, M_survival)
   
   SAD <- initialize_population(beta, burn_in = 1000, 
-                               max_age, age_maturity, remigration_int, 
+                               max_age, age_maturity, 
+                               F_remigration_int, M_remigration_int,
                                nests_mu, eggs_mu, hatch_success_mu, 
                                logit_a, logit_b, temp_mu,
                                f_Leslie, m_Leslie)
