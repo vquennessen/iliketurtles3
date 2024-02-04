@@ -1,38 +1,41 @@
 # base model
 
-base_model <- function(max_age, demographic_stochasticity, 
+base_model <- function(max_age, age_maturity, 
                        F_survival_years, F_survival_values, 
                        M_survival_years, M_survival_values, 
-                       age_maturity, beta, remigration_int, nests_mu, nests_sd, 
-                       eggs_mu, eggs_sd, hatch_success_mu, hatch_success_a, 
-                       hatch_success_b, hatch_success_stochasticity, 
-                       logit_a, logit_b, temp_mu, temp_sd, 
-                       climate_stochasticity, start_year, end_year, scenario, 
-                       F_initial, M_initial, evolution) {
+                       F_remigration_int, M_remigration_int,
+                       nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                       hatch_success_mu, hatch_success_a, 
+                       hatch_success_b, T_piv, k, temp_mu, temp_sd,  
+                       start_year, end_year, scenario, beta, 
+                       demographic_stochasticity, 
+                       climate_stochasticity, 
+                       evolution) {
   
   ##### source initialized arrays ##############################################
   
-  init_output <- initialize_arrays(max_age, age_maturity, remigration_int,
-                                   start_year, end_year, scenario, 
-                                   beta, hatch_success_stochasticity, 
-                                   hatch_success_a, hatch_success_b, 
-                                   hatch_success_mu, 
+  init_output <- initialize_arrays(max_age, age_maturity, 
                                    F_survival_years, F_survival_values, 
                                    M_survival_years, M_survival_values, 
-                                   temp_mu, climate_stochasticity, 
-                                   logit_a, logit_b, nests_mu, eggs_mu, 
-                                   F_initial, M_initial, evolution)
+                                   F_remigration_int, M_remigration_int,
+                                   nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                                   hatch_success_mu, hatch_success_a, 
+                                   hatch_success_b, T_piv, k, temp_mu, temp_sd,  
+                                   start_year, end_year, scenario, beta, 
+                                   demographic_stochasticity, 
+                                   climate_stochasticity, 
+                                   evolution)
   
-  A <- init_output[[1]]               # number of ages
-  Y <- init_output[[2]]               # number of years
-  years <- init_output[[3]]           # years to run model
-  hatch_success <- init_output[[4]]   # array of hatching success values
-  temperatures <- init_output[[5]]    # temperatures across climate scenarios
-  N <- init_output[[6]]               # population size array
-  F_survival <- init_output[[7]]      # vector of survival values - females
-  M_survival <- init_output[[8]]      # vector of survival values - males
-  f_Leslie <- init_output[[9]]        # female Leslie matrix
-  m_Leslie <- init_output[[10]]       # male Leslie matrix
+  A             <- init_output[[1]]    # number of ages
+  Y             <- init_output[[2]]    # number of years
+  years         <- init_output[[3]]    # years to run model
+  hatch_success <- init_output[[4]]    # array of hatching success values
+  temperatures  <- init_output[[5]]    # temperatures across climate scenarios
+  N             <- init_output[[6]]    # population size array
+  F_survival    <- init_output[[7]]    # vector of survival values - females
+  M_survival    <- init_output[[8]]    # vector of survival values - males
+  f_Leslie      <- init_output[[9]]    # female Leslie matrix
+  m_Leslie      <- init_output[[10]]   # male Leslie matrix
   
   ##### model ##################################################################
   for (y in 2:Y) {
@@ -68,10 +71,11 @@ base_model <- function(max_age, demographic_stochasticity,
     else {
       
       # reproduction
-      rep_output <- reproduction(N, age_maturity, max_age, remigration_int, 
-                                 beta, nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                                 hatch_success[y], climate_stochasticity, temp, 
-                                 temp_sd, logit_a, logit_b, y)
+      rep_output <- reproduction(N, y, beta, age_maturity, max_age, 
+                                 F_remigration_int, M_remigration_int,
+                                 nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                                 hatch_success[y], climate_stochasticity, 
+                                 temp, temp_sd, T_piv, k)
       
       # add recruits to population size array
       N[1, 1, y] <- rep_output[[1]]
