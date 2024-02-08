@@ -8,12 +8,12 @@ reproduction <- function(N, y, beta, age_maturity, max_age,
   
   # calculate number of breeding adults
   # females only breed every F_remigration_int years
-  n_breeding_F <- round(sum(N[1, age_maturity:max_age, y - 1], 
-                            na.rm = TRUE) / F_remigration_int)
+  n_breeding_F <- sum(N[1, age_maturity:max_age, y - 1], 
+                      na.rm = TRUE) / F_remigration_int
   
   # males only breed every M_remigration_int years
-  n_breeding_M <- round(sum(N[2, age_maturity:max_age, y - 1], 
-                            na.rm = TRUE) / M_remigration_int)  
+  n_breeding_M <- sum(N[2, age_maturity:max_age, y - 1], 
+                      na.rm = TRUE) / M_remigration_int  
   
   if (n_breeding_F > 0 & n_breeding_M > 0) {
     
@@ -25,7 +25,7 @@ reproduction <- function(N, y, beta, age_maturity, max_age,
     breeding_success <- pbeta(BSR, shape1 = 1, shape2 = beta)
     
     # number of nests per female
-    nests <- round(rnorm(n = n_breeding_F, mean = nests_mu, sd = nests_sd))
+    nests <- rnorm(n = n_breeding_F, mean = nests_mu, sd = nests_sd)
     
     # replace any zeros or -1 with +1
     nests[which(nests < 1)] <- 1
@@ -36,7 +36,7 @@ reproduction <- function(N, y, beta, age_maturity, max_age,
     # number of eggs per nest
     for (f in 1:n_breeding_F) {
       
-      eggs[f] <- sum(round(rnorm(n = nests[f], mean = eggs_mu, sd = eggs_sd)))
+      eggs[f] <- sum(rnorm(n = nests[f], mean = eggs_mu, sd = eggs_sd))
       
     }
     
