@@ -1,28 +1,8 @@
-initialize_population <- function(beta, burn_in,
-                                  max_age, age_maturity, 
+initialize_population <- function(beta, burn_in, max_age, M, 
                                   F_remigration_int, M_remigration_int,
                                   nests_mu, eggs_mu, hatch_success_mu,
-                                  logit_a, logit_b, temp_mu,
-                                  f_Leslie, m_Leslie) {
+                                  k, T_piv, temp_mu, f_Leslie, m_Leslie) {
   
-  # load libraries
-  # library(dplyr)
-  # library(ggplot2)
-  
-  # # model parameters
-  # betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
-  # burn_in <- 1000
-  # 
-  # # demographics
-  # max_age <- 85                   # lifespan
-  # age_maturity <- 23              # age at first reproduction
-  # remigration_int <- 5.557        # remigration interval
-  # nests_mu <- 4.945312            # mean number of nests per female per season
-  # eggs_mu <- 100.6486             # mean number of eggs per nest
-  # hatch_success_mu <- 0.8241024   # mean of hatching success
-  # logit_a <- 41.362228            # temp -> proportion of males a
-  # logit_b <- -1.415462            # temp -> proportion of males b
-  # temp_mu <- 31.80387             # base incubation temp mean
   
   # dimensions
   A <- max_age
@@ -62,12 +42,12 @@ initialize_population <- function(beta, burn_in,
     
     # calculate number of breeding adults
     # females only breed every F_remigration_int years
-    n_breeding_F <- round(sum(N[1, age_maturity:max_age, y - 1], 
-                              na.rm = TRUE) / F_remigration_int)
+    n_breeding_F <- sum(N[1, (1:max_age)*M, y - 1], 
+                        na.rm = TRUE) / F_remigration_int
     
     # males only breed every M_remigration_int years
-    n_breeding_F <- round(sum(N[2, age_maturity:max_age, y - 1], 
-                              na.rm = TRUE) / M_remigration_int) 
+    n_breeding_M <- sum(N[2, (1:max_age)*M, y - 1], 
+                        na.rm = TRUE) / M_remigration_int
     
     if (n_breeding_F > 0 & n_breeding_M > 0) {
       
@@ -91,7 +71,7 @@ initialize_population <- function(beta, burn_in,
       hatchlings <- sum(eggs) * hatch_success_mu * breeding_success
       
       # determine proportion of male hatchlings based on temperature
-      prop_male <- exp(logit_a + logit_b*temp_mu) / (1 + exp(logit_a + logit_b*temp_mu))
+      prop_male <- 1/(1 + exp(k*(temp_mu-T_piv)))
       
       # number of male and female hatchlings
       # female hatchlings

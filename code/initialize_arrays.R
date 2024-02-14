@@ -1,6 +1,6 @@
 # initialize arrays
 
-initialize_arrays <- function(max_age, age_maturity, 
+initialize_arrays <- function(max_age, age_maturity_mu, age_maturity_sd, 
                               F_survival_years, F_survival_values, 
                               M_survival_years, M_survival_values, 
                               F_remigration_int, M_remigration_int,
@@ -49,6 +49,9 @@ initialize_arrays <- function(max_age, age_maturity,
     # if not, the temperatures are just the means
   } else { temperatures <- temp_mus }
   
+  # hatching success
+  
+  
   # survival values vector - females
   F_survival <- rep(F_survival_values, times = F_survival_years)
   
@@ -81,12 +84,10 @@ initialize_arrays <- function(max_age, age_maturity,
   # N <- initialize_population2(temp_mu, logit_a, logit_b, A, Y, 
   #                             F_survival, M_survival)
   
-  SAD <- initialize_population(beta, burn_in = 1000, 
-                               max_age, age_maturity, 
+  SAD <- initialize_population(beta, burn_in = 1000, max_age, M, 
                                F_remigration_int, M_remigration_int,
-                               nests_mu, eggs_mu, hatch_success_mu, 
-                               logit_a, logit_b, temp_mu,
-                               f_Leslie, m_Leslie)
+                               nests_mu, eggs_mu, hatch_success, 
+                               k, T_piv, temp_mu, f_Leslie, m_Leslie)
   
   # separate by sex
   F_SAD <- filter(SAD, Sex == 'Female')
@@ -94,8 +95,8 @@ initialize_arrays <- function(max_age, age_maturity,
   
   # set first timestep to SAD times a value to get at least 30 adult males
   # and 170 adult females
-  f_min <- F_initial / sum(F_SAD$N[age_maturity:max_age])
-  m_min <- M_initial / sum(M_SAD$N[age_maturity:max_age])
+  f_min <- F_initial / sum(F_SAD$(N[1:max_age])*M)
+  m_min <- M_initial / sum(M_SAD$(N[1:max_age])*M)
   multiplicator <- max(m_min, f_min)
   
   N[1, , 1] <- round(F_SAD$N * multiplicator)
@@ -106,7 +107,7 @@ initialize_arrays <- function(max_age, age_maturity,
   
   # output
   output <- list(A, Y, years, hatch_success, temperatures, N, 
-                 F_survival, M_survival, f_Leslie, m_Leslie)
+                 F_survival, M_survival, f_Leslie, m_Leslie, M)
   
   return(output)
   

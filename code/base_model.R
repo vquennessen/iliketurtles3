@@ -1,6 +1,6 @@
 # base model
 
-base_model <- function(max_age, age_maturity, 
+base_model <- function(max_age, age_maturity_mu, age_maturity_sd, 
                        F_survival_years, F_survival_values, 
                        M_survival_years, M_survival_values, 
                        F_remigration_int, M_remigration_int,
@@ -14,7 +14,7 @@ base_model <- function(max_age, age_maturity,
   
   ##### source initialized arrays ##############################################
   
-  init_output <- initialize_arrays(max_age, age_maturity, 
+  init_output <- initialize_arrays(max_age, age_maturity_mu, age_maturity_sd, 
                                    F_survival_years, F_survival_values, 
                                    M_survival_years, M_survival_values, 
                                    F_remigration_int, M_remigration_int,
@@ -71,11 +71,11 @@ base_model <- function(max_age, age_maturity,
     else {
       
       # reproduction
-      rep_output <- reproduction(N, y, beta, age_maturity, max_age, 
+      rep_output <- reproduction(N, y, beta, max_age, M,
                                  F_remigration_int, M_remigration_int,
                                  nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                                 hatch_success[y], climate_stochasticity, 
-                                 temp, temp_sd, T_piv, k)
+                                 climate_stochasticity, temp, temp_sd, 
+                                 T_piv, k)
       
       # add recruits to population size array
       N[1, 1, y] <- rep_output[[1]]

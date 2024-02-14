@@ -13,18 +13,16 @@ run_base_model <- function(arguments) {
   M_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - M
   M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
   demographic_stochasticity <- TRUE         # demographic stochasticity
-  age_maturity <- 23                        # age at first reproduction
+  age_maturity_mu <- 25                     # age at first reproduction, mean
+  age_maturity_sd <- 2.5                    # age at first reproduction, SD
   F_remigration_int <- 3.87                 # remigration interval - females
   M_remigration_int <- 1.47                 # remigration interval - males
   nests_mu <- 4.95                          # mean # of nests/F/season
   nests_sd <- 2.09                          # sd of # of nests/F/season
   eggs_mu <- 100.65                         # mean number of eggs/nest
   eggs_sd <- 23.08                          # sd of number of eggs/nest
-  hatch_success_mu <- 0.8241024             # mean of hatching success
-  hatch_success_a <- 2.089414               # stochastic beta CDF shape 1 par
-  hatch_success_b <- 0.4496393              # stochastic beta CDF shape 2 par
   hatch_success_A <- 0.86                   # logistic by temp - A
-  hatch_success_beta <- -1.7                # logistic by temp - beta
+  hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
   T_piv <- 29.2                             # thermal reaction norm midpoint
   k <- -1.4                                 # thermal reaction norm slope
@@ -44,6 +42,8 @@ run_base_model <- function(arguments) {
   # dimensions
   A <- max_age
   Y <- length(start_year:end_year)
+  
+  
   
   ##############################################################################
   
@@ -79,15 +79,14 @@ run_base_model <- function(arguments) {
   # run the model for each simulation
   for (i in 1:nsims) {
     
-    output <- base_model(max_age, demographic_stochasticity, 
+    output <- base_model(max_age, start_year, end_year, scenario, beta,
                          F_survival_years, F_survival_values, 
-                         M_survival_years, M_survival_values, 
+                         M_survival_years, M_survival_values, SAD,
                          age_maturity, F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                         hatch_success_mu, hatch_success_a, 
-                         hatch_success_b,
-                         T_piv, k, temp_mu, temp_sd, climate_stochasticity, 
-                         start_year, end_year, scenario, beta)
+                         hatch_success_A, hatch_success_k, 
+                         hatch_success_t0, T_piv, k, temp_mu, temp_sd, 
+                         climate_stochasticity, demographic_stochasticity)
     
     # save the N and abundance arrays 
     sims_N[, , , i]             <- output[[1]]

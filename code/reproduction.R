@@ -8,11 +8,11 @@ reproduction <- function(N, y, beta, age_maturity, max_age,
   
   # calculate number of breeding adults
   # females only breed every F_remigration_int years
-  n_breeding_F <- sum(N[1, age_maturity:max_age, y - 1], 
+  n_breeding_F <- sum(N[1, (1:max_age)*M, y - 1], 
                       na.rm = TRUE) / F_remigration_int
   
   # males only breed every M_remigration_int years
-  n_breeding_M <- sum(N[2, age_maturity:max_age, y - 1], 
+  n_breeding_M <- sum(N[2, (1:max_age)*M, y - 1], 
                       na.rm = TRUE) / M_remigration_int  
   
   if (n_breeding_F > 0 & n_breeding_M > 0) {
@@ -39,6 +39,9 @@ reproduction <- function(N, y, beta, age_maturity, max_age,
       eggs[f] <- sum(rnorm(n = nests[f], mean = eggs_mu, sd = eggs_sd))
       
     }
+    
+    # hatching success
+    hatch_success <- 
     
     # total hatchlings = total eggs * hatching success * breeding_success
     hatchlings <- sum(eggs) * hatch_success * breeding_success
