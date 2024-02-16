@@ -32,7 +32,8 @@ base_model <- function(start_year, end_year, scenario, beta,
     N <- pop_dynamics(N, max_age, y, F_survival, M_survival)
       
     # break out of loop if there are zero males or females at any age
-    if (sum(N[1, , y]) < 1 || sum(N[2, , y]) < 1) { break }
+    if (sum(N[1, , y], na.rm = TRUE) < 1 || sum(N[2, , y], na.rm = TRUE) < 1) { 
+      break }
     
     # climate change temperature estimates
     temp <- temperatures[y]
