@@ -1,6 +1,7 @@
 initialize_population <- function(beta, burn_in, max_age, M, 
                                   F_remigration_int, M_remigration_int,
-                                  nests_mu, eggs_mu, hatch_success_mu,
+                                  nests_mu, eggs_mu, hatch_success_A,
+                                  hatch_success_k, hatch_success_t0,
                                   k, T_piv, temp_mu, f_Leslie, m_Leslie) {
   
   
@@ -12,7 +13,7 @@ initialize_population <- function(beta, burn_in, max_age, M,
              dim = c(2, A, burn_in))
   
   # intialize N as a dataframe
-  DF <- data.frame(Beta = rep(beta, times = A*burn_in), 
+  DF <- data.frame(Beta = rep(beta, times = (A*burn_in)), 
                    Age = rep(1:A, times = burn_in), 
                    Year = rep(1:burn_in, each = A),
                    N = rep(0, times = A*burn_in))
@@ -22,10 +23,10 @@ initialize_population <- function(beta, burn_in, max_age, M,
   
   # add initial population size estimates to N at t = 1
   
-  # females and males - 100 per age
+  # females and males - 1000 per age
   N[, 2:max_age, 1] <- 1000
   
-  # female and male hatchlings - 10000 each
+  # female and male hatchlings - 100000 each
   N[, 1, 1] <- 1000000
   
   # move population forward in time burn_in years
@@ -42,11 +43,11 @@ initialize_population <- function(beta, burn_in, max_age, M,
     
     # calculate number of breeding adults
     # females only breed every F_remigration_int years
-    n_breeding_F <- sum(N[1, (1:max_age)*M, y - 1], 
+    n_breeding_F <- sum((N[1, 1:max_age, y - 1]*M), 
                         na.rm = TRUE) / F_remigration_int
     
     # males only breed every M_remigration_int years
-    n_breeding_M <- sum(N[2, (1:max_age)*M, y - 1], 
+    n_breeding_M <- sum((N[2, 1:max_age, y - 1]*M), 
                         na.rm = TRUE) / M_remigration_int
     
     if (n_breeding_F > 0 & n_breeding_M > 0) {
@@ -65,13 +66,16 @@ initialize_population <- function(beta, burn_in, max_age, M,
       nests[which(nests < 1)] <- 1
       
       # initialize eggs vector
-      eggs <- rep(round(eggs_mu), times = n_breeding_F)
+      eggs <- rep(eggs_mu, times = n_breeding_F)
+      
+      # hatching success
+      hatch_success <- hatch_success_A/(1 + exp(-hatch_success_k*(temp_mu - hatch_success_t0)))
       
       # total hatchlings = total eggs * hatching success * breeding_success
-      hatchlings <- sum(eggs) * hatch_success_mu * breeding_success
+      hatchlings <- sum(eggs) * hatch_success * breeding_success
       
       # determine proportion of male hatchlings based on temperature
-      prop_male <- 1/(1 + exp(k*(temp_mu-T_piv)))
+      prop_male <- 1/(1 + exp(-k*(temp_mu-T_piv)))
       
       # number of male and female hatchlings
       # female hatchlings
@@ -89,8 +93,8 @@ initialize_population <- function(beta, burn_in, max_age, M,
     # update dataframe
     start <- A*(y - 1) + 1
     end <- start + A - 1
-    females$N[start:end] <- N[1, , y] / sum(N[1, , y])
-    males$N[start:end] <- N[2, , y] / sum(N[2, , y])
+    females$N[start:end] <- N[1, , y] / sum(N[, , y])
+    males$N[start:end] <- N[2, , y] / sum(N[, , y])
     
   }
   

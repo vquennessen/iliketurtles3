@@ -1,18 +1,19 @@
 # reproduction
 
-reproduction <- function(N, y, beta, age_maturity, max_age, 
+reproduction <- function(N, y, beta, max_age, M, 
                          F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                         hatch_success, climate_stochasticity, 
-                         temp, temp_sd, T_piv, k) {
+                         hatch_success_A, hatch_success_k, 
+                         hatch_success_t0, temp, temp_sd, T_piv, k, 
+                         climate_stochasticity) {
   
   # calculate number of breeding adults
   # females only breed every F_remigration_int years
-  n_breeding_F <- sum(N[1, (1:max_age)*M, y - 1], 
+  n_breeding_F <- sum((N[1, 1:max_age, y - 1]*M), 
                       na.rm = TRUE) / F_remigration_int
   
   # males only breed every M_remigration_int years
-  n_breeding_M <- sum(N[2, (1:max_age)*M, y - 1], 
+  n_breeding_M <- sum((N[2, 1:max_age, y - 1]*M), 
                       na.rm = TRUE) / M_remigration_int  
   
   if (n_breeding_F > 0 & n_breeding_M > 0) {
@@ -31,7 +32,7 @@ reproduction <- function(N, y, beta, age_maturity, max_age,
     nests[which(nests < 1)] <- 1
     
     # initialize eggs vector
-    eggs <- rep(NA, times = n_breeding_F)
+    eggs <- rep(NA, times = round(n_breeding_F))
     
     # number of eggs per nest
     for (f in 1:n_breeding_F) {
@@ -41,7 +42,7 @@ reproduction <- function(N, y, beta, age_maturity, max_age,
     }
     
     # hatching success
-    hatch_success <- 
+    hatch_success <- hatch_success_A/(1 + exp(-hatch_success_k*(temp - hatch_success_t0)))
     
     # total hatchlings = total eggs * hatching success * breeding_success
     hatchlings <- sum(eggs) * hatch_success * breeding_success
@@ -54,7 +55,7 @@ reproduction <- function(N, y, beta, age_maturity, max_age,
     }
     
     # determine proportion of male hatchlings based on temperature
-    prop_male <- 1/(1 + exp(k*(temperature-T_piv)))
+    prop_male <- 1/(1 + exp(-k*(temperature-T_piv)))
     
     # number of male and female hatchlings
     female_hatchlings <- round(hatchlings * (1 - prop_male))

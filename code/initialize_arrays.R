@@ -1,16 +1,12 @@
 # initialize arrays
 
-initialize_arrays <- function(max_age, age_maturity_mu, age_maturity_sd, 
-                              F_survival_years, F_survival_values, 
-                              M_survival_years, M_survival_values, 
-                              F_remigration_int, M_remigration_int,
+initialize_arrays <- function(start_year, end_year, scenario, beta,
+                              max_age, F_survival, M_survival, F_init, M_init, 
+                              M, F_remigration_int, M_remigration_int,
                               nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                              hatch_success_mu, hatch_success_a, 
-                              hatch_success_b, T_piv, k, temp_mu, temp_sd,  
-                              start_year, end_year, scenario, beta, 
-                              demographic_stochasticity, 
-                              climate_stochasticity, 
-                              evolution) {
+                              hatch_success_A, hatch_success_k, 
+                              hatch_success_t0, T_piv, k, temp_mu, temp_sd, 
+                              climate_stochasticity, demographic_stochasticity) {
   
   # years
   years <- seq(from = start_year, to = end_year)
@@ -24,15 +20,9 @@ initialize_arrays <- function(max_age, age_maturity_mu, age_maturity_sd,
   N <- array(rep(0, times = 2 * A * Y), 
              dim = c(2, A, Y))  
   
-  # # initialize hatching success
-  # # determine hatching success
-  # if (hatch_success_stochasticity == TRUE) {
-  #   hatch_success <- rbeta(n = Y, 
-  #                          shape1 = hatch_success_a, 
-  #                          shape2 = hatch_success_b)
-  # } else {
-  #   hatch_success <- rep(hatch_success_mu, times = Y)
-  # }
+  # initial population size
+  N[1, , 1] <- F_init
+  N[2, , 1] <- M_init
   
   # initialize temperature scenarios
   temperatures <- rep(NA, times = Y)
@@ -49,65 +39,11 @@ initialize_arrays <- function(max_age, age_maturity_mu, age_maturity_sd,
     # if not, the temperatures are just the means
   } else { temperatures <- temp_mus }
   
-  # hatching success
-  
-  
-  # survival values vector - females
-  F_survival <- rep(F_survival_values, times = F_survival_years)
-  
-  # survival values vector - males
-  M_survival <- rep(M_survival_values, times = M_survival_years)
-  
-  # check it's long enough, and if not, add the last survival_value until it is
-  # females
-  if (length(F_survival) < A) {
-    F_survival <- c(F_survival, rep(F_survival_values[length(F_survival_values)], 
-                                    A - length(F_survival)))
-  }
-  
-  # males
-  if (length(M_survival) < A) {
-    M_survival <- c(M_survival, 
-                    rep(M_survival_values[length(M_survival_values)], 
-                        A - length(M_survival)))
-  }
-  
-  # make female leslie matrix for survival
-  f_matrix <- matrix(diag(F_survival[1:(A - 1)]), ncol = A - 1)
-  f_Leslie <- rbind(rep(0, A), cbind(f_matrix, rep(0, A - 1)))
-  
-  # make male leslie matrix for survival
-  m_matrix <- matrix(diag(M_survival[1:(A - 1)]), ncol = A - 1)
-  m_Leslie <- rbind(rep(0, A), cbind(m_matrix, rep(0, A - 1)))
-  
-  # # initialize population size array by age class and sex
-  # N <- initialize_population2(temp_mu, logit_a, logit_b, A, Y, 
-  #                             F_survival, M_survival)
-  
-  SAD <- initialize_population(beta, burn_in = 1000, max_age, M, 
-                               F_remigration_int, M_remigration_int,
-                               nests_mu, eggs_mu, hatch_success, 
-                               k, T_piv, temp_mu, f_Leslie, m_Leslie)
-  
-  # separate by sex
-  F_SAD <- filter(SAD, Sex == 'Female')
-  M_SAD <- filter(SAD, Sex == 'Male')
-  
-  # set first timestep to SAD times a value to get at least 30 adult males
-  # and 170 adult females
-  f_min <- F_initial / sum(F_SAD$(N[1:max_age])*M)
-  m_min <- M_initial / sum(M_SAD$(N[1:max_age])*M)
-  multiplicator <- max(m_min, f_min)
-  
-  N[1, , 1] <- round(F_SAD$N * multiplicator)
-  N[2, , 1] <- round(M_SAD$N * multiplicator)
-  
   # if evolution is turned on, turn pivotal temperature and TRT into arrays
   
   
   # output
-  output <- list(A, Y, years, hatch_success, temperatures, N, 
-                 F_survival, M_survival, f_Leslie, m_Leslie, M)
+  output <- list(A, Y, years, temperatures, N)
   
   return(output)
   

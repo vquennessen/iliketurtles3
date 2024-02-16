@@ -6,6 +6,11 @@ run_base_model <- function(arguments) {
   
   ###### model inputs ##########################################################
   
+  # function arguments
+  scenario <- arguments[[1]]
+  beta     <- arguments[[2]]
+  nsims    <- arguments[[3]]
+  
   # turtle demographics
   max_age <- 85                                         # lifespan
   F_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - F
@@ -44,12 +49,66 @@ run_base_model <- function(arguments) {
   Y <- length(start_year:end_year)
   
   
+  ##### derived arrays #########################################################
+  
+  ##### maturity ogive
+  M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
+  
+  ##### initial population size
+  
+  # survival values vector - females
+  F_survival <- rep(F_survival_values, times = F_survival_years)
+  
+  # survival values vector - males
+  M_survival <- rep(M_survival_values, times = M_survival_years)
+  
+  # check it's long enough, and if not, add the last survival_value until it is
+  # females
+  if (length(F_survival) < A) {
+    F_survival <- c(F_survival, rep(F_survival_values[length(F_survival_values)], 
+                                    A - length(F_survival)))
+  }
+  
+  # males
+  if (length(M_survival) < A) {
+    M_survival <- c(M_survival, 
+                    rep(M_survival_values[length(M_survival_values)], 
+                        A - length(M_survival)))
+  }
+  
+  # make female leslie matrix for survival
+  f_matrix <- matrix(diag(F_survival[1:(A - 1)]), ncol = A - 1)
+  f_Leslie <- rbind(rep(0, A), cbind(f_matrix, rep(0, A - 1)))
+  
+  # make male leslie matrix for survival
+  m_matrix <- matrix(diag(M_survival[1:(A - 1)]), ncol = A - 1)
+  m_Leslie <- rbind(rep(0, A), cbind(m_matrix, rep(0, A - 1)))
+
+  # stable age distribution
+  SAD <- initialize_population(beta, burn_in = 1000, max_age, M, 
+                               F_remigration_int, M_remigration_int,
+                               nests_mu, eggs_mu, hatch_success_A, 
+                               hatch_success_k, hatch_success_t0, 
+                               k, T_piv, temp_mu, f_Leslie, m_Leslie)
+  
+  # separate by sex
+  F_SAD <- filter(SAD, Sex == 'Female')
+  M_SAD <- filter(SAD, Sex == 'Male')
+  
+  # set first timestep to SAD times a value to get at least 30 adult males
+  # and 170 adult females
+  f_min <- F_initial / sum((F_SAD$N[1:max_age])*M)
+  m_min <- M_initial / sum((M_SAD$N[1:max_age])*M)
+  multiplicator <- max(m_min, f_min)
+  
+  F_init <- F_SAD$N * multiplicator
+  M_init <- M_SAD$N * multiplicator
   
   ##############################################################################
   
-  scenario <- arguments[[1]]
-  beta     <- arguments[[2]]
-  nsims    <- arguments[[3]]
+  # scenario <- arguments[[1]]
+  # beta     <- arguments[[2]]
+  # nsims    <- arguments[[3]]
   
   # write to progress text file
   update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', 
@@ -79,10 +138,9 @@ run_base_model <- function(arguments) {
   # run the model for each simulation
   for (i in 1:nsims) {
     
-    output <- base_model(max_age, start_year, end_year, scenario, beta,
-                         F_survival_years, F_survival_values, 
-                         M_survival_years, M_survival_values, SAD,
-                         age_maturity, F_remigration_int, M_remigration_int,
+    output <- base_model(start_year, end_year, scenario, beta,
+                         max_age, F_survival, M_survival, F_init, M_init, 
+                         M, F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
                          hatch_success_A, hatch_success_k, 
                          hatch_success_t0, T_piv, k, temp_mu, temp_sd, 
