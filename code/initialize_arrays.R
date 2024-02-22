@@ -1,19 +1,8 @@
 # initialize arrays
 
-initialize_arrays <- function(start_year, end_year, scenario, beta,
-                              max_age, F_survival, M_survival, F_init, M_init, 
-                              M, F_remigration_int, M_remigration_int,
-                              nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                              hatch_success_A, hatch_success_k, 
-                              hatch_success_t0, T_piv, k, temp_mu, temp_sd, 
-                              climate_stochasticity, demographic_stochasticity) {
-  
-  # years
-  years <- seq(from = start_year, to = end_year)
-  
-  # dimensions
-  A <- max_age
-  Y <- length(start_year:end_year)
+initialize_arrays <- function(scenario, years, A, Y, F_init, M_init, 
+                              M, T_piv, k, temp_mu, temp_sd, 
+                              climate_stochasticity) {
   
   # initialize population size array
   # dimensions = sexes * ages  * years
@@ -43,7 +32,7 @@ initialize_arrays <- function(start_year, end_year, scenario, beta,
   
   
   # output
-  output <- list(A, Y, years, temperatures, N)
+  output <- list(temperatures, N)
   
   return(output)
   

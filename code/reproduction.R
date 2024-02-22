@@ -16,7 +16,7 @@ reproduction <- function(N, y, beta, max_age, M,
   n_breeding_M <- sum((N[2, 1:max_age, y - 1]*M), 
                       na.rm = TRUE) / M_remigration_int  
   
-  if (n_breeding_F > 0 & n_breeding_M > 0) {
+  if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
     
     # proportion of males
     # multiply by 2 to get BSR from 0 to 1 instead of 0 to 0.5
@@ -32,7 +32,7 @@ reproduction <- function(N, y, beta, max_age, M,
     nests[which(nests < 1)] <- 1
     
     # initialize eggs vector
-    eggs <- rep(NA, times = round(n_breeding_F))
+    eggs <- rep(NA, times = n_breeding_F)
     
     # number of eggs per nest
     for (f in 1:n_breeding_F) {

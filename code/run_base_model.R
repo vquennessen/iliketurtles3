@@ -11,9 +11,9 @@ run_base_model <- function(arguments) {
   # beta     <- arguments[[2]]
   # nsims    <- arguments[[3]]
   
-  scenario <- 1
+  scenario <- 0.5
   beta <- 1
-  nsims <- 1
+  nsims <- 10
   
   # turtle demographics
   max_age <- 85                                         # lifespan
@@ -21,7 +21,6 @@ run_base_model <- function(arguments) {
   F_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - F
   M_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - M
   M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
-  demographic_stochasticity <- TRUE         # demographic stochasticity
   age_maturity_mu <- 25                     # age at first reproduction, mean
   age_maturity_sd <- 2.5                    # age at first reproduction, SD
   F_remigration_int <- 3.87                 # remigration interval - females
@@ -41,16 +40,14 @@ run_base_model <- function(arguments) {
   # climate data
   temp_mu <- 31.80                          # base incubation temp mean
   temp_sd <- 0.84                           # base incubation temp sd
-  climate_stochasticity <- FALSE            # whether or not to add in
   
-  # model parameters
-  start_year <- 2023                        # first year to simulate
-  end_year <- start_year + 3*max_age        # last year to simulate
+  # model parameters and dimensions
+  years <- 100                              # number of years to simulate
   evolution <- TRUE                         # whether evolution is turned on
-  
-  # dimensions
+  climate_stochasticity <- FALSE            # whether or not to add in
+
   A <- max_age
-  Y <- length(start_year:end_year)
+  Y <- years
   
   
   ##### derived arrays #########################################################
@@ -110,10 +107,6 @@ run_base_model <- function(arguments) {
   
   ##############################################################################
   
-  # scenario <- arguments[[1]]
-  # beta     <- arguments[[2]]
-  # nsims    <- arguments[[3]]
-  
   # write to progress text file
   update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', 
                   nsims, ' sims', sep = '')
@@ -142,13 +135,13 @@ run_base_model <- function(arguments) {
   # run the model for each simulation
   for (i in 1:nsims) {
     
-    output <- base_model(start_year, end_year, scenario, beta,
+    output <- base_model(scenario, beta, years, A, Y,
                          max_age, F_survival, M_survival, F_init, M_init, 
                          M, F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
                          hatch_success_A, hatch_success_k, 
                          hatch_success_t0, T_piv, k, temp_mu, temp_sd, 
-                         climate_stochasticity, demographic_stochasticity)
+                         climate_stochasticity)
     
     # save the N and abundance arrays 
     sims_N[, , , i]             <- output[[1]]
@@ -158,7 +151,7 @@ run_base_model <- function(arguments) {
     sims_mature_abundance[, i]  <- output[[5]]
     
     # write to progress text file
-    if (round(i/nsims*100) %% 5 == 0) {
+    if ((i/nsims*100) %% 10 == 0) {
       update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, 
                       ' - ', nsims, ' sims - ', i/nsims*100, '% done!', 
                       sep = '')
@@ -187,9 +180,3 @@ run_base_model <- function(arguments) {
   save(sims_mature_abundance, file = filepath5)
   
 }
-
-#     }
-#     
-#   }
-#   
-# }
