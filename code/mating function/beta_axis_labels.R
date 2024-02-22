@@ -34,7 +34,7 @@ beta_axis_labels <- function(betas) {
     filter(Breeding_Sex_Ratio == max(Breeding_Sex_Ratio)) %>%
     mutate(M = round((Breeding_Sex_Ratio/2*100)))
   
-  output <- as.character(round(acceptable_loss_of_males$M))
+  output <- paste(as.character(round(acceptable_loss_of_males$M)), '%', sep = '')
   
   return(output)
   

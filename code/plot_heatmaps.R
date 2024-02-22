@@ -10,18 +10,21 @@ library(viridis)
 # source functions
 source('code/mating function/beta_axis_labels.R')
 
-# data output folder
-output_folder <- '2024_02_16_hella_updates'
+# plotting model parameters
+output_folder <- '2024_02_16_Godfrey_Mrosovsky_2006'
+Betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
+start_year <- 2024
+Y <- 100
+Scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
+nsims <- 10000
 
 # Betas
-Betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
 Beta_axis_labels <- beta_axis_labels(Betas)
 
 # if year1 is 2022, calculate year indices for 2040, 2060, and 2100
-start_year <- 2024
-end_year <- start_year + 99
+end_year <- start_year + Y - 1
 years <- start_year:end_year
-years_to_plot <- c(start_year + 99)
+years_to_plot <- c(start_year + Y - 1)
 
 # clear DF object
 rm(DF)
@@ -33,11 +36,9 @@ DF <- data.frame(Scenario = NULL,
                  Probability = NULL)
 
 # Scenarios
-temps <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6), 'C', sep = '')
+temps <- paste(Scenarios, 'C', sep = '')
 Scenarios <- factor(temps, levels = temps)
 
-# number of sims
-nsims <- 10
 
 for (i in 1:length(years_to_plot)) {
   
@@ -98,7 +99,7 @@ for (i in 1:length(years_to_plot)) {
                          limits = c(0, 1), 
                          na.value = 'gray') +
     guides(fill = guide_colourbar(title = "Probability")) +
-    xlab('Percent of males that can support 50% maximum reproduction') +
+    xlab('Percent of males that can fertilize 50% of females') +
     ylab('Increase in sand temperature (C) by 2123') +
     ggtitle(paste('Probability of population persistence (> 10% of starting population size) to ', years_to_plot[i], 
                   sep = '')) +
