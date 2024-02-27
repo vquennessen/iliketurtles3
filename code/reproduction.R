@@ -26,18 +26,19 @@ reproduction <- function(N, y, beta, max_age, M,
     breeding_success <- pbeta(BSR, shape1 = 1, shape2 = beta)
     
     # number of nests per female
-    nests <- rnorm(n = n_breeding_F, mean = nests_mu, sd = nests_sd)
+    nests <- rnorm(n = round(n_breeding_F), mean = nests_mu, sd = nests_sd)
     
     # replace any zeros or -1 with +1
     nests[which(nests < 1)] <- 1
     
     # initialize eggs vector
-    eggs <- rep(NA, times = n_breeding_F)
+    eggs <- rep(NA, times = round(n_breeding_F))
     
     # number of eggs per nest
-    for (f in 1:n_breeding_F) {
+    for (f in 1:round(n_breeding_F)) {
       
-      eggs[f] <- sum(rnorm(n = nests[f], mean = eggs_mu, sd = eggs_sd))
+      eggs[f] <- sum(rnorm(n = round(nests[f]), mean = eggs_mu, sd = eggs_sd), 
+                     na.rm = TRUE)
       
     }
     
@@ -45,7 +46,7 @@ reproduction <- function(N, y, beta, max_age, M,
     hatch_success <- hatch_success_A/(1 + exp(-hatch_success_k*(temp - hatch_success_t0)))
     
     # total hatchlings = total eggs * hatching success * breeding_success
-    hatchlings <- sum(eggs) * hatch_success * breeding_success
+    hatchlings <- sum(eggs, na.rm = TRUE) * hatch_success * breeding_success
     
     # for current temperature 
     if (climate_stochasticity == TRUE) {
