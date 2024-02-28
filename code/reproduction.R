@@ -32,12 +32,12 @@ reproduction <- function(N, y, beta, max_age, M,
     nests[which(nests < 1)] <- 1
     
     # initialize eggs vector
-    eggs <- rep(NA, times = round(n_breeding_F))
+    eggs <- rep(NA, times = length(nests))
     
     # number of eggs per nest
-    for (f in 1:round(n_breeding_F)) {
+    for (f in 1:length(nests)) {
       
-      eggs[f] <- sum(rnorm(n = round(nests[f]), mean = eggs_mu, sd = eggs_sd), 
+      eggs[f] <- sum(rnorm(n = nests[f], mean = eggs_mu, sd = eggs_sd), 
                      na.rm = TRUE)
       
     }
@@ -50,7 +50,7 @@ reproduction <- function(N, y, beta, max_age, M,
     
     # for current temperature 
     if (climate_stochasticity == TRUE) {
-      temperature <- rnorm(mean = temp, sd = temp_sd)
+      temperature <- rnorm(n = 1, mean = temp, sd = temp_sd)
     } else {
       temperature <- temp
     }

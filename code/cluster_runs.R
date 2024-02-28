@@ -14,14 +14,14 @@ source('initialize_population.R')
 source('reproduction.R')
 source('pop_dynamics.R')
 
-# scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)  # total temp increases
-scenarios <- c(2)  # total temp increases
+scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)  # total temp increases
+# scenarios <- c(2)  # total temp increases
 
-# betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
 betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
+# betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
 
 # number of simulations to run
-num_sims <- c(1000, 2000, 3000, 4000)
+num_sims <- c(10000)
 
 #make dataframe of all combinations of arguments
 DF <- expand.grid(scenarios, betas, num_sims)

@@ -7,13 +7,13 @@ run_base_model <- function(arguments) {
   ###### model inputs ##########################################################
   
   # function arguments
-  # scenario <- arguments[[1]]
-  # beta     <- arguments[[2]]
-  # nsims    <- arguments[[3]]
+  scenario <- arguments[[1]]
+  beta     <- arguments[[2]]
+  nsims    <- arguments[[3]]
   
-  scenario <- 0.5
-  beta <- 1
-  nsims <- 100
+  # scenario <- 0.5
+  # beta <- 1
+  # nsims <- 100
   
   # turtle demographics
   max_age <- 85                                         # lifespan

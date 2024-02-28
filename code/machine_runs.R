@@ -17,7 +17,7 @@ source('pop_dynamics.R')
 
 # total temp increases
 # scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-scenarios <- c(0.5)
+scenarios <- c(5)
 
 # mating function betas
 # betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)

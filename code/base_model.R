@@ -25,7 +25,7 @@ base_model <- function(scenario, beta, years, A, Y,
     N <- pop_dynamics(N, max_age, y, F_survival, M_survival)
       
     # break out of loop if there are zero males or females at any age
-    if (sum(N[1, , y], na.rm = TRUE) < 1 || sum(N[2, , y], na.rm = TRUE) < 1) {
+    if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], na.rm = TRUE) < 0.5) {
       break }
     
     # climate change temperature estimates
@@ -58,7 +58,7 @@ base_model <- function(scenario, beta, years, A, Y,
   abundance_F <- colSums(N[1, , ], dims = 1)
   abundance_M <- colSums(N[2, , ], dims = 1)
   abundance_total <- colSums(N, dims = 2)
-  mature_abundance <- colSums(N[, , ]*M, dims = 2)
+  mature_abundance <- colSums(round(N[, , ]*M, 2), dims = 2)
   
   # output N and abundance arrays
   output <- list(N, abundance_F, abundance_M, abundance_total, mature_abundance)
