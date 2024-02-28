@@ -11,7 +11,7 @@ library(viridis)
 source('code/mating function/beta_axis_labels.R')
 
 # plotting model parameters
-output_folder <- '2024_02_16_Godfrey_Mrosovsky_2006'
+output_folder <- '2024_02_28_Patricio_2017'
 Betas <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
 start_year <- 2024
 Y <- 100
