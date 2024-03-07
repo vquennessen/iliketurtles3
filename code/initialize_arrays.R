@@ -1,8 +1,8 @@
 # initialize arrays
 
 initialize_arrays <- function(scenario, years, A, Y, F_init, M_init, 
-                              M, T_piv, k, temp_mu, temp_sd, 
-                              climate_stochasticity) {
+                              M, T_piv, k, H, phen_var, evolution,
+                              temp_mu, temp_sd, climate_stochasticity) {
   
   # initialize population size array
   # dimensions = sexes * ages  * years
@@ -28,11 +28,30 @@ initialize_arrays <- function(scenario, years, A, Y, F_init, M_init,
     # if not, the temperatures are just the means
   } else { temperatures <- temp_mus }
   
-  # if evolution is turned on, turn pivotal temperature and TRT into arrays
+  # genetics for pivotal temperature
+  G <- rep(T_piv, A)
   
+  # if evolution is turned on, create epsilon and delta vectors
+  if (evolution == TRUE) {
+    
+    # distribution of G
+    G <- rnorm(n = A, mean = T_piv, sd = sqrt(H*phen_var))
+    
+    # gamma, error term for the expected genotype
+    Gamma <- rnorm(n = Y, mean = 0, sd = sqrt((H*phen_var) / 2))       
+    
+    # epsilon, error term for the expected pivotal temperature
+    Epsilon <- rnorm(n = Y, mean = 0, sd = sqrt((phen_var*(1 - H))))
+    
+  } else { 
+    
+    epsilon <- NULL 
+    gamma <- NULL 
+    
+    }
   
   # output
-  output <- list(temperatures, N)
+  output <- list(temperatures, N, G, Gamma, Epsilon)
   
   return(output)
   

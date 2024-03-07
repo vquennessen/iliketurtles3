@@ -41,6 +41,10 @@ run_base_model <- function(arguments) {
   temp_mu <- 31.80                          # base incubation temp mean
   temp_sd <- 0.84                           # base incubation temp sd
   
+  # evolution data
+  H <- 0.13                                 # heritability
+  phen_var <- 0.01                          # phenotypic variance
+  
   # model parameters and dimensions
   years <- 100                              # number of years to simulate
   evolution <- TRUE                         # whether evolution is turned on
@@ -140,8 +144,8 @@ run_base_model <- function(arguments) {
                          M, F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
                          hatch_success_A, hatch_success_k, 
-                         hatch_success_t0, T_piv, k, temp_mu, temp_sd, 
-                         climate_stochasticity)
+                         hatch_success_t0, T_piv, k, H, phen_var, evolution,
+                         temp_mu, temp_sd, climate_stochasticity)
     
     # save the N and abundance arrays 
     sims_N[, , , i]             <- output[[1]]

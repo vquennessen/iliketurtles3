@@ -5,18 +5,21 @@ base_model <- function(scenario, beta, years, A, Y,
                        M, F_remigration_int, M_remigration_int,
                        nests_mu, nests_sd, eggs_mu, eggs_sd, 
                        hatch_success_A, hatch_success_k, 
-                       hatch_success_t0, T_piv, k, temp_mu, temp_sd, 
-                       climate_stochasticity) {
+                       hatch_success_t0, T_piv, k, H, phen_var, evolution,
+                       temp_mu, temp_sd, climate_stochasticity) {
   
   ##### source initialized arrays ##############################################
   
   init_output <- initialize_arrays(scenario, years, A, Y, F_init, M_init, 
-                                   M, T_piv, k, temp_mu, temp_sd, 
-                                   climate_stochasticity)
+                                   M, T_piv, k, H, phen_var, evolution,
+                                   temp_mu, temp_sd, climate_stochasticity)
   
   temperatures  <- init_output[[1]]    # temperatures across climate scenarios
   N             <- init_output[[2]]    # population size array
-  
+  G             <- init_output[[3]]    # genetics array
+  Gamma         <- init_output[[4]]    # error around expected genotype
+  Epsilon       <- init_output[[5]]    # error around expected phenotype
+
   ##### model ##################################################################
   for (y in 2:Y) {
     
@@ -41,8 +44,9 @@ base_model <- function(scenario, beta, years, A, Y,
                                  F_remigration_int, M_remigration_int,
                                  nests_mu, nests_sd, eggs_mu, eggs_sd, 
                                  hatch_success_A, hatch_success_k, 
-                                 hatch_success_t0, temp, temp_sd, T_piv, k, 
-                                 climate_stochasticity)
+                                 hatch_success_t0, G, H, phen_var, 
+                                 Gamma, Epsilon, temp, temp_sd, T_piv, k, 
+                                 evolution, climate_stochasticity)
       
       # add recruits to population size array
       N[1, 1, y] <- rep_output[[1]]
