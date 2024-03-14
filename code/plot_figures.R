@@ -28,11 +28,8 @@ rm(DF)
 # pull out number of simulations where population survived to 2040, 2060, 2100
 DF <- data.frame(Scenario = NULL, 
                  Beta = NULL, 
-                 Survive_to = NULL, 
-                 Probability = NULL, 
-                 lambda1 = NULL, 
-                 lambda2 = NULL, 
-                 lambda3 = NULL)
+                 Lambda = rep(paste('Lambda', years_to_plot, sep = ''), 
+                              ))
 
 # Scenarios
 temps <- paste(Scenarios, 'C', sep = '')
