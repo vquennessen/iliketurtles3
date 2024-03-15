@@ -1,7 +1,7 @@
 # initialize arrays
 
 initialize_arrays <- function(scenario, years, A, Y, F_init, M_init, 
-                              M, T_piv, k, H, phen_var, evolution,
+                              M, T_piv, k, H, ag_var, evolution,
                               temp_mu, temp_sd, climate_stochasticity) {
   
   # initialize population size array
@@ -35,13 +35,13 @@ initialize_arrays <- function(scenario, years, A, Y, F_init, M_init,
   if (evolution == TRUE) {
     
     # distribution of G
-    G <- rnorm(n = A, mean = T_piv, sd = sqrt(H*phen_var))
+    G <- rnorm(n = A, mean = T_piv, sd = sqrt(ag_var))
     
     # gamma, error term for the expected genotype
-    Gamma <- rnorm(n = Y, mean = 0, sd = sqrt((H*phen_var) / 2))       
+    Gamma <- rnorm(n = Y, mean = 0, sd = sqrt(ag_var / 2))       
     
     # epsilon, error term for the expected pivotal temperature
-    Epsilon <- rnorm(n = Y, mean = 0, sd = sqrt((phen_var*(1 - H))))
+    Epsilon <- rnorm(n = Y, mean = 0, sd = sqrt((ag_var/H - ag_var)))
     
   } else { 
     

@@ -4,7 +4,7 @@ reproduction <- function(N, y, beta, max_age, M,
                          F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
                          hatch_success_A, hatch_success_k, 
-                         hatch_success_t0, G, H, phen_var, 
+                         hatch_success_t0, G, H, ag_var, 
                          Gamma, Epsilon, temp, temp_sd, T_piv, k, 
                          evolution, climate_stochasticity) {
   

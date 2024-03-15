@@ -43,7 +43,7 @@ run_base_model <- function(arguments) {
   
   # evolution data
   H <- 0.13                                 # heritability
-  phen_var <- 0.01                          # phenotypic variance
+  ag_var <- 0.01                          # phenotypic variance
   
   # model parameters and dimensions
   years <- 100                              # number of years to simulate
@@ -144,7 +144,7 @@ run_base_model <- function(arguments) {
                          M, F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
                          hatch_success_A, hatch_success_k, 
-                         hatch_success_t0, T_piv, k, H, phen_var, evolution,
+                         hatch_success_t0, T_piv, k, H, ag_var, evolution,
                          temp_mu, temp_sd, climate_stochasticity)
     
     # save the N and abundance arrays 

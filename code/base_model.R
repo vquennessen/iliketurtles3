@@ -5,13 +5,13 @@ base_model <- function(scenario, beta, years, A, Y,
                        M, F_remigration_int, M_remigration_int,
                        nests_mu, nests_sd, eggs_mu, eggs_sd, 
                        hatch_success_A, hatch_success_k, 
-                       hatch_success_t0, T_piv, k, H, phen_var, evolution,
+                       hatch_success_t0, T_piv, k, H, ag_var, evolution,
                        temp_mu, temp_sd, climate_stochasticity) {
   
   ##### source initialized arrays ##############################################
   
   init_output <- initialize_arrays(scenario, years, A, Y, F_init, M_init, 
-                                   M, T_piv, k, H, phen_var, evolution,
+                                   M, T_piv, k, H, ag_var, evolution,
                                    temp_mu, temp_sd, climate_stochasticity)
   
   temperatures  <- init_output[[1]]    # temperatures across climate scenarios
@@ -44,7 +44,7 @@ base_model <- function(scenario, beta, years, A, Y,
                                  F_remigration_int, M_remigration_int,
                                  nests_mu, nests_sd, eggs_mu, eggs_sd, 
                                  hatch_success_A, hatch_success_k, 
-                                 hatch_success_t0, G, H, phen_var, 
+                                 hatch_success_t0, G, H, ag_var, 
                                  Gamma, Epsilon, temp, temp_sd, T_piv, k, 
                                  evolution, climate_stochasticity)
       
