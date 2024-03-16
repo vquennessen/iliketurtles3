@@ -42,8 +42,8 @@ run_base_model <- function(arguments) {
   temp_sd <- 0.84                           # base incubation temp sd
   
   # evolution data
-  H <- 0.13                                 # heritability
-  ag_var <- 0.01                          # phenotypic variance
+  H <- 0.135                                # heritability
+  ag_var <- 0.017                           # phenotypic variance
   
   # model parameters and dimensions
   years <- 100                              # number of years to simulate
