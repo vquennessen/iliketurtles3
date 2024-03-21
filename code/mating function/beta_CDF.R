@@ -32,7 +32,7 @@
     geom_hline(yintercept = 0.5, linetype = 2, alpha = 0.5, lwd = 2) +
     geom_line(lwd = 2) +
     ylab('Reproductive Success') +
-    xlab('Breeding Sex Ratio') +
+    xlab('Breeding Sex Ratio (Proportion Male)') +
     ggtitle('Hypothetical mating functions') +
     theme_gray() +
     theme(axis.title.y = element_text(margin = margin(r = 15, l = 10)), 

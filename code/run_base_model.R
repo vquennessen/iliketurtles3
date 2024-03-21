@@ -32,8 +32,8 @@ run_base_model <- function(arguments) {
   hatch_success_A <- 0.86                   # logistic by temp - A
   hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
-  T_piv <- 29.368                           # thermal reaction norm midpoint
-  k <- -0.561                               # thermal reaction norm slope
+  T_piv <- 29.2                             # thermal reaction norm midpoint
+  k <- -1.4                                 # thermal reaction norm slope
   F_initial <- 170                          # initial adult F
   M_initial <- 30                           # initial adult M
   
