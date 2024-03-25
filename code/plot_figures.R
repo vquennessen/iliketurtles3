@@ -11,7 +11,7 @@ library(viridis)
 source('code/mating function/beta_axis_labels.R')
 
 # plotting model parameters
-output_folder <- '2024_03_16_GM_evo_ptiv'
+output_folder <- '2024_03_17_GM_evo_ptiv_high_H'
 Betas_raw <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
 Betas <- beta_axis_labels(Betas_raw)
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
@@ -19,14 +19,12 @@ nsims <- 10000
 Years <- 1:100
 temps <- paste(scenarios, 'C', sep = '')
 Scenarios <- factor(temps, levels = temps)
+years_to_plot <- c(10, 20, 30)
 
 # dimensions
 B <- length(Betas)
 S <- length(Scenarios)
-Y <- length(Years)
-
-# Betas
-
+Y <- max(years_to_plot)
 
 # clear DF object
 rm(DF)
@@ -38,18 +36,13 @@ DF <- data.frame(Scenario = rep(Scenarios, each = B*Y),
                  Population_size = NA,
                  Population_mature = NA, 
                  Lambda = NA, 
-                 dLdtemp = NA, 
-                 Lambda_mature = NA, 
-                 dLMdtemp = NA)
+                 Lambda_mature = NA)
 
 # Scenarios
 
 
 # for each scenario
 for (s in 1:S) {
-  
-  # calculate dTemp
-  dTemp <- scenarios[s] / 100
   
   # for each mating function
   for (b in 1:B) {
@@ -59,7 +52,7 @@ for (s in 1:S) {
       
       # index for year to plot
       index <- (s - 1)*B*Y + (b - 1)*Y + y
-      index
+      print(index)
       
       # load in appropriate output file
       
@@ -111,9 +104,6 @@ for (s in 1:S) {
           # lambda value for each year
           DF$Lambda[index] = DF$Population_size[index] / DF$Population_size[index - 1]
           
-          # d Lambda / d time
-          DF$dLdtemp[index] <- (DF$Lambda[index] - DF$Lambda[index - 1]) / (dTemp)
-          
         }
         
         # mean mature population size
@@ -126,9 +116,6 @@ for (s in 1:S) {
           # lambda value for mature individuals for each year
           DF$Lambda_mature[index] = DF$Population_mature[index] / DF$Population_mature[index - 1]
           
-          # d Lambda mature / d time
-          DF$dLMdtemp[index] <- (DF$Lambda_mature[index] - DF$Lambda_mature[index - 1]) / (dTemp)
-          
         }
         
       } else {
@@ -136,10 +123,8 @@ for (s in 1:S) {
         DF$Population_size[index] = NA 
         DF$Population_mature[index] = NA 
         DF$Lambda[index] = NA
-        DF$dLdtemp[index] = NA
         DF$Lambda_mature[index] = NA
-        DF$dLMdtemp[index] = NA
-        
+
       }
       
     }
@@ -149,99 +134,85 @@ for (s in 1:S) {
 }
 
 # save object to save time  
-save(DF, file = '2024_03_16_GM_evo_ptiv.Rda')
-
-# years to plot
-years_to_plot <- c(10, 20, 25)
+save(DF, file = paste(output_folder, '.Rda', sep = ''))
 
 # beta as factor
 DF$Beta <- factor(DF$Beta, levels = Betas)
 
 # for each year
-# for (i in 1:length(years_to_plot)) {
+for (i in 1:length(years_to_plot)) {
   
   # subset for year
-  to_plot1 <- subset(DF, Year == 20)
+  to_plot1 <- subset(DF, Year == years_to_plot[i])
+  
+  # add new column for Scenario[s] - Scenario[s - 1]
+  for (s in 2:length(Scenarios)) {
+    
+    subset1 <- subset(to_plot1, Scenario == Scenarios[s])
+    subset2 <- subset(to_plot1, Scenario == Scenarios[s - 1])
+    
+    # indexes
+    start <- (s - 1)*B + 1
+    end <- s*B
+
+    # regular lambda differences
+    to_plot1$dLdTemp[start:end] <- (subset1$Lambda - subset2$Lambda)/(scenarios[s] - scenarios[s - 1])
+    
+    # mature lambda differences
+    to_plot1$dLMdTemp[start:end] <- (subset1$Lambda_mature - subset2$Lambda_mature)/(scenarios[s] - scenarios[s - 1])
+    
+  }
   
   # heatmap for change in lambda for full population size
-  fig1 <- ggplot(data = to_plot1, aes(x = Beta, y = Scenario, fill = dLdtemp)) +
+  fig1 <- ggplot(data = to_plot1, aes(x = Beta, y = Scenario, fill = dLdTemp)) +
     geom_tile(color = "white",
               lwd = 1.5,
               linetype = 1) +
     scale_fill_gradient2(low = hcl.colors(5, "viridis")[1],
                          mid = hcl.colors(5, "viridis")[3],
                          high = hcl.colors(5, "viridis")[5], #colors in the scale
-                         midpoint = 0.29,    #same midpoint for plots (mean of the range)
-                         breaks = c(-0.02, 0.29, 0.56), #breaks in the scale bar
-                         limits = c(-0.02, 0.56),
+                         midpoint = -0.01,    #same midpoint for plots (mean of the range)
+                         breaks = c(-0.02, -0.01, 0), #breaks in the scale bar
+                         limits = c(-0.022, 0.001),
                          na.value = 'gray') +
-    guides(fill = guide_colourbar(title = "d Lambda / d temp")) +
-    xlab('Percent of males that can fertilize 50% of females') +
+    guides(fill = guide_colourbar(title = "dL/dT")) +
+    xlab('Breeding sex ratio that can fertilize all available females') +
     ylab('Increase in sand temperature (C) by 2123') +
-    ggtitle('Change in total population growth rate by year 20') +
+    ggtitle(paste('d Lambda / d Temp in total population growth rate by year ',
+                  years_to_plot[i], sep = '')) +    
     theme(panel.background = element_blank())
   
   # save to file
   ggsave(plot = fig1,
-         filename = paste('Y20_', output_folder, 
+         filename = paste('Y', years_to_plot[i], '_', output_folder, 
                           '_persistence_heatmap.png', sep = ''),
          path = '~/Projects/iliketurtles3/figures/',
          width = 8, height = 3.5)
   
-  # subset for year
-  to_plot2 <- subset(DF, Year == 25)
-  
-  # heatmap for change in lambda for full population size
-  fig2 <- ggplot(data = to_plot2, aes(x = Beta, y = Scenario, fill = dLdtemp)) +
+  # heatmap for change in lambda for mature population size
+  fig_mature <- ggplot(data = to_plot1, aes(x = Beta, y = Scenario, fill = dLMdTemp)) +
     geom_tile(color = "white",
               lwd = 1.5,
               linetype = 1) +
     scale_fill_gradient2(low = hcl.colors(5, "viridis")[1],
                          mid = hcl.colors(5, "viridis")[3],
                          high = hcl.colors(5, "viridis")[5], #colors in the scale
-                         midpoint = 2.5,    #same midpoint for plots (mean of the range)
-                         breaks = c(0, 1.25, 2.5, 3.75, 5), #breaks in the scale bar
-                         limits = c(0, 5.1),
+                         midpoint = -0.01,    #same midpoint for plots (mean of the range)
+                         breaks = c(-0.02, -0.01, 0), #breaks in the scale bar
+                         limits = c(-0.022, 0.001),
                          na.value = 'gray') +
-    guides(fill = guide_colourbar(title = "d Lambda / d temp")) +
-    xlab('Percent of males that can fertilize 50% of females') +
+    guides(fill = guide_colourbar(title = "dLM/dT")) +
+    xlab('Breeding sex ratio that can fertilize all available females') +
     ylab('Increase in sand temperature (C) by 2123') +
-    ggtitle('Change in total population growth rate by year 25') +
+    ggtitle(paste('d Lambda / d Temp in mature population growth rate by year ',
+                  years_to_plot[i], sep = '')) +
     theme(panel.background = element_blank())
-  
+
   # save to file
-  ggsave(plot = fig2,
-         filename = paste('Y25_', output_folder, 
+  ggsave(plot = fig_mature,
+         filename = paste('Y', years_to_plot[i], '_mature_', output_folder,
                           '_persistence_heatmap.png', sep = ''),
          path = '~/Projects/iliketurtles3/figures/',
          width = 8, height = 3.5)
   
-  
-  
-  # # heatmap for change in lambda for mature population size
-  # fig_mature <- ggplot(data = to_plot, aes(x = Beta, y = Scenario, fill = dLMdtemp)) +
-  #   geom_tile(color = "white",
-  #             lwd = 1.5,
-  #             linetype = 1) +
-  #   scale_fill_gradient2(low = hcl.colors(5, "viridis")[1],
-  #                        mid = hcl.colors(5, "viridis")[3],
-  #                        high = hcl.colors(5, "viridis")[5], #colors in the scale
-  #                        midpoint = -10,    #same midpoint for plots (mean of the range)
-  #                        breaks = c(-20, -15, -10, -5, 0), #breaks in the scale bar
-  #                        limits = c(-20, 0),
-  #                        na.value = 'gray') +
-  #   guides(fill = guide_colourbar(title = "d Lambda / d temp")) +
-  #   xlab('Percent of males that can fertilize 50% of females') +
-  #   ylab('Increase in sand temperature (C) by 2123') +
-  #   ggtitle(paste('Change in mature population growth rate by year ', 
-  #                 years_to_plot[i], sep = '')) +    
-  #   theme(panel.background = element_blank())
-  # 
-  # # save to file
-  # ggsave(plot = fig_mature,
-  #        filename = paste('Y', years_to_plot[i], '_mature_', output_folder, 
-  #                         '_persistence_heatmap.png', sep = ''),
-  #        path = '~/Projects/iliketurtles3/figures/',
-  #        width = 8, height = 3.5)
-  
-# }
+}
