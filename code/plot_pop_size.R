@@ -1,4 +1,4 @@
-# make figures representing output
+# plot population size by year 100 heatmaps
 
 # set working directory
 setwd('~/Projects/iliketurtles3')
@@ -37,7 +37,7 @@ rm(DF)
 DF <- data.frame(Scenario = NULL, 
                  Beta = NULL, 
                  Survive_to = NULL, 
-                 Probability = NULL)
+                 Pop_size = NULL)
 
 # for each model
 for (m in 1:M) {
@@ -94,8 +94,8 @@ for (m in 1:M) {
           DF2 <- data.frame(Scenario = Scenarios[s],
                             Beta = Betas[b],
                             Survive_to = years_to_plot[y], 
-                            Probability = c(sum(sims_abundance_total[years_to_plot[y], ] > 
-                                                  0.1*sims_abundance_total[1, ]) / nsims))
+                            Pop_size = mean(sims_abundance_total[years_to_plot[y], ] / sims_abundance_total[1, ], 
+                                               na.rm = TRUE))
           
         } 
         
@@ -108,21 +108,21 @@ for (m in 1:M) {
     DF$Beta <- factor(DF$Beta, levels = rev(Betas))
     
     # heatmap for survival to all three years - horizontal
-    fig <- ggplot(data = DF, aes(x = Beta, y = Scenario, fill = Probability)) +
+    fig <- ggplot(data = DF, aes(x = Beta, y = Scenario, fill = Pop_size)) +
       geom_tile(color = "white",
                 lwd = 1.5,
                 linetype = 1) +
-      scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
-                           mid = hcl.colors(5, "viridis")[3], 
-                           high = hcl.colors(5, "viridis")[5], #colors in the scale
-                           midpoint = 0.5,    #same midpoint for plots (mean of the range)
-                           breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
-                           limits = c(0, 1), 
-                           na.value = 'gray') +
-      guides(fill = guide_colourbar(title = "Probability")) +
+      # scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
+      #                      mid = hcl.colors(5, "viridis")[3], 
+      #                      high = hcl.colors(5, "viridis")[5], #colors in the scale
+      #                      midpoint = 0.5,    #same midpoint for plots (mean of the range)
+      #                      breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
+      #                      limits = c(0, 1), 
+      #                      na.value = 'gray') +
+      guides(fill = guide_colourbar(title = "Relative \n population \n size")) +
       ylab('Breeding sex ratio required to fertilize all females') +
       ylab('Increase in sand temperature (C) by year 100') +
-      ggtitle(paste('Probability of population persistence (> 10% of starting population size) to year ', 
+      ggtitle(paste('Population size relative to initial population size in year ', 
                     years_to_plot[y], sep = '')) +
       theme(panel.background = element_blank()) 
     
@@ -130,7 +130,7 @@ for (m in 1:M) {
     # save to file
     ggsave(plot = fig, 
            filename = paste('Y', years_to_plot[y], '_', models_short[m], 
-                            '_persistence_heatmap.png', sep = ''),
+                            '_pop_size.png', sep = ''),
            path = '~/Projects/iliketurtles3/figures/',
            width = 8, height = 3.5)
     
