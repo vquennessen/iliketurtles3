@@ -11,7 +11,7 @@ library(viridis)
 source('code/mating function/beta_axis_labels.R')
 
 # plotting model parameters
-models <- C('2024_02_16_Godfrey_Mrosovsky_2006', 
+models <- c('2024_02_16_Godfrey_Mrosovsky_2006', 
             '2024_03_16_GM_evo_ptiv', 
             '2024_03_17_GM_evo_ptiv_high_H')
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
@@ -19,11 +19,15 @@ nsims <- 10000
 Years <- 1:100
 temps <- paste(scenarios, 'C', sep = '')
 Scenarios <- factor(temps, levels = temps)
+Betas_raw <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
+betas <- beta_axis_labels(Betas_raw)
+Betas <- factor(betas, levels = betas)
 years_to_plot <- c(10, 20, 30)
 
 # dimensions
 M <- length(models)
 S <- length(Scenarios)
+B <- length(Betas)
 Y <- max(years_to_plot)
 
 # clear DF object

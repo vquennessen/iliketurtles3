@@ -54,42 +54,42 @@ for (m in 1:M) {
         # load in appropriate output file
         
         # if the file exists: desktop
-        # if (file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+        if (file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                              models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
+                              '/', nsims, '_abundance_total.Rda', sep = '')) &
+
+            file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                              models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
+                              '/', nsims, '_mature_abundance.Rda', sep = ''))) {
+
+          # load in total abundance object
+          load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                     models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
+                     nsims, '_abundance_total.Rda', sep = ''))
+
+          # load in abundance mature object
+          load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                     models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
+                     nsims, '_mature_abundance.Rda', sep = ''))
+        
+        # # if the file exists: laptop
+        # if (file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
         #                       models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
         #                       '/', nsims, '_abundance_total.Rda', sep = '')) &
         #     
-        #     file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+        #     file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
         #                       models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
         #                       '/', nsims, '_mature_abundance.Rda', sep = ''))) {
         #   
         #   # load in total abundance object
-        #   load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+        #   load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
         #              models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
         #              nsims, '_abundance_total.Rda', sep = ''))
         #   
         #   # load in abundance mature object
-        #   load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+        #   load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
         #              models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
         #              nsims, '_mature_abundance.Rda', sep = ''))
-        
-        # if the file exists: laptop
-        if (file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                              models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
-                              '/', nsims, '_abundance_total.Rda', sep = '')) &
-            
-            file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                              models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
-                              '/', nsims, '_mature_abundance.Rda', sep = ''))) {
-          
-          # load in total abundance object
-          load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                     models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
-                     nsims, '_abundance_total.Rda', sep = ''))
-          
-          # load in abundance mature object
-          load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                     models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
-                     nsims, '_mature_abundance.Rda', sep = ''))
           
           DF2 <- data.frame(Scenario = Scenarios[s],
                             Beta = Betas[b],
@@ -120,7 +120,7 @@ for (m in 1:M) {
                            limits = c(0, 1), 
                            na.value = 'gray') +
       guides(fill = guide_colourbar(title = "Probability")) +
-      ylab('Breeding sex ratio required to fertilize all females') +
+      xlab('Breeding sex ratio required to fertilize all females') +
       ylab('Increase in sand temperature (C) by year 100') +
       ggtitle(paste('Probability of population persistence (> 10% of starting population size) to year ', 
                     years_to_plot[y], sep = '')) +
