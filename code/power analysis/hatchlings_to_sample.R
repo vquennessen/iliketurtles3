@@ -25,17 +25,25 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
     if (breeding == 'dominant') {
       MC <- dom
       contributions <- c(MC, rep((1 - MC)/(i - 1), (i - 1)))
+      title <- paste('Dominant (', dom*100, '%) fertilization mode', sep = '')
+      
     } else if (breeding == 'exponential') {
       MC <- 0.5
       contributions <- 0.5^c(1:(i-1))
       contributions <- c(contributions, contributions[i-1])
+      title <- 'Exponential (1/2) fertilization mode'
+      
     } else if (breeding == 'random') {
       contributions <- rep(1/i, i)
+      title <- 'Random fertilization mode'
+      
     } else if (breeding == 'flexible_dominant') {
       contributions <- list(c(0.8868, 0.1132), 
                             c(0.4744, 0.3241, 0.2015), 
                             c(0.5485, 0.2508, 0.1509, 0.0499), 
                             c(0.4744, 0.1982, 0.1523, 0.0997, 0.0755))
+      title <- 'Flexible dominant fertilization mode \n based on Alfaro-Nunez, 2015'
+      
     }
     
     # proportion_correct array
@@ -46,6 +54,8 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
       
       # pre-allocate correct identifications of number of males
       correct <- rep(NA, n_sims)
+      under <- rep(NA, n_sims)
+      over <- rep(NA, n_sims)
       
       for (k in 1:n_sims) {
         
@@ -69,6 +79,7 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
         
         # correct allocation of number of males?
         correct[k] <- length(unique(samples)) == i
+        estimate[k] <- length(unique(samples))
         
       }
       
@@ -77,6 +88,8 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
       
       # stick proportion in data frame
       DF$Proportion_correct[index] <- mean(correct)
+      DF$Proportion_[index] <- mean(correct)
+      
     }
     
   }
@@ -90,12 +103,13 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
   fig1 <- ggplot(DF, aes(x = Sample_size, y = Proportion_correct, 
                          col = as.factor(Males))) +
     geom_hline(yintercept = 0.8, linetype = 2) +
-    geom_path(lwd = 1) +
+    geom_path(lwd = 1.25) +
     labs(col = 'Number \n of Males') +
     scale_color_manual(values = colors) +
     ylab('Proportion Correct') +
     xlab('Hatchlings Sampled') +
-    geom_vline(xintercept = c(n_sizes), linetype = 3)
+    geom_vline(xintercept = c(n_sizes), linetype = 3) +
+    ggtitle(title)
   
   # save results to image file
   
@@ -127,11 +141,11 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
     grid.table(newDFsamples)
     dev.off()
   } else {
-  png(filename = paste('C://Users/Vic/Documents/Projects/iliketurtles/figures/', 
-                       breeding, '_conf_table.png', sep = ''), 
-      width = 200, height = 200)
-  grid.table(newDFsamples)
-  dev.off()
+    png(filename = paste('C://Users/Vic/Documents/Projects/iliketurtles/figures/', 
+                         breeding, '_conf_table.png', sep = ''), 
+        width = 200, height = 200)
+    grid.table(newDFsamples)
+    dev.off()
   }
   
   output <- list(fig1, newDFsamples)
