@@ -21,6 +21,8 @@ library(igraph)
 library(rgeos)
 library(gridExtra)
 
+source('hatchlings_to_sample.R')
+
 # set number of simulations to run
 n_sims <- 100000
 ```
@@ -70,8 +72,6 @@ For each nest, males could fertilize eggs in different ways:
 
 ### Assuming random fertilization
 ```{r, warning = FALSE}
-source('hatchlings_to_sample.R')
-
 hatchlings_to_sample(n_hatchlings = 100, 
                      max_hatchlings = 96, 
                      max_males = 7,
