@@ -4,7 +4,7 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
                                  max_hatchlings = 96,  # max hatchlings sampled
                                  max_males = 7,        # max # of M F can mate with
                                  breeding,             # breeding mode
-                                 n_sims = 100000,      # number of simulations to run
+                                 n_sims = 10000,      # number of simulations to run
                                  dom = 0.9,            # prop fertilized by dom male
                                  n_sizes = c(32, 96))  # sample sizes to run      
 {
@@ -13,10 +13,10 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
   
   
   # pre-allocate data frame
-  DF <- data.frame(Males = rep(1:max_males, each = (max_hatchlings - 1)), 
-                   Sample_size = rep(2:max_hatchlings, times = max_males), 
-                   Proportion_correct = rep(NA, dim = max_males*(max_hatchlings - 1)), 
-                   Avg_detected = rep(NA, dim = max_males*(max_hatchlings - 1)))
+  DF <- data.frame(Males = rep(2:max_males, each = (max_hatchlings - 1)), 
+                   Sample_size = rep(2:max_hatchlings, times = (max_males - 1)), 
+                   Proportion_correct = rep(NA, dim = (max_males - 1)*(max_hatchlings - 1))) 
+                   # Avg_detected = rep(NA, dim = max_males*(max_hatchlings - 1)))
   
   
   # for each number of males that contribute to a nest:
@@ -26,7 +26,7 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
     if (breeding == 'dominant') {
       MC <- dom
       contributions <- c(MC, rep((1 - MC)/(i - 1), (i - 1)))
-      title <- paste('A. Dominant (', dom*100, '%) fertilization mode', sep = '')
+      title <- paste('C. Dominant (', dom*100, '%) fertilization mode', sep = '')
       
     } else if (breeding == 'exponential') {
       MC <- 0.5
@@ -36,14 +36,14 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
       
     } else if (breeding == 'random') {
       contributions <- rep(1/i, i)
-      title <- 'C. Random fertilization mode'
+      title <- 'A. Random fertilization mode'
       
     } else if (breeding == 'flexible_dominant') {
       contributions <- list(c(0.8868, 0.1132), 
                             c(0.4744, 0.3241, 0.2015), 
                             c(0.5485, 0.2508, 0.1509, 0.0499), 
                             c(0.4744, 0.1982, 0.1523, 0.0997, 0.0755))
-      title <- 'D. Flexible dominant fertilization mode \n based on Alfaro-Nunez, 2015'
+      title <- 'D. Flexible dominant fertilization mode \n based on Alfaro-Nunez et al., 2015'
       
     }
     
@@ -55,7 +55,7 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
       
       # pre-allocate correct identifications of number of males
       correct <- rep(NA, n_sims)
-      estimate <- rep(NA, n_sims)
+      # estimate <- rep(NA, n_sims)
       
       for (k in 1:n_sims) {
         
@@ -79,16 +79,17 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
         
         # correct allocation of number of males?
         correct[k] <- length(unique(samples)) == i
-        estimate[k] <- length(unique(samples))
+        # estimate[k] <- length(unique(samples))
         
       }
       
       # calculate index in data frame
-      index <- (i - 1)*(max_hatchlings - 1) + j - 1
+      index <- (i - 2)*(max_hatchlings - 1) + j - 1
+      # print(index)
       
       # stick proportion in data frame
       DF$Proportion_correct[index] <- mean(correct)
-      DF$Avg_detected[index] <- mean(estimate)
+      # DF$Avg_detected[index] <- mean(estimate)
       
     }
     
@@ -103,25 +104,25 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
   fig1 <- ggplot(DF, aes(x = Sample_size, y = Proportion_correct, 
                          col = as.factor(Males))) +
     geom_hline(yintercept = 0.8, linetype = 2) +
-    geom_path(lwd = 1.25) +
+    geom_path(lwd = 1) +
     labs(col = 'Number \n of Males') +
     scale_color_manual(values = colors) +
     ylab('Proportion Correct') +
     xlab('Hatchlings Sampled') +
-    geom_vline(xintercept = c(n_sizes), linetype = 3) +
-    ggtitle(title)
-  
-  # plot results - average estimate (over or underestimated?)
-  fig2 <- ggplot(DF, aes(x = Sample_size, y = Ave_detected/Males, 
-                         col = as.factor(Males))) +
-    geom_hline(yintercept = 0, linetype = 2) +
-    geom_path(lwd = 1.25) +
-    labs(col = 'Number \n of Males') +
-    scale_color_manual(values = colors) +
-    ylab('Number of Males Detected Relative to Correct Value') +
-    xlab('Hatchlings Sampled') +
-    geom_vline(xintercept = c(n_sizes), linetype = 3) +
-    ggtitle(title)
+    geom_vline(xintercept = c(n_sizes), linetype = 3)
+    # ggtitle(title)
+  # 
+  # # plot results - average estimate (over or underestimated?)
+  # fig2 <- ggplot(DF, aes(x = Sample_size, y = Avg_detected/Males, 
+  #                        col = as.factor(Males))) +
+  #   geom_hline(yintercept = 1, linetype = 2) +
+  #   geom_path(lwd = 1.25) +
+  #   labs(col = 'Number \n of Males') +
+  #   scale_color_manual(values = colors) +
+  #   ylab('Number of Males Detected Relative to Correct Value') +
+  #   xlab('Hatchlings Sampled') +
+  #   geom_vline(xintercept = c(n_sizes), linetype = 3) +
+  #   ggtitle(title)
   
   # save results to image file
   
@@ -130,26 +131,26 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
     ggsave(plot = fig1, 
            filename = paste(breeding, '_', dom*100, 
                             '_fig1_proportion_correct.png', sep = ''),
-           path = 'C://Users/Vic/Documents/Projects/iliketurtles/figures',
-           width = 6, height = 3)
+           path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses',
+           width = 6, height = 4)
     
-    ggsave(plot = fig2, 
-           filename = paste(breeding, '_', dom*100, 
-                            '_fig1_average_estimate.png', sep = ''),
-           path = 'C://Users/Vic/Documents/Projects/iliketurtles/figures',
-           width = 6, height = 3)
+    # ggsave(plot = fig2, 
+    #        filename = paste(breeding, '_', dom*100, 
+    #                         '_fig1_average_estimate.png', sep = ''),
+    #        path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures',
+    #        width = 6, height = 3)
     
   } else {
     
     ggsave(plot = fig1, 
            filename = paste(breeding, '_fig1_proportion_correct.png', sep = ''),
-           path = 'C://Users/Vic/Documents/Projects/iliketurtles/figures',
-           width = 6, height = 3)
+           path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses',
+           width = 6, height = 4)
     
-    ggsave(plot = fig1, 
-           filename = paste(breeding, '_fig1_average_estimate.png', sep = ''),
-           path = 'C://Users/Vic/Documents/Projects/iliketurtles/figures',
-           width = 6, height = 3)
+    # ggsave(plot = fig2, 
+    #        filename = paste(breeding, '_fig1_average_estimate.png', sep = ''),
+    #        path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures',
+    #        width = 6, height = 3)
   }
   
   # What's our confidence if we sample 32 percent of the eggs?
@@ -160,7 +161,7 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
   
   
   if (breeding == 'dominant') {
-    png(filename = paste('C://Users/Vic/Documents/Projects/iliketurtles/figures/', 
+    png(filename = paste('C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses/', 
                          breeding, '_', dom*100, '_conf_table.png', sep = ''), 
         width = 200, height = 200)
     grid.table(newDFsamples)
@@ -168,7 +169,7 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
     
   } else {
     
-    png(filename = paste('C://Users/Vic/Documents/Projects/iliketurtles/figures/', 
+    png(filename = paste('C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses/', 
                          breeding, '_conf_table.png', sep = ''), 
         width = 200, height = 200)
     grid.table(newDFsamples)

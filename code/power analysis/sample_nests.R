@@ -6,7 +6,7 @@ sample_nests <- function(max_n_males = 7,    # maximum # of sires per F
                          minM = 10,          # minimum # of M sampled
                          numF = 60,          # maximum # of F in 1 breeding year
                          maxM = 60,          # maximum # of M in 1 breeding year
-                         sample_all_N = 10,  # number of F where we sample all nests
+                         sample_all_N = 17,  # number of F where we sample all nests
                          breeding = '',      # random, exponential, or dominate
                          nsims = 100000      # number of simulations
 ) 

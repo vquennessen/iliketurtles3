@@ -18,8 +18,9 @@ library(tidyverse)
 library(data.table)
 library(raster)
 library(igraph)
-library(rgeos)
-library(gridExtra)
+# library(rgeos)
+library(cowplot)
+library(patchwork)
 
 source('hatchlings_to_sample.R')
 
@@ -72,72 +73,80 @@ For each nest, males could fertilize eggs in different ways:
 
 ### Assuming random fertilization
 ```{r, warning = FALSE}
-hatchlings_to_sample(n_hatchlings = 100, 
-                     max_hatchlings = 96, 
-                     max_males = 7,
-                     breeding = 'random', 
-                     n_sims = n_sims, 
-                     dom = NULL, 
-                     n_sizes = c(32, 96))
+
+# source function
+source('hatchlings_to_sample.R')
+
+# generate output
+output1 <- hatchlings_to_sample(n_hatchlings = 100, 
+                               max_hatchlings = 96, 
+                               max_males = 7,
+                               breeding = 'random', 
+                               n_sims = n_sims, 
+                               dom = NULL, 
+                               n_sizes = c(32, 96))
+
+# figure
+A <- output1[[1]]
+A
+
+# table
+a <- output1[[2]]
+a
 ```
 \newpage
 
 ### Assuming exponential decay in fertilization (1/2, 1/4, 1/8, etc.)
 ```{r, warning = FALSE}
+
+# source function
 source('hatchlings_to_sample.R')
 
-hatchlings_to_sample(n_hatchlings = 100,
-                     max_hatchlings = 96,
-                     max_males = 7,
-                     breeding = 'exponential',
-                     n_sims = n_sims, 
-                     dom = NULL, 
-                     n_sizes = c(32, 96))
+# generate output
+output2 <- hatchlings_to_sample(n_hatchlings = 100,
+                                max_hatchlings = 96,
+                                max_males = 7,
+                                breeding = 'exponential',
+                                n_sims = n_sims, 
+                                dom = NULL, 
+                                n_sizes = c(32, 96))
+
+# figure
+B <- output2[[1]] +
+  ylab('') + xlab('') +
+  theme(legend.position = 'right', legend.justification = 0)
+B
+
+# table
+b <- output2[[2]]
+b
 ```
 
 \newpage
 
 ### Assuming one dominant sire that fertilizes 90% of eggs
 ```{r, warning = FALSE}
+
+# source function
 source('hatchlings_to_sample.R')
 
-hatchlings_to_sample(n_hatchlings = 100, 
+# generate output
+output3 <- hatchlings_to_sample(n_hatchlings = 100, 
                      max_hatchlings = 96, 
                      max_males = 7, 
                      breeding = 'dominant', 
                      n_sims = n_sims, 
                      dom = 0.9, 
                      n_sizes = c(32, 96))
-```
 
-\newpage
+# figure
+C <- output3[[1]] +
+  theme(legend.position = 'none')
+C
 
-### Assuming one dominant sire that fertilizes 70% of eggs
-```{r, fig.height = 4, warning = FALSE}
-source('hatchlings_to_sample.R')
-
-hatchlings_to_sample(n_hatchlings = 100, 
-                     max_hatchlings = 96, 
-                     max_males = 7, 
-                     breeding = 'dominant', 
-                     n_sims = n_sims, 
-                     dom = 0.7, 
-                     n_sizes = c(32, 96))
-```
-
-\newpage
-
-### Assuming one dominant sire that fertilizes 50% of eggs
-```{r, warning = FALSE}
-source('hatchlings_to_sample.R')
-
-hatchlings_to_sample(n_hatchlings = 100, 
-                     max_hatchlings = 96, 
-                     max_males = 7, 
-                     breeding = 'dominant', 
-                     n_sims = n_sims, 
-                     dom = 0.5, 
-                     n_sizes = c(32, 96))
+# output
+c <- output3[[2]]
+c
 ```
 
 \newpage
@@ -167,63 +176,111 @@ contribution
 \newpage
 
 ```{r, warning = FALSE}
+
+# source function
 source('hatchlings_to_sample.R')
 
-hatchlings_to_sample(n_hatchlings = 100, 
-                     max_hatchlings = 96, 
-                     max_males = 5, 
-                     breeding = 'flexible_dominant', 
-                     n_sims = n_sims, 
-                     dom = NULL, 
-                     n_sizes = c(32, 96))
+# generate output
+output4 <- hatchlings_to_sample(n_hatchlings = 100, 
+                                max_hatchlings = 96, 
+                                max_males = 5, 
+                                breeding = 'flexible_dominant', 
+                                n_sims = n_sims, 
+                                dom = NULL, 
+                                n_sizes = c(32, 96))
+
+# figure
+D <- output4[[1]] +
+  theme(legend.position = 'none') +
+  ylab('')
+D
+
+# output
+d <- output4[[2]]
+d
 ```
 
-<!-- \newpage -->
 
-<!-- Question 2: How many females and nests should be sampled to get a robust estimate of the number of breeding males, and therefore the breeding sex ratio? -->
+```{r}
 
-<!-- ### assuming random fertilization -->
-<!-- ```{r, fig.height = 2.25, warning = FALSE} -->
-<!-- source('sample_all_nests.R') -->
+# random
+A <- output1[[1]] +
+  theme(legend.position = 'none') +
+  xlab('')
 
-<!-- sample_all_nests(max_n_males = 7, -->
-<!--                  max_n_females = 10,  -->
-<!--                  minF = 10,  -->
-<!--                  minM = 10,  -->
-<!--                  maxF = 60,  -->
-<!--                  maxM = 60,  -->
-<!--                  breeding = 'random', -->
-<!--                  nsims = n_sims) -->
-<!-- ``` -->
+# exponential
+B <- output2[[1]] +
+  ylab('') + xlab('') +
+  theme(legend.position = 'right')
 
-<!-- \newpage -->
+# dominant (90%)
+C <- output3[[1]] +
+  theme(legend.position = 'none')
 
-<!-- ### assuming exponential decay in fertilization (1 nest, 1/2, 1/4, 1/8, etc.) -->
-<!-- ```{r, fig.height = 2.5, warning = FALSE} -->
-<!-- source('sample_all_nests.R') -->
+#flexible dominant
+D <- output4[[1]] +
+  theme(legend.position = 'none') +
+  ylab('')
 
-<!-- sample_all_nests(max_n_males = 7, -->
-<!--                  max_n_females = 10,  -->
-<!--                  minF = 10,  -->
-<!--                  minM = 10,  -->
-<!--                  maxF = 60,  -->
-<!--                  maxM = 60,  -->
-<!--                  breeding = 'exponential', -->
-<!--                  nsims = n_sims) -->
-<!-- ``` -->
 
-<!-- \newpage -->
+# put all figures together for 1 big figure
+patchwork <- A + B + C + D
+final_fig <- patchwork + plot_annotation(tag_levels = "a")
+ggsave(filename = 'fig1.png', 
+       path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses/',
+       plot = final_fig, 
+       width = 9, 
+       height = 4.5)
+```
 
-<!-- ### assuming one dominant sire -->
-<!-- ```{r, fig.height = 2.5, warning = FALSE} -->
-<!-- source('sample_all_nests.R') -->
+\newpage
 
-<!-- sample_all_nests(max_n_males = 7, -->
-<!--                  max_n_females = 10,  -->
-<!--                  minF = 10,  -->
-<!--                  minM = 10,  -->
-<!--                  maxF = 60,  -->
-<!--                  maxM = 60,  -->
-<!--                  breeding = 'dominant', -->
-<!--                  nsims = n_sims) -->
-<!-- ``` -->
+### Assuming one dominant sire that fertilizes 70% of eggs
+```{r, fig.height = 4, warning = FALSE}
+
+# source function
+source('hatchlings_to_sample.R')
+
+# generate output
+output5 <- hatchlings_to_sample(n_hatchlings = 100, 
+                                max_hatchlings = 96, 
+                                max_males = 7, 
+                                breeding = 'dominant', 
+                                n_sims = n_sims, 
+                                dom = 0.7, 
+                                n_sizes = c(32, 96))
+
+# figure
+E <- output5[[1]]
+E
+
+# output
+e <- output5[[2]]
+e
+```
+
+\newpage
+
+### Assuming one dominant sire that fertilizes 50% of eggs
+```{r, warning = FALSE}
+
+# source function
+source('hatchlings_to_sample.R')
+
+# generate output
+output6 <- hatchlings_to_sample(n_hatchlings = 100, 
+                                max_hatchlings = 96, 
+                                max_males = 7, 
+                                breeding = 'dominant', 
+                                n_sims = n_sims, 
+                                dom = 0.5, 
+                                n_sizes = c(32, 96))
+
+# figure
+G <- output6[[1]]
+G
+
+# output
+g <- output6[[2]]
+g
+```
