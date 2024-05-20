@@ -1,80 +1,110 @@
 ### function for number of eggs to sample to determine the number of sires
 
-hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs per nest
-                                 max_hatchlings = 96,  # max hatchlings sampled
-                                 max_males = 7,        # max # of M F can mate with
-                                 breeding,             # breeding mode
-                                 n_sims = 10000,      # number of simulations to run
-                                 dom = 0.9,            # prop fertilized by dom male
-                                 n_sizes = c(32, 96))  # sample sizes to run      
+hatchlings_to_sample <- function(hatchlings_mu,
+                                 hatchlings_sd,      # number of eggs per nest
+                                 max_males,          # max # of M F can mate with
+                                 fertilization_mode, # fertilization mode
+                                 n_sims,             # number of simulations to run
+                                 n_sizes,            # sample sizes to run  
+                                 computer)           # which computer is this running on    
 {
   
-  max_hatchlings <- min(max_hatchlings, n_hatchlings) 
-  
-  
   # pre-allocate data frame
-  DF <- data.frame(Males = rep(2:max_males, each = (max_hatchlings - 1)), 
-                   Sample_size = rep(2:max_hatchlings, times = (max_males - 1)), 
-                   Proportion_correct = rep(NA, dim = (max_males - 1)*(max_hatchlings - 1))) 
-                   # Avg_detected = rep(NA, dim = max_males*(max_hatchlings - 1)))
+  DF <- data.frame(Fertilization_mode = fertilization_mode,
+                   Males = rep(2:max_males, each = max(n_sizes)), 
+                   Sample_size = rep(c(1:max(n_sizes)), times = (max_males - 1)), 
+                   Proportion_correct = rep(NA, dim = (max_males - 1)*(max(n_sizes) - 1))) 
+  # Avg_detected = rep(NA, dim = max_males*(max_hatchlings - 1)))
   
   
   # for each number of males that contribute to a nest:
   for (i in 2:max_males) {
     
     # set contributions per males
-    if (breeding == 'dominant') {
-      MC <- dom
+    if (fertilization_mode == 'dominant90') {
+      MC <- 0.90
       contributions <- c(MC, rep((1 - MC)/(i - 1), (i - 1)))
-      title <- paste('C. Dominant (', dom*100, '%) fertilization mode', sep = '')
+      title <- paste('Dominant (90%) fertilization mode', sep = '')
       
-    } else if (breeding == 'exponential') {
+    } else if (fertilization_mode == 'dominant70') {
+      MC <- 0.70
+      contributions <- c(MC, rep((1 - MC)/(i - 1), (i - 1)))
+      title <- paste('Dominant (70%) fertilization mode', sep = '')
+      
+    } else if (fertilization_mode == 'dominant50') {
+      MC <- 0.50
+      contributions <- c(MC, rep((1 - MC)/(i - 1), (i - 1)))
+      title <- paste('Dominant (50%) fertilization mode', sep = '')
+      
+    } else if (fertilization_mode == 'exponential') {
       MC <- 0.5
       contributions <- 0.5^c(1:(i-1))
       contributions <- c(contributions, contributions[i-1])
-      title <- 'B. Exponential (1/2) fertilization mode'
+      title <- 'Exponential (1/2) fertilization mode'
       
-    } else if (breeding == 'random') {
+    } else if (fertilization_mode == 'random') {
       contributions <- rep(1/i, i)
-      title <- 'A. Random fertilization mode'
+      title <- 'Random fertilization mode'
       
-    } else if (breeding == 'flexible_dominant') {
-      contributions <- list(c(0.8868, 0.1132), 
-                            c(0.4744, 0.3241, 0.2015), 
-                            c(0.5485, 0.2508, 0.1509, 0.0499), 
-                            c(0.4744, 0.1982, 0.1523, 0.0997, 0.0755))
-      title <- 'D. Flexible dominant fertilization mode \n based on Alfaro-Nunez et al., 2015'
-      
+    } else if (fertilization_mode == 'dominant_mixed') {
+      doms <- sample(c(0.50, 0.70, 0.90), size = n_sims, replace = TRUE)
+      M1 <- matrix(doms, nrow = n_sims, ncol = 1)
+      M2 <- matrix(rep((1 - doms) / (i - 1), i - 1), nrow = n_sims, ncol = i - 1)
+      probs <- cbind(M1, M2)
+      title <- 'Mixed dominant fertilization mode'
+
     }
+    
+    # } else if (breeding == 'flexible_dominant') {
+    #   contributions <- list(c(0.8868, 0.1132), 
+    #                         c(0.4744, 0.3241, 0.2015), 
+    #                         c(0.5485, 0.2508, 0.1509, 0.0499), 
+    #                         c(0.4744, 0.1982, 0.1523, 0.0997, 0.0755))
+    #   title <- 'D. Flexible dominant fertilization mode \n based on Alfaro-Nunez et al., 2015'
+    #   
+    # }
     
     # proportion_correct array
     prop_correct <- rep(NA, n_sims)
     
     # for each sample size
-    for (j in 2:max_hatchlings) {
+    for (j in 1:max(n_sizes)) {
       
       # pre-allocate correct identifications of number of males
       correct <- rep(NA, n_sims)
       # estimate <- rep(NA, n_sims)
       
+      # initialize nest sizes
+      # pull numbers of hatchlings from normal distribution
+      n_hatchlings <- rnorm(n = n_sims, mean = hatchlings_mu, sd = hatchlings_sd)
+      
+      # set any nests with 0 or fewer eggs to 10 eggs
+      n_hatchlings[which(n_hatchlings <= 0)] <- 10
+      
       for (k in 1:n_sims) {
         
         # simulate male contributions to nest
-        if (breeding != 'flexible_dominant') {
-          nest <- sample(x = 1:i, 
-                         size = n_hatchlings, 
-                         replace = TRUE,
-                         prob = contributions)
-        } else {
-          nest <- sample(x = 1:i, 
-                         size = n_hatchlings, 
-                         replace = TRUE,
-                         prob = contributions[[i - 1]])
-        }
+        # if (breeding != 'flexible_dominant') {
+        #   nest <- sample(x = 1:i, 
+        #                  size = n_hatchlings[k], 
+        #                  replace = TRUE,
+        #                  prob = contributions)
+        # } else {
         
-        # take samples of size k
+        # if mixed dominant, extract contributions
+        if (fertilization_mode == 'dominant_mixed') { contributions <- probs[k, ]}
+        
+        # make nest with i fathers
+        nest <- sample(x = 1:i, 
+                       size = n_hatchlings[k], 
+                       replace = TRUE,
+                       prob = contributions)
+        # }
+        
+        # take sample of size j from nest (or the whole nest if < j)
+        sample_size <- min(j, length(nest))
         samples <- sample(x = nest, 
-                          size = j, 
+                          size = sample_size,
                           replace = FALSE)
         
         # correct allocation of number of males?
@@ -84,7 +114,7 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
       }
       
       # calculate index in data frame
-      index <- (i - 2)*(max_hatchlings - 1) + j - 1
+      index <- (i - 2)*(max(n_sizes)) + j 
       # print(index)
       
       # stick proportion in data frame
@@ -109,8 +139,9 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
     scale_color_manual(values = colors) +
     ylab('Proportion Correct') +
     xlab('Hatchlings Sampled') +
-    geom_vline(xintercept = c(n_sizes), linetype = 3)
-    # ggtitle(title)
+    geom_vline(xintercept = c(n_sizes), linetype = 3) +
+    ggtitle(title)
+  
   # 
   # # plot results - average estimate (over or underestimated?)
   # fig2 <- ggplot(DF, aes(x = Sample_size, y = Avg_detected/Males, 
@@ -124,59 +155,30 @@ hatchlings_to_sample <- function(n_hatchlings = 100,         # number of eggs pe
   #   geom_vline(xintercept = c(n_sizes), linetype = 3) +
   #   ggtitle(title)
   
-  # save results to image file
+  # which computer am I using???
+  if (computer == 'desktop') { comp <- 'Vic' } else if (computer == 'laptop') { comp <- 'vique' }
   
-  if (breeding == 'dominant') {
-    
-    ggsave(plot = fig1, 
-           filename = paste(breeding, '_', dom*100, 
-                            '_fig1_proportion_correct.png', sep = ''),
-           path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses',
-           width = 6, height = 4)
-    
-    # ggsave(plot = fig2, 
-    #        filename = paste(breeding, '_', dom*100, 
-    #                         '_fig1_average_estimate.png', sep = ''),
-    #        path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures',
-    #        width = 6, height = 3)
-    
-  } else {
-    
-    ggsave(plot = fig1, 
-           filename = paste(breeding, '_fig1_proportion_correct.png', sep = ''),
-           path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses',
-           width = 6, height = 4)
-    
-    # ggsave(plot = fig2, 
-    #        filename = paste(breeding, '_fig1_average_estimate.png', sep = ''),
-    #        path = 'C://Users/Vic/Documents/Projects/iliketurtles3/figures',
-    #        width = 6, height = 3)
-  }
+  # save plot
+  ggsave(plot = fig1, 
+         filename = paste(fertilization_mode, '_fig1_proportion_correct.png', sep = ''),
+         path = paste('C://Users/', comp, '/Documents/Projects/iliketurtles3/figures/power analyses', 
+                      sep = ''),
+         width = 6, height = 4)
   
   # What's our confidence if we sample 32 percent of the eggs?
-  library(dplyr)
-  DFsamples <- subset(DF, Sample_size %in% n_sizes)
-  newDFsamples <- DFsamples %>% 
+  DFsamples <- DF %>% 
+    filter(Sample_size %in% n_sizes) %>%
     spread(Sample_size, Proportion_correct)
   
+  # save confidence table
+  png(filename = paste('C://Users/', comp, '/Documents/Projects/iliketurtles3/figures/power analyses/', 
+                       fertilization_mode, '_conf_table.png', sep = ''), 
+      width = 200, height = 200)
+  grid.table(DFsamples, rows = NULL)
+  dev.off()
   
-  if (breeding == 'dominant') {
-    png(filename = paste('C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses/', 
-                         breeding, '_', dom*100, '_conf_table.png', sep = ''), 
-        width = 200, height = 200)
-    grid.table(newDFsamples)
-    dev.off()
-    
-  } else {
-    
-    png(filename = paste('C://Users/Vic/Documents/Projects/iliketurtles3/figures/power analyses/', 
-                         breeding, '_conf_table.png', sep = ''), 
-        width = 200, height = 200)
-    grid.table(newDFsamples)
-    dev.off()
-  }
   
-  output <- list(fig1, newDFsamples)
+  output <- list(fig1, DFsamples)
   
   return(output)
   
