@@ -27,8 +27,8 @@ run_base_model <- function(arguments) {
   M_remigration_int <- 1.47                 # remigration interval - males
   nests_mu <- 4.95                          # mean # of nests/F/season
   nests_sd <- 2.09                          # sd of # of nests/F/season
-  eggs_mu <- 100.65                         # mean number of eggs/nest
-  eggs_sd <- 23.08                          # sd of number of eggs/nest
+  eggs_mu <- 100.58                         # mean number of eggs/nest
+  eggs_sd <- 22.61                          # sd of number of eggs/nest
   hatch_success_A <- 0.86                   # logistic by temp - A
   hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
