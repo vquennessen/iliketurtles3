@@ -178,7 +178,7 @@ hatchlings_to_sample <- function(hatchlings_mu,
   dev.off()
   
   
-  output <- list(fig1, DFsamples)
+  output <- list(fig1, DF)
   
   return(output)
   
