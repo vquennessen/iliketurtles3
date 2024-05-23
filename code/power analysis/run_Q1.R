@@ -17,9 +17,9 @@ source('hatchlings_to_sample.R')
 hatchlings_mu <- 100.58                  # number of eggs per nest, mean
 hatchlings_sd <- 22.61                   # number of eggs per nest, SD
 max_males <- 5                           # max # of M F can mate with
-n_sims <- 50000                          # number of simulations to run
+n_sims <- 1000000                        # number of simulations to run
 n_sizes <- c(32, 96)                     # sample sizes to calculate probs for  
-computer <- 'desktop'                     # computer
+computer <- 'desktop'                    # computer
 fertilization_modes <- c('random',       # fertilization modes
                          'exponential', 
                          'dominant50', 
