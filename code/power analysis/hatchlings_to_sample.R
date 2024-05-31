@@ -46,7 +46,7 @@ hatchlings_to_sample <- function(hatchlings_mu,
       contributions <- rep(1/i, i)
       title <- 'Random fertilization mode'
       
-    } else if (fertilization_mode == 'dominant_mixed') {
+    } else if (fertilization_mode == 'mixed_dominant') {
       doms <- sample(c(0.50, 0.70, 0.90), size = n_sims, replace = TRUE)
       M1 <- matrix(doms, nrow = n_sims, ncol = 1)
       M2 <- matrix(rep((1 - doms) / (i - 1), i - 1), nrow = n_sims, ncol = i - 1)
@@ -92,7 +92,7 @@ hatchlings_to_sample <- function(hatchlings_mu,
         # } else {
         
         # if mixed dominant, extract contributions
-        if (fertilization_mode == 'dominant_mixed') { contributions <- probs[k, ]}
+        if (fertilization_mode == 'mixed_dominant') { contributions <- probs[k, ]}
         
         # make nest with i fathers
         nest <- sample(x = 1:i, 
@@ -120,6 +120,14 @@ hatchlings_to_sample <- function(hatchlings_mu,
       # stick proportion in data frame
       DF$Proportion_correct[index] <- mean(correct)
       # DF$Avg_detected[index] <- mean(estimate)
+      
+      # grab column means of probs for dominant mixed fertilization
+      if (fertilization_mode == 'mixed_dominant') {
+        contributions2 <- colMeans(probs)
+      } else { contributions2 <- contributions }
+      
+      # marginal contribution of last male
+      DF$Marginal[index] <- contributions2[i]
       
     }
     
@@ -166,9 +174,8 @@ hatchlings_to_sample <- function(hatchlings_mu,
          width = 6, height = 4)
   
   # What's our confidence if we sample 32 percent of the eggs?
-  DFsamples <- DF %>% 
-    filter(Sample_size %in% n_sizes) %>%
-    spread(Sample_size, Proportion_correct)
+  DFsamples <- DF %>% filter(Sample_size %in% n_sizes)
+  DFsamples2 <- DFsamples %>% spread(Sample_size, Proportion_correct)
   
   # save confidence table
   png(filename = paste('C://Users/', comp, '/Documents/Projects/iliketurtles3/figures/power analyses/', 
@@ -178,7 +185,7 @@ hatchlings_to_sample <- function(hatchlings_mu,
   dev.off()
   
   
-  output <- list(fig1, DFsamples)
+  output <- list(fig1, DFsamples, DFsamples2)
   
   return(output)
   
