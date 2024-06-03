@@ -12,25 +12,27 @@ load("~/Projects/iliketurtles3/output/power analysis/probabilities1e+06.Rdata")
 # output called 'probs'
 
 # undo spread from hatchlings_to_sample.R
-DF <- probs %>%
-  gather(key = 'Sample_Size', value = 'Probability', 3:4)
+# DF <- probs %>%
+#   gather(key = 'Sample_Size', value = 'Probability', 3:4)
 
 # make factor variables
-DF$Males <- as.factor(DF$Males)
-DF$Fertilization_mode <- factor(DF$Fertilization_mode, 
-                                levels = c('dominant_mixed', 'dominant90', 'dominant70',
-                                           'dominant50', 'exponential', 'random'),
-                                labels = c('Mixed Dominant', 'Dominant (90%)', 'Dominant (70%)', 
-                                           'Dominant (50%)', 'Exponential', 'Random'))
-DF$Sample_Size <- as.factor(DF$Sample_Size)
-DF$Sample_Size <- as.factor(DF$Sample_Size)
+probs$Males <- as.factor(probs$Males)
+probs$Fertilization_mode <- factor(probs$Fertilization_mode, 
+                                   levels = c('mixed_dominant', 'dominant90', 'dominant70',
+                                              'dominant50', 'exponential', 'random'),
+                                   labels = c('Mixed Dominant', 'Dominant (90%)', 'Dominant (70%)', 
+                                              'Dominant (50%)', 'Exponential', 'Random'))
+probs$Sample_Size <- as.factor(probs$Sample_size)
+probs$Sample_Size <- as.factor(probs$Sample_size)
 
 # subset by sample size
-DF32 <- subset(DF, Sample_Size == 32)
-DF96 <- subset(DF, Sample_Size == 96)
+DF32 <- subset(probs, Sample_size == 32)
+DF96 <- subset(probs, Sample_size == 96)
 
 # start heatmap for sample size 32
-ggplot(data = DF32, aes(x = Males, y = Fertilization_mode, fill = Probability)) +
+figure2 <- ggplot(data = DF32, aes(x = Males, 
+                                   y = Fertilization_mode, 
+                                   fill = Proportion_correct)) +
   geom_tile(color = 'white',
             lwd = 1.5,
             linetype = 1) +
@@ -41,12 +43,13 @@ ggplot(data = DF32, aes(x = Males, y = Fertilization_mode, fill = Probability)) 
                        breaks = c(0, 0.25, 0.5, 0.75, 1),
                        limits = c(0, 1),
                        na.value = 'gray') +
-  guides(fill = guide_colourbar(title = 'Probability')) +
+  guides(fill = guide_colourbar(title = 'Proportion \n correct')) +
   xlab('Number of males') +
   ylab('Fertilization mode') +
   theme(text = element_text(size = 15)) +
   ggtitle('Probability of detecting all contributing males \n and marginal contributions') +
   theme(panel.background = element_blank()) +
+  
   # random
   annotate(geom = 'text', x = 1, y = 6.25, label = '1.000', colour = 'black') +
   annotate(geom = 'text', x = 2, y = 6.25, label = '1.000', colour = 'black') +
@@ -69,7 +72,7 @@ ggplot(data = DF32, aes(x = Males, y = Fertilization_mode, fill = Probability)) 
            lwd = 3) +
   annotate("segment", x = 3.72, xend = 4.5, y = 5.75, yend = 5.75, colour = "white", 
            lwd = 3) +
-
+  
   # exponential
   annotate(geom = 'text', x = 1, y = 5.25, label = '1.000', colour = 'black') +
   annotate(geom = 'text', x = 2, y = 5.25, label = '1.000', colour = 'black') +
@@ -200,3 +203,7 @@ ggplot(data = DF32, aes(x = Males, y = Fertilization_mode, fill = Probability)) 
            lwd = 3) +
   annotate("segment", x = 3.645, xend = 4.5, y = 0.75, yend = 0.75, colour = "white", 
            lwd = 3)
+
+ggsave(figure2, 
+     file = "C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/chapters/chapter 1/figures/figure2.png", 
+     height = 10, width = 14)
