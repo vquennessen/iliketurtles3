@@ -32,8 +32,8 @@ run_base_model <- function(arguments) {
   hatch_success_A <- 0.86                   # logistic by temp - A
   hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
-  T_piv <- 29.2                             # thermal reaction norm midpoint
-  k <- -1.4                                 # thermal reaction norm slope
+  T_piv <- 29.368                           # thermal reaction norm midpoint
+  k <- -0.561                               # thermal reaction norm slope
   F_initial <- 170                          # initial adult F
   M_initial <- 30                           # initial adult M
   
@@ -49,7 +49,7 @@ run_base_model <- function(arguments) {
   years <- 100                              # number of years to simulate
   evolution <- TRUE                         # whether evolution is turned on
   climate_stochasticity <- FALSE            # whether or not to add in
-
+  
   A <- max_age
   Y <- years
   
@@ -88,7 +88,7 @@ run_base_model <- function(arguments) {
   # make male leslie matrix for survival
   m_matrix <- matrix(diag(M_survival[1:(A - 1)]), ncol = A - 1)
   m_Leslie <- rbind(rep(0, A), cbind(m_matrix, rep(0, A - 1)))
-
+  
   # stable age distribution
   SAD <- initialize_population(beta, burn_in = 1000, max_age, M, 
                                F_remigration_int, M_remigration_int,
@@ -134,6 +134,13 @@ run_base_model <- function(arguments) {
   sims_mature_abundance <- array(rep(NA, times = Y * nsims), 
                                  dim = c(Y, nsims))  
   
+  if (evolution == TRUE) {
+    
+    sims_ptiv <- array(rep(NA, times = Y * nsims), 
+                       dim = c(Y, nsims))
+    
+  }
+  
   ########################################################################
   
   # run the model for each simulation
@@ -153,6 +160,12 @@ run_base_model <- function(arguments) {
     sims_abundance_M[, i]       <- output[[3]]
     sims_abundance_total[, i]   <- output[[4]]
     sims_mature_abundance[, i]  <- output[[5]]
+    
+    if (evolution == TRUE) {
+      
+      sims_ptiv[, i]              <- output[[6]]
+      
+    }
     
     # write to progress text file
     if ((i/nsims*100) %% 10 == 0) {
@@ -176,11 +189,25 @@ run_base_model <- function(arguments) {
                     '_abundance_total.Rda', sep = '')
   filepath5 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
                     '_mature_abundance.Rda', sep = '')
+  
+  if (evolution == TRUE) {
+    
+    filepath6 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
+                      '_ptiv.Rda', sep = '')
+    
+  }
+  
   # save objects
   save(sims_N, file = filepath1)
   save(sims_abundance_F, file = filepath2)
   save(sims_abundance_M, file = filepath3)
   save(sims_abundance_total, file = filepath4)
   save(sims_mature_abundance, file = filepath5)
+  
+  if (evolution == TRUE) {
+    
+    save(sims_ptiv, file = filepath6)
+    
+  }
   
 }
