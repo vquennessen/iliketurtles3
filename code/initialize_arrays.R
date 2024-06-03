@@ -43,15 +43,19 @@ initialize_arrays <- function(scenario, years, A, Y, F_init, M_init,
     # epsilon, error term for the expected pivotal temperature
     Epsilon <- rnorm(n = Y, mean = 0, sd = sqrt((ag_var/H - ag_var)))
     
+    # pivotal temperature
+    Pivotal_temps <- c(G[1], rep(NA, times = Y - 1))
+    
   } else { 
     
-    epsilon <- NULL 
-    gamma <- NULL 
+    Epsilon <- NULL 
+    Gamma <- NULL 
+    Pivotal_temps <- NULL
     
     }
   
   # output
-  output <- list(temperatures, N, G, Gamma, Epsilon)
+  output <- list(temperatures, N, G, Gamma, Epsilon, Pivotal_temps)
   
   return(output)
   
