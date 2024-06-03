@@ -6,7 +6,7 @@ reproduction <- function(N, y, beta, max_age, M,
                          hatch_success_A, hatch_success_k, 
                          hatch_success_t0, G, H, ag_var, 
                          Gamma, Epsilon, temp, temp_sd, T_piv, k, 
-                         evolution, climate_stochasticity) {
+                         evolution, climate_stochasticity, Pivotal_temps) {
   
   # calculate number of breeding adults
   # females only breed every F_remigration_int years
@@ -66,16 +66,19 @@ reproduction <- function(N, y, beta, max_age, M,
       GF <- weighted.mean(x = G, w = N[1, , y])
       
       # hatchling genotype
-      GH <- (GM + GF) / 2 + Gamma[y]
+      Pivotal_temps[y] <- (GM + GF) / 2 + Gamma[y]
       
       # determine proportion of male hatchlings based on temperature + genetics
-      prop_male <- 1/(1 + exp(-k*(temperature - GH + Epsilon[y])))
+      prop_male <- 1/(1 + exp(-k*(temperature - Pivotal_temps[y] + Epsilon[y])))
       
       
     } else {
       
       # determine proportion of male hatchlings based on temperature
       prop_male <- 1/(1 + exp(-k*(temperature-T_piv)))
+      
+      # don't track pivotal temperatures
+      Pivotal_temps <- NULL
       
     }
     
@@ -87,11 +90,11 @@ reproduction <- function(N, y, beta, max_age, M,
     
     female_hatchlings <- 0
     male_hatchlings <- 0 
-    
+
   }
   
   # output
-  output <- list(female_hatchlings, male_hatchlings)
+  output <- list(female_hatchlings, male_hatchlings, Pivotal_temps)
   
   return(output)
   
