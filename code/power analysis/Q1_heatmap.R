@@ -46,7 +46,6 @@ figure2 <- ggplot(data = DF32, aes(x = Males,
   guides(fill = guide_colourbar(title = 'Proportion \n correct')) +
   xlab('Number of males') +
   ylab('Fertilization mode') +
-  theme(text = element_text(size = 15)) +
   ggtitle('Probability of detecting all contributing males \n and marginal contributions') +
   theme(panel.background = element_blank()) +
   
@@ -202,8 +201,10 @@ figure2 <- ggplot(data = DF32, aes(x = Males,
   annotate("segment", x = 3.595, xend = 3.645, y = 0.75, yend = 0.75, colour = "lightgrey", 
            lwd = 3) +
   annotate("segment", x = 3.645, xend = 4.5, y = 0.75, yend = 0.75, colour = "white", 
-           lwd = 3)
+           lwd = 3) +
+  
+  theme(text = element_text(size = 15))
 
 ggsave(figure2, 
      file = "C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/chapters/chapter 1/figures/figure2.png", 
-     height = 10, width = 14)
+     height = 6, width = 8)
