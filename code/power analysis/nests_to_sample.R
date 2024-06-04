@@ -1,11 +1,12 @@
 # function to determine our confidence in BSR estimate given how many nests we 
 # sample to robustly estimate the BSR for that year
 
-sample_nests <- function(# max_n_males = 5,    # maximum # of sires per F
-                         max_n_females = 3,  # maximum # of F each M mates with
+sample_nests <- function(# max_n_males = 5,  # maximum # of sires per F
+                         # max_n_females = 3,  # maximum # of F each M mates with
                          minM = 10,          # minimum # of M sampled
+                         minF = 30,         
                          maxF = 60,          # maximum # of F in 1 breeding year
-                         maxM = 60,          # maximum # of M in 1 breeding year
+                         maxM = 30,          # maximum # of M in 1 breeding year
                          sample_all_N = 17,  # number of F where we sample all nests
                          breeding = '',      # random, exponential, or dominant
                          nsims = 100000      # number of simulations
@@ -16,6 +17,10 @@ sample_nests <- function(# max_n_males = 5,    # maximum # of sires per F
   # probabilities of mating with 1 - 5 males
   # Mprob <- rep(1/max_n_males, times = max_n_males)
   Mprob <- c(0.463, 0.318, 0.157, 0.034, 0.028)
+  
+  # probabilities of mating with 1 - 3 females
+  Fprob <- c(22/30, 7/30, 1/30)
+  
   
   # dimensions
   sampM  <- seq(from = minM, to = maxM, by = 5)
