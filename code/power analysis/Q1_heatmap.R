@@ -226,7 +226,7 @@ figure3 <- ggplot(data = DF96, aes(x = Males,
   guides(fill = guide_colourbar(title = 'Proportion \n correct')) +
   xlab('Number of males') +
   ylab('Fertilization mode') +
-  ggtitle('Proportion correct with sample size 32 \n and marginal contributions') +
+  ggtitle('Proportion correct with sample size 96 \n and marginal contributions') +
   theme(panel.background = element_blank()) +
   
   # random
