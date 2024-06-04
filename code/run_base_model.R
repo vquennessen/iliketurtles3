@@ -47,7 +47,7 @@ run_base_model <- function(arguments) {
   
   # model parameters and dimensions
   years <- 100                              # number of years to simulate
-  evolution <- TRUE                         # whether evolution is turned on
+  evolution <- FALSE                        # whether evolution is turned on
   climate_stochasticity <- FALSE            # whether or not to add in
   
   A <- max_age
