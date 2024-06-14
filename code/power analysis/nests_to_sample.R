@@ -6,16 +6,15 @@ sample_nests <- function(pop_size = 100,            # total population size
                          Mprob = c(0.463, 0.318, 0.157, 0.034, 0.028),
                          # probabilities for mating with 1 - max females    
                          Fprob = c(22/30, 7/30, 1/30),
-                         # random, exponential, dominant, or mixed_dominant fertilization mode
                          nests_mu = 4.59,           # average # of nests per F
                          nests_sd = 2.09,           # sd # of nests per F
                          eggs_mu = 100.58,          # average # of eggs per nest
                          eggs_sd = 22.68,           # sd # of eggs per nest
-                         breeding = '',      
-                         sample_sizes = 32,         # sample size of hatchlings
+                         breeding = '',             # fertilization mode
+                         sample_size = 32,          # sample size of hatchlings
                          nsims = 100000             # number of simulations
 )  
-  
+
 {
   
   # dimensions
@@ -27,7 +26,7 @@ sample_nests <- function(pop_size = 100,            # total population size
   nB <- length(BSR)
   
   # proportion of nests sampled
-  propNests <- c(from = 0.05, to = 1, by = 0.05)
+  propNests <- seq(from = 0.05, to = 1, by = 0.05)
   npN <- length(propNests)
   
   # pre-allocate data frame for results
@@ -43,7 +42,8 @@ sample_nests <- function(pop_size = 100,            # total population size
     nF <- pop_size - nM
     
     # make breeding pool of males
-    BPm <- rep(1:nM, times = maxM)
+    BPm <- data.frame(Male = rep(1:nM, each = maxM), 
+                      ID = 1:(nM*maxM))
     
     # assign males to females
     
@@ -53,26 +53,33 @@ sample_nests <- function(pop_size = 100,            # total population size
       ID <- rep(NA, nsims)
       
       # initialize number of nests, make sure no numbers below 1
-      nNests <- rnorm(n = nF, mean = nests_mu, sd = nests_sd)
+      nNests <- round(rnorm(n = nF, mean = nests_mu, sd = nests_sd))
       nNests[nNests < 1] <- 1
       
       for (i in 1:nsims) {
         
         # females mate with 1 - max males from breeding pool until they run out
         
+        # for each female
         for (f in 1:nF) {
           
-          # if there are any males left in the breeding pool
-          if (length(BPm) > 0) {
+          # how many nests for this female
+          nN <- nNests[f]
+          
+          # if there are enough males left in the breeding pool
+          if (nrow(BPm) > nN) {
             
-            # contributing males
-            males <- sample(BPm, size = maxM, replace = FALSE)
+            # indices for contributing males
+            indices <- sample(BPm$ID, size = nN, replace = FALSE)
+            
+            # contributing males themselves
+            males <- unique(BPm$Male[indices])
             
             # new breeding pool for males
-          
+            BPm <- BPm[-indices, ]
             
-            # number of nests
-            nests <- nNests[f]
+            # how many males were identified?
+            
             
           }
           
@@ -83,7 +90,7 @@ sample_nests <- function(pop_size = 100,            # total population size
         # sample proportion of nests given fertilization mode
         
         # were all the contributing males identified?
-      
+        
         
       }
     }
