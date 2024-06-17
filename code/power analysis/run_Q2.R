@@ -1,8 +1,14 @@
 # run Q2
 
+# set working directory
+setwd('~/Projects/iliketurtles3/code/power analysis/')
+
 # load libraries
 library(dplyr)
 library(ggplot2)
+
+# source function
+source('nests_to_sample.R')
 
 # model parameters
 pop_size <- 100                               # total population size
@@ -14,18 +20,22 @@ eggs_mu <- 100.58                             # average # of eggs per nest
 eggs_sd <- 22.68                              # sd # of eggs per nest
 breeding <- 'random'                          # fertilization mode
 sample_size <- 32                             # sample size of hatchlings
-nsims <- 100                               # number of simulations
+nsims <- 1e6                                  # number of simulations
 
 # load probabilities object
-load("~/Projects/iliketurtles3/output/power analysis/probabilities1e+06.Rdata")
+load('number_of_males.Rdata')
 
 # extract probabilities for 2-5 males
-id_probs <- probs %>%
+id_probs <- number_of_males %>%
   filter(Sample_size == sample_size) %>%
   filter(Fertilization_mode == breeding) %>%
-  select(Males, Proportion_correct)
+  select(Males_contributing, Males_identified, Probability)
 
 # run sample_nests
-output <- sample_nests(pop_size, Mprob, Fprob, id_probs,
-                       nests_mu, nests_sd, eggs_mu, eggs_sd, breeding, 
-                       sample_sizes, nsims)
+output <- nests_to_sample(pop_size, Mprob, Fprob, id_probs,
+                          nests_mu, nests_sd, eggs_mu, eggs_sd, breeding, 
+                          sample_sizes, nsims)
+
+# save output
+save(output, 
+     file = paste(sample_size, '_nests_to_sample.Rdata', sep = ''))
