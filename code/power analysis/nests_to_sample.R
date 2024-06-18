@@ -1,21 +1,16 @@
 # function to determine our confidence in BSR estimate given how many nests we 
 # sample to robustly estimate the BSR for that year
 
-nests_to_sample <- function(pop_size = 100,            # total population size
-                            # probabilities for mating with 1 - max males    
-                            Mprob = c(0.463, 0.318, 0.157, 0.034, 0.028),
-                            # probabilities for mating with 1 - max females    
-                            Fprob = c(22/30, 7/30, 1/30),
-                            id_probs = NULL,
-                            nests_mu = 4.59,           # average # of nests per F
-                            nests_sd = 2.09,           # sd # of nests per F
-                            eggs_mu = 100.58,          # average # of eggs per nest
-                            eggs_sd = 22.68,           # sd # of eggs per nest
-                            breeding = '',             # fertilization mode
-                            sample_size = 32,          # sample size of hatchlings
-                            nsims = 100000             # number of simulations
-)  
-
+nests_to_sample <- function(nsims,            # number of simulations
+                            pop_size,         # total population size
+                            breeding,         # fertilization mode
+                            Mprob,            # probs for mating with 1 - max M    
+                            Fprob,            # probs for mating with 1 - max F   
+                            nests_mu,         # average # of nests per F
+                            nests_sd,         # sd # of nests per F
+                            id_probs)         # probs of IDing 1-all M in a nest
+  
+  
 {
   
   # dimensions
@@ -68,17 +63,26 @@ nests_to_sample <- function(pop_size = 100,            # total population size
       # for each simulation
       for (i in 1:nsims) {
         
-        # initialize vector to see which males in the season were identified
-        identified_for_season <- NA
+        # how many females per male
+        nFemales <- sample(1:maxF, size = nM, prob = Fprob, replace = TRUE)
         
         # make breeding pool of males
-        BPm <- rep(1:nM, each = maxM)
+        BPm <- rep(1:nM, times = nFemales)
+        
+        # initialize nests list
+        nests <- NA
         
         # for each female
         for (f in 1:nF) {
           
+          # how many nests for this female
+          nN_f <- nNests[f, i]
+          
           # how many males for this female
           nM_f <- nMales[f, i]
+          
+          # if there are no males left, stop the loop for the females    
+          if (length(unique(BPm)) == 0) { break }
           
           # if there are not enough unique males left in the breeding pool 
           # for this female
@@ -89,23 +93,21 @@ nests_to_sample <- function(pop_size = 100,            # total population size
             
           }
           
-          # if there are no males left, stop the loop for the females    
-          if (length(unique(BPm)) == 0) { break }
-          
           # who are the contributing males themselves, sample from breeding pool 
           # without duplicates
           males_f <- sample(unique(BPm), size = nM_f, replace = FALSE)
           
-          # if there is only one male that mated with this female    
-          if (nM_f == 1) { 
+          # new breeding pool for males
+          BPm <- BPm[-match(males_f, BPm)]
+          
+          # if there's only 1 male
+          if (nM_f == 1) {
             
-            # it gets identified no matter what
-            identified_for_female <- males_f
+            # append identified male to nests nN_f times
+            nests <- append(rep(list(males_f), times = nN_f))
+            
             
           } else {
-            
-            # new breeding pool for males
-            BPm <- BPm[-match(males_f, BPm)]
             
             # probability of identification of all possible males for this female
             sub <- subset(id_probs, Males_contributing == nM_f & Probability > 0)
@@ -113,31 +115,32 @@ nests_to_sample <- function(pop_size = 100,            # total population size
             # if there's only one possible number of males identified for any nest
             if (nrow(sub) == 1) {
               
-              identified_for_female <- males_f
+              nests <- append(nests, list(males_f))
               
             } else {
               
-              # how many nests for this female
-              nN <- nNests[f, i]
-              
               # how many males were identified in each nest for this female?
-              nM_id <- sample(sub$Males_identified, 
-                              size = nN, 
-                              prob = sub$Probability, 
+              nM_id <- sample(sub$Males_identified,
+                              size = nN_f,
+                              prob = sub$Probability,
                               replace = TRUE)
               
-              # if all the males for this female were identified in any nest
-              if (sum(nM_id == nM_f) > 0) {
+              # if there's only 1 nest
+              if (nN_f == 1) {
                 
-                identified_for_female <- males_f
+                nests <- append(nests, list(sample(males_f,
+                                                   size = nM_id,
+                                                   replace = TRUE)))
                 
-                # otherwise, which of the possible males were identified across 
-                # all nests
               } else {
                 
-                identified_for_female <- sample(males_f, 
-                                                size = nM_id, 
-                                                replace = FALSE)
+                for (n in 1:nN_f) {
+                  
+                  nests <- append(nests, list(sample(males_f,
+                                                     size = nM_id[n],
+                                                     replace = TRUE)))
+                  
+                }
                 
               }
               
@@ -145,20 +148,34 @@ nests_to_sample <- function(pop_size = 100,            # total population size
             
           }
           
-          # WHICH males were identified, add to identified males vector
-          identified_for_season <- append(identified_for_season, 
-                                          identified_for_female)
-          
         }
         
-        # were all the males identified across the whole season for this sim?
-        ID[i] <- ifelse(length(na.omit(unique(identified_for_season))) == as.integer(nM), 1, 0)
+        # remove NA from nests
+        nests <- na.omit(nests)
+        
+        # number of nests total
+        all_nests <- length(nests)
+        
+        # how many nests
+        num_nests <- round(all_nests*npN[pn])
+        
+        # sample all possible nests for proportion
+        indices <- sample(1:num_nests, 
+                               size = num_nests, 
+                               replace = FALSE)
+        
+        # WHICH males were identified, add to identified males vector
+        sampled_nests <- unlist(nests[nests == indices])
+        
+        # were all males identified?
+        ID[i] <- ifelse(length(unique(sampled_nests)) == nM, 1, 0)
         
       }
       
       # calculate index
       index <- (b - 1)*npN + pn
       print(index)
+      print(Sys.time())
       
       # proportion of simulations where all males were identified
       all_males_ID <- mean(ID, na.rm = TRUE)
