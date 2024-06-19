@@ -12,7 +12,7 @@ source('nests_to_sample.R')
 
 # model parameters
 sample_size <- 32                             # sample size of hatchlings
-nsims <- 100                                  # number of simulations
+nsims <- 1e5                                  # number of simulations
 pop_size <- 100                               # total population size
 breeding <- 'random'                          # fertilization mode
 
