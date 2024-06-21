@@ -162,6 +162,9 @@ nests_to_sample <- function(nsims,            # number of simulations
         # how many nests
         num_nests_sampled <- round(all_nests*prop)
         
+        # if num_nests_sampled is greater than all_nests, replace it
+        if (num_nests_sampled < all_nests) { num_nests_sampled <- all_nests }
+        
         # if no nests end up getting sampled, sample 1 nest
         if (num_nests_sampled == 0) { num_nests_sampled <- 1 }
         
