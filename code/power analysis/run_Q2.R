@@ -52,7 +52,7 @@ for (s in 1:length(sample_sizes)) {
     
     # save output
     save(output, 
-         file = paste(breeding, '_', sample_size, '_nests_to_sample_', nsims, '.Rdata', sep = ''))
+         file = paste(sample_size, '_nests_to_sample_', breeding, '_', nsims, '.Rdata', sep = ''))
     
   }
   
