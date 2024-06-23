@@ -11,7 +11,7 @@ library(ggplot2)
 source('nests_to_sample.R')
 
 # model parameters
-sample_sizes <- c(96)                         # sample sizes of hatchlings
+sample_sizes <- c(32, 96)                     # sample sizes of hatchlings
 nsims <- 1e3                                  # number of simulations
 pop_size <- 100                               # total population size
 fertilization_modes <- c('random',            # fertilization modes
@@ -24,7 +24,7 @@ fertilization_modes <- c('random',            # fertilization modes
 # population parameters
 Mprob <- c(0.463, 0.318, 0.157, 0.034, 0.028) # probabilities for mating with 1 - max males    
 Fprob <- c(22/30, 7/30, 1/30)                 # probabilities for mating with 1 - max females    
-nests_mu <- 4.59                              # average # of nests per F
+nests_mu <- 4.95                              # average # of nests per F
 nests_sd <- 2.09                              # sd # of nests per F
 
 # load probabilities object
@@ -52,7 +52,7 @@ for (s in 1:length(sample_sizes)) {
     
     # save output
     save(output, 
-         file = paste(breeding, '_', sample_size, '_nests_to_sample_', nsims, '.Rdata', sep = ''))
+         file = paste(sample_size, '_nests_to_sample_', breeding, '_', nsims, '.Rdata', sep = ''))
     
   }
   
