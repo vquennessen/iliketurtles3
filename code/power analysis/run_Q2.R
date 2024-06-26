@@ -1,7 +1,12 @@
 # run Q2
 
 # set working directory
-setwd('~/Projects/iliketurtles3/code/power analysis/')
+
+# desktop
+# setwd('~/Projects/iliketurtles3/code/power analysis/')
+
+# cluster
+setwd('/home/quennessenv/iliketurtles3/code/power analysis')
 
 # load libraries
 library(dplyr)
@@ -11,8 +16,8 @@ library(ggplot2)
 source('nests_to_sample.R')
 
 # model parameters
-sample_sizes <- c(32, 96)                     # sample sizes of hatchlings
-nsims <- 1e3                                  # number of simulations
+sample_sizes <- c(96)                     # sample sizes of hatchlings
+nsims <- 1e5                                  # number of simulations
 pop_size <- 100                               # total population size
 fertilization_modes <- c('random',            # fertilization modes
                          'exponential', 

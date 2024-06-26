@@ -9,10 +9,10 @@ library(ggplot2)
 library(viridisLite)
 
 # load data
-load("~/Projects/iliketurtles3/code/power analysis/32_nests_to_sample_1e+05.Rdata")
+load("~/Projects/iliketurtles3/code/power analysis/32_nests_to_sample_mixed_dominant_1000.Rdata")
 DF32 <- output
 
-load("~/Projects/iliketurtles3/code/power analysis/96_nests_to_sample_1e+05.Rdata")
+load("~/Projects/iliketurtles3/code/power analysis/96_nests_to_sample_mixed_dominant_1000.Rdata")
 DF96 <- output
 ################################################################################
 
