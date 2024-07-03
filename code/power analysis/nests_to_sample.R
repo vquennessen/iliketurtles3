@@ -1,9 +1,10 @@
-# function to determine our confidence in BSR estimate given how many nests we 
-# sample to robustly estimate the BSR for that year
+# function to determine our confidence in OSR estimate given how many nests we 
+# sample to robustly estimate the OSR for that year
 
 nests_to_sample <- function(nsims,            # number of simulations
                             pop_size,         # total population size
-                            breeding,         # fertilization mode
+                            sample_size,
+                            fertilization_mode,
                             Mprob,            # probs for mating with 1 - max M    
                             Fprob,            # probs for mating with 1 - max F   
                             nests_mu,         # average # of nests per F
@@ -17,37 +18,37 @@ nests_to_sample <- function(nsims,            # number of simulations
   maxM <- length(Mprob) # max number of males a female can mate with
   maxF <- length(Fprob) # max number of females a male can mate with
   
-  # breeding sex ratios
-  BSR <- seq(from = 0.05, to = 0.5, by = 0.05)
-  nB <- length(BSR)
+  # operational sex ratios
+  OSR <- seq(from = 0.05, to = 0.5, by = 0.05)
+  nO <- length(OSR)
   
   # proportion of nests sampled
   propNests <- seq(from = 0.05, to = 1, by = 0.05)
-  npN <- length(propNests)
+  nPN <- length(propNests)
   
   # pre-allocate data frame for results
-  DF2 <- data.frame(BSR = rep(BSR, each = npN), 
-                    PropNests = rep(propNests, times = nB), 
+  DF2 <- data.frame(OSR = rep(OSR, each = nPN), 
+                    PropNests = rep(propNests, times = nO), 
                     Proportion = NA)
   
-  # for each BSR population
-  for (b in 1:nB) {
+  # for each OSR population
+  for (o in 1:nO) {
     
     # make population of males and females
-    nM <- pop_size*BSR[b]
+    nM <- pop_size*OSR[o]
     nF <- pop_size - nM
     
     # # make breeding pool of males
     # BPm <- rep(1:nM, each = maxM)
     
     # for each proportion of nests sampled
-    for (pn in 1:npN) {
+    for (pn in 1:nPN) {
       
       # initialize vector of whether or not all males were identified
       ID <- rep(NA, nsims)
       
-      # initialize number of nests, make sure no numbers below 1
-      nNests <- matrix(round(rnorm(n = nF*nsims, mean = nests_mu, sd = nests_sd)), 
+      # initialize number of nests
+      nNests <- matrix(round(rnorm(n = nF*nsims, mean = nests_mu, sd = nests_sd)),
                        nrow = nF, ncol = nsims)
       
       # make sure there aren't any negative or 0 nests
@@ -84,15 +85,15 @@ nests_to_sample <- function(nsims,            # number of simulations
           # how many males for this female
           nM_f <- nMales[f, i]
           
-          # if there are no males left, stop the loop for the females    
-          if (length(unique(BPm)) == 0) { break; break }
+          # if there are no males left, stop the loop for the simulation    
+          if (n_distinct(na.omit(BPm)) == 0) { break; break }
           
           # if there are not enough unique males left in the breeding pool 
           # for this female
-          if (length(unique(BPm)) < nM_f) {
+          if (n_distinct(BPm) < nM_f) {
             
             # change the number of males with however many unique males are left
-            nM_f <- length(unique(BPm))
+            nM_f <- n_distinct(BPm)
             
           }
           
@@ -108,7 +109,6 @@ nests_to_sample <- function(nsims,            # number of simulations
             
             # append identified male to nests nN_f times
             nests <- append(nests, rep(list(males_f), times = nN_f))
-            
             
           } else {
             
@@ -156,20 +156,20 @@ nests_to_sample <- function(nsims,            # number of simulations
         # remove NA from nests
         nests <- nests[-1]
         
+        # number of males actually represented across all nests, i.e. breeding
+        num_males <- n_distinct(unlist(nests))
+        
         # number of nests total
-        all_nests <- length(nests)
+        num_nests <- length(nests)
         
-        # how many nests
-        num_nests_sampled <- round(all_nests*prop)
-        
-        # if num_nests_sampled is greater than all_nests, replace it
-        if (num_nests_sampled < all_nests) { num_nests_sampled <- all_nests }
+        # how many nests were sampled
+        num_nests_sampled <- round(num_nests*prop)
         
         # if no nests end up getting sampled, sample 1 nest
-        if (num_nests_sampled == 0) { num_nests_sampled <- 1 }
+        if (num_nests_sampled < 1) { num_nests_sampled <- 1 }
         
         # sample all possible nests for proportion
-        indices <- sample(1:all_nests, 
+        indices <- sample(1:num_nests, 
                           size = num_nests_sampled, 
                           replace = FALSE)
         
@@ -177,14 +177,23 @@ nests_to_sample <- function(nsims,            # number of simulations
         identified_males <- unlist(nests[indices])
         
         # were all males identified?
-        ID[i] <- ifelse(length(unique(identified_males)) == as.integer(nM), 1, 0)
+        ID[i] <- ifelse(n_distinct(identified_males) == as.integer(num_males), 1, 0)
         
       }
       
       # calculate index
-      index <- (b - 1)*npN + pn
-      print(index)
-      print(Sys.time())
+      index <- (o - 1)*nPN + pn
+      
+      # write to progress text file
+      if ((index/2) %% 10 == 0) {
+        update <- paste(Sys.time(), 
+                        ' - sample size ', sample_size, ' - ', 
+                        fertilization_mode, ' - ', 
+                        nsims, ' sims - ', index/2, '% done!', 
+                        sep = '')
+        write(update, file = 'progress.txt', append = TRUE)
+        
+      }
       
       # proportion of simulations where all males were identified
       all_males_ID <- mean(ID, na.rm = TRUE)
