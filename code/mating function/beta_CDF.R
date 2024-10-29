@@ -2,12 +2,16 @@
   
   # load libraries
   library(ggplot2)
+  library(viridis)
   
   # values of x to plot
   x <- seq(from = 0, to = 1, by = 0.01)
   
   # beta values to cycle through
   betas <- c(1, 2, 3, 5, 10, 20, 100)
+  
+  # colors
+  colors <- viridis(length(betas) + 1)
   
   # initialise DF
   DF <- data.frame(Breeding_Sex_Ratio = rep(x, times = length(betas)), 
@@ -31,8 +35,9 @@
                         color = Beta)) +
     geom_hline(yintercept = 0.5, linetype = 2, alpha = 0.5, lwd = 2) +
     geom_line(lwd = 2) +
+    scale_color_manual(values = rev(colors)[-1]) +
     ylab('Reproductive Success') +
-    xlab('Breeding Sex Ratio (Proportion Male)') +
+    xlab('Operational Sex Ratio (Proportion Male)') +
     ggtitle('Hypothetical mating functions') +
     theme_gray() +
     theme(axis.title.y = element_text(margin = margin(r = 15, l = 10)), 
