@@ -16,7 +16,7 @@ y2 <- 1/(1 + exp(-k2*(x - t_piv2)))
 
 # make dataframe
 TRN <- data.frame(Temperature = x,
-                  Model = rep(c('Patricio', 'Godfrey and Mrosovsky'), each = 1000),
+                  Model = rep(c('West Africa', 'Suriname'), each = 1000),
                   Proportion_Male = c(y1, y2))
 
 # plot
@@ -34,5 +34,5 @@ ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, col = Model)) +
         axis.text = element_text(size = 20), 
         axis.title = element_text(size = 25), 
         legend.title = element_text(size = 20), 
-        legend.text = element_text(size = 15), 
-        legend.position = c(0.8, 0.75))
+        legend.text = element_text(size = 20), 
+        legend.position = c(0.8, 0.7))

@@ -159,7 +159,7 @@ for (m in 1:M) {
                            limits = c(0, 1), 
                            na.value = 'gray') +
       guides(fill = guide_colourbar(title = "Probability")) +
-      xlab('Breeding sex ratio required to fertilize all females') +
+      xlab('Operational sex ratio required to fertilize all females') +
       ylab('Increase in sand temperature (C) by year 100') +
       ggtitle(paste('Probability of population persistence (> 10% of starting population size) to year ', 
                     years_to_plot[y], sep = '')) +
@@ -195,7 +195,7 @@ fig2 <- ggplot(data = SDF, aes(x = Beta, y = Scenario, fill = Probability)) +
                        limits = c(0, 1), 
                        na.value = 'gray') +
   guides(fill = guide_colourbar(title = "Probability")) +
-  xlab('Breeding sex ratio required to fertilize all females') +
+  xlab('Operational sex ratio required to fertilize all females') +
   ylab('Increase in sand temperature (\u00B0C) by year 100') +
   ggtitle(paste('Probability of population persistence \n (> 10% of starting population size) to year ', 
                 years_to_plot[y], sep = '')) +
