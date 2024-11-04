@@ -17,7 +17,7 @@ pop_dynamics <- function(N, max_age, y, F_survival, M_survival) {
                         na.rm = TRUE)
       
       # annual survival - males
-      N[2, a, y] <- sum(rbinom(n = round(N[1, a - 1, y - 1]),    
+      N[2, a, y] <- sum(rbinom(n = round(N[2, a - 1, y - 1]),    
                                size = 1, 
                                prob = M_survival[a - 1]), 
                         na.rm = TRUE)
