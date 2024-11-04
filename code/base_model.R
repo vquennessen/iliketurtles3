@@ -12,14 +12,17 @@ base_model <- function(scenario, beta, years, A, Y,
   
   init_output <- initialize_arrays(scenario, years, A, Y, F_init, M_init, 
                                    M, T_piv, k, H, ag_var, evolution,
-                                   temp_mu, temp_sd, climate_stochasticity)
+                                   temp_mu, temp_sd, climate_stochasticity, 
+                                   F_remigration_int, M_remigration_int)
   
   temperatures    <- init_output[[1]]    # temperatures across climate scenarios
   N               <- init_output[[2]]    # population size array
   G               <- init_output[[3]]    # genetics array
-  Gamma           <- init_output[[4]]    # error around expected genotype
-  Epsilon         <- init_output[[5]]    # error around expected phenotype
-  Pivotal_temps   <- init_output[[6]]    # pivotal temperature
+  Delta           <- init_output[[4]]    # phenotypic variance
+  Gamma           <- init_output[[5]]    # error around expected genotype
+  Epsilon         <- init_output[[6]]    # error around expected phenotype (P+E)
+  Pivotal_temps   <- init_output[[7]]    # pivotal temperature
+  OSR             <- init_output[[8]]    # operational sex ratio
   
   ##### model ##################################################################
   for (y in 2:Y) {
@@ -45,7 +48,7 @@ base_model <- function(scenario, beta, years, A, Y,
                                    F_remigration_int, M_remigration_int,
                                    nests_mu, nests_sd, eggs_mu, eggs_sd, 
                                    hatch_success_A, hatch_success_k, 
-                                   hatch_success_t0, G, H, ag_var, 
+                                   hatch_success_t0, G, H, ag_var, Delta,
                                    Gamma, Epsilon, temp, temp_sd, T_piv, k, 
                                    evolution, climate_stochasticity, 
                                    Pivotal_temps)
@@ -54,6 +57,7 @@ base_model <- function(scenario, beta, years, A, Y,
         N[1, 1, y]    <- rep_output[[1]]
         N[2, 1, y]    <- rep_output[[2]]
         Pivotal_temps <- rep_output[[3]]
+        OSR[y]        <- rep_output[[4]]
         
       }
     
@@ -76,6 +80,7 @@ base_model <- function(scenario, beta, years, A, Y,
                    abundance_M, 
                    abundance_total, 
                    mature_abundance, 
+                   OSR,
                    Pivotal_temps)
     
   } else {
@@ -84,7 +89,8 @@ base_model <- function(scenario, beta, years, A, Y,
                    abundance_F, 
                    abundance_M, 
                    abundance_total, 
-                   mature_abundance)
+                   mature_abundance, 
+                   OSR)
     
   }
   
