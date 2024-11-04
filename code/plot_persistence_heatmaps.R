@@ -10,47 +10,68 @@ library(patchwork)
 library(gridExtra)
 
 # source functions
-source('code/mating function/beta_axis_labels.R')
+source('code/mating function/OSRs_to_betas.R')
 
 # which computer am I using?
-desktop <- FALSE
+desktop <- TRUE
 
 # plotting model parameters
-nsims <- 10000
-models <- c('2024_02_28_Patricio_2017',
-            '2024_03_15_P_evo_ptiv', 
-            '2024_03_18_P_evo_ptiv_high_H', 
-            '2024_02_16_Godfrey_Mrosovsky_2006',
-            '2024_03_16_GM_evo_ptiv',
-            '2024_03_17_GM_evo_ptiv_high_H')
-models_short <- c('base_P', 'P_evo', 'P_high_H', 
+nsims <- 100
+
+# test runs - folder names
+models <- c('no_temp_stochasticity/P_base',
+            'no_temp_stochasticity/P_evol',
+            'no_temp_stochasticity/P_evol_high_H',
+            'no_temp_stochasticity/GM_base',
+            'no_temp_stochasticity/GM_evol',
+            'no_temp_stochasticity/GM_evol_high_H')
+
+# models <- c('P_base')
+# models_short <- c('P_base')
+# authors <- c('West Africa')
+# model_types <- c('base')
+nsims <- 100
+
+# models <- c('P_base',
+#             'P_evo_ptiv',
+#             'P_evo_ptiv_high_H',
+#             'GM_base',
+#             'GM_evo_ptiv',
+#             'GM_evo_ptiv_high_H')
+
+# individual heatmap titles
+models_short <- c('base_P', 'P_evo', 'P_high_H',
                   'base_GM', 'GM_evo', 'GM_high_H')
-authors <- c(rep('Patricio et al. 2017', 3),
-             rep('Godfrey and Mrosovsky 2006', 3))
-model_types <- rep(c('base model', 'evolution', 'evolution with high H'), 
+
+# column names for combined heatmap
+authors <- c(rep('West Africa', 3),
+             rep('Suriname', 3))
+
+# row names for combined heatmap
+model_types <- rep(c('base model', 'evolution', 'evolution with high H'),
                    times = 2)
 
 years_to_plot <- c(100)
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
-Scenarios <- factor(scenarios, levels = scenarios)
-Betas_raw <- c(1, 1.35, 1.94, 3.1, 6.57, 8.31, 11.19, 16.94, 34.14)
-betas <- beta_axis_labels(Betas_raw)
-Betas <- factor(betas, levels = betas)
+# scenarios <- paste(c(0.5, 5), 'C', sep = '')
+osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
+betas <- OSRs_to_betas(osrs)
 
 # dimensions
 M <- length(models)
 Y <- length(years_to_plot)
-S <- length(Scenarios)
-B <- length(Betas_raw)
+S <- length(scenarios)
+B <- length(osrs)
 
-# clear DF object
+# clear DF and SDF objects
 rm(DF)
+rm(SDF)
 
 # initialize empty dataframe
 DF <- data.frame(Author = NULL, 
                  Model = NULL,
                  Scenario = NULL, 
-                 Beta = NULL, 
+                 OSR = NULL, 
                  Survive_to = NULL, 
                  Probability = NULL)
 
@@ -61,7 +82,7 @@ plot_list <- list()
 SDF <- data.frame(Author = NULL, 
                   Model = NULL,
                   Scenario = NULL, 
-                  Beta = NULL, 
+                  OSR = NULL, 
                   Survive_to = NULL, 
                   Probability = NULL)
 
@@ -83,21 +104,21 @@ for (m in 1:M) {
           
           # if the file exists: desktop
           if (file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
+                                models[m], '/', scenarios[s], '/beta', betas[b],
                                 '/', nsims, '_abundance_total.Rda', sep = '')) &
               
               file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
+                                models[m], '/', scenarios[s], '/beta', betas[b],
                                 '/', nsims, '_mature_abundance.Rda', sep = ''))) {
             
             # load in total abundance object
             load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
+                       models[m], '/', scenarios[s], '/beta', betas[b], '/',
                        nsims, '_abundance_total.Rda', sep = ''))
             
             # load in abundance mature object
             load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
+                       models[m], '/', scenarios[s], '/beta', betas[b], '/',
                        nsims, '_mature_abundance.Rda', sep = ''))
             
           }
@@ -106,21 +127,21 @@ for (m in 1:M) {
           
           # if the file exists: laptop
           if (file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
+                                models[m], '/', Scenarios[s], '/beta', betas[b],
                                 '/', nsims, '_abundance_total.Rda', sep = '')) &
               
               file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', Scenarios[s], '/beta', Betas_raw[b],
+                                models[m], '/', Scenarios[s], '/beta', betas[b],
                                 '/', nsims, '_mature_abundance.Rda', sep = ''))) {
             
             # load in total abundance object
             load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
+                       models[m], '/', Scenarios[s], '/beta', betas[b], '/',
                        nsims, '_abundance_total.Rda', sep = ''))
             
             # load in abundance mature object
             load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', Scenarios[s], '/beta', Betas_raw[b], '/',
+                       models[m], '/', Scenarios[s], '/beta', betas[b], '/',
                        nsims, '_mature_abundance.Rda', sep = ''))
             
           }
@@ -130,11 +151,12 @@ for (m in 1:M) {
         # initialize dataframe
         DF2 <- data.frame(Author = authors[m], 
                           Model = model_types[m],
-                          Scenario = Scenarios[s],
-                          Beta = Betas[b],
+                          Scenario = scenarios[s],
+                          OSR = osrs[b],
                           Survive_to = years_to_plot[y], 
-                          Probability = c(sum(sims_abundance_total[years_to_plot[y], ] > 
-                                                0.1*sims_abundance_total[1, ]) / nsims))
+                          Probability = mean(sims_abundance_total[years_to_plot[y], ] >
+                                               0.1*sims_abundance_total[1, ]))
+        # Probability = mean(sims_abundance_total[years_to_plot[y], ] / sims_abundance_total[1, ]))
         
         # add DF2 to DF
         DF <- rbind(DF, DF2)
@@ -143,11 +165,12 @@ for (m in 1:M) {
       
     }
     
-    # make beta a factor variable
-    DF$Beta <- factor(DF$Beta, levels = rev(Betas))
-
-        # heatmap for survival to year 100
-    fig <- ggplot(data = DF, aes(x = Beta, y = Scenario, fill = Probability)) +
+    # make scenario and osr a factor variable
+    DF$Scenario <- factor(DF$Scenario, levels = scenarios)
+    # DF$OSR <- factor(osrs, levels = osrs)
+    
+    # heatmap for survival to year 100
+    fig <- ggplot(data = DF, aes(x = OSR, y = Scenario, fill = Probability)) +
       geom_tile(color = "white",
                 lwd = 1.5,
                 linetype = 1) +
@@ -174,7 +197,7 @@ for (m in 1:M) {
                             '_persistence_heatmap.png', sep = ''),
            path = '~/Projects/iliketurtles3/figures/',
            width = 8, height = 3.5)
-     
+    
   }
   
   # add model results to super data frame
@@ -183,7 +206,7 @@ for (m in 1:M) {
 }
 
 # heatmap for survival to year 100
-fig2 <- ggplot(data = SDF, aes(x = Beta, y = Scenario, fill = Probability)) +
+fig2 <- ggplot(data = SDF, aes(x = OSR, y = Scenario, fill = Probability)) +
   geom_tile(color = "white",
             lwd = 1.5,
             linetype = 1) +
@@ -205,9 +228,11 @@ fig2 <- ggplot(data = SDF, aes(x = Beta, y = Scenario, fill = Probability)) +
   theme(axis.title.x = element_text(size = 12, vjust = -3)) +
   theme(axis.title.y = element_text(size = 12, vjust = 3)) +
   theme(title = element_text(size = 13))
-  
+
 # save to file
 ggsave(plot = fig2, 
-       filename = 'PvsGM_base_evol_highH.png',
+       filename = paste('PvsGM_base_evol_highH_', years_to_plot[y], '.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 7, height = 7)
+
+# save dataframe as R object
