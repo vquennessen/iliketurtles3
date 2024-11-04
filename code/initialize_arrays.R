@@ -2,7 +2,8 @@
 
 initialize_arrays <- function(scenario, years, A, Y, F_init, M_init, 
                               M, T_piv, k, H, ag_var, evolution,
-                              temp_mu, temp_sd, climate_stochasticity) {
+                              temp_mu, temp_sd, climate_stochasticity, 
+                              F_remigration_int, M_remigration_int) {
   
   # initialize population size array
   # dimensions = sexes * ages  * years
@@ -10,8 +11,8 @@ initialize_arrays <- function(scenario, years, A, Y, F_init, M_init,
              dim = c(2, A, Y))  
   
   # initial population size
-  N[1, , 1] <- F_init
-  N[2, , 1] <- M_init
+  N[1, , 1] <- round(F_init)
+  N[2, , 1] <- round(M_init)
   
   # initialize temperature scenarios
   temperatures <- rep(NA, times = Y)
@@ -31,19 +32,22 @@ initialize_arrays <- function(scenario, years, A, Y, F_init, M_init,
   # genetics for pivotal temperature
   G <- rep(T_piv, A)
   
+  # delta vector for just phenotypic variation
+  Delta <- rnorm(n = Y, mean = 0, sd = sqrt(ag_var / H))
+  
   # if evolution is turned on, create epsilon and delta vectors
   if (evolution == TRUE) {
     
-    # distribution of G
+    # distribution of G - starting genotypes
     G <- rnorm(n = A, mean = T_piv, sd = sqrt(ag_var))
     
     # gamma, error term for the expected genotype
     Gamma <- rnorm(n = Y, mean = 0, sd = sqrt(ag_var / 2))       
     
     # epsilon, error term for the expected pivotal temperature
-    Epsilon <- rnorm(n = Y, mean = 0, sd = sqrt((ag_var/H - ag_var)))
+    Epsilon <- rnorm(n = Y, mean = 0, sd = sqrt((ag_var / H - ag_var)))
     
-    # pivotal temperature
+    # intializez pivotal temperatures vector
     Pivotal_temps <- c(G[1], rep(NA, times = Y - 1))
     
   } else { 
@@ -52,10 +56,22 @@ initialize_arrays <- function(scenario, years, A, Y, F_init, M_init,
     Gamma <- NULL 
     Pivotal_temps <- NULL
     
-    }
+  }
+  
+  # OSR vector - dimensions 1 for each year
+  OSR <- rep(NA, times = Y)
+  
+  # first OSR value
+  # females only breed every F_remigration_int years
+  n_breeding_F <- sum((F_init * M), na.rm = TRUE) / F_remigration_int
+  
+  # males only breed every M_remigration_int years
+  n_breeding_M <- sum((M_init * M), na.rm = TRUE) / M_remigration_int
+  
+  OSR[1] <- n_breeding_M / (n_breeding_M + n_breeding_F)
   
   # output
-  output <- list(temperatures, N, G, Gamma, Epsilon, Pivotal_temps)
+  output <- list(temperatures, N, G, Delta, Gamma, Epsilon, Pivotal_temps, OSR)
   
   return(output)
   
