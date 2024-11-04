@@ -7,14 +7,23 @@ run_base_model <- function(arguments) {
   ###### model inputs ##########################################################
   
   # function arguments
-  scenario <- arguments[[1]]
-  beta     <- arguments[[2]]
-  nsims    <- arguments[[3]]
+  scenario <- arguments[[1]][1]
+  beta     <- arguments[[2]][1]
+  nsims    <- arguments[[3]][1]
+  model    <- arguments[[4]][1]
+
+  # model name from number
+  model_name <- ifelse(model == 1, 'P_base',
+                       ifelse(model == 2, 'P_evol',
+                              ifelse(model == 3, 'P_evol_high_H',
+                                     ifelse(model == 4, 'GM_base',
+                                            ifelse(model == 5, 'GM_evol',
+                                                   'GM_evol_high_H')))))
   
   # scenario <- 0.5
   # beta <- 1
   # nsims <- 100
-  
+  # 
   # turtle demographics
   max_age <- 85                                         # lifespan
   F_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - F
@@ -27,13 +36,23 @@ run_base_model <- function(arguments) {
   M_remigration_int <- 1.47                 # remigration interval - males
   nests_mu <- 4.95                          # mean # of nests/F/season
   nests_sd <- 2.09                          # sd of # of nests/F/season
-  eggs_mu <- 100.58                         # mean number of eggs/nest
-  eggs_sd <- 22.61                          # sd of number of eggs/nest
+  eggs_mu <- 100.58                         # mean number of eggs/nest - 100.58
+  eggs_sd <- 22.61                          # sd of number of eggs/nest - 22.61
   hatch_success_A <- 0.86                   # logistic by temp - A
   hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
-  T_piv <- 29.368                           # thermal reaction norm midpoint
-  k <- -0.561                               # thermal reaction norm slope
+  T_piv <- 29.2                         # thermal reaction norm midpoint
+
+  if (model_name %in% c('P_base', 'P_evol', 'P_evol_high_H')) {
+    
+      k <- -1.4                             # thermal reaction norm slope
+  
+  } else {
+    
+    k <- -0.56                              # thermal reaction norm slope
+    
+  }
+
   F_initial <- 170                          # initial adult F
   M_initial <- 30                           # initial adult M
   
@@ -42,13 +61,34 @@ run_base_model <- function(arguments) {
   temp_sd <- 0.84                           # base incubation temp sd
   
   # evolution data
-  H <- 0.135                                # heritability
+  
+  if (model_name %in% c('P_base', 'P_evol', 'GM_base', 'GM_evol')) {
+    
+    H <- 0.135                                # heritability
+
+  } else {
+    
+    H <- 0.351
+    
+  }
+  
   ag_var <- 0.017                           # phenotypic variance
   
   # model parameters and dimensions
-  years <- 100                              # number of years to simulate
-  evolution <- FALSE                        # whether evolution is turned on
-  climate_stochasticity <- FALSE            # whether or not to add in
+  years <- 100
+  
+  if (model_name %in% c('P_base', 'GM_base')) {
+    
+      evolution <- FALSE                         # whether evolution is turned on
+    
+  } else {
+    
+    evolution <- TRUE
+    
+  }
+  
+  # number of years to simulate
+  climate_stochasticity <- FALSE             # whether or not to add in
   
   A <- max_age
   Y <- years
@@ -90,49 +130,56 @@ run_base_model <- function(arguments) {
   m_Leslie <- rbind(rep(0, A), cbind(m_matrix, rep(0, A - 1)))
   
   # stable age distribution
-  SAD <- initialize_population(beta, burn_in = 1000, max_age, M, 
-                               F_remigration_int, M_remigration_int,
-                               nests_mu, eggs_mu, hatch_success_A, 
-                               hatch_success_k, hatch_success_t0, 
-                               k, T_piv, temp_mu, f_Leslie, m_Leslie)
+  SAD_output <- initialize_population(beta, burn_in = 1000, max_age, M, 
+                                      F_remigration_int, M_remigration_int,
+                                      nests_mu, eggs_mu, hatch_success_A, 
+                                      hatch_success_k, hatch_success_t0, 
+                                      k, T_piv, temp_mu, f_Leslie, m_Leslie)
   
   # separate by sex
-  F_SAD <- filter(SAD, Sex == 'Female')
-  M_SAD <- filter(SAD, Sex == 'Male')
+  SAD_F <- SAD_output[[1]]
+  SAD_M <- SAD_output[[2]]
+  # M_multiplicator <- SAD_output[[3]]
   
   # set first timestep to SAD times a value to get at least 30 adult males
   # and 170 adult females
-  f_min <- F_initial / sum((F_SAD$N[1:max_age])*M)
-  m_min <- M_initial / sum((M_SAD$N[1:max_age])*M)
-  multiplicator <- max(m_min, f_min)
+  f_min <- F_initial / sum(SAD_F * M)
+  m_min <- M_initial / sum(SAD_M * M)
+
+  # multiplicator <- max(m_min, f_min)
+
+  F_init <- SAD_F * f_min
+  M_init <- SAD_M * m_min
   
-  F_init <- F_SAD$N * multiplicator
-  M_init <- M_SAD$N * multiplicator
+  # # no multiplicator
+  # # 6e3 chosen so that sum of hatchlings for the first year is about 
+  # # 14k (hatchlings we sampled) / 3 seasons * 2+ (total hatchlings / sampled)
+  # init_pop <- 14000 / (SAD_F[1] * M_multiplicator + SAD_M[1])
+  # # TO DO - adjust if abundance total seems fucked up between years 1 and 2
+  # F_init <- SAD_F * init_pop * M_multiplicator
+  # M_init <- SAD_M * init_pop
   
   ##############################################################################
   
   # write to progress text file
-  update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, ' - ', 
-                  nsims, ' sims', sep = '')
+  update <- paste(Sys.time(), ' - ', model_name, ' - ', scenario, 'C - beta ', 
+                  beta, ' - ', nsims, ' sims', sep = '')
   write(update, file = 'progress.txt', append = TRUE)
   
   # initialize yield and biomass arrays
   
   # initialize population size array by age class and sex
-  sims_N <- array(rep(NA, times = 2 * A * Y * nsims), 
-                  dim = c(2, A, Y, nsims))
+  sims_N <- array(rep(NA, times = 2 * A * Y * nsims), dim = c(2, A, Y, nsims))
   
-  sims_abundance_F <- array(rep(NA, times = Y * nsims), 
-                            dim = c(Y, nsims))  
+  sims_abundance_F <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims))  
   
-  sims_abundance_M <- array(rep(NA, times = Y * nsims), 
-                            dim = c(Y, nsims)) 
+  sims_abundance_M <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims)) 
   
-  sims_abundance_total <- array(rep(NA, times = Y * nsims), 
-                                dim = c(Y, nsims)) 
+  sims_abundance_total <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims)) 
   
-  sims_mature_abundance <- array(rep(NA, times = Y * nsims), 
-                                 dim = c(Y, nsims))  
+  sims_mature_abundance <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims))  
+  
+  sims_OSR <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims)) 
   
   if (evolution == TRUE) {
     
@@ -160,18 +207,19 @@ run_base_model <- function(arguments) {
     sims_abundance_M[, i]       <- output[[3]]
     sims_abundance_total[, i]   <- output[[4]]
     sims_mature_abundance[, i]  <- output[[5]]
+    sims_OSR[, i]               <- output[[6]]
     
     if (evolution == TRUE) {
       
-      sims_ptiv[, i]              <- output[[6]]
+      sims_ptiv[, i]            <- output[[7]]
       
     }
     
     # write to progress text file
     if ((i/nsims*100) %% 10 == 0) {
-      update <- paste(Sys.time(), ' - ', scenario, 'C - beta ', beta, 
-                      ' - ', nsims, ' sims - ', i/nsims*100, '% done!', 
-                      sep = '')
+      update <- paste(Sys.time(), ' - ', model_name, ' - ', scenario, 
+                      'C - beta ', beta, ' - ', nsims, ' sims - ', 
+                      i/nsims*100, '% done!', sep = '')
       write(update, file = 'progress.txt', append = TRUE)
       
     }
@@ -179,21 +227,23 @@ run_base_model <- function(arguments) {
   }
   
   # get filepaths to save objects to
-  filepath1 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
-                    '_N.Rda', sep = '')
-  filepath2 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
-                    '_abundance_F.Rda', sep = '')
-  filepath3 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
-                    '_abundance_M.Rda', sep = '')
-  filepath4 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
-                    '_abundance_total.Rda', sep = '')
-  filepath5 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
-                    '_mature_abundance.Rda', sep = '')
+  filepath1 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+                    '/', nsims, '_N.Rda', sep = '')
+  filepath2 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+                    '/', nsims, '_abundance_F.Rda', sep = '')
+  filepath3 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+                    '/', nsims, '_abundance_M.Rda', sep = '')
+  filepath4 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+                    '/', nsims, '_abundance_total.Rda', sep = '')
+  filepath5 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+                    '/', nsims, '_mature_abundance.Rda', sep = '')
+  filepath6 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+                    '/', nsims, '_OSR.Rda', sep = '')
   
   if (evolution == TRUE) {
     
-    filepath6 = paste('../output/', scenario, 'C/beta', beta, '/',  nsims, 
-                      '_ptiv.Rda', sep = '')
+    filepath7 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+                      '/',  nsims, '_ptiv.Rda', sep = '')
     
   }
   
@@ -203,10 +253,11 @@ run_base_model <- function(arguments) {
   save(sims_abundance_M, file = filepath3)
   save(sims_abundance_total, file = filepath4)
   save(sims_mature_abundance, file = filepath5)
-  
+  save(sims_OSR, file = filepath6)
+
   if (evolution == TRUE) {
     
-    save(sims_ptiv, file = filepath6)
+    save(sims_ptiv, file = filepath7)
     
   }
   
