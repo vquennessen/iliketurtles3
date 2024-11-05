@@ -20,10 +20,15 @@ run_base_model <- function(arguments) {
                                             ifelse(model == 5, 'GM_evol',
                                                    'GM_evol_high_H')))))
   
+  
+  # model parameters to modulate
+  climate_stochasticity <- TRUE             # whether or not to add in
+  
+  # troubleshooting
   # scenario <- 0.5
   # beta <- 1
   # nsims <- 100
-  # 
+  
   # turtle demographics
   max_age <- 85                                         # lifespan
   F_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - F
@@ -86,13 +91,10 @@ run_base_model <- function(arguments) {
     evolution <- TRUE
     
   }
-  
-  # number of years to simulate
-  climate_stochasticity <- FALSE             # whether or not to add in
-  
+
+  # dimensions
   A <- max_age
   Y <- years
-  
   
   ##### derived arrays #########################################################
   
