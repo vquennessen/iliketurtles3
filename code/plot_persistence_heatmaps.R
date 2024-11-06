@@ -16,7 +16,7 @@ source('code/mating function/OSRs_to_betas.R')
 desktop <- TRUE
 
 # plotting model parameters
-nsims <- 100
+nsims <- 10000
 
 # test runs - folder names
 models <- c('no_temp_stochasticity/P_base',
@@ -30,7 +30,6 @@ models <- c('no_temp_stochasticity/P_base',
 # models_short <- c('P_base')
 # authors <- c('West Africa')
 # model_types <- c('base')
-nsims <- 100
 
 # models <- c('P_base',
 #             'P_evo_ptiv',
