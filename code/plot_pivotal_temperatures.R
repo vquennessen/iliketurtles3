@@ -66,13 +66,6 @@ DF <- data.frame(Pop = NULL,
 # initialize plot list
 plot_list <- list()
 
-# initialize super data frame
-SDF <- data.frame(Pop = NULL, 
-                  Model = NULL,
-                  Scenario = NULL, 
-                  OSR = NULL, 
-                  Probability = NULL)
-
 # for each model
 for (m in 1:M) {
 
@@ -204,16 +197,26 @@ load('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/no_temp_st
 
 # extract average pivotal temperature per year
 DF3 <- data.frame(Year = 1:100, 
-                  Pivotal_Temperature = rowMeans(sims_ptiv, na.rm = TRUE))
+                  Mean = rowMeans(sims_ptiv, na.rm = TRUE), 
+                  # Min = apply(sims_ptiv, 1, FUN = min, na.rm = TRUE), 
+                  # Max = apply(sims_ptiv, 1, FUN = max, na.rm = TRUE))
+                  Min = apply(sims_ptiv, 1, FUN = quantile, probs = 0.05, na.rm = TRUE), 
+                  Max = apply(sims_ptiv, 1, FUN = quantile, probs = 0.95, na.rm = TRUE))
+                  
+DF3$Mean[which(is.nan(DF3$Mean))] <- NA
+DF3$Min[which(DF3$Min == Inf)] <- NA
+DF3$Max[which(DF3$Max == -Inf)] <- NA
 
 # plot average pivotal temperature for each year
-fig3 <- ggplot(data = DF3, aes(x = Year, y = Pivotal_Temperature)) +
-  geom_segment(x = 0, y = DF3$Pivotal_Temperature[1], 
-               xend = 100, yend = DF3$Pivotal_Temperature[1], 
+fig3 <- ggplot(data = DF3, aes(x = Year, y = Mean)) +
+  geom_segment(x = 0, y = DF3$Mean[1], 
+               xend = 100, yend = DF3$Mean[1], 
              lwd = 1.5, col = hcl.colors(5, "viridis")[2]) +
-  geom_line(data = DF3, aes(x = Year, y = Pivotal_Temperature), 
+  geom_line(data = DF3, aes(x = Year, y = Mean), 
             lwd = 2, col = hcl.colors(5, "viridis")[1]) +
-  ylim(c(29.175, 29.225)) + 
+  geom_line(data = DF3, aes(x = Year, y = Min), col = 'gray') +
+  geom_line(data = DF3, aes(x = Year, y = Max), col = 'gray') +
+  ylim(c(28.96, 29.42)) + 
   ylab('') +
   ggtitle('Average Pivotal Temperature') +
   theme(plot.margin = unit(c(1, 0.25, 1, -0.25), units = 'cm')) +
