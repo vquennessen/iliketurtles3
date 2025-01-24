@@ -45,7 +45,10 @@ fig <- ggplot(data = DF, aes(x = Operational_Sex_Ratio,
                              color = Beta)) +
   geom_hline(yintercept = 0.5, linetype = 2, alpha = 0.5, lwd = 2) +
   geom_line(lwd = 2) +
-  scale_color_manual(values = rev(colors)[-1]) +
+  scale_color_manual(values = rev(colors)[-1], 
+                     labels = rev(OSRs)) +
+  # for replacement legend - delete for legend with beta values
+  labs(color = 'OSR needed \n for 100% \n reproductive \n success') +
   ylab('Reproductive Success') +
   xlab('Operational Sex Ratio (Proportion Male)') +
   ggtitle('Hypothetical mating functions') +
