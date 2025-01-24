@@ -5,7 +5,7 @@ setwd("~/Projects/iliketurtles3")
 library(ggplot2)
 
 # temperatures
-x <- seq(from = 20, to = 40, length = 1000)
+x <- seq(from = 20, to = 40, length = 100)
 
 # patricio et al.
 t_piv1 <- 29.2
@@ -19,19 +19,20 @@ y2 <- 1/(1 + exp(-k2*(x - t_piv2)))
 
 # make dataframe
 TRN <- data.frame(Temperature = x,
-                  Model = rep(c('West Africa', 'Suriname'), each = 1000),
+                  Model = rep(c('West Africa', 'Suriname'), each = 100),
                   Proportion_Male = c(y1, y2))
+
+# WA <- subset(TRN, Model == 'West Africa')
+# SN <- subset(TRN, Model == 'Suriname')
 
 # plot
 fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, 
                               col = Model, lty = Model)) +
+  geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
+  geom_vline(xintercept = t_piv1, col = 'darkgrey', lwd = 1, lty = 1) +
   geom_line(lwd = 2) +
-  geom_hline(yintercept = c(0.05, 0.50, 0.95), lty = 1, lwd = 1.5) +
-  geom_vline(xintercept = t_piv1, col = 'darkgrey', lty = 1, lwd = 1.5) +
-  # geom_line(data = TRN, aes(lwd = 2, lty = Model) +
-  scale_linetype_manual(values = c('dotted', 'dotdash')) +
-  geom_line(lwd = 2, aes(lty = '11')) +
-  # scale_linetype_manual(values = c(3, 6)) +  
+  scale_color_manual(values = c('#F8766D', '#00BFC4')) +
+  scale_linetype_manual(values = c(4, 5)) +
   ylab('Proportion hatchlings male') +
   xlab('Temperature (\u00B0C)') +
   # ggtitle('Thermal Reaction Norm') +
@@ -41,11 +42,13 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
         # plot.title = element_text(margin = margin(b = 10, t = 10), 
         #                           size = 30), 
         axis.text = element_text(size = 15), 
-        axis.title = element_text(size = 20), 
-        legend.text = element_text(size = 15), 
-        legend.title = element_text(size = 20), 
-        legend.position = c(0.8, 0.7), 
-        legend.key.width = unit(3.75, "line"))
+        axis.title = element_text(size = 20),
+        legend.position = 'none')
+
+        # legend.text = element_text(size = 15), 
+        # legend.title = element_text(size = 20), 
+        # legend.position = c(0.8, 0.7), 
+        # legend.key.width = unit(9, "line"))
 
 ggsave("figures/thermal_reaction_norms.png", 
        plot = last_plot(), 
