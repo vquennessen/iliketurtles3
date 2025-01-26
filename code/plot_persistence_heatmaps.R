@@ -13,34 +13,20 @@ library(gridExtra)
 source('code/mating function/OSRs_to_betas.R')
 
 # which computer am I using?
-desktop <- TRUE
+desktop <- FALSE
 
 # plotting model parameters
 nsims <- 10000
 
-# test runs - folder names
-models <- c('no_temp_stochasticity/P_base',
-            'no_temp_stochasticity/P_evol',
-            'no_temp_stochasticity/P_evol_high_H',
-            'no_temp_stochasticity/GM_base',
-            'no_temp_stochasticity/GM_evol',
-            'no_temp_stochasticity/GM_evol_high_H')
-
-# models <- c('P_base')
-# models_short <- c('P_base')
-# authors <- c('West Africa')
-# model_types <- c('base')
-
-# models <- c('P_base',
-#             'P_evo_ptiv',
-#             'P_evo_ptiv_high_H',
-#             'GM_base',
-#             'GM_evo_ptiv',
-#             'GM_evo_ptiv_high_H')
+# folder
+folder <- 'no_temp_stochasticity'
 
 # individual heatmap titles
-models_short <- c('base_P', 'P_evo', 'P_high_H',
-                  'base_GM', 'GM_evo', 'GM_high_H')
+models_short <- c('P_base', 'P_evo', 'P_high_H',
+                  'GM_base', 'GM_evo', 'GM_high_H')
+
+# test runs - full folder and model names
+models <- paste(folder, '/', models_short, sep = '')
 
 # column names for combined heatmap
 authors <- c(rep('West Africa', 3),
@@ -99,51 +85,28 @@ for (m in 1:M) {
         
         # load in appropriate output file
         
-        if (desktop == TRUE) {
+        if (desktop == TRUE) { user <- 'Vic' } else { user <- 'vique' }
+        
+        # if the file exists
+        if (file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                              folder, '/', models_short[m], '/', scenarios[s], '/beta', betas[b],
+                              '/', nsims, '_abundance_total.Rda', sep = '')) &
+            
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                              folder, '/', models_short[m], '/', scenarios[s], '/beta', betas[b],
+                              '/', nsims, '_mature_abundance.Rda', sep = ''))) {
           
-          # if the file exists: desktop
-          if (file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', scenarios[s], '/beta', betas[b],
-                                '/', nsims, '_abundance_total.Rda', sep = '')) &
-              
-              file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', scenarios[s], '/beta', betas[b],
-                                '/', nsims, '_mature_abundance.Rda', sep = ''))) {
-            
-            # load in total abundance object
-            load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', scenarios[s], '/beta', betas[b], '/',
-                       nsims, '_abundance_total.Rda', sep = ''))
-            
-            # load in abundance mature object
-            load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', scenarios[s], '/beta', betas[b], '/',
-                       nsims, '_mature_abundance.Rda', sep = ''))
-            
-          }
+          # load in total abundance object
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                     folder, '/', models_short[m], '/', scenarios[s], '/beta', betas[b], '/',
+                     nsims, '_abundance_total.Rda', sep = ''))
           
-        } else {
+          # load in abundance mature object
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                     folder, '/', models_short[m], '/', scenarios[s], '/beta', betas[b], '/',
+                     nsims, '_mature_abundance.Rda', sep = ''))
           
-          # if the file exists: laptop
-          if (file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', Scenarios[s], '/beta', betas[b],
-                                '/', nsims, '_abundance_total.Rda', sep = '')) &
-              
-              file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', Scenarios[s], '/beta', betas[b],
-                                '/', nsims, '_mature_abundance.Rda', sep = ''))) {
-            
-            # load in total abundance object
-            load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', Scenarios[s], '/beta', betas[b], '/',
-                       nsims, '_abundance_total.Rda', sep = ''))
-            
-            # load in abundance mature object
-            load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', Scenarios[s], '/beta', betas[b], '/',
-                       nsims, '_mature_abundance.Rda', sep = ''))
-            
-          }
+          
           
         }
         
@@ -155,7 +118,6 @@ for (m in 1:M) {
                           Survive_to = years_to_plot[y], 
                           Probability = mean(sims_abundance_total[years_to_plot[y], ] >
                                                0.1*sims_abundance_total[1, ]))
-        # Probability = mean(sims_abundance_total[years_to_plot[y], ] / sims_abundance_total[1, ]))
         
         # add DF2 to DF
         DF <- rbind(DF, DF2)
@@ -164,40 +126,41 @@ for (m in 1:M) {
       
     }
     
-    # make scenario and osr a factor variable
-    DF$Scenario <- factor(DF$Scenario, levels = scenarios)
-    # DF$OSR <- factor(osrs, levels = osrs)
-    
-    # heatmap for survival to year 100
-    fig <- ggplot(data = DF, aes(x = OSR, y = Scenario, fill = Probability)) +
-      geom_tile(color = "white",
-                lwd = 1.5,
-                linetype = 1) +
-      scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
-                           mid = hcl.colors(5, "viridis")[3], 
-                           high = hcl.colors(5, "viridis")[5], #colors in the scale
-                           midpoint = 0.5,    #same midpoint for plots (mean of the range)
-                           breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
-                           limits = c(0, 1), 
-                           na.value = 'gray') +
-      guides(fill = guide_colourbar(title = "Probability")) +
-      xlab('Operational sex ratio required to fertilize all females') +
-      ylab('Increase in sand temperature (C) by year 100') +
-      ggtitle(paste('Probability of population persistence (> 10% of starting population size) to year ', 
-                    years_to_plot[y], sep = '')) +
-      theme(panel.background = element_blank()) 
-    
-    # add figs to plot_list
-    plot_list[[m]] <- fig
-    
-    # save to file
-    ggsave(plot = fig, 
-           filename = paste('Y', years_to_plot[y], '_', models_short[m], 
-                            '_persistence_heatmap.png', sep = ''),
-           path = '~/Projects/iliketurtles3/figures/',
-           width = 8, height = 3.5)
-    
   }
+  
+  # make scenario and osr a factor variable
+  DF$Scenario <- factor(DF$Scenario, levels = scenarios)
+  # DF$OSR <- factor(osrs, levels = osrs)
+  
+  # heatmap for survival to year 100
+  fig <- ggplot(data = DF, aes(x = OSR, y = Scenario, fill = Probability)) +
+    geom_tile(color = "white",
+              lwd = 1.5,
+              linetype = 1) +
+    scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
+                         mid = hcl.colors(5, "viridis")[3], 
+                         high = hcl.colors(5, "viridis")[5], #colors in the scale
+                         midpoint = 0.5,    #same midpoint for plots (mean of the range)
+                         breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
+                         limits = c(0, 1), 
+                         na.value = 'gray') +
+    guides(fill = guide_colourbar(title = "Probability")) +
+    xlab('Operational sex ratio required to fertilize all females') +
+    ylab('Increase in sand temperature (C) by year 100') +
+    ggtitle(paste('Probability of population persistence (> 10% of starting population size) to year ', 
+                  years_to_plot[y], sep = '')) +
+    theme(panel.background = element_blank()) 
+  
+  # add figs to plot_list
+  plot_list[[m]] <- fig
+  
+  # save to file
+  ggsave(plot = fig, 
+         filename = paste(folder, '_', models_short[m], '_', 'Y', 
+                          years_to_plot[y], '_persistence_heatmap.png', 
+                          sep = ''),
+         path = '~/Projects/iliketurtles3/figures/',
+         width = 8, height = 3.5)
   
   # add model results to super data frame
   SDF <- rbind(SDF, DF)
@@ -230,8 +193,11 @@ fig2 <- ggplot(data = SDF, aes(x = OSR, y = Scenario, fill = Probability)) +
 
 # save to file
 ggsave(plot = fig2, 
-       filename = paste('PvsGM_base_evol_highH_', years_to_plot[y], '.png', sep = ''),
+       filename = paste(folder, '_', 'PvsGM_base_evol_highH_', years_to_plot[y], 
+                        '.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 7, height = 7)
 
 # save dataframe as R object
+save(SDF, file = paste('~/Projects/iliketurtles3/output/persistence_probs/', 
+                       folder, '.Rdata', sep = ''))
