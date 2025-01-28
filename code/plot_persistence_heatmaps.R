@@ -13,7 +13,7 @@ library(gridExtra)
 source('code/mating function/OSRs_to_betas.R')
 
 # which computer am I using?
-desktop <- FALSE
+desktop <- TRUE
 
 # plotting model parameters
 nsims <- 10000
@@ -22,8 +22,8 @@ nsims <- 10000
 folder <- 'no_temp_stochasticity'
 
 # individual heatmap titles
-models_short <- c('P_base', 'P_evo', 'P_high_H',
-                  'GM_base', 'GM_evo', 'GM_high_H')
+models_short <- c('P_base', 'P_evol', 'P_evol_high_H',
+                  'GM_base', 'GM_evol', 'GM_evol_high_H')
 
 # test runs - full folder and model names
 models <- paste(folder, '/', models_short, sep = '')
@@ -147,7 +147,8 @@ for (m in 1:M) {
     guides(fill = guide_colourbar(title = "Probability")) +
     xlab('Operational sex ratio required to fertilize all females') +
     ylab('Increase in sand temperature (C) by year 100') +
-    ggtitle(paste('Probability of population persistence (> 10% of starting population size) to year ', 
+    ggtitle(paste(folder, ' - ', models_short[m], ': 
+    Probability of population persistence (> 10% of starting population size) to year ', 
                   years_to_plot[y], sep = '')) +
     theme(panel.background = element_blank()) 
   
@@ -182,7 +183,8 @@ fig2 <- ggplot(data = SDF, aes(x = OSR, y = Scenario, fill = Probability)) +
   guides(fill = guide_colourbar(title = "Probability")) +
   xlab('Operational sex ratio required to fertilize all females') +
   ylab('Increase in sand temperature (\u00B0C) by year 100') +
-  ggtitle(paste('Probability of population persistence \n (> 10% of starting population size) to year ', 
+  ggtitle(paste('Probability of population persistence \n 
+                (> 10% of starting population size) to year ', 
                 years_to_plot[y], sep = '')) +
   facet_grid(rows = vars(Model), 
              cols = vars(Author)) +
@@ -197,6 +199,10 @@ ggsave(plot = fig2,
                         '.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 7, height = 7)
+
+# save figs as R objects
+save(plot_list, file = paste('~/Projects/iliketurtles3/figures/', folder, 
+                             '/figs.Rdata', sep = ''))
 
 # save dataframe as R object
 save(SDF, file = paste('~/Projects/iliketurtles3/output/persistence_probs/', 
