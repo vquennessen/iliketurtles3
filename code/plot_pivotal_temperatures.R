@@ -19,14 +19,18 @@ desktop <- TRUE
 nsims <- 10000
 
 # folder
-folder <- 'no_temp_stochasticity/'
+folder1 <- 'no_temp_stochasticity/'
+folder2 <- 'temp_stochasticity/'
 
+# # test runs - folder names
+# models <- paste(folder, c('P_evol', 'P_evol_high_H', 
+#                           'GM_evol', 'GM_evol_high_H'), sep = '')
 # test runs - folder names
-models <- paste(folder, c('P_evol', 'P_evol_high_H', 
-                          'GM_evol', 'GM_evol_high_H'), sep = '')
+models <- c(paste(folder1, c('P_base', 'GM_base'), sep = ''), 
+            paste(folder2, c('P_base', 'GM_base'), sep = ''))
 
 # individual heatmap titles
-models_short <- c('P_evo', 'P_high_H',
+models_short <- c('P_base', 'P_high_H',
                   'GM_evo', 'GM_high_H')
 
 # column names for combined heatmap
@@ -77,35 +81,19 @@ for (m in 1:M) {
         
         # load in appropriate output file
         
-        if (desktop == TRUE) {
+        if (desktop == TRUE) { user <- 'Vic' } else { user <- vique }
           
           # if the file exists: desktop
-          if (file.exists(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          if (file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
                                 models[m], '/', scenarios[s], '/beta', betas[b],
                                 '/', nsims, '_ptiv.Rda', sep = ''))) {
             
             # load in total abundance object
-            load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', scenarios[s], '/beta', betas[b], '/',
+            load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                       folder, models[m], '/', scenarios[s], '/beta', betas[b], '/',
                        nsims, '_ptiv.Rda', sep = ''))
             
           }
-          
-        } else {
-          
-          # if the file exists: laptop
-          if (file.exists(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', scenarios[s], '/beta', betas[b],
-                                '/', nsims, '_ptiv.Rda', sep = ''))) {
-            
-            # load in total abundance object
-            load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       models[m], '/', scenarios[s], '/beta', betas[b], '/',
-                       nsims, '_ptiv.Rda', sep = ''))
-            
-          }
-          
-        }
         
         # extract last year with pivotal temperature
         last_ptivs <- apply(sims_ptiv, 2, function(x) x[max(which(!is.na(x)))])
