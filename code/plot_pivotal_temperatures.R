@@ -19,31 +19,32 @@ desktop <- TRUE
 nsims <- 10000
 
 # folder
-folder1 <- 'no_temp_stochasticity/'
-folder2 <- 'temp_stochasticity/'
+folders <- c('no_temp_stochasticity', 'temp_stochasticity')
 
 # # test runs - folder names
 # models <- paste(folder, c('P_evol', 'P_evol_high_H', 
 #                           'GM_evol', 'GM_evol_high_H'), sep = '')
-# test runs - folder names
-models <- c(paste(folder1, c('P_base', 'GM_base'), sep = ''), 
-            paste(folder2, c('P_base', 'GM_base'), sep = ''))
 
 # individual heatmap titles
-models_short <- c('P_base', 'P_high_H',
-                  'GM_evo', 'GM_high_H')
+models_short <- c('P_base', 'GM_base')
+
+# test runs - folder names
+filenames <- c(paste(folders[1], '/', models_short, sep = ''), 
+               paste(folders[2], '/',  models_short, sep = ''))
+
+
 
 # column names for combined heatmap
-pops <- c(rep('West Africa', 2),
-             rep('Suriname', 2))
+pops <- c(rep('West Africa', length(folders)),
+             rep('Suriname', length(folders)))
 
 # row names for combined heatmap
-model_types <- rep(c('evolution', 'evolution with high H'),
+model_names <- rep(c('no temperature stochasticity', 
+                     'temperature stochasticity'),
                    times = 2)
 
 # which temperature increase scenarios 
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
-# scenarios <- paste(c(0.5, 5), 'C', sep = '')
 
 # which operational sex ratios to fertilize all females
 osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
@@ -52,7 +53,7 @@ osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
 betas <- OSRs_to_betas(osrs)
 
 # dimensions
-M <- length(models)
+FN <- length(filenames)
 S <- length(scenarios)
 B <- length(osrs)
 
@@ -71,7 +72,7 @@ DF <- data.frame(Pop = NULL,
 plot_list <- list()
 
 # for each model
-for (m in 1:M) {
+for (fn in 1:FN) {
 
     # for each scenario
     for (s in 1:S) {
@@ -84,14 +85,16 @@ for (m in 1:M) {
         if (desktop == TRUE) { user <- 'Vic' } else { user <- vique }
           
           # if the file exists: desktop
-          if (file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                models[m], '/', scenarios[s], '/beta', betas[b],
-                                '/', nsims, '_ptiv.Rda', sep = ''))) {
+          if (file.exists(paste('C:/Users/', user, 
+                                '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                                filenames[fn], '/', scenarios[s], '/beta', 
+                                betas[b], '/', nsims, '_ptiv.Rda', sep = ''))) {
             
             # load in total abundance object
-            load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       folder, models[m], '/', scenarios[s], '/beta', betas[b], '/',
-                       nsims, '_ptiv.Rda', sep = ''))
+            load(paste('C:/Users/', user, 
+                       '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                       folder, filenames[fn], '/', scenarios[s], '/beta', 
+                       betas[b], '/', nsims, '_ptiv.Rda', sep = ''))
             
           }
         
@@ -99,8 +102,8 @@ for (m in 1:M) {
         last_ptivs <- apply(sims_ptiv, 2, function(x) x[max(which(!is.na(x)))])
         
         # initialize dataframe
-        DF2 <- data.frame(Pop = pops[m], 
-                          Model = model_types[m],
+        DF2 <- data.frame(Pop = pops[fn], 
+                          Model = model_names[fn],
                           Scenario = scenarios[s],
                           OSR = osrs[b],
                           Probability = mean(last_ptivs > sims_ptiv[1, ], na.rm = TRUE))
@@ -128,17 +131,17 @@ for (m in 1:M) {
                            limits = c(0.47, 0.59), 
                            na.value = 'gray') +
       guides(fill = guide_colourbar(title = "Probability")) +
-      xlab('Operational sex ratio required to fertilize all females') +
-      ylab('Increase in sand temperature (C) by year 100') +
+      xlab('Operational sex ratio required for 100% reproductive success') +
+      ylab('Increase in sand temperature (\u00B0C) by year 100') +
       ggtitle('Probability of increase in pivotal temperature') +
       theme(panel.background = element_blank()) 
     
     # add figs to plot_list
-    plot_list[[m]] <- fig
+    plot_list[[fn]] <- fig
     
     # save to file
     ggsave(plot = fig, 
-           filename = paste(models_short[m], '_tpiv_heatmap.png', sep = ''),
+           filename = paste(models_short[fn], '_tpiv_heatmap.png', sep = ''),
            path = '~/Projects/iliketurtles3/figures/',
            width = 8, height = 3.5)
     
@@ -150,7 +153,7 @@ for (m in 1:M) {
 }
 
 # heatmap for survival to year 100
-fig2 <- ggplot(data = DF, aes(x = OSR, y = Scenario, fill = Probability)) +
+fig5 <- ggplot(data = DF, aes(x = OSR, y = Scenario, fill = Probability)) +
   geom_tile(color = "white",
             lwd = 1.5,
             linetype = 1) +
@@ -173,7 +176,7 @@ fig2 <- ggplot(data = DF, aes(x = OSR, y = Scenario, fill = Probability)) +
   theme(title = element_text(size = 13))
 
 # save to file
-ggsave(plot = fig2, 
+ggsave(plot = fig5, 
        filename = paste('PvsGM_base_evol_highH_tpiv.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 7, height = 7)
@@ -196,7 +199,7 @@ DF3$Min[which(DF3$Min == Inf)] <- NA
 DF3$Max[which(DF3$Max == -Inf)] <- NA
 
 # plot average pivotal temperature for each year
-fig3 <- ggplot(data = DF3, aes(x = Year, y = Mean)) +
+fig <- ggplot(data = DF3, aes(x = Year, y = Mean)) +
   geom_segment(x = 0, y = DF3$Mean[1], 
                xend = 100, yend = DF3$Mean[1], 
              lwd = 1.5, col = hcl.colors(5, "viridis")[2]) +
@@ -213,7 +216,7 @@ fig3 <- ggplot(data = DF3, aes(x = Year, y = Mean)) +
   theme(axis.text = element_text(size = 15))
 
 # save to file
-ggsave(plot = fig3, 
+ggsave(plot = fig, 
        filename = paste('P_evol_high_H_5c_beta1_avg_tpiv.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 6)
