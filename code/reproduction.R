@@ -3,10 +3,10 @@
 reproduction <- function(N, y, beta, max_age, M, 
                          F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                         hatch_success_A, hatch_success_k, 
-                         hatch_success_t0, G, H, ag_var, Delta, 
-                         Gamma, Epsilon, temp, temp_sd, T_piv, k, 
-                         evolution, climate_stochasticity, Pivotal_temps) {
+                         hatch_success_A, hatch_success_k, hatch_success_t0, 
+                         T_piv, k, H_piv, ag_var_piv, evolution_piv, G_piv, 
+                         Delta_piv, Gamma_piv, Epsilon_piv, Pivotal_temps,
+                         temp, temp_sd, climate_stochasticity) {
   
   # calculate number of breeding adults
   # females only breed every F_remigration_int years
@@ -64,30 +64,30 @@ reproduction <- function(N, y, beta, max_age, M,
       # if there are more than 0.5 hatchlings
     } else { 
       
-      # evolution
-      if (evolution == TRUE) {
+      # evolution in the pivotal temperature
+      if (evolution_piv == TRUE) {
         
         # weighted average of genotypes for mature males from last year
-        GM <- weighted.mean(x = G, w = N[2, , y - 1] * M)
+        GM_piv <- weighted.mean(x = G_piv, w = N[2, , y - 1] * M)
         
         # weighted average of genotypes for mature females from last year
-        GF <- weighted.mean(x = G, w = N[1, , y - 1] * M)
+        GF_piv <- weighted.mean(x = G_piv, w = N[1, , y - 1] * M)
         
         # hatchling genotype, with genotypic variance
-        Pivotal_temps[y] <- (GM + GF) / 2 + Gamma[y]
+        Pivotal_temps[y] <- (GM_piv + GF_piv) / 2 + Gamma_piv[y]
         
         # determine proportion of male hatchlings based on temperature + genetics
-        prop_male <- 1/(1 + exp(-k*(temp - (Pivotal_temps[y] + Epsilon[y]))))
+        prop_male <- 1/(1 + exp(-k*(temp - (Pivotal_temps[y] + Epsilon_piv[y]))))
         
-        # if evolution == FALSE
+        # if evolution_piv == FALSE
       } else {
         
         # determine proportion of male hatchlings based on temperature and 
         # phenotypic variation
-        prop_male <- 1/(1 + exp(-k * (temp - (T_piv + Delta[y]))))
+        prop_male <- 1/(1 + exp(-k * (temp - (T_piv + Delta_piv[y]))))
         
-        # don't track pivotal temperatures
-        Pivotal_temps <- NULL
+        # don't track pivotal temperature
+        Pivotal_temps[y] <- NULL
         
       }
       
@@ -107,7 +107,7 @@ reproduction <- function(N, y, beta, max_age, M,
   }
   
   # output
-  output <- list(female_hatchlings, male_hatchlings, Pivotal_temps, OSR)
+  output <- list(female_hatchlings, male_hatchlings, Pivotal_temps[y], OSR)
   
   return(output)
   

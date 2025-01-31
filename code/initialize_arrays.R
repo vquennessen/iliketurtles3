@@ -1,9 +1,9 @@
 # initialize arrays
 
-initialize_arrays <- function(scenario, years, A, Y, F_init, M_init, 
-                              M, T_piv, k, H, ag_var, evolution,
-                              temp_mu, temp_sd, climate_stochasticity, 
-                              F_remigration_int, M_remigration_int) {
+initialize_arrays <- function(scenario, years, A, Y, F_init, M_init, M, 
+                              F_remigration_int, M_remigration_int, 
+                              T_piv, k, H_piv, ag_var_piv, evolution_piv,
+                              temp_mu, temp_sd, climate_stochasticity) {
   
   # initialize population size array
   # dimensions = sexes * ages  * years
@@ -30,30 +30,32 @@ initialize_arrays <- function(scenario, years, A, Y, F_init, M_init,
   } else { temperatures <- temp_mus }
   
   # genetics for pivotal temperature
-  G <- rep(T_piv, A)
+  G_piv <- rep(T_piv, A)
   
   # delta vector for just phenotypic variation
-  Delta <- rnorm(n = Y, mean = 0, sd = sqrt(ag_var / H))
+  Delta_piv <- rnorm(n = Y, mean = 0, sd = sqrt(ag_var_piv / H_piv))
   
-  # if evolution is turned on, create epsilon and delta vectors
-  if (evolution == TRUE) {
+  # if evolution_piv is turned on, create epsilon and delta vectors
+  if (evolution_piv == TRUE) {
     
     # distribution of G - starting genotypes
-    G <- rnorm(n = A, mean = T_piv, sd = sqrt(ag_var))
+    G_piv <- rnorm(n = A, mean = T_piv, sd = sqrt(ag_var_piv))
     
     # gamma, error term for the expected genotype
-    Gamma <- rnorm(n = Y, mean = 0, sd = sqrt(ag_var / 2))       
+    Gamma_piv <- rnorm(n = Y, mean = 0, sd = sqrt(ag_var_piv / 2))       
     
     # epsilon, error term for the expected pivotal temperature
-    Epsilon <- rnorm(n = Y, mean = 0, sd = sqrt((ag_var / H - ag_var)))
+    Epsilon_piv <- rnorm(n = Y, 
+                         mean = 0, 
+                         sd = sqrt((ag_var_piv / H_piv - ag_var_piv)))
     
-    # intializez pivotal temperatures vector
-    Pivotal_temps <- c(G[1], rep(NA, times = Y - 1))
+    # intialize pivotal temperatures vector
+    Pivotal_temps <- c(G_piv[1], rep(NA, times = Y - 1))
     
   } else { 
     
-    Epsilon <- NULL 
-    Gamma <- NULL 
+    Epsilon_piv <- NULL 
+    Gamma_piv <- NULL 
     Pivotal_temps <- NULL
     
   }
@@ -71,7 +73,9 @@ initialize_arrays <- function(scenario, years, A, Y, F_init, M_init,
   OSR[1] <- n_breeding_M / (n_breeding_M + n_breeding_F)
   
   # output
-  output <- list(temperatures, N, G, Delta, Gamma, Epsilon, Pivotal_temps, OSR)
+  output <- list(temperatures, N, 
+                 G_piv, Delta_piv, Gamma_piv, Epsilon_piv, Pivotal_temps, 
+                 OSR)
   
   return(output)
   

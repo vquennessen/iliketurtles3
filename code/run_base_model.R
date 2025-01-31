@@ -6,19 +6,27 @@ run_base_model <- function(arguments) {
   
   ###### model inputs ##########################################################
   
+  # # function arguments
+  # scenario <- arguments[[1]][1]
+  # beta     <- arguments[[2]][1]
+  # nsims    <- arguments[[3]][1]
+  # model    <- arguments[[4]][1]
+  # years    <- arguments[[5]][1]
+  # 
+  # # model name from number
+  # model_name <- ifelse(model == 1, 'P_base',
+  #                      ifelse(model == 2, 'P_evol',
+  #                             ifelse(model == 3, 'P_evol_high_H',
+  #                                    ifelse(model == 4, 'GM_base',
+  #                                           ifelse(model == 5, 'GM_evol',
+  #                                                  'GM_evol_high_H')))))
+  
   # function arguments
-  scenario <- arguments[[1]][1]
-  beta     <- arguments[[2]][1]
-  nsims    <- arguments[[3]][1]
-  model    <- arguments[[4]][1]
-
-  # model name from number
-  model_name <- ifelse(model == 1, 'P_base',
-                       ifelse(model == 2, 'P_evol',
-                              ifelse(model == 3, 'P_evol_high_H',
-                                     ifelse(model == 4, 'GM_base',
-                                            ifelse(model == 5, 'GM_evol',
-                                                   'GM_evol_high_H')))))
+  model    <- arguments$Var1
+  scenario <- arguments$Var2
+  beta     <- arguments$Var3
+  years    <- arguments$Var4
+  nsims    <- arguments$Var5
   
   
   # model parameters to modulate
@@ -46,51 +54,46 @@ run_base_model <- function(arguments) {
   hatch_success_A <- 0.86                   # logistic by temp - A
   hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
-  T_piv <- 29.2                         # thermal reaction norm midpoint
-
-  if (model_name %in% c('P_base', 'P_evol', 'P_evol_high_H')) {
-    
-      k <- -1.4                             # thermal reaction norm slope
-  
-  } else {
-    
-    k <- -0.56                              # thermal reaction norm slope
-    
-  }
-
-  F_initial <- 170                          # initial adult F
-  M_initial <- 30                           # initial adult M
-  
-  # climate data
+  T_piv <- 29.2                             # thermal reaction norm midpoint
+  ag_var_piv <- 0.017                       # phenotypic variance
   temp_mu <- 31.80                          # base incubation temp mean
   temp_sd <- 0.84                           # base incubation temp sd
   
+  
+  # thermal reaction norm slope by model name
+  if (model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H')) {
+    
+    k <- -1.4} 
+  
+  if (model %in% c('GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H')) {
+    
+    k <- -0.561}
+
   # evolution data
   
-  if (model_name %in% c('P_base', 'P_evol', 'GM_base', 'GM_evol')) {
+  # heritability
+  if (model %in% c('P_base', 'P_evol_piv', 'GM_base', 'GM_evol_piv')) {
     
-    H <- 0.135                                # heritability
+    H_piv <- 0.135} 
+  
+  if (model %in% c('P_evol_piv_high_H', 'GM_evol_piv_high_H')) {
+    
+    H_piv <- 0.351}
 
-  } else {
-    
-    H <- 0.351
-    
-  }
   
-  ag_var <- 0.017                           # phenotypic variance
+  if (model %in% c('P_base', 'GM_base')) {
+    
+      evolution_piv <- FALSE} 
   
-  # model parameters and dimensions
-  years <- 100
+  if (model %in% c('P_evol_piv', 'P_evol_piv_high_H', 
+                   'GM_evol_piv', 'GM_evol_piv_high_H')) {
+    
+    evolution_piv <- TRUE}
   
-  if (model_name %in% c('P_base', 'GM_base')) {
-    
-      evolution <- FALSE                         # whether evolution is turned on
-    
-  } else {
-    
-    evolution <- TRUE
-    
-  }
+  # initial numbers of breeding adults by sex to find starting population size
+  # based on the stable age distribution
+  F_initial <- 170                          # initial adult F
+  M_initial <- 30                           # initial adult M
 
   # dimensions
   A <- max_age
@@ -164,7 +167,7 @@ run_base_model <- function(arguments) {
   ##############################################################################
   
   # write to progress text file
-  update <- paste(Sys.time(), ' - ', model_name, ' - ', scenario, 'C - beta ', 
+  update <- paste(Sys.time(), ' - ', model, ' - ', scenario, 'C - beta ', 
                   beta, ' - ', nsims, ' sims', sep = '')
   write(update, file = 'progress.txt', append = TRUE)
   
@@ -179,11 +182,11 @@ run_base_model <- function(arguments) {
   
   sims_abundance_total <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims)) 
   
-  sims_mature_abundance <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims))  
+  sims_abundance_mature <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims))  
   
   sims_OSR <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims)) 
   
-  if (evolution == TRUE) {
+  if (evolution_piv == TRUE) {
     
     sims_ptiv <- array(rep(NA, times = Y * nsims), 
                        dim = c(Y, nsims))
@@ -199,8 +202,8 @@ run_base_model <- function(arguments) {
                          max_age, F_survival, M_survival, F_init, M_init, 
                          M, F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                         hatch_success_A, hatch_success_k, 
-                         hatch_success_t0, T_piv, k, H, ag_var, evolution,
+                         hatch_success_A, hatch_success_k, hatch_success_t0, 
+                         T_piv, k, H_piv, ag_var_piv, evolution_piv,
                          temp_mu, temp_sd, climate_stochasticity)
     
     # save the N and abundance arrays 
@@ -208,10 +211,10 @@ run_base_model <- function(arguments) {
     sims_abundance_F[, i]       <- output[[2]]
     sims_abundance_M[, i]       <- output[[3]]
     sims_abundance_total[, i]   <- output[[4]]
-    sims_mature_abundance[, i]  <- output[[5]]
+    sims_abundance_mature[, i]  <- output[[5]]
     sims_OSR[, i]               <- output[[6]]
     
-    if (evolution == TRUE) {
+    if (evolution_piv == TRUE) {
       
       sims_ptiv[, i]            <- output[[7]]
       
@@ -219,9 +222,9 @@ run_base_model <- function(arguments) {
     
     # write to progress text file
     if ((i/nsims*100) %% 10 == 0) {
-      update <- paste(Sys.time(), ' - ', model_name, ' - ', scenario, 
-                      'C - beta ', beta, ' - ', nsims, ' sims - ', 
-                      i/nsims*100, '% done!', sep = '')
+      update <- paste(Sys.time(), ' - ', model, ' - ', scenario, 'C - beta ', 
+                      beta, ' - ', nsims, ' sims - ', i/nsims*100, '% done!', 
+                      sep = '')
       write(update, file = 'progress.txt', append = TRUE)
       
     }
@@ -229,22 +232,22 @@ run_base_model <- function(arguments) {
   }
   
   # get filepaths to save objects to
-  filepath1 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+  filepath1 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                     '/', nsims, '_N.Rda', sep = '')
-  filepath2 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+  filepath2 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                     '/', nsims, '_abundance_F.Rda', sep = '')
-  filepath3 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+  filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                     '/', nsims, '_abundance_M.Rda', sep = '')
-  filepath4 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+  filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                     '/', nsims, '_abundance_total.Rda', sep = '')
-  filepath5 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
-                    '/', nsims, '_mature_abundance.Rda', sep = '')
-  filepath6 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+  filepath5 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
+                    '/', nsims, '_abundance_mature.Rda', sep = '')
+  filepath6 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                     '/', nsims, '_OSR.Rda', sep = '')
   
-  if (evolution == TRUE) {
+  if (evolution_piv == TRUE) {
     
-    filepath7 = paste('../output/', model_name, '/', scenario, 'C/beta', beta, 
+    filepath7 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                       '/',  nsims, '_ptiv.Rda', sep = '')
     
   }
@@ -254,10 +257,10 @@ run_base_model <- function(arguments) {
   save(sims_abundance_F, file = filepath2)
   save(sims_abundance_M, file = filepath3)
   save(sims_abundance_total, file = filepath4)
-  save(sims_mature_abundance, file = filepath5)
+  save(sims_abundance_mature, file = filepath5)
   save(sims_OSR, file = filepath6)
 
-  if (evolution == TRUE) {
+  if (evolution_piv == TRUE) {
     
     save(sims_ptiv, file = filepath7)
     
