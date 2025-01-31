@@ -16,21 +16,17 @@ library(ggpattern)
 desktop <- TRUE
 
 # folder(s)
-folders <- c('no_temp_stochasticity', 'temp_stochasticity')
+folders <- c('temp_stochasticity')
 
 # model(s)
 models <- c('P_base', 'GM_base')
 
 # filepaths
-paths <- c(paste(folders[1], '/', models, sep = ''), 
-           paste(folders[2], '/', models, sep = ''))
+paths <- c(paste(folders[1], '/', models, sep = ''))
 
 # years to average over
-years <- 2:100
 average_over <- 10
-years_avg <- (average_over + 1):100
-
-################################################################################
+years <- 1:100
 
 # plotting model parameters
 nsims <- 10000
@@ -40,8 +36,7 @@ populations <- c(rep('West Africa', length(folders)),
                  rep('Suriname', length(folders)))
 
 # row names for combined heatmap
-stochasticity <- rep(c('no temperature stochaticity', 
-                       'temperature stochasticity'),
+stochasticity <- rep('temperature stochasticity',
                      times = length(models))
 
 # temperature increase scenarios
@@ -61,7 +56,6 @@ M <- length(models)
 S <- length(scenarios)
 OSR <- length(osrs)
 Y <- length(years)
-Ya <- length(years_avg)
 A <- length(abundances)
 
 # clear DF and SDF objects
@@ -91,7 +85,7 @@ for (p in 1:P) {
       # initialize empty dataframe, one for each filepath
       DF <- data.frame(Stochasticity = stochasticity[p], 
                        Population = populations[p], 
-                       Model = models[ceiling(p / 2)],
+                       Model = models[p],
                        Scenario = scenarios[s], 
                        OSR = osrs[osr], 
                        Year = years, 
@@ -118,8 +112,9 @@ for (p in 1:P) {
                             '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
                             paths[p], '/', scenarios[s], '/beta', 
                             betas[osr], '/', nsims, '_', abundances[2], '.Rda', 
-                            sep = '')))
-      {
+                            sep = ''))
+          
+          )  {
         
         # load in total abundance object
         load(paste('C:/Users/', user, 
@@ -135,21 +130,18 @@ for (p in 1:P) {
         
       }
       
-      # calculate lambdas for abundance total
+      # calculate lambdas for each year for each simulation
+      # year 1 is NA because there is no previous year to divide by
+      lambdas_total <- sims_abundance_total[2:Y, ] / 
+        sims_abundance_total[1:(Y - 1), ]
+      lambdas_mature <- sims_mature_abundance[2:Y, ] / 
+        sims_mature_abundance[1:(Y - 1), ]
       
-      # average abundances total and mature
-      avg_abundance_total <- rowMeans(sims_abundance_total)
-      avg_abundance_mature <- rowMeans(sims_mature_abundance)
+      # add average lambdas across simulations to DF
+      DF$Lambda[1:Y] <- c(NA, rowMeans(lambdas_total))
+      DF$Lambda[(Y + 1):(2 * Y)] <- c(NA, rowMeans(lambdas_mature))
       
-      # lambdas per year
-      lambdas_total <- sims_abundance_total[2:100, ] / sims_abundance_total[1:99, ]
-      lambdas_mature <- sims_mature_abundance[2:100, ] / sims_mature_abundance[1:99, ]
-      
-      # add lambdas to DF
-      DF$Lambda[1:Y] <- rowMeans(lambdas_total)
-      DF$Lambda[(Y + 1):(2 * Y)] <- rowMeans(lambdas_mature)
-      
-      # initialize average, Q5, and Q95 lambdas
+      # initialize average, Q5, and Q95 lambdas for years 2 - 100
       avg_lambdas_total <- rep(NA, Y)
       avg_lambdas_mature <- rep(NA, Y)
       
@@ -159,41 +151,60 @@ for (p in 1:P) {
       Q75_lambdas_total <- rep(NA, Y)
       Q75_lambdas_mature <- rep(NA, Y)
       
-      # average lambdas per year over over_average years
-      for (y in average_over:Y) {
+      # calculate average, Q25, and Q75 lambdas across over_average years for 
+      # years 11 - 100
+      for (y in (average_over):(Y - 1)) {
+              
+        # average lambdas per year across over_average years across all simulations
+        avg_lambdas_total[y + 1] <- mean(
+          lambdas_total[(y - average_over):y, ], 
+          na.omit = TRUE)
         
-        avg_lambdas_total[y] <- mean(lambdas_total[(y - average_over):y, ], 
-                                     na.omit = TRUE)
-        avg_lambdas_mature[y] <- mean(lambdas_mature[(y - average_over):y, ], 
-                                      na.omit = TRUE)
+        avg_lambdas_mature[y + 1] <- mean(
+          lambdas_mature[(y - average_over):y, ], 
+          na.omit = TRUE)
         
-        Q25_lambdas_total[y] <- quantile(lambdas_total[(y - average_over):y, ],
-                                         na.rm = TRUE,
-                                         probs = c(0.25))
-        Q25_lambdas_mature[y] <- quantile(lambdas_mature[(y - average_over):y, ],
-                                         na.rm = TRUE,
-                                         probs = c(0.25))
+        # Q25 lambdas per year across over_average years across all simulations
+        Q25_lambdas_total[y + 1] <- quantile(
+          lambdas_total[(y - average_over):y, ], 
+          na.rm = TRUE,
+          probs = c(0.25))
         
-        Q75_lambdas_total[y] <- quantile(lambdas_total[(y - average_over):y, ],
-                                         na.rm = TRUE,
-                                         probs = c(0.75))
-        Q75_lambdas_mature[y] <- quantile(lambdas_mature[(y - average_over):y, ],
-                                          na.rm = TRUE,
-                                          probs = c(0.75))
+        Q25_lambdas_mature[y + 1] <- quantile(
+          lambdas_mature[(y - average_over):y, ],
+          na.rm = TRUE,
+          probs = c(0.25))
+        
+        Q75_lambdas_total[y + 1] <- quantile(
+          lambdas_total[(y - average_over):y, ],
+          na.rm = TRUE,
+          probs = c(0.75))
+        
+        Q75_lambdas_mature[y + 1] <- quantile(
+          lambdas_mature[(y - average_over):y, ],
+          na.rm = TRUE,
+          probs = c(0.75))
 
-        
       }
       
       # add average lambdas to DF
       DF$Lambda_avg[1:Y] <- avg_lambdas_total
       DF$Lambda_avg[(Y + 1):(2 * Y)] <- avg_lambdas_mature
       
+      # add average lambdas to DF
+      DF$Lambda_Q25[1:Y] <- Q25_lambdas_total
+      DF$Lambda_Q25[(Y + 1):(2 * Y)] <- Q25_lambdas_mature
+      
+      # add average lambdas to DF
+      DF$Lambda_Q75[1:Y] <- Q75_lambdas_total
+      DF$Lambda_Q75[(Y + 1):(2 * Y)] <- Q75_lambdas_mature
+      
       # add DF to SDF
       SDF <- rbind(SDF, DF)
       
       # print progress update
-      print(paste(Sys.time(), ' - ', stochasticity[p], ' - ', 
-                  models[ceiling(p / 2)], ' - ', scenarios[s], ' - beta ', 
+      print(paste(Sys.time(), ' - ', stochasticity[p], ' - ',
+                  models[p], ' - ', scenarios[s], ' - beta ', 
                   betas[osr], ' all done!', sep = ''))
       
     }
