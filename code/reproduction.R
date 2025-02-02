@@ -1,12 +1,11 @@
 # reproduction
 
-reproduction <- function(N, y, beta, max_age, M, 
+reproduction <- function(N, M, y, beta, max_age,
                          F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                         hatch_success_A, hatch_success_k, hatch_success_t0, 
-                         T_piv, k, H_piv, ag_var_piv, evolution_piv, G_piv, 
-                         Delta_piv, Gamma_piv, Epsilon_piv, Pivotal_temps,
-                         temp, temp_sd, climate_stochasticity) {
+                         hatch_success_A, hatch_success_k, 
+                         hatch_success_t0, temperatures,
+                         k_piv, Pivotal_temps, Threshold_temps) {
   
   # calculate number of breeding adults
   # females only breed every F_remigration_int years
@@ -44,13 +43,15 @@ reproduction <- function(N, y, beta, max_age, M,
     # number of eggs per nest
     for (f in 1:length(nests)) {
       
-      eggs[f] <- sum(rnorm(n = nests[f], mean = eggs_mu, sd = eggs_sd), 
+      eggs[f] <- sum(rnorm(n = nests[f], 
+                           mean = eggs_mu, 
+                           sd = eggs_sd), 
                      na.rm = TRUE)
       
     }
     
     # hatching success
-    hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (temp - hatch_success_t0)))
+    hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (temperatures[y] - hatch_success_t0)))
     
     # total hatchlings = breeding success * total eggs * hatching success
     hatchlings <- breeding_success * sum(eggs, na.rm = TRUE) * hatch_success
@@ -63,34 +64,11 @@ reproduction <- function(N, y, beta, max_age, M,
       
       # if there are more than 0.5 hatchlings
     } else { 
-      
-      # evolution in the pivotal temperature
-      if (evolution_piv == TRUE) {
-        
-        # weighted average of genotypes for mature males from last year
-        GM_piv <- weighted.mean(x = G_piv, w = N[2, , y - 1] * M)
-        
-        # weighted average of genotypes for mature females from last year
-        GF_piv <- weighted.mean(x = G_piv, w = N[1, , y - 1] * M)
-        
-        # hatchling genotype, with genotypic variance
-        Pivotal_temps[y] <- (GM_piv + GF_piv) / 2 + Gamma_piv[y]
-        
-        # determine proportion of male hatchlings based on temperature + genetics
-        prop_male <- 1/(1 + exp(-k*(temp - (Pivotal_temps[y] + Epsilon_piv[y]))))
-        
-        # if evolution_piv == FALSE
-      } else {
         
         # determine proportion of male hatchlings based on temperature and 
         # phenotypic variation
-        prop_male <- 1/(1 + exp(-k * (temp - (T_piv + Delta_piv[y]))))
-        
-        # don't track pivotal temperature
-        Pivotal_temps[y] <- NULL
-        
-      }
-      
+        prop_male <- 1/(1 + exp(-k_piv * (temperatures[y] - (Pivotal_temps[y]))))
+
       # number of male and female hatchlings
       female_hatchlings <- round(hatchlings * (1 - prop_male))
       male_hatchlings <- round(hatchlings * prop_male)
@@ -107,7 +85,7 @@ reproduction <- function(N, y, beta, max_age, M,
   }
   
   # output
-  output <- list(female_hatchlings, male_hatchlings, Pivotal_temps[y], OSR)
+  output <- list(female_hatchlings, male_hatchlings, OSR)
   
   return(output)
   

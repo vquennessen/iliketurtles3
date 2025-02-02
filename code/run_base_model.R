@@ -5,29 +5,13 @@ run_base_model <- function(arguments) {
   
   
   ###### model inputs ##########################################################
-  
-  # # function arguments
-  # scenario <- arguments[[1]][1]
-  # beta     <- arguments[[2]][1]
-  # nsims    <- arguments[[3]][1]
-  # model    <- arguments[[4]][1]
-  # years    <- arguments[[5]][1]
-  # 
-  # # model name from number
-  # model_name <- ifelse(model == 1, 'P_base',
-  #                      ifelse(model == 2, 'P_evol',
-  #                             ifelse(model == 3, 'P_evol_high_H',
-  #                                    ifelse(model == 4, 'GM_base',
-  #                                           ifelse(model == 5, 'GM_evol',
-  #                                                  'GM_evol_high_H')))))
-  
+
   # function arguments
   model    <- arguments$Var1
   scenario <- arguments$Var2
   beta     <- arguments$Var3
   years    <- arguments$Var4
   nsims    <- arguments$Var5
-  
   
   # model parameters to modulate
   climate_stochasticity <- TRUE             # whether or not to add in
@@ -55,40 +39,54 @@ run_base_model <- function(arguments) {
   hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
   T_piv <- 29.2                             # thermal reaction norm midpoint
-  ag_var_piv <- 0.017                       # phenotypic variance
+  ag_var_piv <- 0.017                       # phenotypic variance - pivotal temp
+  T_threshold <- 35                         # lethal temperature threshold
+  ag_var_threshold <- 0.017                 # phenotypic variance - threshold
   temp_mu <- 31.80                          # base incubation temp mean
   temp_sd <- 0.84                           # base incubation temp sd
   
   
   # thermal reaction norm slope by model name
-  if (model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H')) {
+  if (model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
+                   'P_evol_threshold', 'P_evol_threshold_high_H')) {
     
-    k <- -1.4} 
+    k_piv <- -1.4 } 
   
-  if (model %in% c('GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H')) {
+  if (model %in% c('GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H', 
+                   'GM_evol_threshold', 'GM_evol_threshold_high_H')) {
     
-    k <- -0.561}
+    k_piv <- -0.561 }
 
   # evolution data
   
   # heritability
-  if (model %in% c('P_base', 'P_evol_piv', 'GM_base', 'GM_evol_piv')) {
+  if (model %in% c('P_base', 'P_evol_piv', 'P_evol_threshold',
+                   'GM_base', 'GM_evol_piv', 'GM_evol_threshold')) {
     
-    H_piv <- 0.135} 
+    h2_piv <- 0.135
+    h2_threshold <- 0.20 } 
   
-  if (model %in% c('P_evol_piv_high_H', 'GM_evol_piv_high_H')) {
+  if (model %in% c('P_evol_piv_high_H', 'P_evol_threshold_high_H',
+                   'GM_evol_piv_high_H', 'GM_evol_threshold_high_H')) {
     
-    H_piv <- 0.351}
+    h2_piv <- 0.351 
+    h2_threshold <- 0.38 }
 
   
   if (model %in% c('P_base', 'GM_base')) {
     
-      evolution_piv <- FALSE} 
+      evolution_piv <- FALSE 
+      evolution_threshold <- FALSE } 
   
   if (model %in% c('P_evol_piv', 'P_evol_piv_high_H', 
                    'GM_evol_piv', 'GM_evol_piv_high_H')) {
     
-    evolution_piv <- TRUE}
+    evolution_piv <- TRUE }
+  
+  if (model %in% c('P_evol_threshold', 'P_evol_threshold_high_H', 
+                   'GM_evol_threshold', 'GM_evol_threshold_high_H')) {
+    
+    evolution_threshold <- TRUE }
   
   # initial numbers of breeding adults by sex to find starting population size
   # based on the stable age distribution
@@ -114,32 +112,32 @@ run_base_model <- function(arguments) {
   
   # check it's long enough, and if not, add the last survival_value until it is
   # females
-  if (length(F_survival) < A) {
+  if (length(F_survival) < max_age) {
     F_survival <- c(F_survival, rep(F_survival_values[length(F_survival_values)], 
-                                    A - length(F_survival)))
+                                    max_age - length(F_survival)))
   }
   
   # males
-  if (length(M_survival) < A) {
+  if (length(M_survival) < max_age) {
     M_survival <- c(M_survival, 
                     rep(M_survival_values[length(M_survival_values)], 
-                        A - length(M_survival)))
+                        max_age - length(M_survival)))
   }
   
   # make female leslie matrix for survival
-  f_matrix <- matrix(diag(F_survival[1:(A - 1)]), ncol = A - 1)
-  f_Leslie <- rbind(rep(0, A), cbind(f_matrix, rep(0, A - 1)))
+  f_matrix <- matrix(diag(F_survival[1:(max_age - 1)]), ncol = max_age - 1)
+  f_Leslie <- rbind(rep(0, max_age), cbind(f_matrix, rep(0, max_age - 1)))
   
   # make male leslie matrix for survival
-  m_matrix <- matrix(diag(M_survival[1:(A - 1)]), ncol = A - 1)
-  m_Leslie <- rbind(rep(0, A), cbind(m_matrix, rep(0, A - 1)))
+  m_matrix <- matrix(diag(M_survival[1:(max_age - 1)]), ncol = max_age - 1)
+  m_Leslie <- rbind(rep(0, max_age), cbind(m_matrix, rep(0, max_age - 1)))
   
   # stable age distribution
   SAD_output <- initialize_population(beta, burn_in = 1000, max_age, M, 
                                       F_remigration_int, M_remigration_int,
                                       nests_mu, eggs_mu, hatch_success_A, 
                                       hatch_success_k, hatch_success_t0, 
-                                      k, T_piv, temp_mu, f_Leslie, m_Leslie)
+                                      k_piv, T_piv, temp_mu, f_Leslie, m_Leslie)
   
   # separate by sex
   SAD_F <- SAD_output[[1]]
@@ -174,22 +172,35 @@ run_base_model <- function(arguments) {
   # initialize yield and biomass arrays
   
   # initialize population size array by age class and sex
-  sims_N <- array(rep(NA, times = 2 * A * Y * nsims), dim = c(2, A, Y, nsims))
+  sims_N <- array(rep(NA, times = 2 * max_age * years * nsims), 
+                  dim = c(2, max_age, years, nsims))
   
-  sims_abundance_F <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims))  
+  sims_abundance_F <- array(rep(NA, times = years * nsims), 
+                            dim = c(years, nsims))  
   
-  sims_abundance_M <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims)) 
+  sims_abundance_M <- array(rep(NA, times = years * nsims), 
+                            dim = c(years, nsims)) 
   
-  sims_abundance_total <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims)) 
+  sims_abundance_total <- array(rep(NA, times = years * nsims), 
+                                dim = c(years, nsims)) 
   
-  sims_abundance_mature <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims))  
+  sims_abundance_mature <- array(rep(NA, times = years * nsims), 
+                                 dim = c(years, nsims))  
   
-  sims_OSR <- array(rep(NA, times = Y * nsims), dim = c(Y, nsims)) 
+  sims_OSR <- array(rep(NA, times = years * nsims), 
+                    dim = c(years, nsims)) 
   
   if (evolution_piv == TRUE) {
     
-    sims_ptiv <- array(rep(NA, times = Y * nsims), 
-                       dim = c(Y, nsims))
+    sims_piv <- array(rep(NA, times = years * nsims), 
+                       dim = c(years, nsims))
+    
+  }
+  
+  if (evolution_threshold == TRUE) {
+    
+    sims_threshold <- array(rep(NA, times = years * nsims), 
+                            dim = c(years, nsims))
     
   }
   
@@ -198,12 +209,14 @@ run_base_model <- function(arguments) {
   # run the model for each simulation
   for (i in 1:nsims) {
     
-    output <- base_model(scenario, beta, years, A, Y,
-                         max_age, F_survival, M_survival, F_init, M_init, 
+    output <- base_model(scenario, beta, years, max_age,
+                         F_survival, M_survival, F_init, M_init, 
                          M, F_remigration_int, M_remigration_int,
                          nests_mu, nests_sd, eggs_mu, eggs_sd, 
                          hatch_success_A, hatch_success_k, hatch_success_t0, 
-                         T_piv, k, H_piv, ag_var_piv, evolution_piv,
+                         T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
+                         T_threshold, h2_threshold, ag_var_threshold, 
+                         evolution_threshold,
                          temp_mu, temp_sd, climate_stochasticity)
     
     # save the N and abundance arrays 
@@ -216,7 +229,13 @@ run_base_model <- function(arguments) {
     
     if (evolution_piv == TRUE) {
       
-      sims_ptiv[, i]            <- output[[7]]
+      sims_piv[, i]             <- output[[7]]
+      
+    }
+    
+    if (evolution_threshold == TRUE) {
+      
+      sims_threshold[, i]       <- output[[8]]
       
     }
     
@@ -248,7 +267,14 @@ run_base_model <- function(arguments) {
   if (evolution_piv == TRUE) {
     
     filepath7 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/',  nsims, '_ptiv.Rda', sep = '')
+                      '/',  nsims, '_piv.Rda', sep = '')
+    
+  }
+  
+  if (evolution_threshold == TRUE) {
+    
+    filepath8 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
+                      '/',  nsims, '_threshold.Rda', sep = '')
     
   }
   
@@ -262,7 +288,13 @@ run_base_model <- function(arguments) {
 
   if (evolution_piv == TRUE) {
     
-    save(sims_ptiv, file = filepath7)
+    save(sims_piv, file = filepath7)
+    
+  }
+  
+  if (evolution_threshold == TRUE) {
+    
+    save(sims_threshold, file = filepath8)
     
   }
   

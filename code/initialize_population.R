@@ -2,24 +2,17 @@ initialize_population <- function(beta, burn_in, max_age, M,
                                   F_remigration_int, M_remigration_int,
                                   nests_mu, eggs_mu, hatch_success_A,
                                   hatch_success_k, hatch_success_t0,
-                                  k, T_piv, temp_mu, f_Leslie, m_Leslie) {
-  
-  
-  # dimensions
-  A <- max_age
+                                  k_piv, T_piv, temp_mu, f_Leslie, m_Leslie) {
   
   # initialize N dataframe
-  N <- array(rep(0, times = 2 * A * burn_in), dim = c(2, A, burn_in))
-  # DF <- data.frame(Beta = beta, 
-  #                  Age = 1:A, 
-  #                  Year = 1,
-  #                  N = NA)
+  N <- array(rep(0, times = 2 * max_age * burn_in), 
+             dim = c(2, max_age, burn_in))
   
   # initial pop size
 # hatchlings
   N[ , 1, 1] <- 100
 # not hatchlings
-  N[ , 2:A, 1] <- 1
+  N[ , 2:max_age, 1] <- 1
   
   # move population forward in time burn_in years
   for (y in 2:burn_in) {
@@ -62,7 +55,7 @@ initialize_population <- function(beta, burn_in, max_age, M,
       hatchlings <- breeding_success * eggs * hatch_success
       
       # determine proportion of male hatchlings based on temperature
-      prop_male <- 1 / (1 + exp(-k * (temp_mu - T_piv)))
+      prop_male <- 1 / (1 + exp(-k_piv * (temp_mu - T_piv)))
       
       # number of male and female hatchlings
       # female hatchlings
