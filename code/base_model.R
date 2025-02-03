@@ -35,13 +35,6 @@ base_model <- function(scenario, beta, years, max_age,
   Epsilon_threshold  <- init_output[[14]]   # error around expected phenotype
   OSR                <- init_output[[15]]   # operational sex ratio
   
-  # output
-  output <- list(N, temperatures,
-                 Delta_piv, G_piv, P_piv, Pivotal_temps, Gamma_piv, Epsilon_piv, 
-                 Delta_threshold, G_threshold, P_threshold, Threshold_temps,
-                 Gamma_threshold, Epsilon_threshold, 
-                 OSR)
-  
   ##### model ##################################################################
   for (y in 2:years) {
     
@@ -104,9 +97,9 @@ base_model <- function(scenario, beta, years, max_age,
   
   # output N and abundance arrays
   
-  if (evolution_piv == FALSE) { Pivotal_temps <- NULL }
+  if (evolution_piv == FALSE) { Pivotal_temps <- NA }
   
-  if (evolution_threshold == FALSE) { Threshold_temps <- NULL }
+  if (evolution_threshold == FALSE) { Threshold_temps <- NA }
     
     output <- list(N, 
                    abundance_F, 

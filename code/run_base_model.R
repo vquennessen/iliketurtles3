@@ -7,11 +7,13 @@ run_base_model <- function(arguments) {
   ###### model inputs ##########################################################
 
   # function arguments
-  model    <- arguments$Var1
-  scenario <- arguments$Var2
-  beta     <- arguments$Var3
-  years    <- arguments$Var4
-  nsims    <- arguments$Var5
+  model     <- arguments$Var1
+  scenario  <- arguments$Var2
+  beta      <- arguments$Var3
+  intensity <- arguments$Var4
+  frequency <- arguments$Var5
+  years     <- arguments$Var6
+  nsims     <- arguments$Var7
   
   # model parameters to modulate
   climate_stochasticity <- TRUE             # whether or not to add in
@@ -45,48 +47,129 @@ run_base_model <- function(arguments) {
   temp_mu <- 31.80                          # base incubation temp mean
   temp_sd <- 0.84                           # base incubation temp sd
   
-  
-  # thermal reaction norm slope by model name
-  if (model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
-                   'P_evol_threshold', 'P_evol_threshold_high_H')) {
+  ##### parameters that are model and scenario dependent #######################
+  if (model == 'P_base') {
     
-    k_piv <- -1.4 } 
-  
-  if (model %in% c('GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H', 
-                   'GM_evol_threshold', 'GM_evol_threshold_high_H')) {
-    
-    k_piv <- -0.561 }
-
-  # evolution data
-  
-  # heritability
-  if (model %in% c('P_base', 'P_evol_piv', 'P_evol_threshold',
-                   'GM_base', 'GM_evol_piv', 'GM_evol_threshold')) {
-    
+    k_piv <- -1.4
     h2_piv <- 0.135
-    h2_threshold <- 0.20 } 
-  
-  if (model %in% c('P_evol_piv_high_H', 'P_evol_threshold_high_H',
-                   'GM_evol_piv_high_H', 'GM_evol_threshold_high_H')) {
+    h2_threshold <- 0.20
+    evolution_piv <- FALSE 
+    evolution_threshold <- FALSE
+    conservation <- FALSE
     
-    h2_piv <- 0.351 
-    h2_threshold <- 0.38 }
-
+  }
   
-  if (model %in% c('P_base', 'GM_base')) {
+  if (model == 'P_evol_piv') {
     
-      evolution_piv <- FALSE 
-      evolution_threshold <- FALSE } 
+    k_piv <- -1.4
+    h2_piv <- 0.135
+    h2_threshold <- 0.20
+    evolution_piv <- TRUE 
+    evolution_threshold <- FALSE
+    conservation <- FALSE
+    
+  }
   
-  if (model %in% c('P_evol_piv', 'P_evol_piv_high_H', 
-                   'GM_evol_piv', 'GM_evol_piv_high_H')) {
+  if (model == 'P_evol_piv_high_H') {
     
-    evolution_piv <- TRUE }
+    k_piv <- -1.4
+    h2_piv <- 0.351
+    h2_threshold <- 0.20
+    evolution_piv <- TRUE 
+    evolution_threshold <- FALSE
+    conservation <- FALSE
+    
+  }
   
-  if (model %in% c('P_evol_threshold', 'P_evol_threshold_high_H', 
-                   'GM_evol_threshold', 'GM_evol_threshold_high_H')) {
+  if (model == 'P_evol_threshold') {
     
-    evolution_threshold <- TRUE }
+    k_piv <- -1.4
+    h2_piv <- 0.135
+    h2_threshold <- 0.20
+    evolution_piv <- FALSE 
+    evolution_threshold <- TRUE
+    conservation <- FALSE
+    
+  }
+  
+  if (model == 'P_evol_threshold_high_H') {
+    
+    k_piv <- -1.4
+    h2_piv <- 0.135
+    h2_threshold <- 0.38
+    evolution_piv <- FALSE 
+    evolution_threshold <- TRUE
+    conservation <- FALSE
+    
+  }
+  
+  if (model == 'GM_base') {
+    
+    k_piv <- -0.561
+    h2_piv <- 0.135
+    h2_threshold <- 0.20
+    evolution_piv <- FALSE 
+    evolution_threshold <- FALSE
+    conservation <- FALSE
+    
+  }
+  
+  if (model == 'GM_evol_piv') {
+    
+    k_piv <- -0.561
+    h2_piv <- 0.135
+    h2_threshold <- 0.20
+    evolution_piv <- TRUE 
+    evolution_threshold <- FALSE
+    conservation <- FALSE
+    
+  }
+  
+  if (model == 'GM_evol_piv_high_H') {
+    
+    k_piv <- -0.561
+    h2_piv <- 0.351
+    h2_threshold <- 0.20
+    evolution_piv <- TRUE 
+    evolution_threshold <- FALSE
+    conservation <- FALSE
+    
+  }
+  
+  if (model == 'GM_evol_threshold') {
+    
+    k_piv <- -0.561
+    h2_piv <- 0.135
+    h2_threshold <- 0.20
+    evolution_piv <- FALSE 
+    evolution_threshold <- TRUE
+    conservation <- FALSE
+    
+  }
+  
+  if (model == 'GM_evol_threshold_high_H') {
+    
+    k_piv <- -0.561
+    h2_piv <- 0.135
+    h2_threshold <- 0.38
+    evolution_piv <- TRUE 
+    evolution_threshold <- FALSE
+    conservation <- FALSE
+    
+  }
+  
+  if (model == 'GM_conservation') {
+    
+    k_piv <- -0.561
+    h2_piv <- 0.135
+    h2_threshold <- 0.20
+    evolution_piv <- FALSE 
+    evolution_threshold <- FALSE
+    conservation <- TRUE
+    
+  }
+  
+  ##### initialize population ##################################################
   
   # initial numbers of breeding adults by sex to find starting population size
   # based on the stable age distribution
@@ -96,8 +179,6 @@ run_base_model <- function(arguments) {
   # dimensions
   A <- max_age
   Y <- years
-  
-  ##### derived arrays #########################################################
   
   ##### maturity ogive
   M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
@@ -144,8 +225,8 @@ run_base_model <- function(arguments) {
   SAD_M <- SAD_output[[2]]
   # M_multiplicator <- SAD_output[[3]]
   
-  # set first timestep to SAD times a value to get at least 30 adult males
-  # and 170 adult females
+  # set first timestep to SAD times a value to get at least m_min adult males
+  # and f_min adult females
   f_min <- F_initial / sum(SAD_F * M)
   m_min <- M_initial / sum(SAD_M * M)
 
@@ -154,15 +235,7 @@ run_base_model <- function(arguments) {
   F_init <- SAD_F * f_min
   M_init <- SAD_M * m_min
   
-  # # no multiplicator
-  # # 6e3 chosen so that sum of hatchlings for the first year is about 
-  # # 14k (hatchlings we sampled) / 3 seasons * 2+ (total hatchlings / sampled)
-  # init_pop <- 14000 / (SAD_F[1] * M_multiplicator + SAD_M[1])
-  # # TO DO - adjust if abundance total seems fucked up between years 1 and 2
-  # F_init <- SAD_F * init_pop * M_multiplicator
-  # M_init <- SAD_M * init_pop
-  
-  ##############################################################################
+  ##### initialize output ######################################################
   
   # write to progress text file
   update <- paste(Sys.time(), ' - ', model, ' - ', scenario, 'C - beta ', 
@@ -190,21 +263,13 @@ run_base_model <- function(arguments) {
   sims_OSR <- array(rep(NA, times = years * nsims), 
                     dim = c(years, nsims)) 
   
-  if (evolution_piv == TRUE) {
-    
-    sims_piv <- array(rep(NA, times = years * nsims), 
+  sims_piv <- array(rep(NA, times = years * nsims), 
                        dim = c(years, nsims))
     
-  }
-  
-  if (evolution_threshold == TRUE) {
-    
-    sims_threshold <- array(rep(NA, times = years * nsims), 
+  sims_threshold <- array(rep(NA, times = years * nsims), 
                             dim = c(years, nsims))
-    
-  }
   
-  ########################################################################
+  ##### run sims and save output ###############################################
   
   # run the model for each simulation
   for (i in 1:nsims) {
@@ -226,18 +291,8 @@ run_base_model <- function(arguments) {
     sims_abundance_total[, i]   <- output[[4]]
     sims_abundance_mature[, i]  <- output[[5]]
     sims_OSR[, i]               <- output[[6]]
-    
-    if (evolution_piv == TRUE) {
-      
-      sims_piv[, i]             <- output[[7]]
-      
-    }
-    
-    if (evolution_threshold == TRUE) {
-      
-      sims_threshold[, i]       <- output[[8]]
-      
-    }
+    sims_piv[, i]               <- output[[7]]
+    sims_threshold[, i]         <- output[[8]]
     
     # write to progress text file
     if ((i/nsims*100) %% 10 == 0) {
@@ -264,20 +319,6 @@ run_base_model <- function(arguments) {
   filepath6 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                     '/', nsims, '_OSR.Rda', sep = '')
   
-  if (evolution_piv == TRUE) {
-    
-    filepath7 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/',  nsims, '_piv.Rda', sep = '')
-    
-  }
-  
-  if (evolution_threshold == TRUE) {
-    
-    filepath8 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/',  nsims, '_threshold.Rda', sep = '')
-    
-  }
-  
   # save objects
   save(sims_N, file = filepath1)
   save(sims_abundance_F, file = filepath2)
@@ -288,14 +329,21 @@ run_base_model <- function(arguments) {
 
   if (evolution_piv == TRUE) {
     
+    filepath7 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
+                      '/',  nsims, '_piv.Rda', sep = '')
+    
     save(sims_piv, file = filepath7)
     
   }
   
   if (evolution_threshold == TRUE) {
     
+    filepath8 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
+                      '/',  nsims, '_threshold.Rda', sep = '')
     save(sims_threshold, file = filepath8)
     
   }
   
 }
+
+    

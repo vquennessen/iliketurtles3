@@ -27,15 +27,20 @@ evolution <- function(N, M, max_age, y,
     PH_piv <- GH_piv + Epsilon_piv[y]
     
     # hatchling actual phenotype with phenotypic variation
-    Pivotal_temps[y] <- PH_piv[y] + Delta_piv[y]    
+    Pivotal_temps[y] <- PH_piv + Delta_piv[y]    
     
     # update genotypes vector
-    G_piv <- c(GH_piv, G_piv[1:(max_age - 1)])
+    new_G_piv <- c(GH_piv, G_piv[1:(max_age - 1)])
     
     # update expected phenotypes vector
-    P_piv <- c(PH_piv, P_piv[1:(max_age - 1)])
+    new_P_piv <- c(PH_piv, P_piv[1:(max_age - 1)])
     
-  } 
+  } else {
+    
+    new_G_piv <- NULL
+    new_P_piv <- NULL
+    
+  }
   
   ##### threshold temperature ##################################################
   
@@ -58,15 +63,20 @@ evolution <- function(N, M, max_age, y,
     Threshold_temps[y] <- PH_threshold + Delta_threshold[y]
     
     # update genotypes vector
-    G_threshold <- c(GH_threshold, G_threshold[1:(max_age - 1)])
+    new_G_threshold <- c(GH_threshold, G_threshold[1:(max_age - 1)])
     
     # update expected phenotypes vector
-    P_threshold <- c(PH_threshold, P_threshold[1:(max_age - 1)])
+    new_P_threshold <- c(PH_threshold, P_threshold[1:(max_age - 1)])
     
-  } 
+  } else {
+    
+    new_G_threshold <- NULL
+    new_P_threshold <- NULL
+    
+  }
   
-  output <- c(Pivotal_temps[y], G_piv, P_piv, 
-              Threshold_temps[y], G_threshold, P_threshold)
+  output <- list(Pivotal_temps[y], new_G_piv, new_P_piv, 
+                 Threshold_temps[y], new_G_threshold, new_P_threshold)
   
   return(output)
   
