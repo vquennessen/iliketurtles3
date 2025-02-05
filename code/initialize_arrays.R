@@ -106,7 +106,7 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
     
     # intialize actual threshold temperatures vector
     # expected phenotypes plus phenotypic variation
-    Threshold_temps <- c(NA, times = years)
+    Threshold_temps <- rep(NA, times = years)
     Threshold_temps[1] <- P_threshold[1] + rnorm(n = 1, 
                                                  mean = 0, 
                                                  sd = sqrt(ag_var_threshold / 

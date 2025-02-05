@@ -10,10 +10,12 @@ run_base_model <- function(arguments) {
   model     <- arguments$Var1
   scenario  <- arguments$Var2
   beta      <- arguments$Var3
-  intensity <- arguments$Var4
-  frequency <- arguments$Var5
-  years     <- arguments$Var6
-  nsims     <- arguments$Var7
+  # intensity <- arguments$Var4
+  # frequency <- arguments$Var5
+  # years     <- arguments$Var6
+  # nsims     <- arguments$Var7
+  years     <- arguments$Var4
+  nsims     <- arguments$Var5
   
   # model parameters to modulate
   climate_stochasticity <- TRUE             # whether or not to add in
