@@ -42,7 +42,7 @@ fig4 <- ggplot(data = all_data,
   ylab('Increase in average incubation temperature (\u00B0C) by year 100') +
   ggtitle('Probability of population persistence \n (> 10% of starting population size) to year 100') +
   facet_grid(rows = vars(Stochasticity), 
-             cols = vars(Author)) +
+             cols = vars(Population)) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +

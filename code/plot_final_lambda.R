@@ -9,224 +9,49 @@ source('code/mating function/OSRs_to_betas.R')
 # load libraries
 library(ggplot2)
 library(ggpattern)
+library(matrixStats)
+library(dplyr)
+library(tidyr)
 
-##### to modify ################################################################
+# load persistence probabilities objects and left_join to SDF_lambdas, then 
+# filter out any rows where the probability is < 1% (0.01)
+load("~/Projects/iliketurtles3/output/lambdas.Rdata")
+load("~/Projects/iliketurtles3/output/base_persistence.Rdata")
 
-# which computer am I using?
-desktop <- TRUE
-
-# folder(s)
-folders <- c('temp_stochasticity')
-
-# model(s)
-models <- c('P_base', 'GM_base')
-
-# filepaths
-paths <- c(paste(folders[1], '/', models, sep = ''))
-
-# years to average over
-average_over <- 10
-years <- 1:100
-
-# plotting model parameters
-nsims <- 10000
-
-# column names for combined heatmap
-populations <- c(rep('West Africa', length(folders)),
-                 rep('Suriname', length(folders)))
-
-# row names for combined heatmap
-stochasticity <- rep('temperature stochasticity',
-                     times = length(models))
-
-# temperature increase scenarios
-scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
-
-# operational sex ratios / betas
-osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
-betas <- OSRs_to_betas(osrs)
-
-# abundances to plot
-abundances <- c('abundance_total', 'mature_abundance')
-abundance_names <- c('total abundance', 'mature abundance')
-
-# dimensions
-P <- length(paths)
-M <- length(models)
-S <- length(scenarios)
-OSR <- length(osrs)
-Y <- length(years)
-A <- length(abundances)
-
-# clear DF and SDF objects
-rm(DF)
-rm(SDF)
-
-# initialize plot list
-plot_list <- list()
-
-# initialize super data frame
-SDF <- data.frame(Stochasticity = NULL, 
-                  Population = NULL, 
-                  Model = NULL,
-                  Scenario = NULL, 
-                  OSR = NULL, 
-                  Year = NULL,
-                  Abundance = NULL,
-                  Lambda = NULL,
-                  Lambda_avg = NULL)
-
-for (p in 1:P) {
-  
-  for (s in 1:S) {
-    
-    for (osr in 1:OSR) {
-      
-      # initialize empty dataframe, one for each filepath
-      DF <- data.frame(Stochasticity = stochasticity[p], 
-                       Population = populations[p], 
-                       Model = models[p],
-                       Scenario = scenarios[s], 
-                       OSR = osrs[osr], 
-                       Year = years, 
-                       Abundance = rep(abundance_names, each = Y), 
-                       Lambda = NA, 
-                       Lambda_avg = NA,
-                       Lambda_Q25 = NA, 
-                       Lambda_Q75 = NA)
-      
-      # load in appropriate output file
-      
-      if (desktop == TRUE) { user <- 'Vic' } else { user <- vique }
-      
-      # if the file exists
-      if (file.exists(paste('C:/Users/', user, 
-                            '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                            paths[p], '/', scenarios[s], '/beta', 
-                            betas[osr], '/', nsims, '_', abundances[1], '.Rda', 
-                            sep = '')) 
-          
-          &
-          
-          file.exists(paste('C:/Users/', user, 
-                            '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                            paths[p], '/', scenarios[s], '/beta', 
-                            betas[osr], '/', nsims, '_', abundances[2], '.Rda', 
-                            sep = ''))
-          
-          )  {
-        
-        # load in total abundance object
-        load(paste('C:/Users/', user, 
-                   '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                   paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
-                   '_', abundances[1], '.Rda', sep = ''))
-        
-        # load in mature abundance object
-        load(paste('C:/Users/', user, 
-                   '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                   paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
-                   '_', abundances[2], '.Rda', sep = ''))
-        
-      }
-      
-      # calculate lambdas for each year for each simulation
-      # year 1 is NA because there is no previous year to divide by
-      lambdas_total <- sims_abundance_total[2:Y, ] / 
-        sims_abundance_total[1:(Y - 1), ]
-      lambdas_mature <- sims_mature_abundance[2:Y, ] / 
-        sims_mature_abundance[1:(Y - 1), ]
-      
-      # add average lambdas across simulations to DF
-      DF$Lambda[1:Y] <- c(NA, rowMeans(lambdas_total))
-      DF$Lambda[(Y + 1):(2 * Y)] <- c(NA, rowMeans(lambdas_mature))
-      
-      # initialize average, Q5, and Q95 lambdas for years 2 - 100
-      avg_lambdas_total <- rep(NA, Y)
-      avg_lambdas_mature <- rep(NA, Y)
-      
-      Q25_lambdas_total <- rep(NA, Y)
-      Q25_lambdas_mature <- rep(NA, Y)
-      
-      Q75_lambdas_total <- rep(NA, Y)
-      Q75_lambdas_mature <- rep(NA, Y)
-      
-      # calculate average, Q25, and Q75 lambdas across over_average years for 
-      # years 11 - 100
-      for (y in (average_over):(Y - 1)) {
-              
-        # average lambdas per year across over_average years across all simulations
-        avg_lambdas_total[y + 1] <- mean(
-          lambdas_total[(y - average_over):y, ], 
-          na.omit = TRUE)
-        
-        avg_lambdas_mature[y + 1] <- mean(
-          lambdas_mature[(y - average_over):y, ], 
-          na.omit = TRUE)
-        
-        # Q25 lambdas per year across over_average years across all simulations
-        Q25_lambdas_total[y + 1] <- quantile(
-          lambdas_total[(y - average_over):y, ], 
-          na.rm = TRUE,
-          probs = c(0.25))
-        
-        Q25_lambdas_mature[y + 1] <- quantile(
-          lambdas_mature[(y - average_over):y, ],
-          na.rm = TRUE,
-          probs = c(0.25))
-        
-        Q75_lambdas_total[y + 1] <- quantile(
-          lambdas_total[(y - average_over):y, ],
-          na.rm = TRUE,
-          probs = c(0.75))
-        
-        Q75_lambdas_mature[y + 1] <- quantile(
-          lambdas_mature[(y - average_over):y, ],
-          na.rm = TRUE,
-          probs = c(0.75))
-
-      }
-      
-      # add average lambdas to DF
-      DF$Lambda_avg[1:Y] <- avg_lambdas_total
-      DF$Lambda_avg[(Y + 1):(2 * Y)] <- avg_lambdas_mature
-      
-      # add average lambdas to DF
-      DF$Lambda_Q25[1:Y] <- Q25_lambdas_total
-      DF$Lambda_Q25[(Y + 1):(2 * Y)] <- Q25_lambdas_mature
-      
-      # add average lambdas to DF
-      DF$Lambda_Q75[1:Y] <- Q75_lambdas_total
-      DF$Lambda_Q75[(Y + 1):(2 * Y)] <- Q75_lambdas_mature
-      
-      # add DF to SDF
-      SDF <- rbind(SDF, DF)
-      
-      # print progress update
-      print(paste(Sys.time(), ' - ', stochasticity[p], ' - ',
-                  models[p], ' - ', scenarios[s], ' - beta ', 
-                  betas[osr], ' all done!', sep = ''))
-      
-    }
-    
-  }
-  
-}
-
-# save dataframe as R object
-save(SDF, file = paste('~/Projects/iliketurtles3/output/lambdas.Rdata', 
-                       sep = ''))
+lambdas_and_persistence <- base_persistence %>%
+  filter(Stochasticity == 'temperature stochasticity') %>%
+  pivot_longer(cols = c(Probability_total, Probability_mature), 
+               names_to = c('Abundance')) %>%
+  rename('Probability' = 'value') %>%
+  mutate(Abundance = replace(Abundance, 
+                             Abundance == 'Probability_total', 
+                             'total abundance')) %>%
+  mutate(Abundance = replace(Abundance, 
+                             Abundance == 'Probability_mature', 
+                             'mature abundance')) %>%
+  select(Population, Scenario, OSR, Abundance, Probability) %>%
+  right_join(lambdas)
 
 ##### plot final lambdas #######################################################
 
+
+
+##### median figure ############################################################
+
 years_to_plot <- 100
-SDF_subset <- subset(SDF, Year == years_to_plot & 
+
+SDF_subset_median <- subset(SDF, Year == years_to_plot & 
                        Stochasticity == 'temperature stochasticity')
-SDF_subset$bin <- cut(SDF_subset$Lambda,
-                      breaks = c(0.5, 0.9, 0.99, 1, 1.01, 1.02, 1.03),
+
+SDF_subset_median$Scenario <- factor(SDF_subset_median$Scenario, 
+                                levels = scenarios, 
+                                labels = scenarios)
+
+SDF_subset_median$bin <- cut(SDF_subset_median$Lambda_median,
+                      breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
                       right = FALSE)
 
-fig5a <- ggplot(data = SDF_subset, aes(x = OSR, 
+fig5a_median <- ggplot(data = SDF_subset_median, aes(x = OSR, 
                                        y = Scenario, 
                                        fill = bin)) +
   geom_tile(color = "white",
@@ -236,7 +61,7 @@ fig5a <- ggplot(data = SDF_subset, aes(x = OSR,
   guides(fill = guide_legend(title = "Lambda")) +
   xlab('Operational sex ratio required to fertilize all females') +
   ylab('Increase in sand temperature (\u00B0C) by year 100') +
-  ggtitle('temperature stochasticity; final lambda (year 100)') +
+  ggtitle('temperature stochasticity; final median lambda (year 100)') +
   facet_grid(rows = vars(Abundance), 
              cols = vars(Population)) +
   theme_bw() +
@@ -250,8 +75,48 @@ fig5a <- ggplot(data = SDF_subset, aes(x = OSR,
   theme(title = element_text(size = 13))
 
 # save to file
-ggsave(plot = fig5a, 
-       filename = paste('TS_final_lambda.png', sep = ''),
+ggsave(plot = fig5a_median, 
+       filename = paste('TS_final_lambda_median.png', sep = ''),
+       path = '~/Projects/iliketurtles3/figures/',
+       width = 8, height = 17/3)
+
+##### mean figure ##############################################################
+
+years_to_plot <- 100
+
+SDF_subset_mean <- subset(SDF, Year == years_to_plot & 
+                              Stochasticity == 'temperature stochasticity')
+
+SDF_subset_mean$bin <- cut(SDF_subset_mean$Lambda_mean,
+                             breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
+                             right = FALSE)
+
+fig5a_mean <- ggplot(data = SDF_subset_mean, aes(x = OSR, 
+                                              y = Scenario, 
+                                              fill = bin)) +
+  geom_tile(color = "white",
+            lwd = 1.25,
+            linetype = 1) +
+  scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
+  guides(fill = guide_legend(title = "Lambda")) +
+  xlab('Operational sex ratio required to fertilize all females') +
+  ylab('Increase in sand temperature (\u00B0C) by year 100') +
+  ggtitle('temperature stochasticity; final mean lambda (year 100)') +
+  facet_grid(rows = vars(Abundance), 
+             cols = vars(Population)) +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
+  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
+  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
+  theme(axis.text = element_text(size = 10)) +
+  theme(strip.text = element_text(size = 10)) +
+  theme(title = element_text(size = 13))
+
+# save to file
+ggsave(plot = fig5a_mean, 
+       filename = paste('TS_final_lambda_mean.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 17/3)
 
@@ -262,17 +127,33 @@ SDF_subset2 <- subset(SDF,
                       Stochasticity == 'temperature stochasticity' &
                         Scenario %in% c('0.5C', '5C') &
                         OSR %in% c(0.05, 0.5))
-SDF_subset2$OSR <- as.factor(SDF_subset2$OSR)
 
+# # make OSR variable a factor
+# SDF_subset2$OSR <- factor(SDF_subset2$OSR, 
+#                              levels = c(osrs), 
+#                              labels = as.character(levels))
+
+# set any year where Lambda isn't a number to NA
+SDF_subset2$Lambda_avg[is.infinite(SDF_subset2$Lambda)] <- NA
+SDF_subset2$Lambda_Q25[is.infinite(SDF_subset2$Lambda)] <- NA
+SDF_subset2$Lambda_Q75[is.infinite(SDF_subset2$Lambda)] <- NA
+
+# plot figure
 fig5b <- ggplot(data = SDF_subset2, aes(x = Year, 
                                         y = Lambda_avg, 
                                         color = OSR, 
                                         linetype = Scenario)) +
   geom_hline(yintercept = 1, lty = 1) +
-  geom_path() +
+  geom_ribbon(aes(ymin = Lambda_Q25, 
+                  ymax = Lambda_Q75, 
+                  fill = OSR, 
+                  alpha = 0.25), 
+              color = NA, 
+              show.legend = FALSE) +
+  geom_path(lwd = 1) +
   xlab('Year') +
   ylab('Lambda') +
-  ggtitle('temperature stochasticity; lambdas over time') +
+  ggtitle('temperature stochasticity; (10yr) average lambdas over time') +
   facet_grid(rows = vars(Abundance), 
              cols = vars(Population)) +
   # theme_bw() +

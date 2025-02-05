@@ -1,0 +1,131 @@
+# make figures representing output
+
+# TODO 
+# make this script just for extracting all the probabilities of population
+# persistence, then use separate scripts to make the figures
+
+# set working directory
+setwd('~/Projects/iliketurtles3')
+
+# load libraries
+library(ggplot2)
+library(viridis)
+library(patchwork)
+library(gridExtra)
+
+# source functions
+source('code/mating function/OSRs_to_betas.R')
+
+# which computer am I using?
+desktop <- TRUE
+
+# plotting model parameters
+nsims <- 10000
+
+# combos
+combos <- c('no_temp_stochasticity', 'temp_stochasticity')
+combo_names <- c('no temperature stochasticity', 'temperature stochasticity')
+models <- c('P_base', 'GM_base')
+pops <- c('West Africa', 'Suriname')
+model_names <- c('base model', 'base model')
+individual_figs_filename <- 'base_persistence_individual_heatmaps'
+combined_fig_filename <- 'base_persistence_combined_heatmaps'
+
+# which year to visualize
+year_to_plot <- 100
+
+# temperature increase scenarios
+scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
+# scenarios <- paste(c(0.5, 5), 'C', sep = '')
+
+# operational sex ratios to get 100% reproductive success
+osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
+betas <- OSRs_to_betas(osrs)
+
+# generate automatically
+paths <- as.vector(outer(combos, models, paste, sep="/"))
+populations <- rep(pops, each = length(combos))
+models_short <- rep(models, each = length(combos))
+model_types <- rep(model_names, each = length(combos))
+
+# dimensions
+P <- length(paths)
+S <- length(scenarios)
+B <- length(osrs)
+
+# initialize plot list
+plot_list <- list()
+
+# initialize super data frame
+SDF <- data.frame(Combo = rep(NA, P*S*B), 
+                  Population = rep(NA, P*S*B), 
+                  Model = rep(NA, P*S*B),
+                  model = rep(NA, P*S*B),
+                  Scenario = rep(NA, P*S*B), 
+                  OSR = rep(NA, P*S*B), 
+                  Survive_to = rep(NA, P*S*B), 
+                  Probability_total = rep(NA, P*S*B), 
+                  Probability_mature = rep(NA, P*S*B))
+
+# for each model
+for (p in 1:P) {
+  
+  # for each scenario
+  for (s in 1:S) {
+    
+    # for each mating function
+    for (b in 1:B) {
+      
+      # load in appropriate output file
+      
+      if (desktop == TRUE) { user <- 'Vic' } else { user <- 'vique' }
+      
+      # if the file exists
+      if (file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                            paths[p], '/', scenarios[s], '/beta', betas[b],
+                            '/', nsims, '_abundance_total.Rda', sep = '')) &
+          
+          file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                            paths[p], '/', scenarios[s], '/beta', betas[b],
+                            '/', nsims, '_mature_abundance.Rda', sep = ''))) {
+        
+        # load in total abundance object
+        load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                   paths[p], '/', scenarios[s], '/beta', betas[b], '/',
+                   nsims, '_abundance_total.Rda', sep = ''))
+        
+        # load in abundance mature object
+        load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+                   paths[p], '/', scenarios[s], '/beta', betas[b], '/',
+                   nsims, '_mature_abundance.Rda', sep = ''))
+        
+      }
+      
+      # index
+      index <- (p - 1)*S*B + (s - 1)*B + b
+      print(index)
+      
+      # initialize dataframe
+      SDF$Combo[index] <- combos[p]
+      SDF$Population[index] <- populations[p]
+      SDF$Model[index] <- models_short[p]
+      SDF$model[index] <- model_types[p]
+      SDF$Scenario[index] <- scenarios[s]
+      SDF$OSR[index] <- osrs[b]
+      SDF$Survive_to[index] <- year_to_plot 
+      SDF$Probability_total[index] <- mean(
+        sims_abundance_total[year_to_plot, ] > 0.1*sims_abundance_total[1, ])
+      SDF$Probability_mature[index] <- mean(
+        sims_mature_abundance[year_to_plot, ] > 0.1*sims_mature_abundance[1, ])
+      
+    }
+    
+  }
+
+}
+
+# save dataframe as R object
+base_persistence <- SDF
+save(nTS_TS_base_persistence, 
+     file = paste('~/Projects/iliketurtles3/output/base_persistence.Rdata', 
+                  sep = ''))
