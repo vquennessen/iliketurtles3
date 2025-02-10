@@ -30,7 +30,12 @@ lambdas_and_persistence <- base_persistence %>%
                              Abundance == 'Probability_mature', 
                              'mature abundance')) %>%
   select(Population, Scenario, OSR, Abundance, Probability) %>%
-  right_join(lambdas)
+  right_join(lambdas) %>%
+  filter(Probability > 0.01)
+
+# make scenarios factor variable
+lambdas_and_persistence$Scenario <- factor(lambdas_and_persistence$Scenario, 
+                                           levels = unique(lambdas$Scenario))
 
 ##### plot final lambdas #######################################################
 
@@ -40,18 +45,18 @@ lambdas_and_persistence <- base_persistence %>%
 
 years_to_plot <- 100
 
-SDF_subset_median <- subset(SDF, Year == years_to_plot & 
+subset_median <- subset(lambdas_and_persistence, Year == years_to_plot & 
                        Stochasticity == 'temperature stochasticity')
 
-SDF_subset_median$Scenario <- factor(SDF_subset_median$Scenario, 
+subset_median$Scenario <- factor(subset_median$Scenario, 
                                 levels = scenarios, 
                                 labels = scenarios)
 
-SDF_subset_median$bin <- cut(SDF_subset_median$Lambda_median,
+subset_median$bin <- cut(subset_median$Lambda_median,
                       breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
                       right = FALSE)
 
-fig5a_median <- ggplot(data = SDF_subset_median, aes(x = OSR, 
+fig5a_median <- ggplot(data = subset_median, aes(x = OSR, 
                                        y = Scenario, 
                                        fill = bin)) +
   geom_tile(color = "white",

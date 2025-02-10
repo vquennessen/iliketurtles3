@@ -23,8 +23,8 @@ desktop <- TRUE
 nsims <- 10000
 
 # combos
-combos <- c('no_temp_stochasticity', 'temp_stochasticity')
-combo_names <- c('no temperature stochasticity', 'temperature stochasticity')
+stochasticity <- c('no_temp_stochasticity', 'temp_stochasticity')
+stochasticity_names <- c('no temperature stochasticity', 'temperature stochasticity')
 models <- c('P_base', 'GM_base')
 pops <- c('West Africa', 'Suriname')
 model_names <- c('base model', 'base model')
@@ -43,10 +43,10 @@ osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
 betas <- OSRs_to_betas(osrs)
 
 # generate automatically
-paths <- as.vector(outer(combos, models, paste, sep="/"))
-populations <- rep(pops, each = length(combos))
-models_short <- rep(models, each = length(combos))
-model_types <- rep(model_names, each = length(combos))
+paths <- as.vector(outer(stochasticity, models, paste, sep="/"))
+populations <- rep(pops, each = length(stochasticity))
+models_short <- rep(models, each = length(stochasticity))
+model_types <- rep(model_names, each = length(stochasticity))
 
 # dimensions
 P <- length(paths)
@@ -57,7 +57,7 @@ B <- length(osrs)
 plot_list <- list()
 
 # initialize super data frame
-SDF <- data.frame(Combo = rep(NA, P*S*B), 
+SDF <- data.frame(Stochasticity = rep(NA, P*S*B), 
                   Population = rep(NA, P*S*B), 
                   Model = rep(NA, P*S*B),
                   model = rep(NA, P*S*B),
@@ -87,7 +87,7 @@ for (p in 1:P) {
           
           file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
                             paths[p], '/', scenarios[s], '/beta', betas[b],
-                            '/', nsims, '_mature_abundance.Rda', sep = ''))) {
+                            '/', nsims, '_abundance_mature.Rda', sep = ''))) {
         
         # load in total abundance object
         load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
@@ -97,7 +97,7 @@ for (p in 1:P) {
         # load in abundance mature object
         load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
                    paths[p], '/', scenarios[s], '/beta', betas[b], '/',
-                   nsims, '_mature_abundance.Rda', sep = ''))
+                   nsims, '_abundance_mature.Rda', sep = ''))
         
       }
       
@@ -106,7 +106,7 @@ for (p in 1:P) {
       print(index)
       
       # initialize dataframe
-      SDF$Combo[index] <- combos[p]
+      SDF$Stochasticity[index] <- stochasticity_names[(p + 1) %% 2 + 1]
       SDF$Population[index] <- populations[p]
       SDF$Model[index] <- models_short[p]
       SDF$model[index] <- model_types[p]
@@ -126,6 +126,10 @@ for (p in 1:P) {
 
 # save dataframe as R object
 base_persistence <- SDF
-save(nTS_TS_base_persistence, 
+
+# make scenario and osr a factor variable
+base_persistence$Scenario <- factor(base_persistence$Scenario, 
+                                    levels = scenarios)
+save(base_persistence, 
      file = paste('~/Projects/iliketurtles3/output/base_persistence.Rdata', 
                   sep = ''))
