@@ -16,7 +16,7 @@ library(tidyr)
 ##### to modify ################################################################
 
 # which computer am I using?
-desktop <- TRUE
+desktop <- FALSE
 
 # folder(s)
 folders <- c('temp_stochasticity')
@@ -50,7 +50,7 @@ osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
 betas <- OSRs_to_betas(osrs)
 
 # abundances to plot
-abundances <- c('abundance_total', 'mature_abundance')
+abundances <- c('abundance_total', 'abundance_mature')
 abundance_names <- c('total abundance', 'mature abundance')
 
 # dimensions
@@ -95,14 +95,16 @@ for (p in 1:P) {
                        Abundance = rep(abundance_names, each = Y), 
                        Lambda_mean = NA,
                        Lambda_median = NA,
+                       Lambda_Q25 = NA, 
+                       Lambda_Q75 = NA,
                        Lambda_10yr_mean = NA,
                        Lambda_10yr_median = NA,
-                       Lambda_Q25 = NA, 
-                       Lambda_Q75 = NA)
+                       Lambda_10yr_Q25 = NA, 
+                       Lambda_0yr_Q75 = NA)
       
       # load in appropriate output file
       
-      if (desktop == TRUE) { user <- 'Vic' } else { user <- vique }
+      if (desktop == TRUE) { user <- 'Vic' } else { user <- 'vique' }
       
       # if the file exists
       if (file.exists(paste('C:/Users/', user, 
@@ -139,8 +141,8 @@ for (p in 1:P) {
       # year 1 is NA because there is no previous year to divide by
       lambdas_total <- sims_abundance_total[2:Y, ] / 
         sims_abundance_total[1:(Y - 1), ]
-      lambdas_mature <- sims_mature_abundance[2:Y, ] / 
-        sims_mature_abundance[1:(Y - 1), ]
+      lambdas_mature <- sims_abundance_mature[2:Y, ] / 
+        sims_abundance_mature[1:(Y - 1), ]
       
       # add average lambdas across simulations to DF
       DF$Lambda_mean[1:Y] <- c(NA, 
@@ -156,6 +158,24 @@ for (p in 1:P) {
       DF$Lambda_median[(Y + 1):(2 * Y)] <- c(NA, 
                                              rowMedians(lambdas_mature, 
                                                         na.rm = TRUE))
+      
+      DF$Lambda_Q25[1:Y] <- c(NA, 
+                              rowQuantiles(lambdas_total,
+                                           prob = c(0.25),
+                                           na.rm = TRUE))
+      DF$Lambda_Q25[(Y + 1):(2 * Y)] <- c(NA, 
+                                          rowQuantiles(lambdas_total,
+                                                       prob = c(0.25), 
+                                                       na.rm = TRUE))
+      
+      DF$Lambda_Q75[1:Y] <- c(NA, 
+                              rowQuantiles(lambdas_total,
+                                           prob = c(0.75),
+                                           na.rm = TRUE))
+      DF$Lambda_Q75[(Y + 1):(2 * Y)] <- c(NA, 
+                                          rowQuantiles(lambdas_total,
+                                                       prob = c(0.75), 
+                                                       na.rm = TRUE))
       
       # initialize average, Q5, and Q95 lambdas for years 2 - 100
       mean_lambdas_total <- rep(NA, Y)
@@ -222,12 +242,12 @@ for (p in 1:P) {
       DF$Lambda_10yr_median[(Y + 1):(2 * Y)] <- median_lambdas_mature
       
       # add average lambdas to DF
-      DF$Lambda_Q25[1:Y] <- Q25_lambdas_total
-      DF$Lambda_Q25[(Y + 1):(2 * Y)] <- Q25_lambdas_mature
+      DF$Lambda_10yr_Q25[1:Y] <- Q25_lambdas_total
+      DF$Lambda_10yr_Q25[(Y + 1):(2 * Y)] <- Q25_lambdas_mature
       
       # add average lambdas to DF
-      DF$Lambda_Q75[1:Y] <- Q75_lambdas_total
-      DF$Lambda_Q75[(Y + 1):(2 * Y)] <- Q75_lambdas_mature
+      DF$Lambda_10yr_Q75[1:Y] <- Q75_lambdas_total
+      DF$Lambda_10yr_Q75[(Y + 1):(2 * Y)] <- Q75_lambdas_mature
       
       # add DF to SDF
       SDF <- rbind(SDF, DF)
