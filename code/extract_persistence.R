@@ -22,14 +22,25 @@ desktop <- TRUE
 # plotting model parameters
 nsims <- 10000
 
-# combos
+# combos - no vs. temp stochasticity
 stochasticity <- c('no_temp_stochasticity', 'temp_stochasticity')
-stochasticity_names <- c('no temperature stochasticity', 'temperature stochasticity')
-models <- c('P_base', 'GM_base')
+stochasticity_names <- c('temperature stochasticity')
+models <- c('P_evol_piv', 'P_evol_piv_high_H', 
+            'GM_evol_piv', 'GM_evol_piv_high_H')
 pops <- c('West Africa', 'Suriname')
-model_names <- c('base model', 'base model')
-individual_figs_filename <- 'base_persistence_individual_heatmaps'
-combined_fig_filename <- 'base_persistence_combined_heatmaps'
+model_names <- rep(c('evolution', 'evolution with high H'), times = length(pops))
+individual_figs_filename <- 'evol_piv_persistence'
+combined_fig_filename <- 'evol_piv_persistence_combined'
+
+# # combos
+# stochasticity <- c('temp_stochasticity')
+# stochasticity_names <- c('temperature stochasticity')
+# models <- c('P_evol_piv', 'P_evol_piv_high_H', 
+#             'GM_evol_piv', 'GM_evol_piv_high_H')
+# pops <- c('West Africa', 'Suriname')
+# model_names <- rep(c('evolution', 'evolution with high H'), times = length(pops))
+# individual_figs_filename <- 'evol_piv_persistence'
+# combined_fig_filename <- 'evol_piv_persistence_combined'
 
 # which year to visualize
 year_to_plot <- 100
@@ -105,9 +116,22 @@ for (p in 1:P) {
       index <- (p - 1)*S*B + (s - 1)*B + b
       print(index)
       
-      # initialize dataframe
-      SDF$Stochasticity[index] <- stochasticity_names[(p + 1) %% 2 + 1]
-      SDF$Population[index] <- populations[p]
+      # # initialize dataframe - temp vs. no temp stochasticity
+      # SDF$Stochasticity[index] <- stochasticity_names[(p + 1) %% 2 + 1]
+      # SDF$Population[index] <- populations[p]
+      # SDF$Model[index] <- models_short[p]
+      # SDF$model[index] <- model_types[p]
+      # SDF$Scenario[index] <- scenarios[s]
+      # SDF$OSR[index] <- osrs[b]
+      # SDF$Survive_to[index] <- year_to_plot 
+      # SDF$Probability_total[index] <- mean(
+      #   sims_abundance_total[year_to_plot, ] > 0.1*sims_abundance_total[1, ])
+      # SDF$Probability_mature[index] <- mean(
+      #   sims_mature_abundance[year_to_plot, ] > 0.1*sims_mature_abundance[1, ])
+      
+      # initialize dataframe - evolution
+      SDF$Stochasticity[index] <- stochasticity_names[1]
+      SDF$Population[index] <- populations[ceiling(p/2)]
       SDF$Model[index] <- models_short[p]
       SDF$model[index] <- model_types[p]
       SDF$Scenario[index] <- scenarios[s]
@@ -116,7 +140,7 @@ for (p in 1:P) {
       SDF$Probability_total[index] <- mean(
         sims_abundance_total[year_to_plot, ] > 0.1*sims_abundance_total[1, ])
       SDF$Probability_mature[index] <- mean(
-        sims_mature_abundance[year_to_plot, ] > 0.1*sims_mature_abundance[1, ])
+        sims_abundance_mature[year_to_plot, ] > 0.1*sims_abundance_mature[1, ])
       
     }
     

@@ -44,6 +44,10 @@ lambdas_and_persistence <- base_persistence %>%
 lambdas_and_persistence$Scenario <- factor(lambdas_and_persistence$Scenario, 
                                            levels = unique(lambdas$Scenario))
 
+# save as object
+save(lambdas_and_persistence, 
+     file = '~/Projects/iliketurtles3/output/lambdas_and_persistence.Rdata')
+
 ##### plot final lambdas #######################################################
 
 
@@ -134,40 +138,32 @@ ggsave(plot = fig5a_mean,
 
 ##### plot lambdas over time ###################################################
 
+# load object
+load("~/Projects/iliketurtles3/output/lambdas_and_persistence.Rdata")
+
 # subset to only look at some scenarios and OSRs
 SDF_subset2 <- subset(lambdas_and_persistence,
                       Stochasticity == 'temperature stochasticity' &
-                        Scenario %in% c('0.5C', '5C') &
+                        Scenario %in% c('1C', '2C') &
                         OSR %in% c(0.05, 0.5))
-# 
-# # make OSR variable a factor
-# SDF_subset2$OSR <- factor(SDF_subset2$OSR,
-#                           levels = c(vector(unique(lambdas_and_persistence$Scenario))))
-
-# # set any year where Lambda isn't a number to NA
-# SDF_subset2$Lambda_mean[is.infinite(SDF_subset2$Lambda_mean)] <- NA
-# SDF_subset2$Lambda_Q25[is.infinite(SDF_subset2$Lambda_mean)] <- NA
-# SDF_subset2$Lambda_Q75[is.infinite(SDF_subset2$Lambda_mean)] <- NA
 
 # plot figure - median
 fig5b <- ggplot(data = SDF_subset2, aes(x = Year, 
-                                        y = Lambda_median, 
-                                        color = factor(OSR), 
-                                        linetype = Scenario)) +
+                                        y = Lambda_10yr_median, 
+                                        color = as.factor(OSR), 
+                                        linetype = Scenario)) + 
   geom_hline(yintercept = 1, lty = 1) +
-  # geom_ribbon(aes(ymin = Lambda_Q25, 
-  #                 ymax = Lambda_Q75, 
-  #                 fill = OSR, 
-  #                 alpha = 0.25), 
-  #             color = NA, 
-  #             show.legend = FALSE) +
+  geom_ribbon(aes(ymin = Lambda_Q25,
+                  ymax = Lambda_Q75,
+                  fill = as.factor(OSR)),
+              alpha = 0.25,
+              show.legend = FALSE) +
   geom_path(lwd = 1) +
   scale_color_manual(values = c('F8766D', '00BFC4')) +
   xlab('Year') +
   ylab('Lambda') +
-  ggtitle('temperature stochasticity; (10yr) median lambdas over time') +
-  facet_grid(rows = vars(Abundance), 
-             cols = vars(Population)) +
+  ggtitle('temperature stochasticity; (10yr) median lambdas over time + IQR') +
+  facet_grid(cols = vars(Population)) +
   # theme_bw() +
   # theme(panel.grid.major = element_blank(), 
   #       panel.grid.minor = element_blank()) +
@@ -181,6 +177,6 @@ fig5b <- ggplot(data = SDF_subset2, aes(x = Year,
 
 # save to file
 ggsave(plot = fig5b, 
-       filename = paste('TS_avg_lambdas.png', sep = ''),
+       filename = paste('TS_10yr_median_lambdas.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 17/3)
