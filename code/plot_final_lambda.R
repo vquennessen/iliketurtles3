@@ -12,6 +12,7 @@ library(ggpattern)
 library(matrixStats)
 library(dplyr)
 library(tidyr)
+library(scales)
 
 # load persistence probabilities objects and left_join to SDF_lambdas, then 
 # filter out any rows where the probability is < 1% (0.01)
@@ -31,7 +32,13 @@ lambdas_and_persistence <- base_persistence %>%
                              'mature abundance')) %>%
   select(Population, Scenario, OSR, Abundance, Probability) %>%
   right_join(lambdas) %>%
-  filter(Probability > 0.01)
+  mutate(Lambda_mean = replace(Lambda_mean, Probability < 0.01, NA)) %>%
+  mutate(Lambda_median = replace(Lambda_median, Probability < 0.01, NA)) %>%
+  mutate(Lambda_10yr_mean = replace(Lambda_10yr_mean, Probability < 0.01, NA)) %>%
+  mutate(Lambda_10yr_median = replace(Lambda_10yr_median, Probability < 0.01, NA)) %>%
+  mutate(Lambda_Q25 = replace(Lambda_Q25, Probability < 0.01, NA)) %>%
+  mutate(Lambda_Q75 = replace(Lambda_Q75, Probability < 0.01, NA))
+  
 
 # make scenarios factor variable
 lambdas_and_persistence$Scenario <- factor(lambdas_and_persistence$Scenario, 
@@ -48,9 +55,9 @@ years_to_plot <- 100
 subset_median <- subset(lambdas_and_persistence, Year == years_to_plot & 
                        Stochasticity == 'temperature stochasticity')
 
-subset_median$Scenario <- factor(subset_median$Scenario, 
-                                levels = scenarios, 
-                                labels = scenarios)
+# subset_median$Scenario <- factor(subset_median$Scenario, 
+#                                 levels = scenarios, 
+#                                 labels = scenarios)
 
 subset_median$bin <- cut(subset_median$Lambda_median,
                       breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
@@ -89,7 +96,7 @@ ggsave(plot = fig5a_median,
 
 years_to_plot <- 100
 
-SDF_subset_mean <- subset(SDF, Year == years_to_plot & 
+SDF_subset_mean <- subset(lambdas_and_persistence, Year == years_to_plot & 
                               Stochasticity == 'temperature stochasticity')
 
 SDF_subset_mean$bin <- cut(SDF_subset_mean$Lambda_mean,
@@ -128,37 +135,37 @@ ggsave(plot = fig5a_mean,
 ##### plot lambdas over time ###################################################
 
 # subset to only look at some scenarios and OSRs
-SDF_subset2 <- subset(SDF,
+SDF_subset2 <- subset(lambdas_and_persistence,
                       Stochasticity == 'temperature stochasticity' &
                         Scenario %in% c('0.5C', '5C') &
                         OSR %in% c(0.05, 0.5))
-
+# 
 # # make OSR variable a factor
-# SDF_subset2$OSR <- factor(SDF_subset2$OSR, 
-#                              levels = c(osrs), 
-#                              labels = as.character(levels))
+# SDF_subset2$OSR <- factor(SDF_subset2$OSR,
+#                           levels = c(vector(unique(lambdas_and_persistence$Scenario))))
 
-# set any year where Lambda isn't a number to NA
-SDF_subset2$Lambda_avg[is.infinite(SDF_subset2$Lambda)] <- NA
-SDF_subset2$Lambda_Q25[is.infinite(SDF_subset2$Lambda)] <- NA
-SDF_subset2$Lambda_Q75[is.infinite(SDF_subset2$Lambda)] <- NA
+# # set any year where Lambda isn't a number to NA
+# SDF_subset2$Lambda_mean[is.infinite(SDF_subset2$Lambda_mean)] <- NA
+# SDF_subset2$Lambda_Q25[is.infinite(SDF_subset2$Lambda_mean)] <- NA
+# SDF_subset2$Lambda_Q75[is.infinite(SDF_subset2$Lambda_mean)] <- NA
 
-# plot figure
+# plot figure - median
 fig5b <- ggplot(data = SDF_subset2, aes(x = Year, 
-                                        y = Lambda_avg, 
-                                        color = OSR, 
+                                        y = Lambda_median, 
+                                        color = factor(OSR), 
                                         linetype = Scenario)) +
   geom_hline(yintercept = 1, lty = 1) +
-  geom_ribbon(aes(ymin = Lambda_Q25, 
-                  ymax = Lambda_Q75, 
-                  fill = OSR, 
-                  alpha = 0.25), 
-              color = NA, 
-              show.legend = FALSE) +
+  # geom_ribbon(aes(ymin = Lambda_Q25, 
+  #                 ymax = Lambda_Q75, 
+  #                 fill = OSR, 
+  #                 alpha = 0.25), 
+  #             color = NA, 
+  #             show.legend = FALSE) +
   geom_path(lwd = 1) +
+  scale_color_manual(values = c('F8766D', '00BFC4')) +
   xlab('Year') +
   ylab('Lambda') +
-  ggtitle('temperature stochasticity; (10yr) average lambdas over time') +
+  ggtitle('temperature stochasticity; (10yr) median lambdas over time') +
   facet_grid(rows = vars(Abundance), 
              cols = vars(Population)) +
   # theme_bw() +
