@@ -18,7 +18,7 @@ run_base_model <- function(arguments) {
   nsims     <- arguments$Var5
   
   # model parameters to modulate
-  climate_stochasticity <- TRUE             # whether or not to add in
+  climate_stochasticity <- FALSE             # whether or not to add in
   
   # troubleshooting
   # scenario <- 0.5

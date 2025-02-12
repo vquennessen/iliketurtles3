@@ -26,7 +26,7 @@ folders <- c('no_temp_stochasticity', 'temp_stochasticity')
 #                           'GM_evol', 'GM_evol_high_H'), sep = '')
 
 # individual heatmap titles
-models_short <- c('P_base', 'GM_base')
+models_short <- c('P_evol_piv', 'GM_base')
 
 # test runs - folder names
 filenames <- c(paste(folders[1], '/', models_short, sep = ''), 
