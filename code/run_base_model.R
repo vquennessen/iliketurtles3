@@ -154,8 +154,8 @@ run_base_model <- function(arguments) {
     k_piv <- -0.561
     h2_piv <- 0.135
     h2_threshold <- 0.38
-    evolution_piv <- TRUE 
-    evolution_threshold <- FALSE
+    evolution_piv <- FALSE 
+    evolution_threshold <- TRUE
     conservation <- FALSE
     
   }

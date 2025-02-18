@@ -37,8 +37,11 @@ lambdas_and_persistence <- base_persistence %>%
   mutate(Lambda_10yr_mean = replace(Lambda_10yr_mean, Probability < 0.01, NA)) %>%
   mutate(Lambda_10yr_median = replace(Lambda_10yr_median, Probability < 0.01, NA)) %>%
   mutate(Lambda_Q25 = replace(Lambda_Q25, Probability < 0.01, NA)) %>%
-  mutate(Lambda_Q75 = replace(Lambda_Q75, Probability < 0.01, NA))
-  
+  mutate(Lambda_Q75 = replace(Lambda_Q75, Probability < 0.01, NA)) %>%
+  mutate(Lambda_10yr_Q25 = replace(Lambda_10yr_Q25, Probability < 0.01, NA)) %>%
+  mutate(Lambda_10yr_Q75 = replace(Lambda_10yr_Q75, Probability < 0.01, NA))
+
+
 
 # make scenarios factor variable
 lambdas_and_persistence$Scenario <- factor(lambdas_and_persistence$Scenario, 
@@ -57,19 +60,19 @@ save(lambdas_and_persistence,
 years_to_plot <- 100
 
 subset_median <- subset(lambdas_and_persistence, Year == years_to_plot & 
-                       Stochasticity == 'temperature stochasticity')
+                          Stochasticity == 'temperature stochasticity')
 
 # subset_median$Scenario <- factor(subset_median$Scenario, 
 #                                 levels = scenarios, 
 #                                 labels = scenarios)
 
 subset_median$bin <- cut(subset_median$Lambda_median,
-                      breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
-                      right = FALSE)
+                         breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
+                         right = FALSE)
 
-fig5a_median <- ggplot(data = subset_median, aes(x = OSR, 
-                                       y = Scenario, 
-                                       fill = bin)) +
+fig5_median <- ggplot(data = subset_median, aes(x = OSR, 
+                                                y = Scenario, 
+                                                fill = bin)) +
   geom_tile(color = "white",
             lwd = 1.25,
             linetype = 1) +
@@ -91,7 +94,7 @@ fig5a_median <- ggplot(data = subset_median, aes(x = OSR,
   theme(title = element_text(size = 13))
 
 # save to file
-ggsave(plot = fig5a_median, 
+ggsave(plot = fig5_median, 
        filename = paste('TS_final_lambda_median.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 17/3)
@@ -101,15 +104,15 @@ ggsave(plot = fig5a_median,
 years_to_plot <- 100
 
 SDF_subset_mean <- subset(lambdas_and_persistence, Year == years_to_plot & 
-                              Stochasticity == 'temperature stochasticity')
+                            Stochasticity == 'temperature stochasticity')
 
 SDF_subset_mean$bin <- cut(SDF_subset_mean$Lambda_mean,
-                             breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
-                             right = FALSE)
+                           breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
+                           right = FALSE)
 
 fig5a_mean <- ggplot(data = SDF_subset_mean, aes(x = OSR, 
-                                              y = Scenario, 
-                                              fill = bin)) +
+                                                 y = Scenario, 
+                                                 fill = bin)) +
   geom_tile(color = "white",
             lwd = 1.25,
             linetype = 1) +
@@ -133,50 +136,5 @@ fig5a_mean <- ggplot(data = SDF_subset_mean, aes(x = OSR,
 # save to file
 ggsave(plot = fig5a_mean, 
        filename = paste('TS_final_lambda_mean.png', sep = ''),
-       path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 17/3)
-
-##### plot lambdas over time ###################################################
-
-# load object
-load("~/Projects/iliketurtles3/output/lambdas_and_persistence.Rdata")
-
-# subset to only look at some scenarios and OSRs
-SDF_subset2 <- subset(lambdas_and_persistence,
-                      Stochasticity == 'temperature stochasticity' &
-                        Scenario %in% c('1C', '2C') &
-                        OSR %in% c(0.05, 0.5))
-
-# plot figure - median
-fig5b <- ggplot(data = SDF_subset2, aes(x = Year, 
-                                        y = Lambda_10yr_median, 
-                                        color = as.factor(OSR), 
-                                        linetype = Scenario)) + 
-  geom_hline(yintercept = 1, lty = 1) +
-  geom_ribbon(aes(ymin = Lambda_Q25,
-                  ymax = Lambda_Q75,
-                  fill = as.factor(OSR)),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_path(lwd = 1) +
-  scale_color_manual(values = c('F8766D', '00BFC4')) +
-  xlab('Year') +
-  ylab('Lambda') +
-  ggtitle('temperature stochasticity; (10yr) median lambdas over time + IQR') +
-  facet_grid(cols = vars(Population)) +
-  # theme_bw() +
-  # theme(panel.grid.major = element_blank(), 
-  #       panel.grid.minor = element_blank()) +
-  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
-  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
-  theme(axis.text = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 12)) +
-  theme(title = element_text(size = 13)) +
-  theme(legend.key.width = unit(2.65, "line"))
-
-# save to file
-ggsave(plot = fig5b, 
-       filename = paste('TS_10yr_median_lambdas.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 17/3)

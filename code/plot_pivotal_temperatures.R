@@ -8,225 +8,192 @@ library(ggplot2)
 library(viridis)
 library(patchwork)
 library(gridExtra)
+library(scales)
 
-# source functions
-source('code/mating function/OSRs_to_betas.R')
+# load in pivotal temps data
+load("~/Projects/iliketurtles3/output/pivotal_temperatures.Rdata")
+load("~/Projects/iliketurtles3/output/evolution_persistence.Rdata")
 
 # which computer am I using?
 desktop <- TRUE
 
-# plotting model parameters
-nsims <- 10000
+# join with persistence to remove pivotal temps for populations that have died out
+pivotal_and_persistence <- evolution_persistence %>%
+  select(!Stochasticity) %>%
+  right_join(pivotal_temps) 
 
-# folder
-folders <- c('no_temp_stochasticity', 'temp_stochasticity')
+piv_persist_total <- pivotal_and_persistence %>%
+  mutate(Piv_mean = replace(Piv_mean, Probability_total < 0.01, NA)) %>%
+  mutate(Piv_median = replace(Piv_median, Probability_total < 0.01, NA)) %>%
+  mutate(Piv_Q25 = replace(Piv_Q25, Probability_total < 0.01, NA)) %>%
+  mutate(Piv_Q75 = replace(Piv_Q75, Probability_total < 0.01, NA))
 
-# # test runs - folder names
-# models <- paste(folder, c('P_evol', 'P_evol_high_H', 
-#                           'GM_evol', 'GM_evol_high_H'), sep = '')
+change_in_mean_piv <- piv_persist_total %>%
+  filter(Year %in% c(1, 100)) %>%
+  select(Population, Model, model, Scenario, OSR, Year, Piv_mean) %>%
+  group_by(Model, Scenario, OSR) %>%
+    pivot_wider(names_from = Year, values_from = Piv_mean) %>%
+  mutate(Difference = `100` - `1`)
 
-# individual heatmap titles
-models_short <- c('P_evol_piv', 'GM_base')
+change_in_mean_piv$Scenario <- factor(change_in_mean_piv$Scenario, 
+                                      levels = unique(change_in_mean_piv$Scenario))
 
-# test runs - folder names
-filenames <- c(paste(folders[1], '/', models_short, sep = ''), 
-               paste(folders[2], '/',  models_short, sep = ''))
+change_in_median_piv <- piv_persist_total %>%
+  filter(Year %in% c(1, 100)) %>%
+  select(Population, Model, model, Scenario, OSR, Year, Piv_median) %>%
+  group_by(Model, Scenario, OSR) %>%
+  pivot_wider(names_from = Year, values_from = Piv_median) %>%
+  mutate(Difference = `100` - `1`)
 
+change_in_median_piv$Scenario <- factor(change_in_median_piv$Scenario, 
+                                      levels = unique(change_in_median_piv$Scenario))
 
+##### change in pivotal temps by year 100 plots ################################
+ 
+change_in_mean_piv$bin <- cut(change_in_mean_piv$Difference,
+                                    breaks = c(-0.03, -0.01, 0, 0.01, 0.03),
+                                    right = FALSE)
 
-# column names for combined heatmap
-pops <- c(rep('West Africa', length(folders)),
-             rep('Suriname', length(folders)))
-
-# row names for combined heatmap
-model_names <- rep(c('no temperature stochasticity', 
-                     'temperature stochasticity'),
-                   times = 2)
-
-# which temperature increase scenarios 
-scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
-
-# which operational sex ratios to fertilize all females
-osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
-
-# associated beta values
-betas <- OSRs_to_betas(osrs)
-
-# dimensions
-FN <- length(filenames)
-S <- length(scenarios)
-B <- length(osrs)
-
-# clear DF and SDF objects
-rm(DF)
-rm(SDF)
-
-# initialize empty dataframe
-DF <- data.frame(Pop = NULL, 
-                 Model = NULL,
-                 Scenario = NULL, 
-                 OSR = NULL, 
-                 Probability = NULL)
-
-# initialize plot list
-plot_list <- list()
-
-# for each model
-for (fn in 1:FN) {
-
-    # for each scenario
-    for (s in 1:S) {
-      
-      # for each mating function
-      for (b in 1:B) {
-        
-        # load in appropriate output file
-        
-        if (desktop == TRUE) { user <- 'Vic' } else { user <- vique }
-          
-          # if the file exists: desktop
-          if (file.exists(paste('C:/Users/', user, 
-                                '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                                filenames[fn], '/', scenarios[s], '/beta', 
-                                betas[b], '/', nsims, '_ptiv.Rda', sep = ''))) {
-            
-            # load in total abundance object
-            load(paste('C:/Users/', user, 
-                       '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-                       folder, filenames[fn], '/', scenarios[s], '/beta', 
-                       betas[b], '/', nsims, '_ptiv.Rda', sep = ''))
-            
-          }
-        
-        # extract last year with pivotal temperature
-        last_ptivs <- apply(sims_ptiv, 2, function(x) x[max(which(!is.na(x)))])
-        
-        # initialize dataframe
-        DF2 <- data.frame(Pop = pops[fn], 
-                          Model = model_names[fn],
-                          Scenario = scenarios[s],
-                          OSR = osrs[b],
-                          Probability = mean(last_ptivs > sims_ptiv[1, ], na.rm = TRUE))
-
-        # add DF2 to DF
-        DF <- rbind(DF, DF2)
-        
-      }
-      
-    }
-    
-    # make scenario and osr a factor variable
-    DF$Scenario <- factor(DF$Scenario, levels = scenarios)
-
-    # heatmap for survival to year 100
-    fig <- ggplot(data = DF, aes(x = OSR, y = Scenario, fill = Probability)) +
-      geom_tile(color = "white",
-                lwd = 1.5,
-                linetype = 1) +
-      scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
-                           mid = hcl.colors(5, "viridis")[3], 
-                           high = hcl.colors(5, "viridis")[5], #colors in the scale
-                           midpoint = 0.53,    #same midpoint for plots (mean of the range)
-                           breaks = c(0.47, 0.53, 0.59), #breaks in the scale bar
-                           limits = c(0.47, 0.59), 
-                           na.value = 'gray') +
-      guides(fill = guide_colourbar(title = "Probability")) +
-      xlab('Operational sex ratio required for 100% reproductive success') +
-      ylab('Increase in sand temperature (\u00B0C) by year 100') +
-      ggtitle('Probability of increase in pivotal temperature') +
-      theme(panel.background = element_blank()) 
-    
-    # add figs to plot_list
-    plot_list[[fn]] <- fig
-    
-    # save to file
-    ggsave(plot = fig, 
-           filename = paste(models_short[fn], '_tpiv_heatmap.png', sep = ''),
-           path = '~/Projects/iliketurtles3/figures/',
-           width = 8, height = 3.5)
-    
-  # }
-  # 
-  # # add model results to super data frame
-  # SDF <- rbind(SDF, DF)
-  
-}
-
-# heatmap for survival to year 100
-fig5 <- ggplot(data = DF, aes(x = OSR, y = Scenario, fill = Probability)) +
+# heatmap for change in mean pivotal temperature for hatchlings to year 100
+fig1 <- ggplot(data = change_in_mean_piv, aes(x = OSR,
+                                              y = Scenario,
+                                              fill = bin)) +
   geom_tile(color = "white",
             lwd = 1.5,
             linetype = 1) +
-  scale_fill_gradient2(low = hcl.colors(5, "viridis")[1], 
-                       mid = hcl.colors(5, "viridis")[3], 
-                       high = hcl.colors(5, "viridis")[5], #colors in the scale
-                       midpoint = 0.53,    #same midpoint for plots (mean of the range)
-                       breaks = c(0.47, 0.53, 0.59), #breaks in the scale bar
-                       limits = c(0.47, 0.59),  
-                       na.value = 'gray') +
-  guides(fill = guide_colourbar(title = "Probability")) +
+  scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
+  # scale_fill_gradient2(low = hcl.colors(5, "viridis")[1],
+  #                      mid = hcl.colors(5, "viridis")[3],
+  #                      high = hcl.colors(5, "viridis")[5], #colors in the scale
+  #                      # midpoint = 0.53,    #same midpoint for plots (mean of the range)
+  #                      # breaks = c(0.47, 0.53, 0.59), #breaks in the scale bar
+  #                      # limits = c(0.47, 0.59),
+  #                      na.value = 'gray') +
+  # guides(fill = guide_colourbar(title = "Change")) +
   xlab('Operational sex ratio required to fertilize all females') +
   ylab('Increase in sand temperature (\u00B0C) by year 100') +
-  ggtitle('Probability of increase in pivotal temperature') +
-  facet_grid(rows = vars(Model), 
-             cols = vars(Pop)) +
+  ggtitle('Change in mean hatchling pivotal temperature (year 100 - year 1)') +
+  facet_grid(rows = vars(model),
+             cols = vars(Population)) +
   theme(plot.margin = unit(c(1, 0, 1, 1), units = 'cm')) +
   theme(axis.title.x = element_text(size = 12, vjust = -3)) +
   theme(axis.title.y = element_text(size = 12, vjust = 3)) +
   theme(title = element_text(size = 13))
 
 # save to file
-ggsave(plot = fig5, 
-       filename = paste('PvsGM_base_evol_highH_tpiv.png', sep = ''),
+ggsave(plot = fig1,
+       filename = paste('change_in_mean_piv.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 7, height = 7)
+       width = 8, height = 7)
 
-##### pivotal temperature plot over time for P evol high H 5C beta 1 ###########
+# heatmap for change in median pivotal temperature for hatchlings to year 100
 
-# load in object
-load('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/no_temp_stochasticity/P_evol_high_H/5C/beta1/10000_ptiv.Rda')
+change_in_median_piv$bin <- cut(change_in_median_piv$Difference,
+                                breaks = c(-0.03, -0.01, 0, 0.01, 0.03),
+                                right = FALSE)
 
-# extract average pivotal temperature per year
-DF3 <- data.frame(Year = 1:100, 
-                  Mean = rowMeans(sims_ptiv, na.rm = TRUE), 
-                  # Min = apply(sims_ptiv, 1, FUN = min, na.rm = TRUE), 
-                  # Max = apply(sims_ptiv, 1, FUN = max, na.rm = TRUE))
-                  Min = apply(sims_ptiv, 1, FUN = quantile, probs = 0.05, na.rm = TRUE), 
-                  Max = apply(sims_ptiv, 1, FUN = quantile, probs = 0.95, na.rm = TRUE))
-                  
-DF3$Mean[which(is.nan(DF3$Mean))] <- NA
-DF3$Min[which(DF3$Min == Inf)] <- NA
-DF3$Max[which(DF3$Max == -Inf)] <- NA
-
-# plot average pivotal temperature for each year
-fig <- ggplot(data = DF3, aes(x = Year, y = Mean)) +
-  geom_segment(x = 0, y = DF3$Mean[1], 
-               xend = 100, yend = DF3$Mean[1], 
-             lwd = 1.5, col = hcl.colors(5, "viridis")[2]) +
-  geom_line(data = DF3, aes(x = Year, y = Mean), 
-            lwd = 2, col = hcl.colors(5, "viridis")[1]) +
-  geom_line(data = DF3, aes(x = Year, y = Min), col = 'gray') +
-  geom_line(data = DF3, aes(x = Year, y = Max), col = 'gray') +
-  ylim(c(28.96, 29.42)) + 
-  ylab('') +
-  ggtitle('Average Pivotal Temperature') +
-  theme(plot.margin = unit(c(1, 0.25, 1, -0.25), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 20, vjust = -3)) +
-  theme(title = element_text(size = 25)) +
-  theme(axis.text = element_text(size = 15))
+fig2 <- ggplot(data = change_in_median_piv, aes(x = OSR,
+                                              y = Scenario,
+                                              fill = bin)) +
+  geom_tile(color = "white",
+            lwd = 1.5,
+            linetype = 1) +
+  scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
+  # scale_fill_gradient2(low = hcl.colors(5, "viridis")[1],
+  #                      mid = hcl.colors(5, "viridis")[3],
+  #                      high = hcl.colors(5, "viridis")[5], #colors in the scale
+  #                      # midpoint = 0.53,    #same midpoint for plots (mean of the range)
+  #                      # breaks = c(0.47, 0.53, 0.59), #breaks in the scale bar
+  #                      # limits = c(0.47, 0.59),
+  #                      na.value = 'gray') +
+  # guides(fill = guide_colourbar(title = "Change")) +
+  xlab('Operational sex ratio required to fertilize all females') +
+  ylab('Increase in sand temperature (\u00B0C) by year 100') +
+  ggtitle('Change in median hatchling pivotal temperature (year 100 - year 1)') +
+  facet_grid(rows = vars(model),
+             cols = vars(Population)) +
+  theme(plot.margin = unit(c(1, 0, 1, 1), units = 'cm')) +
+  theme(axis.title.x = element_text(size = 12, vjust = -3)) +
+  theme(axis.title.y = element_text(size = 12, vjust = 3)) +
+  theme(title = element_text(size = 13))
 
 # save to file
-ggsave(plot = fig, 
-       filename = paste('P_evol_high_H_5c_beta1_avg_tpiv.png', sep = ''),
+ggsave(plot = fig2,
+       filename = paste('change_in_median_piv.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 6)
+       width = 8, height = 7)
 
-# histogram of final pivotal temperatures
-# extract last year with pivotal temperature
-last_ptivs <- apply(sims_ptiv, 2, function(x) x[max(which(!is.na(x)))])
-DF4 <- data.frame(i = 1:nsims, 
-                  final_pivotal_temperature = last_ptivs)
-hist(last_ptivs)
+##### pivotal temps over time plot #############################################
 
-ggplot(data = DF4, aes(x = last_ptivs)) + 
-  geom_histogram(fill = hcl.colors(5, "viridis")[1])
+population_to_plot <- c('West Africa')
+model_to_plot <- c('evolution with high H')
+scenario_to_plot <- c('5C')
+osr_to_plot <- c(0.05, 0.5)
+
+# plot mean and median pivotal temperatures over time for most extreme scenario
+piv_to_plot <- pivotal_and_persistence %>%
+  filter(Population %in% population_to_plot) %>%
+  filter(model %in% model_to_plot) %>%
+  filter(Scenario %in% scenario_to_plot) %>%
+  filter(OSR %in% osr_to_plot)
+
+# extract years to extinction for pivotal temperature plot
+
+# load in files
+load("~/Projects/iliketurtles3/output/pivotal plots/1_piv_plot_10000_abundance_total.Rda")
+osr0.5_total <- sims_abundance_total
+alive_total_0.5 <- osr0.5_total > 0.1*osr0.5_total[1, ]
+prop_alive_total_0.5 <- rowMeans(alive_total_0.5)
+vline_total_0.5 <- min(which(prop_alive_total_0.5 < 0.01))
+
+# load in files
+load("~/Projects/iliketurtles3/output/pivotal plots/0.05_piv_plot_10000_abundance_total.Rda")
+osr0.05_total <- sims_abundance_total
+alive_total_0.05 <- osr0.05_total > 0.1*osr0.05_total[1, ]
+prop_alive_total_0.05 <- rowMeans(alive_total_0.05)
+vline_total_0.05 <- min(which(prop_alive_total_0.05 < 0.01))
+
+load("~/Projects/iliketurtles3/output/pivotal plots/1_piv_plot_10000_abundance_mature.Rda")
+osr0.5_mature <- sims_abundance_mature
+alive_mature_0.5 <- osr0.5_mature > 0.1*osr0.5_mature[1, ]
+prop_alive_mature_0.5 <- rowMeans(alive_mature_0.5)
+vline_mature_0.5 <- min(which(prop_alive_mature_0.5 < 0.01))
+
+load("~/Projects/iliketurtles3/output/pivotal plots/0.05_piv_plot_10000_abundance_mature.Rda")
+osr0.05_mature <- sims_abundance_mature
+alive_mature_0.05 <- osr0.05_mature > 0.1*osr0.05_mature[1, ]
+prop_alive_mature_0.05 <- rowMeans(alive_mature_0.05)
+vline_mature_0.05 <- min(which(prop_alive_mature_0.05 < 0.01))
+
+# TO DO
+# add vlines to piv_to_plot DF to plot proper vlines in each plot
+
+# plot figure - median
+fig3 <- ggplot(data = piv_to_plot, aes(x = Year, 
+                                        y = Piv_median)) + 
+  # geom_vline(xintercept = vline_total, lty = 2) +
+  # geom_vline(xintercept = vline_mature, lty = 3) +
+  geom_hline(yintercept = 29.2) +
+  geom_ribbon(aes(ymin = Piv_10yr_Q25,
+                  ymax = Piv_10yr_Q75), 
+                  fill = 'turquoise1',
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_path(lwd = 1, col = 'turquoise3') +
+  xlab('Year') +
+  ylab('Median hatchling pivotal temperature (\u00B0C)') +
+  ggtitle('median hatchling pivotal temperature over time + IQR \n
+          west africa population, scenario 5C, OSR 0.5, \n evolution with high H') +
+  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
+  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
+  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
+  theme(axis.text = element_text(size = 10)) +
+  theme(strip.text = element_text(size = 12)) +
+  theme(title = element_text(size = 13)) +
+  theme(legend.key.width = unit(2.65, "line"))
+
+# save to file
+ggsave(plot = fig3,
+       filename = paste('median_piv_over_time.png', sep = ''),
+       path = '~/Projects/iliketurtles3/figures/',
+       width = 7, height = 5)

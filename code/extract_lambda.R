@@ -1,14 +1,14 @@
 # plot final lambda at year 100
 
 # set working directory
-setwd('~/Projects/iliketurtles3')
+# setwd('~/Projects/iliketurtles3')
 
 # source functions
-source('code/mating function/OSRs_to_betas.R')
+source('mating function/OSRs_to_betas.R')
 
 # load libraries
 library(ggplot2)
-library(ggpattern)
+# library(ggpattern)
 library(matrixStats)
 library(dplyr)
 library(tidyr)
@@ -19,13 +19,16 @@ library(tidyr)
 desktop <- FALSE
 
 # folder(s)
-folders <- c('temp_stochasticity')
+stochasticity <- c('temp_stochasticity')
 
 # model(s)
-models <- c('P_base', 'GM_base')
+models <- c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
+            'P_evol_threshold', 'P_evol_threshold_high_H',
+            'GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H', 
+            'GM_evol_threshold', 'GM_evol_threshold_high_H')
 
 # filepaths
-paths <- c(paste(folders[1], '/', models, sep = ''))
+paths <- as.vector(outer(stochasticity, models, paste, sep="/"))
 
 # years to average over
 average_over <- 10
@@ -35,8 +38,7 @@ years <- 1:100
 nsims <- 10000
 
 # column names for combined heatmap
-populations <- c(rep('West Africa', length(folders)),
-                 rep('Suriname', length(folders)))
+populations <- rep(c('West Africa', 'Suriname'), each = length(models)/2)
 
 # row names for combined heatmap
 stochasticity <- rep('temperature stochasticity',
@@ -62,8 +64,8 @@ Y <- length(years)
 A <- length(abundances)
 
 # clear DF and SDF objects
-rm(DF)
-rm(SDF)
+# rm(DF)
+# rm(SDF)
 
 # initialize plot list
 plot_list <- list()
@@ -76,8 +78,14 @@ SDF <- data.frame(Stochasticity = NULL,
                   OSR = NULL, 
                   Year = NULL,
                   Abundance = NULL,
-                  Lambda = NULL,
-                  Lambda_avg = NULL)
+                  Lambda_mean = NULL,
+                  Lambda_median = NULL,
+                  Lambda_Q25 = NULL, 
+                  Lambda_Q75 = NULL,
+                  Lambda_10yr_mean = NULL,
+                  Lambda_10yr_median = NULL,
+                  Lambda_10yr_Q25 = NULL, 
+                  Lambda_10yr_Q75 = NULL)
 
 for (p in 1:P) {
   
@@ -86,7 +94,7 @@ for (p in 1:P) {
     for (osr in 1:OSR) {
       
       # initialize empty dataframe, one for each filepath
-      DF <- data.frame(Stochasticity = stochasticity[p], 
+      DF <- data.frame(Stochasticity = stochasticity[1], 
                        Population = populations[p], 
                        Model = models[p],
                        Scenario = scenarios[s], 
@@ -100,23 +108,52 @@ for (p in 1:P) {
                        Lambda_10yr_mean = NA,
                        Lambda_10yr_median = NA,
                        Lambda_10yr_Q25 = NA, 
-                       Lambda_0yr_Q75 = NA)
+                       Lambda_10yr_Q75 = NA)
       
       # load in appropriate output file
       
       if (desktop == TRUE) { user <- 'Vic' } else { user <- 'vique' }
       
-      # if the file exists
-      if (file.exists(paste('C:/Users/', user, 
-                            '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+      # # if the file exists - desktop or laptop
+      # if (file.exists(paste('C:/Users/', user, 
+      #                       '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+      #                       paths[p], '/', scenarios[s], '/beta', 
+      #                       betas[osr], '/', nsims, '_', abundances[1], '.Rda', 
+      #                       sep = '')) 
+      #     
+      #     &
+      #     
+      #     file.exists(paste('C:/Users/', user, 
+      #                       '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+      #                       paths[p], '/', scenarios[s], '/beta', 
+      #                       betas[osr], '/', nsims, '_', abundances[2], '.Rda', 
+      #                       sep = ''))
+      #     
+      # )  {
+      #   
+      #   # load in total abundance object
+      #   load(paste('C:/Users/', user, 
+      #              '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+      #              paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
+      #              '_', abundances[1], '.Rda', sep = ''))
+      #   
+      #   # load in mature abundance object
+      #   load(paste('C:/Users/', user, 
+      #              '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+      #              paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
+      #              '_', abundances[2], '.Rda', sep = ''))
+      #   
+      # }
+      
+      # if the file exists - cluster
+      if (file.exists(paste('/home/quennessenv/iliketurtles3/output/',
                             paths[p], '/', scenarios[s], '/beta', 
                             betas[osr], '/', nsims, '_', abundances[1], '.Rda', 
                             sep = '')) 
           
           &
           
-          file.exists(paste('C:/Users/', user, 
-                            '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          file.exists(paste('/home/quennessenv/iliketurtles3/output/',
                             paths[p], '/', scenarios[s], '/beta', 
                             betas[osr], '/', nsims, '_', abundances[2], '.Rda', 
                             sep = ''))
@@ -124,14 +161,12 @@ for (p in 1:P) {
       )  {
         
         # load in total abundance object
-        load(paste('C:/Users/', user, 
-                   '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+        load(paste('/home/quennessenv/iliketurtles3/output/',
                    paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
                    '_', abundances[1], '.Rda', sep = ''))
         
         # load in mature abundance object
-        load(paste('C:/Users/', user, 
-                   '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+        load(paste('/home/quennessenv/iliketurtles3/output/',
                    paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
                    '_', abundances[2], '.Rda', sep = ''))
         
@@ -143,6 +178,10 @@ for (p in 1:P) {
         sims_abundance_total[1:(Y - 1), ]
       lambdas_mature <- sims_abundance_mature[2:Y, ] / 
         sims_abundance_mature[1:(Y - 1), ]
+      
+      # replace Inf and NaN with NA
+      lambdas_total[!is.finite(lambdas_total)] <- NA
+      lambdas_mature[!is.finite(lambdas_mature)] <- NA
       
       # add average lambdas across simulations to DF
       DF$Lambda_mean[1:Y] <- c(NA, 
@@ -164,7 +203,7 @@ for (p in 1:P) {
                                            prob = c(0.25),
                                            na.rm = TRUE))
       DF$Lambda_Q25[(Y + 1):(2 * Y)] <- c(NA, 
-                                          rowQuantiles(lambdas_total,
+                                          rowQuantiles(lambdas_mature,
                                                        prob = c(0.25), 
                                                        na.rm = TRUE))
       
@@ -173,7 +212,7 @@ for (p in 1:P) {
                                            prob = c(0.75),
                                            na.rm = TRUE))
       DF$Lambda_Q75[(Y + 1):(2 * Y)] <- c(NA, 
-                                          rowQuantiles(lambdas_total,
+                                          rowQuantiles(lambdas_mature,
                                                        prob = c(0.75), 
                                                        na.rm = TRUE))
       
@@ -255,7 +294,7 @@ for (p in 1:P) {
       # print progress update
       print(paste(Sys.time(), ' - ', stochasticity[p], ' - ',
                   models[p], ' - ', scenarios[s], ' - beta ', 
-                  betas[osr], ' all done!', sep = ''))
+                  betas[osr], ' lambdas all done!', sep = ''))
       
     }
     
@@ -269,6 +308,9 @@ lambdas <- SDF
 # SDF[which(is.infinite(SDF$Lambda_mean)), 8:13] <- NA
 # SDF[which(SDF$Lambda_mean == 0), 8:13] <- NA
 
-# save dataframe as R object
-save(lambdas, file = paste('~/Projects/iliketurtles3/output/lambdas.Rdata', 
-                           sep = ''))
+# # save dataframe as R object - desktop or laptop
+# save(lambdas, file = paste('~/Projects/iliketurtles3/output/lambdas.Rdata', 
+#                            sep = ''))
+
+# save dataframe as R object - cluster
+save(lambdas, file = '/home/quennessenv/iliketurtles3/output/lambdas.Rdata')
