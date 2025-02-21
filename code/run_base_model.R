@@ -18,8 +18,12 @@ run_base_model <- function(arguments) {
   nsims     <- arguments$Var5
   
   # model parameters to modulate
-  climate_stochasticity <- FALSE             # whether or not to add in
-  
+  temp_mu <- 31.80                        # base incubation temp mean
+  climate_stochasticity <- TRUE           # whether or not to add in
+  noise <- 'Red'                          # noise: White or Red
+  temp_sd <- 0.84                         # base incubation temp sd
+  AC <- 0.5                               # autocorrelation coefficient
+
   # troubleshooting
   # scenario <- 0.5
   # beta <- 1
@@ -46,8 +50,7 @@ run_base_model <- function(arguments) {
   ag_var_piv <- 0.017                       # phenotypic variance - pivotal temp
   T_threshold <- 35                         # lethal temperature threshold
   ag_var_threshold <- 0.017                 # phenotypic variance - threshold
-  temp_mu <- 31.80                          # base incubation temp mean
-  temp_sd <- 0.84                           # base incubation temp sd
+  
   
   ##### parameters that are model and scenario dependent #######################
   if (model == 'P_base') {
@@ -284,7 +287,7 @@ run_base_model <- function(arguments) {
                          T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
                          T_threshold, h2_threshold, ag_var_threshold, 
                          evolution_threshold,
-                         temp_mu, temp_sd, climate_stochasticity)
+                         temp_mu, climate_stochasticity, noise, temp_sd, AC)
     
     # save the N and abundance arrays 
     sims_N[, , , i]             <- output[[1]]

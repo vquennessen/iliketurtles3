@@ -5,7 +5,8 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
                               T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
                               T_threshold, h2_threshold, ag_var_threshold, 
                               evolution_threshold,
-                              temp_mu, temp_sd, climate_stochasticity) {
+                              temp_mu, climate_stochasticity, noise, temp_sd, 
+                              AC) {
   
   ##### population size ########################################################
   
@@ -26,10 +27,35 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
   # if we're including climate stochasticity in the model
   if (climate_stochasticity == TRUE) {
     
-    # generate stochastic temperatures from means given temp_sd
-    temperatures <- rnorm(n = years, mean = temp_mus, sd = temp_sd)
+    white_noise <- rnorm(n = years, mean = 0, sd = temp_sd)
     
-    # if not, the temperatures are just the means
+    if (noise == 'White') {
+      
+    # generate stochastic temperatures from means given temp_sd
+    temperatures <- temp_mus + white_noise
+    
+    }
+    
+    if (noise == 'Red') {
+
+      # initialize deviations
+      deviations <- rep(NA, times = years)
+      
+      # first deviation term
+      deviations[1] <- rnorm(n = 1, mean = 0, sd = temp_sd) + white_noise[1]
+      
+      # autocorrelated deviation series
+      for (i in 2:years) {
+        
+        deviations[i] <- AC * deviations[i - 1] + white_noise[i]
+          
+      }
+      
+      temperatures <- temp_mus + deviations
+      
+    }
+    
+    # if no climate stochasticity, the temperatures are just the means
   } else { temperatures <- temp_mus }
   
   ##### pivotal temperatures ###################################################

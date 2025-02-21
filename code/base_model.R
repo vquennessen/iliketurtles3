@@ -8,16 +8,18 @@ base_model <- function(scenario, beta, years, max_age,
                        T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv, 
                        T_threshold, h2_threshold, ag_var_threshold, 
                        evolution_threshold,
-                       temp_mu, temp_sd, climate_stochasticity) {
+                       temp_mu, climate_stochasticity, noise, temp_sd, AC) {
   
   ##### source initialized arrays ##############################################
   
   init_output <- initialize_arrays(scenario, years, max_age, F_init, M_init, M, 
                                    F_remigration_int, M_remigration_int, 
-                                   T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
+                                   T_piv, k_piv, h2_piv, ag_var_piv, 
+                                   evolution_piv,
                                    T_threshold, h2_threshold, ag_var_threshold, 
                                    evolution_threshold,
-                                   temp_mu, temp_sd, climate_stochasticity)
+                                   temp_mu, climate_stochasticity, noise, 
+                                   temp_sd, AC)
   
   N                  <- init_output[[1]]    # population size array
   temperatures       <- init_output[[2]]    # incubation temperatures

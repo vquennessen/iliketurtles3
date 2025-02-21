@@ -21,7 +21,7 @@ source('evolution.R')
 #             'P_evol_threshold', 'P_evol_threshold_high_H',
 #             'GM_evol_piv', 'GM_evol_piv_high_H',
 #             'GM_evol_threshold', 'GM_evol_threshold_high_H')
-models <- c('GM_evol_threshold_high_H')
+models <- c('P_base', 'GM_base')
 
 # total temp increases
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)

@@ -13,7 +13,7 @@ library(ggplot2)
 ##### create incubation data frame #############################################
 
 # load nest object
-load("~/Projects/iliketurtles3/data/nests.Rdata")
+load("~/Projects/iliketurtles3/output/nests.Rdata")
 nests2 <- nests %>%
   select(Season, N_NINHO, TEMP_LOGGER_DEPLOYED, TEMP_LOGGER_REMOVED, 
          Hatching_success)
@@ -49,8 +49,10 @@ years <- c(2020, 2021, 2022, 2023)
 
 for (s in 1:length(seasons)) {
   
-  setwd(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/temperature files/', 
-              seasons[s], sep = ''))
+  directory <- paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/temperature files/', 
+                     seasons[s], sep = '')
+  
+  setwd(directory)
   
   # season 4 are .csv files, all others are .xlsx files
   if (s < 4) {

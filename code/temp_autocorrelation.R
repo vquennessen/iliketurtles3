@@ -48,7 +48,7 @@ r_brick <- brick(stl3.array,
 
 FdN_lon <- -32.438293
 FdN_lat <- -3.856864
-FdN_series <- extract(r_brick, 
+FdN_series <- raster::extract(r_brick, 
                       SpatialPoints(cbind(FdN_lon, FdN_lat)), 
                       method = 'simple')
 
@@ -112,6 +112,7 @@ Fortaleza_pretty <- Fortaleza_df %>%
   dplyr::select(year, month, stl3C) %>%
   pivot_wider(names_from = month, values_from = stl3C)
 
+
 autocorrelation_coefficients <- 
   data.frame(Lag = 0:18,
              January = c(acf(Fortaleza_pretty$January)[[1]]), 
@@ -120,16 +121,20 @@ autocorrelation_coefficients <-
              April = c(acf(Fortaleza_pretty$April)[[1]]), 
              May = c(acf(Fortaleza_pretty$May)[[1]]), 
              June = c(acf(Fortaleza_pretty$June)[[1]])) %>%
-  dplyr::filter(Lag > 0) %>%
+  dplyr::filter(Lag == 1) %>%
   pivot_longer(cols = 2:7, values_to = 'AutoCoeff') %>%
   dplyr::mutate(Month = factor(name, 
                         levels = months))
+
+mean_auto_coeff <- mean(autocorrelation_coefficients$AutoCoeff)
+sd_auto_coeff <- sd(autocorrelation_coefficients$AutoCoeff)
 
 ggplot(data = autocorrelation_coefficients, 
        aes(x = Month, y = AutoCoeff, col = factor(Lag))) +
   geom_hline(yintercept = 0.5, col = 'blue', lty = 2) +
   geom_hline(yintercept = -0.5, col = 'blue', lty = 2) +
   geom_hline(yintercept = 0, col = 'red', lty = 3, lwd = 1) +
+  geom_hline(yintercept = mean_auto_coeff, col = 'green', lty = 2) +
   geom_point(size = 1.5) +
   scale_color_manual(values = viridis(18)) +
   ylab('Temporal autocorrelation coefficient')
