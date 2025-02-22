@@ -59,25 +59,23 @@ save(lambdas_and_persistence,
 
 years_to_plot <- 100
 
-subset_median <- subset(lambdas_and_persistence, Year == years_to_plot & 
-                          Stochasticity == 'temperature stochasticity')
+SDF_subset_median <- lambdas_and_persistence %>%
+  filter(Year == years_to_plot) %>%
+  filter(Stochasticity == 'temperature stochasticity') %>%
+  mutate(bins = cut(Lambda_median, 
+                    breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
+                    include.lowest = TRUE,
+                    right = FALSE))
 
-# subset_median$Scenario <- factor(subset_median$Scenario, 
-#                                 levels = scenarios, 
-#                                 labels = scenarios)
-
-subset_median$bin <- cut(subset_median$Lambda_median,
-                         breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
-                         right = FALSE)
-
-fig5_median <- ggplot(data = subset_median, aes(x = OSR, 
+fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR, 
                                                 y = Scenario, 
-                                                fill = bin)) +
+                                                fill = bins)) +
   geom_tile(color = "white",
             lwd = 1.25,
             linetype = 1) +
   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
-  guides(fill = guide_legend(title = "Lambda")) +
+  guides(fill = guide_legend(title = "Median \n Lambda", 
+                             reverse = TRUE)) +
   xlab('Operational sex ratio required to fertilize all females') +
   ylab('Increase in sand temperature (\u00B0C) by year 100') +
   ggtitle('temperature stochasticity; final median lambda (year 100)') +
@@ -103,21 +101,23 @@ ggsave(plot = fig5_median,
 
 years_to_plot <- 100
 
-SDF_subset_mean <- subset(lambdas_and_persistence, Year == years_to_plot & 
-                            Stochasticity == 'temperature stochasticity')
-
-SDF_subset_mean$bin <- cut(SDF_subset_mean$Lambda_mean,
-                           breaks = c(0, 0.25, 0.9, 0.99, 1, 1.01, 1.1, 2),
-                           right = FALSE)
+SDF_subset_mean <- lambdas_and_persistence %>%
+  filter(Year == years_to_plot) %>%
+  filter(Stochasticity == 'temperature stochasticity') %>%
+  mutate(bins = cut(Lambda_mean, 
+                    breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
+                    include.lowest = TRUE,
+                    right = FALSE))
 
 fig5a_mean <- ggplot(data = SDF_subset_mean, aes(x = OSR, 
                                                  y = Scenario, 
-                                                 fill = bin)) +
+                                                 fill = bins)) +
   geom_tile(color = "white",
             lwd = 1.25,
             linetype = 1) +
   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
-  guides(fill = guide_legend(title = "Lambda")) +
+  guides(fill = guide_legend(title = "Mean \n Lambda", 
+                             reverse = TRUE)) + 
   xlab('Operational sex ratio required to fertilize all females') +
   ylab('Increase in sand temperature (\u00B0C) by year 100') +
   ggtitle('temperature stochasticity; final mean lambda (year 100)') +
