@@ -13,7 +13,7 @@ library(patchwork)
 library(gridExtra)
 
 # source functions
-source('mating function/OSRs_to_betas.R')
+source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 
 # which computer am I using?
 desktop <- TRUE
@@ -46,8 +46,8 @@ combined_fig_filename <- 'base_persistence_combined'
 # combined_fig_filename <- c('piv_evol_persistence_combined', 
 #                            'threshold_evol_persistence_combined')
 
-# which year to visualize
-years_to_plot <- c(25, 50, 75, 100)
+# which year to track
+years_to_plot <- c(100)
 
 # temperature increase scenarios
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
@@ -69,6 +69,13 @@ S <- length(scenarios)
 B <- length(osrs)
 Y <- length(years_to_plot)
 
+# maturity ogive
+max_age <- 85
+age_maturity_mu <- 25
+age_maturity_sd <- 2.5
+M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
+
+
 # initialize super data frame
 SDF <- data.frame(Stochasticity = rep(NA, P*S*B),
                   Stochasticity_short = rep(NA, P*S*B), 
@@ -78,8 +85,12 @@ SDF <- data.frame(Stochasticity = rep(NA, P*S*B),
                   Scenario = rep(NA, P*S*B), 
                   OSR = rep(NA, P*S*B), 
                   Survive_to = rep(NA, P*S*B), 
-                  Probability_total = rep(NA, P*S*B), 
-                  Probability_mature = rep(NA, P*S*B))
+                  Probability_total = rep(NA, P*S*B),
+                  Probability_total_F = rep(NA, P*S*B), 
+                  Probability_total_M = rep(NA, P*S*B), 
+                  Probability_mature = rep(NA, P*S*B),
+                  Probability_mature_F = rep(NA, P*S*B),
+                  Probability_mature_M = rep(NA, P*S*B))
 
 # for each year to plot
 for (y in 1:Y) {
@@ -100,23 +111,53 @@ for (y in 1:Y) {
         if (desktop == TRUE) { user <- 'Vic' } else { user <- 'vique' }
         
         # if the file exists - desktop / laptop
+        # if (file.exists(paste('E:/phd model output/',
         if (file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
                               paths[p], '/', scenarios[s], '/beta', betas[b],
                               '/', nsims, '_abundance_total.Rda', sep = '')) &
             
-            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                              
                               paths[p], '/', scenarios[s], '/beta', betas[b],
-                              '/', nsims, '_abundance_mature.Rda', sep = ''))) {
+                              '/', nsims, '_abundance_mature.Rda', sep = '')) &
+            
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                              
+                              paths[p], '/', scenarios[s], '/beta', betas[b],
+                              '/', nsims, '_abundance_F.Rda', sep = '')) &
+            
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                              
+                              paths[p], '/', scenarios[s], '/beta', betas[b],
+                              '/', nsims, '_abundance_M.Rda', sep = '')) &
+            
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                              
+                              paths[p], '/', scenarios[s], '/beta', betas[b],
+                              '/', nsims, '_N.Rda', sep = ''))
+            
+            ) {
           
           # load in total abundance object
-          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_abundance_total.Rda', sep = ''))
           
           # load in abundance mature object
-          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_abundance_mature.Rda', sep = ''))
+          
+          # load in abundance F object
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
+                     paths[p], '/', scenarios[s], '/beta', betas[b], '/',
+                     nsims, '_abundance_F.Rda', sep = ''))
+          
+          # load in abundance M object
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
+                     paths[p], '/', scenarios[s], '/beta', betas[b], '/',
+                     nsims, '_abundance_M.Rda', sep = ''))
+          
+          # load in N object
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
+                     paths[p], '/', scenarios[s], '/beta', betas[b], '/',
+                     nsims, '_N.Rda', sep = ''))
           
         }
         
@@ -153,10 +194,19 @@ for (y in 1:Y) {
         SDF$Scenario[index] <- scenarios[s]
         SDF$OSR[index] <- osrs[b]
         SDF$Survive_to[index] <- year_to_plot
-        SDF$Probability_total[index] <- mean(
-          sims_abundance_total[year_to_plot, ] > 0.1*sims_abundance_total[1, ])
+        
+        SDF$Probability_total_mean[index] <- mean(
+          sims_abundance_total[year_to_plot, ] > 0.1 * sims_abundance_total[1, ])
+        SDF$Probability_total_F_mean[index] <- mean(
+          sims_abundance_F[year_to_plot, ] > 0.1 * sims_abundance_F[1, ])
+        SDF$Probability_total_M_mean[index] <- mean(
+          sims_abundance_M[year_to_plot, ] > 0.1 * sims_abundance_M[1, ])
         SDF$Probability_mature[index] <- mean(
-          sims_abundance_mature[year_to_plot, ] > 0.1*sims_abundance_mature[1, ])
+          sims_abundance_mature[year_to_plot, ] > 0.1 * sims_abundance_mature[1, ])
+        SDF$Probability_mature_F[index] <- mean(
+          sims_N[1, , year_to_plot, ] * M > 0.1 * sims_N[1, , 1, ] * M)
+        SDF$Probability_mature_M[index] <- mean(
+          sims_N[2, , year_to_plot, ] * M > 0.1 * sims_N[2, , 1, ] * M)
         
         # # initialize dataframe - evolution
         # SDF$Stochasticity[index] <- stochasticity_names[1]

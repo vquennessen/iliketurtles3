@@ -34,8 +34,8 @@ all_combos <- base_persistence
 all_combos$Scenario <- factor(all_combos$Scenario, 
                            levels = unique(all_combos$Scenario))
 
-# shorter time scales
-short <- all_combos
+# # shorter time scales
+# short <- all_combos
   
 # pivotal <- all_combos %>%
 #   filter(Stochasticity == 'temperature stochasticity') %>%
