@@ -7,6 +7,8 @@ rm(list = ls())
 library(ggplot2)
 library(matrixStats)
 library(readr)
+library(patchwork)
+library(tidyverse)
 
 # source functions
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
@@ -155,103 +157,112 @@ sex_ratios <- subset(median_abundances_to_plot_over_time,
                      Value == 'Sex Ratio')
 
 # plot figure - mature abundances
-figA <- ggplot(data = mature, 
-                aes(x = Year, 
-                    y = Median, 
-                    color = Combo)) + 
+figA <- median_abundances_to_plot_over_time %>%
+  filter(Age == 'Mature') %>%
+  filter(Value == 'Abundance') %>%
+  ggplot(aes(x = Year, 
+             y = Median, 
+             color = Scenario, 
+             lty = factor(OSR))) + 
   geom_ribbon(aes(ymin = Q25,
                   ymax = Q75, 
                   col = NULL, 
-                  fill = Combo),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
-  geom_path(lwd = 1) +
-  # scale_color_manual(values = c('#F8766D', '#00BFC4')) + 
-  xlab('Year') +
-  ylab('Abundance') +
-  ggtitle('median mature abundances over time + IQR') +
-  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
-  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
-  theme(axis.text = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 12)) +
-  theme(title = element_text(size = 13))
+  geom_line(lwd = 1) +
+  xlab('') +
+  ylab('Median \n Mature Abundance') +
+  guides(color = "none", 
+         lty = "none")
 
 # plot figure - hatchling abundances
-figB <- ggplot(data = hatchling, 
-               aes(x = Year, 
-                   y = Median, 
-                   color = Combo)) + 
+figB <- median_abundances_to_plot_over_time %>%
+  filter(Age == 'Hatchling') %>%
+  filter(Value == 'Abundance') %>%
+  ggplot(aes(x = Year, 
+             y = Median, 
+             color = Scenario, 
+             lty = factor(OSR))) + 
   geom_ribbon(aes(ymin = Q25,
                   ymax = Q75, 
                   col = NULL, 
-                  fill = Combo),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_path(lwd = 1) +
   # scale_color_manual(values = c('#F8766D', '#00BFC4')) + 
-  xlab('Year') +
-  ylab('Abundance') +
-  ggtitle('median hatchling abundances over time + IQR') +
-  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
-  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
-  theme(axis.text = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 12)) +
-  theme(title = element_text(size = 13))
+  xlab('') +
+  ylab('Median \n Hatchling Abundance')
+  # # theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
+  # theme(axis.title.x = element_text(size = 13, vjust = -3)) +
+  # theme(axis.title.y = element_text(size = 13, vjust = 4)) +
+  # theme(axis.text = element_text(size = 10)) +
+  # theme(strip.text = element_text(size = 12)) +
+  # theme(title = element_text(size = 13))
 
 # plot figure - sex ratios
-figC <- ggplot(data = sex_ratios, 
-               aes(x = Year, 
-                   y = Median, 
-                   color = Combo, 
-                   lty = Age)) + 
+figC <- median_abundances_to_plot_over_time %>%
+  filter(Value == 'Sex Ratio') %>%
+  ggplot(aes(x = Year, 
+             y = Median, 
+             color = Scenario, 
+             lty = factor(OSR), 
+             lwd = Age)) + 
+  scale_linewidth_manual(values = c(0.5, 1)) +
   geom_ribbon(aes(ymin = Q25,
                   ymax = Q75, 
                   col = NULL, 
-                  fill = Combo),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
-  geom_path(lwd = 1) +
+  geom_path() +
   # scale_color_manual(values = c('#F8766D', '#00BFC4')) + 
-  xlab('Year') +
-  ylab('Abundance') +
-  ggtitle('median sex ratios over time + IQR') +
-  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
-  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
-  theme(axis.text = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 12)) +
-  theme(title = element_text(size = 13))
+  xlab('') +
+  # theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
+  # theme(axis.title.x = element_text(size = 13, vjust = -3)) +
+  # theme(axis.title.y = element_text(size = 13, vjust = 4)) +
+  # theme(axis.text = element_text(size = 10)) +
+  # theme(strip.text = element_text(size = 12)) +
+  # theme(title = element_text(size = 13)) +
+  guides(color = "none", 
+         lty = "none") +
+  ylab('Median Sex Ratio')
 
 # plot figure - temperatures
-figD <- ggplot(data = median_abundances_to_plot_over_time, 
+figD <- ggplot(data = subset(median_abundances_to_plot_over_time, 
+                             OSR == 0.1), 
                aes(x = Year, 
                    y = Temperature, 
-                   color = Combo)) + 
-  geom_ribbon(aes(ymin = Q25,
-                  ymax = Q75, 
-                  col = NULL, 
-                  fill = Combo),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_path(lwd = 1) +
+                   color = Scenario, 
+                   lty = factor(OSR))) + 
+  geom_line(lwd = 1.5) + 
+  # scale_linetype_manual(values = c(1, 2, 3, 4)) +
+  geom_line(data = subset(median_abundances_to_plot_over_time, 
+                          OSR == 0.45), 
+            lwd = 1.5, 
+            position = position_nudge(y = -0.1)) +  
   # scale_color_manual(values = c('#F8766D', '#00BFC4')) + 
   xlab('Year') +
-  ylab('Abundance') +
-  ggtitle('temperatures over time + IQR') +
-  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
-  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
-  theme(axis.text = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 12)) +
-  theme(title = element_text(size = 13))
+  # theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
+  # theme(axis.title.x = element_text(size = 13, vjust = -3)) +
+  # theme(axis.title.y = element_text(size = 13, vjust = 4)) +
+  # theme(axis.text = element_text(size = 10)) +
+  # theme(strip.text = element_text(size = 12)) +
+  # theme(title = element_text(size = 13)) +
+  guides(color = "none", 
+         lty = "none") +
+  ylab('Temperature (\u00B0C)')
 
-# # save to file
-# ggsave(plot = figA, 
-#        filename = paste('median_mature_abundances.png', sep = ''),
-#        path = '~/Projects/iliketurtles3/figures/',
-#        width = 9, height = 8)
+final_fig <- figA/figC/figB/figD +
+  plot_layout(heights = c(-1, -1, -1, -1))
+final_fig
+
+# save to file
+ggsave(plot = final_fig,
+       filename = paste('abundance_sexratios_temps.png', sep = ''),
+       path = '~/Projects/iliketurtles3/figures/',
+       width = 8.5, height = 11)
 
 # # plot figure - hatchling abundances
 # figB <- ggplot(data = hatchling, 
