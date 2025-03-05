@@ -20,10 +20,10 @@ library(tidyr)
 # EDIT dataframes to load up ###################################################
 
 # load in persistence object
-load("~/Projects/iliketurtles3/output/base_persistence_100.Rdata")
+load("~/Projects/iliketurtles3/output/base_persistence_red100.Rdata")
 
 # load in persistence object
-load("~/Projects/iliketurtles3/output/evolution_persistence.Rdata")
+# load("~/Projects/iliketurtles3/output/evolution_persistence.Rdata")
 
 # all_combos <- rbind(base_persistence, evolution_persistence)
 all_combos <- base_persistence
@@ -33,6 +33,8 @@ all_combos <- base_persistence
 # make scenario and osr a factor variable
 all_combos$Scenario <- factor(all_combos$Scenario, 
                            levels = unique(all_combos$Scenario))
+all_combos$Stochasticity <- factor(all_combos$Stochasticity, 
+                              levels = unique(all_combos$Stochasticity))
 
 # # shorter time scales
 # short <- all_combos
@@ -48,12 +50,13 @@ all_combos$Scenario <- factor(all_combos$Scenario,
 #                       'GM_base', 'GM_evol_threshold', 'GM_evol_threshold_high_H'))
 
 # EDIT #########################################################################
-DF_to_use <- short
-name_to_use <- paste(deparse(substitute(short)), '_Y', DF_to_use$Survive_to[1], 
+DF_to_use <- all_combos
+name_to_use <- paste(deparse(substitute(all_combos)), '_Y', 
+                     DF_to_use$Survive_to[1], 
                      sep = '')
-short_stochasticities <- c('nTS', 'TS')
-var_rows <- 1
-var_columns <- 3
+short_stochasticities <- unique(DF_to_use$Stochasticity_short)
+var_rows <- 1 # stochasticity nice names
+var_columns <- 3 # populations
 ################################################################################
 
 # variable levels
@@ -90,11 +93,13 @@ OSRs <- length(osrs)
 # }
 
 ##### plotting abundance total##################################################
+DFsubset <- DF_to_use %>%
+  filter(Stochasticity_short %in% c('nTS', 'TS', 'red0.5'))
 
-fig3 <- ggplot(data = DF_to_use, 
+fig3 <- ggplot(data = DFsubset, 
                aes(x = OSR, 
                    y = Scenario, 
-                   fill = Probability_total)) +
+                   fill = Probability_mature)) +
   geom_tile(color = "white",
             lwd = 1.5,
             linetype = 1) +
@@ -110,10 +115,10 @@ fig3 <- ggplot(data = DF_to_use,
   ylab(paste('Increase in sand temperature (\u00B0C) by year ', 
              DF_to_use$Survive_to, sep = '')) +
   ggtitle(paste(name_to_use, ': Probability of population persistence \n
-          (> 10% of starting total abundance) to year ', 
+          (> 10% of starting mature abundance) to year ', 
                 DF_to_use$Survive_to[1], sep = '')) +
-  facet_grid(rows = vars(DF_to_use[, var_rows]),
-             cols = vars(DF_to_use[, var_columns])) +
+  facet_grid(rows = vars(DFsubset[, var_rows]),
+             cols = vars(DFsubset[, var_columns])) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
@@ -125,7 +130,7 @@ fig3 <- ggplot(data = DF_to_use,
 
 # save combined figure to file
 ggsave(plot = fig3,
-filename = paste(name_to_use, '_abundance_total.png', sep = ''),
+filename = paste(name_to_use, '_abundance_mature_red_noise.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 7)
 

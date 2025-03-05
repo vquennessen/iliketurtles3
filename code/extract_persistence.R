@@ -14,6 +14,7 @@ library(gridExtra)
 
 # source functions
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
+# source('/home/quennessenv/iliketurtles3/code/mating function/OSRs_to_betas.R')
 
 # which computer am I using?
 desktop <- TRUE
@@ -22,14 +23,31 @@ desktop <- TRUE
 nsims <- 10000
 
 # combos - no vs. temp stochasticity
-stochasticity <- c('no_temp_stochasticity', 'temp_stochasticity')
-stochasticity_names <- c('no temperature stochasticity', 'temperature stochasticity')
-stochasticity_names_short <- c('nTS', 'TS')
+stochasticity <- c('no_temp_stochasticity', 'temp_stochasticity',
+                   'temp_stochasticity/red noise 0.1',
+                   'temp_stochasticity/red noise 0.3',
+                   'temp_stochasticity/red noise 0.5')
+# stochasticity <- c('no_temp_stochasticity', 'temp_stochasticity', 
+#                    'temp_stochasticity/red noise 0.1')
+
 models <- c('P_base', 'GM_base')
+# models <- c('P_base')
+
+stochasticity_names <- rep(c('no temperature stochasticity', 'white noise',
+                         'red noise 0.1', 'red noise 0.3', 'red noise 0.5'),
+                         times = length(models))
+stochasticity_names_short <- rep(c('nTS', 'TS', 'red0.1', 'red0.3', 'red0.5'),
+                                 times = length(models))
 pops <- c('West Africa', 'Suriname')
 model_names <- c('base model', 'base model')
-individual_figs_filename <- 'base_persistence'
-combined_fig_filename <- 'base_persistence_combined'
+
+# stochasticity_names <- rep(c('no temperature stochasticity', 
+#                              'temperature stochasticity',
+#                              'red noise 0.1'), times = length(models))
+# stochasticity_names_short <- rep(c('nTS', 'TS', 'red0.1'), 
+#                                  times = length(models))
+# pops <- c('West Africa')
+# model_names <- c('base model')
 
 # # combos - evolution
 # stochasticity <- c('temp_stochasticity')
@@ -51,14 +69,15 @@ years_to_plot <- c(100)
 
 # temperature increase scenarios
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
-# scenarios <- paste(c(0.5, 5), 'C', sep = '')
+# scenarios <- paste(c(1), 'C', sep = '')
 
 # operational sex ratios to get 100% reproductive success
 osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
+# osrs <- c(0.25)
 betas <- OSRs_to_betas(osrs)
 
 # generate automatically
-paths <- as.vector(outer(stochasticity, models, paste, sep="/"))
+paths <- as.vector(outer(stochasticity, models, paste, sep = "/"))
 populations <- rep(pops, each = length(stochasticity))
 models_short <- rep(models, each = length(stochasticity))
 model_types <- rep(model_names, each = length(stochasticity), times = length(pops))
@@ -111,83 +130,91 @@ for (y in 1:Y) {
         if (desktop == TRUE) { user <- 'Vic' } else { user <- 'vique' }
         
         # if the file exists - desktop / laptop
-        # if (file.exists(paste('E:/phd model output/',
         if (file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+        # if (file.exists(paste('~/Projects/iliketurtles3/output/',
+        # if (file.exists(paste('E:/',
+        # if (file.exists(paste('/home/quennessenv/iliketurtles3/output/',
                               paths[p], '/', scenarios[s], '/beta', betas[b],
                               '/', nsims, '_abundance_total.Rda', sep = '')) &
             
-            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                              
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+              # file.exists(paste('~/Projects/iliketurtles3/output/',
+            # file.exists(paste('E:/',
+            # file.exists(paste('/home/quennessenv/iliketurtles3/output/',
                               paths[p], '/', scenarios[s], '/beta', betas[b],
                               '/', nsims, '_abundance_mature.Rda', sep = '')) &
             
-            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                              
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+              # file.exists(paste('~/Projects/iliketurtles3/output/',
+            # file.exists(paste('E:/',
+              # file.exists(paste('~/Projects/iliketurtles3/output/',
                               paths[p], '/', scenarios[s], '/beta', betas[b],
                               '/', nsims, '_abundance_F.Rda', sep = '')) &
             
-            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                              
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+              # file.exists(paste('~/Projects/iliketurtles3/output/',
+            # file.exists(paste('E:/',
+            # file.exists(paste('/home/quennessenv/iliketurtles3/output/',
                               paths[p], '/', scenarios[s], '/beta', betas[b],
                               '/', nsims, '_abundance_M.Rda', sep = '')) &
             
-            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                              
+            file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+              # file.exists(paste('~/Projects/iliketurtles3/output/',
+            # file.exists(paste('E:/',
+            # file.exists(paste('/home/quennessenv/iliketurtles3/output/',
                               paths[p], '/', scenarios[s], '/beta', betas[b],
                               '/', nsims, '_N.Rda', sep = ''))
             
             ) {
           
           # load in total abundance object
-          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          # load(paste('~/Projects/iliketurtles3/output/',
+          # load(paste('E:/',
+          # load(paste('/home/quennessenv/iliketurtles3/output/',
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_abundance_total.Rda', sep = ''))
           
           # load in abundance mature object
-          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          # load(paste('~/Projects/iliketurtles3/output/',
+          # load(paste('E:/',
+          # load(paste('/home/quennessenv/iliketurtles3/output/',
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_abundance_mature.Rda', sep = ''))
           
           # load in abundance F object
-          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          # load(paste('~/Projects/iliketurtles3/output/',
+          # load(paste('E:/',
+          # load(paste('/home/quennessenv/iliketurtles3/output/',
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_abundance_F.Rda', sep = ''))
           
           # load in abundance M object
-          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          # load(paste('~/Projects/iliketurtles3/output/',
+          # load(paste('E:/',
+          # load(paste('/home/quennessenv/iliketurtles3/output/',
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_abundance_M.Rda', sep = ''))
           
           # load in N object
-          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',                     
+          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          # load(paste('~/Projects/iliketurtles3/output/',
+          # load(paste('E:/',
+          # load(paste('/home/quennessenv/iliketurtles3/output/',
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_N.Rda', sep = ''))
           
         }
         
-        # # if the file exists - cluster - evolution
-        # if (file.exists(paste('/home/quennessenv/iliketurtles3/output/', paths[p], 
-        #                       '/', scenarios[s], '/beta', betas[b], '/', nsims, 
-        #                       '_abundance_total.Rda', sep = '')) &
-        #     
-        #     file.exists(paste('/home/quennessenv/iliketurtles3/output/', paths[p], 
-        #                       '/', scenarios[s], '/beta', betas[b], '/', nsims, 
-        #                       '_abundance_mature.Rda', sep = ''))) {
-        #   
-        #   # load in total abundance object
-        #   load(paste('/home/quennessenv/iliketurtles3/output/', paths[p], '/', 
-        #              scenarios[s], '/beta', betas[b], '/', nsims, 
-        #              '_abundance_total.Rda', sep = ''))
-        #   
-        #   # load in abundance mature object
-        #   load(paste('/home/quennessenv/iliketurtles3/output/', paths[p], '/', 
-        #              scenarios[s], '/beta', betas[b], '/', nsims, 
-        #              '_abundance_mature.Rda', sep = ''))
-        #   
-        # }
-        
         index <- (p - 1)*S*B + (s - 1)*B + b
         print(index)
         
         # initialize dataframe - temp vs. no temp stochasticity
-        SDF$Stochasticity[index] <- stochasticity_names[(p + 1) %% 2 + 1]
-        SDF$Stochasticity_short[index] <- stochasticity_names_short[(p + 1) %% 2 + 1]
+        SDF$Stochasticity[index] <- stochasticity_names[p]
+        SDF$Stochasticity_short[index] <- stochasticity_names_short[p]
         SDF$Population[index] <- populations[p]
         SDF$Model[index] <- models_short[p]
         SDF$model[index] <- model_types[p]
@@ -195,11 +222,11 @@ for (y in 1:Y) {
         SDF$OSR[index] <- osrs[b]
         SDF$Survive_to[index] <- year_to_plot
         
-        SDF$Probability_total_mean[index] <- mean(
+        SDF$Probability_total[index] <- mean(
           sims_abundance_total[year_to_plot, ] > 0.1 * sims_abundance_total[1, ])
-        SDF$Probability_total_F_mean[index] <- mean(
+        SDF$Probability_total_F[index] <- mean(
           sims_abundance_F[year_to_plot, ] > 0.1 * sims_abundance_F[1, ])
-        SDF$Probability_total_M_mean[index] <- mean(
+        SDF$Probability_total_M[index] <- mean(
           sims_abundance_M[year_to_plot, ] > 0.1 * sims_abundance_M[1, ])
         SDF$Probability_mature[index] <- mean(
           sims_abundance_mature[year_to_plot, ] > 0.1 * sims_abundance_mature[1, ])
@@ -230,22 +257,26 @@ for (y in 1:Y) {
   
   # save dataframe as R object
   base_persistence <- SDF
-  
+
   # make scenario and osr a factor variable
   base_persistence$Scenario <- factor(base_persistence$Scenario,
                                       levels = scenarios)
   save(base_persistence,
-       file = paste('~/Projects/iliketurtles3/output/base_persistence_', 
+       file = paste('~/Projects/iliketurtles3/output/base_persistence_red',
                     year_to_plot, '.Rdata', sep = ''))
   
-  # # save dataframe as R object
-  # evolution_persistence <- SDF
+  # save(base_persistence,
+  #      file = paste('/home/quennessenv/iliketurtles3/output/base_persistence_red',
+  #                   year_to_plot, '.Rdata', sep = ''))
   # 
-  # # make scenario and osr a factor variable
-  # evolution_persistence$Scenario <- factor(evolution_persistence$Scenario, 
-  #                                          levels = scenarios)
-  # save(evolution_persistence, 
-  #      file = paste('../output/evolution_persistence_', year_to_plot, '.Rdata', 
-  #                   sep = ''))
+  # # # save dataframe as R object
+  # # evolution_persistence <- SDF
+  # # 
+  # # # make scenario and osr a factor variable
+  # # evolution_persistence$Scenario <- factor(evolution_persistence$Scenario, 
+  # #                                          levels = scenarios)
+  # # save(evolution_persistence, 
+  # #      file = paste('../output/evolution_persistence_', year_to_plot, '.Rdata', 
+  # #                   sep = ''))
   
 }
