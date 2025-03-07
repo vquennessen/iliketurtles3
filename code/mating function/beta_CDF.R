@@ -52,7 +52,7 @@ fig <- ggplot(data = DF, aes(x = Operational_Sex_Ratio,
   ylab('Reproductive Success') +
   xlab('Operational Sex Ratio (Proportion Male)') +
   ggtitle('Hypothetical mating functions') +
-  theme_gray() +
+  theme_bw() +
   theme(axis.title.y = element_text(margin = margin(r = 15, l = 10)), 
         axis.title.x = element_text(margin = margin(t = 15, b = 10)), 
         plot.title = element_text(margin = margin(b = 10, t = 10), 
