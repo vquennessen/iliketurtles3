@@ -19,7 +19,7 @@ y2 <- 1/(1 + exp(-k2*(x - t_piv2)))
 
 # make dataframe
 TRN <- data.frame(Temperature = x,
-                  Model = rep(c('West Africa', 'Suriname'), each = 100),
+                  Population = rep(c('West Africa', 'Suriname'), each = 100),
                   Proportion_Male = c(y1, y2))
 
 # WA <- subset(TRN, Model == 'West Africa')
@@ -27,7 +27,7 @@ TRN <- data.frame(Temperature = x,
 
 # plot
 fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, 
-                              col = Model, lty = Model)) +
+                              col = Population, lty = Population)) +
   geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
   geom_vline(xintercept = t_piv1, col = 'darkgrey', lwd = 1, lty = 1) +
   geom_line(lwd = 2) +
@@ -35,20 +35,22 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
   scale_linetype_manual(values = c(4, 5)) +
   ylab('Proportion hatchlings male') +
   xlab('Temperature (\u00B0C)') +
-  # ggtitle('Thermal Reaction Norm') +
-  theme_gray() +
-  theme(axis.title.y = element_text(margin = margin(r = 15, l = 10)), 
-        axis.title.x = element_text(margin = margin(t = 15, b = 10)), 
-        # plot.title = element_text(margin = margin(b = 10, t = 10), 
-        #                           size = 30), 
-        axis.text = element_text(size = 15), 
+  theme_bw() +
+  theme(axis.text = element_text(size = 15), 
         axis.title = element_text(size = 20),
-        legend.position = 'none')
+        # legend.position = 'none', +
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 20),
+        legend.position = 'inside', 
+        legend.position.inside = c(0.75, 0.7),
+        legend.key.width = unit(8, "line")) +
+  annotate("text", x = 39.4, y = 0.08, label = "0.05", size = 6) +
+  annotate("text", x = 39.4, y = 0.53, label = "0.50", size = 6) +
+  annotate("text", x = 39.4, y = 0.98, label = "0.95", size = 6) +
+  annotate("text", x = 28.6, y = 0, label = "29.2", size = 6)
 
-        # legend.text = element_text(size = 15), 
-        # legend.title = element_text(size = 20), 
-        # legend.position = c(0.8, 0.7), 
-        # legend.key.width = unit(9, "line"))
+
+fig
 
 ggsave("figures/thermal_reaction_norms.png", 
        plot = last_plot(), 
