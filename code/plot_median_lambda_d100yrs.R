@@ -22,10 +22,13 @@ abundances <- c('total abundance', 'mature abundance')
 filenames <- c('10000_abundance_total.Rda', '10000_abundance_mature.Rda')
 
 # scenarios
-scenarios <- c('1C', '4C')
+# scenarios <- c('1C', '4C')
+scenarios <- c('0.5C', '3.5C')
 
 # osrs
-osrs <- c(0.5, 0.05)
+# osrs <- c(0.5, 0.05)
+osrs <- c(0.1, 0.45)
+
 betas <- OSRs_to_betas(osrs)
 beta_names <- paste('beta', betas, sep = '')
 
@@ -109,12 +112,14 @@ load("~/Projects/iliketurtles3/output/median_lambdas_to_plot_over_time.Rdata")
 # make scenario a factor
 median_lambdas_to_plot_over_time$Scenario <- 
   factor(median_lambdas_to_plot_over_time$Scenario)
+median_lambdas_to_plot_over_time$OSR <- 
+  factor(median_lambdas_to_plot_over_time$OSR)
 
 # plot figure - median
 fig5b <- ggplot(data = median_lambdas_to_plot_over_time, 
                 aes(x = Year, 
                     y = Lambda_10yr_median, 
-                    color = factor(OSR), 
+                    color = OSR, 
                     linetype = Scenario)) + 
   facet_grid(cols = vars(Population), rows = vars(Abundance)) +
   geom_hline(yintercept = 1) +
@@ -127,7 +132,7 @@ fig5b <- ggplot(data = median_lambdas_to_plot_over_time,
   geom_path(lwd = 1) +
   scale_color_manual(values = c('#F8766D', '#00BFC4')) + 
   xlab('Year') +
-  ylab('Lambda') +
+  ylab('Median Lambda') +
   ggtitle('temperature stochasticity; (10yr) median lambdas over time + IQR') +
   theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
   theme(axis.title.x = element_text(size = 13, vjust = -3)) +

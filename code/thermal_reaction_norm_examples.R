@@ -29,7 +29,8 @@ TRN <- data.frame(Temperature = x,
 fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, 
                               col = Population, lty = Population)) +
   geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
-  geom_vline(xintercept = t_piv1, col = 'darkgrey', lwd = 1, lty = 1) +
+  geom_vline(xintercept = 29.2, col = 'gray50', lwd = 1, lty = 1) +
+  geom_vline(xintercept = 31.8, col = 'gray80', lwd = 1, lty = 1) +
   geom_vline(xintercept = 27, col = '#00BFC4', lty = 5, 
              lwd = 0.75, alpha = 0.5) +
   geom_vline(xintercept = 31.3, col = '#00BFC4', lty = 5, 
@@ -55,7 +56,8 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
   annotate("text", x = 39.4, y = 0.1, label = "0.05", size = 5) +
   annotate("text", x = 39.4, y = 0.55, label = "0.50", size = 5) +
   annotate("text", x = 39.4, y = 1.00, label = "0.95", size = 5) +
-  annotate("text", x = 28.1, y = 0, label = "29.2\u00B0C", size = 5)
+  annotate("text", x = 28.1, y = 0.45, label = "29.2\u00B0C", size = 5) +
+  annotate("text", x = 33, y = 1.00, label = "31.8\u00B0C", size = 5)
 
 
 fig

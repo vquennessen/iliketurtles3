@@ -56,6 +56,7 @@ save(lambdas_and_persistence,
 
 
 ##### median figure ############################################################
+load("~/Projects/iliketurtles3/output/lambdas_and_persistence.Rdata")
 
 years_to_plot <- 100
 
@@ -76,8 +77,8 @@ fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR,
   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
   guides(fill = guide_legend(title = "Median \n Lambda", 
                              reverse = TRUE)) +
-  xlab('Operational sex ratio required to fertilize all females') +
-  ylab('Increase in sand temperature (\u00B0C) by year 100') +
+  xlab('Minimum operational sex ratio required for 100% female reproductive success') +
+  ylab('Increase in temperature (\u00B0C) by year 100') +
   ggtitle('temperature stochasticity; final median lambda (year 100)') +
   facet_grid(rows = vars(Abundance), 
              cols = vars(Population)) +
