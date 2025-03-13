@@ -22,12 +22,13 @@ abundances <- c('total abundance', 'mature abundance')
 filenames <- c('10000_abundance_total.Rda', '10000_abundance_mature.Rda')
 
 # scenarios
-# scenarios <- c('1C', '4C')
-scenarios <- c('0.5C', '3.5C')
+scenarios <- c('1C', '4C')
+# scenarios <- c('0.5C', '3.5C')
+
 
 # osrs
-# osrs <- c(0.5, 0.05)
-osrs <- c(0.1, 0.45)
+osrs <- c(0.5, 0.05)
+# osrs <- c(0.1, 0.45)
 
 betas <- OSRs_to_betas(osrs)
 beta_names <- paste('beta', betas, sep = '')
@@ -59,7 +60,7 @@ for (p in 1:length(pops)) {
       for (a in 1:length(abundances)) {
         
         # load in appropriate object
-        load(paste('~/Projects/iliketurtles3/output/lambda plots', 
+        load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/lambda plots/', 
                    pops[p], scenarios[s], beta_names[b], filenames[a], 
                    sep = '/'))
         
@@ -144,7 +145,7 @@ fig5b <- ggplot(data = median_lambdas_to_plot_over_time,
 
 # save to file
 ggsave(plot = fig5b, 
-       filename = paste('10yr_median_lambdas.png', sep = ''),
+       filename = paste('TEST_10yr_median_lambdas.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 9, height = 8)
 
