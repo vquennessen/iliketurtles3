@@ -120,14 +120,14 @@ median_lambdas_to_plot_over_time$OSR <-
 fig5b <- ggplot(data = median_lambdas_to_plot_over_time, 
                 aes(x = Year, 
                     y = Lambda_10yr_median, 
-                    color = OSR, 
-                    linetype = Scenario)) + 
+                    color = Scenario, 
+                    linetype = OSR)) + 
   facet_grid(cols = vars(Population), rows = vars(Abundance)) +
   geom_hline(yintercept = 1) +
   geom_ribbon(aes(ymin = Lambda_10yr_Q25,
                   ymax = Lambda_10yr_Q75, 
                   col = NULL, 
-                  fill = factor(OSR)),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_path(lwd = 1) +
