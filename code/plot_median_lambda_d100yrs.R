@@ -22,13 +22,13 @@ abundances <- c('total abundance', 'mature abundance')
 filenames <- c('10000_abundance_total.Rda', '10000_abundance_mature.Rda')
 
 # scenarios
-scenarios <- c('1C', '4C')
-# scenarios <- c('0.5C', '3.5C')
+# scenarios <- c('1.5C')
+scenarios <- c('0.5C', '3.5C')
 
 
 # osrs
-osrs <- c(0.5, 0.05)
-# osrs <- c(0.1, 0.45)
+# osrs <- c(0.05)
+osrs <- c(0.1, 0.45)
 
 betas <- OSRs_to_betas(osrs)
 beta_names <- paste('beta', betas, sep = '')
@@ -60,9 +60,9 @@ for (p in 1:length(pops)) {
       for (a in 1:length(abundances)) {
         
         # load in appropriate object
-        load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/lambda plots/', 
-                   pops[p], scenarios[s], beta_names[b], filenames[a], 
-                   sep = '/'))
+        load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis', 
+                   'model output/temp_stochasticity', models[p], scenarios[s], 
+                   beta_names[b], filenames[a], sep = '/'))
         
         # for each year for each sim, is the total abundance > 10% starting?
         alive <- sims_abundance_total > 0.1*sims_abundance_total[1, ]
@@ -131,7 +131,8 @@ fig5b <- ggplot(data = median_lambdas_to_plot_over_time,
               alpha = 0.25,
               show.legend = FALSE) +
   geom_path(lwd = 1) +
-  scale_color_manual(values = c('#F8766D', '#00BFC4')) + 
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   xlab('Year') +
   ylab('Median Lambda') +
   ggtitle('temperature stochasticity; (10yr) median lambdas over time + IQR') +

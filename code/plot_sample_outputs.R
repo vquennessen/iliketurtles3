@@ -20,10 +20,10 @@ ages <- c('Mature', 'Hatchling', 'Mature', 'Hatchling')
 values <- c('Abundance', 'Abundance', 'Sex Ratio', 'Sex Ratio')
 
 # scenarios
-scenarios <- c('0.5C', '3.5C')
+scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
 
 # osrs
-osrs <- c(0.1, 0.45)
+osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
 betas <- OSRs_to_betas(osrs)
 beta_names <- paste('beta', betas, sep = '')
 
@@ -61,13 +61,13 @@ for (s in 1:length(scenarios)) {
   for (b in 1:length(betas)) {
     
     # load in sims N
-    load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/', 
+    load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/', 
                'model output/temp_stochasticity/P_base/', 
                scenarios[s], '/', beta_names[b], '/10000_N.Rda', 
                sep = ''))
     
     # load in sims OSR
-    load(paste('C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/', 
+    load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/', 
                'model output/temp_stochasticity/P_base/', 
                scenarios[s], '/', beta_names[b], '/10000_OSR.Rda', 
                sep = ''))
@@ -156,6 +156,10 @@ for (s in 1:length(scenarios)) {
 
 sample_plot_values <- SDF
 
+# add in emergence success
+sample_plot_values$Emergence_Success <- 
+  0.86 / (1 + exp(1.7 * (sample_plot_values$Temperature - 32.7)))
+
 save(sample_plot_values, 
      file = '~/Projects/iliketurtles3/output/sample_plot_values.Rdata')
 
@@ -164,30 +168,19 @@ save(sample_plot_values,
 # load object
 load("~/Projects/iliketurtles3/output/sample_plot_values.Rdata")
 
-# add in emergence success
-temps0.5 <- subset(sample_plot_values, 
-                   Scenario == '0.5C' & 
-                     OSR == 0.1 & 
-                     Age == 'Mature')$Temperature
+# make scenario and OSR a factor
+sample_plot_values$Scenario <- factor(sample_plot_values$Scenario, 
+                                      levels = as.factor(scenarios))
+sample_plot_values$OSR <- factor(sample_plot_values$OSR, 
+                                 levels = as.factor(osrs))
 
-emergence0.5 <- 0.86 / (1 + exp(1.7 * (temps0.5 - 32.7)))
-
-temps3.5 <- subset(sample_plot_values, 
-                   Scenario == '3.5C' &
-                     OSR == 0.1 & 
-                     Age == 'Mature')$Temperature
-
-emergence3.5 <- 0.86 / (1 + exp(1.7 * (temps3.5 - 32.7)))
-
-sample_plot_values$Emergence <- c(rep(emergence0.5, times = 4), 
-                                  rep(emergence3.5, times = 4))
-
-# make scenario a factor
-sample_plot_values$Scenario <- factor(sample_plot_values$Scenario)
-sample_plot_values$OSR <- factor(sample_plot_values$OSR)
+# filter scenarios and OSRs to plot
+samples_to_plot <- sample_plot_values %>%
+  filter(OSR %in% c('0.1', '0.45')) %>%
+  filter(Scenario %in% c('0.5C', '3.5C'))
 
 # plot figure - mature abundances
-figA <- sample_plot_values %>%
+figA <- samples_to_plot %>%
   filter(Age == 'Mature') %>%
   filter(Abundance_Median > 0) %>%
   ggplot(aes(x = Year, 
@@ -210,7 +203,7 @@ figA <- sample_plot_values %>%
          lty = "none")
 
 # plot figure - hatchling abundances
-figB <- sample_plot_values %>%
+figB <- samples_to_plot %>%
   filter(Age == 'Hatchling') %>%
   filter(Abundance_Median > 0) %>%  
   ggplot(aes(x = Year, 
@@ -231,38 +224,42 @@ figB <- sample_plot_values %>%
   theme_bw()
 
 # plot figure - sex ratios
-figC <- sample_plot_values %>%
+figC <- samples_to_plot %>%
   filter(Abundance_Median > 0) %>%  
+  filter(Age == 'Hatchling') %>%
   ggplot(aes(x = Year, 
              y = Sex_Ratio_Median, 
              color = Scenario, 
              lty = OSR, 
-             lwd = Age)) + 
+             lwd = Age
+             )) + 
+  geom_hline(yintercept = 0.01) +
   scale_linewidth_manual(values = c(1, 2)) +
   geom_ribbon(aes(ymin = Sex_Ratio_Q25,
-                  ymax = Sex_Ratio_Q75, 
-                  col = NULL, 
+                  ymax = Sex_Ratio_Q75,
+                  col = NULL,
                   fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_path() +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +  
-  xlab('') +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  xlab('Year') +
   theme_bw() +
-  guides(color = "none", 
+  ylim(c(0, 0.05)) +
+  guides(color = "none",
          lty = "none") +
   ylab('median sex ratio')
 
 # plot figure - temperatures
-figD <- ggplot(data = subset(sample_plot_values, 
+figD <- ggplot(data = subset(samples_to_plot, 
                              OSR == '0.1' & Abundance_Median > 0), 
                aes(x = Year, 
                    y = Temperature, 
                    color = Scenario, 
                    lty = OSR)) + 
   geom_line(lwd = 1) + 
-  geom_line(data = subset(sample_plot_values, 
+  geom_line(data = subset(samples_to_plot, 
                           OSR == 0.45 & Abundance_Median > 0), 
             lwd = 1, 
             position = position_nudge(y = -0.05)) +  
@@ -275,14 +272,14 @@ figD <- ggplot(data = subset(sample_plot_values,
   ylab('temperature (\u00B0C)')
 
 # plot figure - emergence success
-figE <- ggplot(data = subset(sample_plot_values, 
+figE <- ggplot(data = subset(samples_to_plot, 
                              OSR == '0.1' & Abundance_Median > 0), 
                aes(x = Year, 
                    y = Emergence, 
                    color = Scenario, 
                    lty = OSR)) + 
   geom_line(lwd = 1) + 
-  geom_line(data = subset(sample_plot_values, 
+  geom_line(data = subset(samples_to_plot, 
                           OSR == 0.45 & Abundance_Median > 0), 
             lwd = 1, 
             position = position_nudge(y = -0.015)) +  
@@ -311,3 +308,28 @@ ggsave(plot = final_fig,
        filename = paste('abundance_sexratios_temps.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8.5, height = 12)
+
+# plot figure - hatchling sex ratios across all temps and OSRs
+figF <- sample_plot_values %>%
+  filter(Abundance_Median > 0) %>%  
+  filter(Age == 'Hatchling') %>%
+  ggplot(aes(x = Year, 
+             y = Sex_Ratio_Median, 
+             color = Scenario, 
+             lty = OSR 
+  )) + 
+  geom_hline(yintercept = 0.01) +
+  scale_linewidth_manual(values = c(1, 2)) +
+  geom_path() +
+  xlab('Year') +
+  theme_bw() +
+  ylim(c(0, 0.03)) +
+  ylab('Median Hatchling Sex Ratio') +
+  theme(legend.box = "horizontal")
+  
+
+# save to file
+ggsave(plot = figF,
+       filename = paste('hatchling_sex_ratios.png', sep = ''),
+       path = '~/Projects/iliketurtles3/figures/',
+       width = 8, height = 4)
