@@ -61,9 +61,10 @@ load("~/Projects/iliketurtles3/output/lambdas_and_persistence.Rdata")
 years_to_plot <- 100
 
 SDF_subset_median <- lambdas_and_persistence %>%
+  filter(Model %in% c('GM_base', 'P_base')) %>%
   filter(Year == years_to_plot) %>%
   filter(Stochasticity == 'temperature stochasticity') %>%
-  mutate(bins = cut(Lambda_median, 
+  mutate(bins = cut(Lambda_10yr_median, 
                     breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
                     include.lowest = TRUE,
                     right = FALSE))
@@ -79,7 +80,7 @@ fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR,
                              reverse = TRUE)) +
   xlab('Minimum operational sex ratio required for 100% female reproductive success') +
   ylab('Increase in temperature (\u00B0C) by year 100') +
-  ggtitle('temperature stochasticity; final median lambda (year 100)') +
+  ggtitle('temperature stochasticity; final 10 yr median lambda (year 100)') +
   facet_grid(rows = vars(Abundance), 
              cols = vars(Population)) +
   theme_bw() +
