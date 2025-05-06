@@ -40,7 +40,7 @@ save(DF, file = 'code/mating function/potential_beta_values.Rda')
 
 # extract values from each beta curve that corresponds to a 10% decrease in
 # reproductive success
-acceptable_loss_of_males <- DF %>%
+acceptable_loss_of_males <- DF %>% 
   group_by(Beta) %>%
   filter(Reproductive_Success <= 0.99) %>%
   filter(Operational_Sex_Ratio == max(Operational_Sex_Ratio)) %>%

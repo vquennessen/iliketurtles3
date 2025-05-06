@@ -24,7 +24,9 @@ OSRs_to_betas <- function(OSRs) {
     
     start <- (a - 1)*length(betas) + 1
     stop <- start + length(betas) - 1
-    DF$Reproductive_Success[start:stop] <- pbeta(2 * OSRs[a], shape1 = 1, shape2 = betas)
+    DF$Reproductive_Success[start:stop] <- pbeta(2 * OSRs[a], 
+                                                 shape1 = 1, 
+                                                 shape2 = betas)
     
   }
   
@@ -33,8 +35,8 @@ OSRs_to_betas <- function(OSRs) {
   
   acceptable_loss_of_males <- DF %>% 
     group_by(Operational_Sex_Ratio) %>%
-    filter(Reproductive_Success > 0.99) %>%
-    filter(Beta == min(as.numeric(Beta)))
+    filter(Reproductive_Success <= 0.99) %>%
+    filter(Beta == max(as.numeric(Beta)))
   
   output <- as.character(acceptable_loss_of_males$Beta)
   

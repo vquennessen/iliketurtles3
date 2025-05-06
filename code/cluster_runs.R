@@ -28,7 +28,7 @@ scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
 # scenarios <- c(4, 5)
 
 # OSR values to get full fertilization of females
-OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
+OSRs <- c(0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
 # OSRs <- c(0.5)
 
 # mating function beta values
