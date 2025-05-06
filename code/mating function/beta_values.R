@@ -5,7 +5,7 @@ library(ggplot2)
 library(dplyr)
 
 # values of operational sex ratios to plot
-x <- seq(from = 0, to = 1, by = 0.0001)
+x <- seq(from = 0, to = 0.5, by = 0.0001)
 
 # beta values to try
 betas <- seq(from = 1, to = 100, by = 0.01)
@@ -15,7 +15,7 @@ DF <- data.frame(Operational_Sex_Ratio = rep(x, times = length(betas)),
                  Beta = as.numeric(rep(betas, each = length(x))), 
                  Reproductive_Success = NA)
 
-print(paste(lubridate::now(), ' - beta loop starting', sep = ''))
+# print(paste(lubridate::now(), ' - beta loop starting', sep = ''))
 
 # CDF function
 for (b in 1:length(betas)) {
@@ -35,11 +35,14 @@ for (b in 1:length(betas)) {
 # make Beta factor
 DF$Beta <- as.factor(DF$Beta)
 
-# # extract values from each beta curve that corresponds to a 10% decrease in 
-# # reproductive success
-# acceptable_loss_of_males <- DF %>% 
-#   group_by(Beta) %>%
-#   filter(Reproductive_Success <= 0.5) %>%
-#   filter(Operational_Sex_Ratio == max(Operational_Sex_Ratio)) %>%
-#   filter(((Operational_Sex_Ratio*100) %% 1 <= 0.05))
+# save object
+save(DF, file = 'code/mating function/potential_beta_values.Rda')
+
+# extract values from each beta curve that corresponds to a 10% decrease in
+# reproductive success
+acceptable_loss_of_males <- DF %>%
+  group_by(Beta) %>%
+  filter(Reproductive_Success <= 0.99) %>%
+  filter(Operational_Sex_Ratio == max(Operational_Sex_Ratio)) %>%
+  filter(((Operational_Sex_Ratio*100) %% 1 <= 0.05))
 
