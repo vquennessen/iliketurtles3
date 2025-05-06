@@ -26,13 +26,17 @@ reproduction <- function(N, M, y, beta, max_age,
     # multiply OSR by 2 to transform to beta function with x from 0 to 0.5 
     # instead of 0 to 1
     if (OSR <= 0.5) {
-      breeding_success <- pbeta(2 * OSR, shape1 = 1, shape2 = beta) 
+      breeding_success <- pbeta(2 * OSR, 
+                                shape1 = 1, 
+                                shape2 = beta) 
       
       # if OSR > 0.5 all the females get to mate
     } else { breeding_success <- 1 }
     
-    # number of nests per female
-    nests <- rnorm(n = round(n_breeding_F), mean = nests_mu, sd = nests_sd)
+    # number of nests per female (round to nearest integer)
+    nests <- round(rnorm(n = round(n_breeding_F), 
+                   mean = nests_mu, 
+                   sd = nests_sd))
     
     # replace any number < 1 with +1
     nests[which(nests < 1)] <- 1
@@ -40,13 +44,13 @@ reproduction <- function(N, M, y, beta, max_age,
     # initialize eggs vector
     eggs <- rep(NA, times = length(nests))
     
-    # number of eggs per nest
+    # number of eggs per nest (round to nearest integer)
     for (f in 1:length(nests)) {
       
-      eggs[f] <- sum(rnorm(n = nests[f], 
+      eggs[f] <- sum(round(rnorm(n = nests[f], 
                            mean = eggs_mu, 
                            sd = eggs_sd), 
-                     na.rm = TRUE)
+                     na.rm = TRUE))
       
     }
     
@@ -54,10 +58,11 @@ reproduction <- function(N, M, y, beta, max_age,
     hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (temperatures[y] - hatch_success_t0)))
     
     # total hatchlings = breeding success * total eggs * hatching success
-    hatchlings <- breeding_success * sum(eggs, na.rm = TRUE) * hatch_success
+    # (round to nearest integer)
+    hatchlings <- round(breeding_success * sum(eggs, na.rm = TRUE) * hatch_success)
     
     # if fewer than 1 hatchling (rounded), no hatchlings for this cohort
-    if (hatchlings < 0.5) { 
+    if (hatchlings < 1) { 
       
       female_hatchlings <- 0
       male_hatchlings <- 0  
