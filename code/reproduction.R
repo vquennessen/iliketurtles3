@@ -9,10 +9,10 @@ reproduction <- function(N, M, y, beta, max_age,
   
   # calculate number of breeding adults
   # females only breed every F_remigration_int years
-  n_breeding_F <- sum((N[1, , y - 1] * M), na.rm = TRUE) / F_remigration_int
+  n_breeding_F <- sum(round(N[1, , y - 1] * M), na.rm = TRUE) / F_remigration_int
   
   # males only breed every M_remigration_int years
-  n_breeding_M <- sum((N[2, , y - 1] * M), na.rm = TRUE) / M_remigration_int  
+  n_breeding_M <- sum(round(N[2, , y - 1] * M), na.rm = TRUE) / M_remigration_int  
   
   if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
     
