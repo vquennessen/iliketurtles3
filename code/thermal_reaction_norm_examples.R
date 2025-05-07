@@ -47,12 +47,13 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
   theme_bw() +
   theme(axis.text = element_text(size = 12), 
         axis.title = element_text(size = 15),
-        legend.text = element_text(size = 12),
-        legend.title = element_text(size = 15),
-        legend.position = 'top',
-        # legend.position = 'inside', 
-        # legend.position.inside = c(0.8, 0.75),
-        legend.key.width = unit(9.63, "line")) +
+        # legend.text = element_text(size = 12),
+        # legend.title = element_text(size = 15),
+        # legend.position = 'top',
+        # # legend.position = 'inside', 
+        # # legend.position.inside = c(0.8, 0.75),
+        # legend.key.width = unit(9.63, "line"), 
+        legend.position = 'none') +
   annotate("text", x = 39.4, y = 0.1, label = "0.05", size = 5) +
   annotate("text", x = 39.4, y = 0.55, label = "0.50", size = 5) +
   annotate("text", x = 39.4, y = 1.00, label = "0.95", size = 5) +
