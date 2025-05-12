@@ -26,10 +26,10 @@ initialize_population <- function(beta, burn_in, max_age, M,
     ##### reproduction
     
     # females only breed every F_remigration_int years
-    n_breeding_F <- sum((N[1, , y] * M), na.rm = TRUE) / F_remigration_int
+    n_breeding_F <- round(sum(round(N[1, , y] * M), na.rm = TRUE) / F_remigration_int)
     
     # males only breed every M_remigration_int years
-    n_breeding_M <- sum((N[2, , y] * M), na.rm = TRUE) / M_remigration_int
+    n_breeding_M <- round(sum(round(N[2, , y] * M), na.rm = TRUE) / M_remigration_int)
     
     # as long as there is at least one mature female and one mature male:
     if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
@@ -46,7 +46,7 @@ initialize_population <- function(beta, burn_in, max_age, M,
       } else { breeding_success <- 1 }
       
       # number of eggs
-      eggs <- sum(n_breeding_F * nests_mu * eggs_mu)
+      eggs <- sum(n_breeding_F * round(nests_mu) * round(eggs_mu))
       
       # hatching success
       hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (temp_mu - hatch_success_t0)))
