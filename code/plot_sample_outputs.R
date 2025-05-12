@@ -209,7 +209,7 @@ figAB1 <- examples_to_plot %>%
                 y = a + Emergence_Success*b, 
                 col = Scenario), 
             lwd = 1, lty = 4) +
-  scale_y_continuous("Temperature", 
+  scale_y_continuous("Temperature and \n Emergence Success", 
                      sec.axis = sec_axis(~ (. - a)/b, 
                                          name = "")) +
   theme_bw() +
@@ -240,7 +240,7 @@ figAB2 <- examples_to_plot %>%
             lwd = 1, lty = 4) +
   scale_y_continuous("", 
                      sec.axis = sec_axis(~ (. - a)/b, 
-                                         name = "Emergence Success")) +
+                                         name = "")) +
   theme_bw() +
   theme(panel.border = element_blank()) +
   theme(axis.line.y.right = element_line(linetype = 4, linewidth = 1), 
@@ -250,7 +250,7 @@ figAB2 <- examples_to_plot %>%
   annotate(geom = 'segment', y = Inf, yend = Inf, color = 'black', x = -Inf, xend = Inf) +
   xlab('') +
   ylab('') +
-  theme(plot.margin = unit(c(0, 0, 0, -1), 'cm'))
+  theme(plot.margin = unit(c(0, 0, 0, -2), 'cm'))
 
 figAB2
 
@@ -312,8 +312,8 @@ figB2 <- examples_to_plot %>%
   geom_line(lwd = 1) + 
   theme_bw() +
   xlab('') +
-  ylab('') +
-  guides(color = 'none')
+  ylab('emergence \n success') +
+  theme(plot.margin = unit(c(0, 0, 0, -1.5), 'cm'))
 
 figB2
 
@@ -344,7 +344,7 @@ figC <- examples_to_plot %>%
   ylim(c(0, 0.25)) +
   guides(color = "none", 
          lty = 'none') +
-  ylab('median hatchling \n sex ratio')
+  ylab('median \n hatchling sex ratio')
 
 figC
 
@@ -404,7 +404,7 @@ figE <- examples_to_plot %>%
   theme_bw() +
   ylim(c(0, 0.45)) +
   guides(color = "none", lty = 'none') +
-  ylab('median operational \n sex ratio') 
+  ylab('median \n operational sex ratio') 
 
 figE
 
@@ -503,17 +503,24 @@ figH
 # figH: mature abundance (GM base)
 
 
-option1 <- (figA1 + figA2) / (figB1 + figB2) / (figC + figD) / (figE + figF) / (figG + figH) +
-  plot_layout(heights = c(-1, -1, -1, -1, -1)) +
+option1 <- (figA1 + figB2) / (figC + figD) / (figE + figF) / (figG + figH) +
+  plot_layout(heights = c(1, 1, 1, 1)) +
   plot_annotation(tag_levels = "A")
 
 option1
 
-option2 <- (figAB1 + figAB2) / (figC + figD) / (figE + figF) / (figG + figH) +
-  plot_annotation(tag_levels = "A") +
-  plot_layout(ncol = 1, nrow = 4, widths = c(6), heights = c(2, 2, 2, 2))
+option2 <- (figA1 + figA2) / (figB1 + figB2) / (figC + figD) / (figE + figF) / (figG + figH) +
+  plot_layout(heights = c(-1, -1, -1, -1, -1)) +
+  plot_annotation(tag_levels = "A")
 
 option2
+
+option3 <- (figAB1 + figAB2) / (figC + figD) / (figE + figF) / (figG + figH) +
+  # plot_layout(heights = c(0, -1, -1, -1, -1)) +
+  plot_annotation(tag_levels = "A") +
+  plot_layout(ncol = 1, nrow = 4, widths = c(7), heights = c(2, 2, 2, 2))
+
+option3
 
 # # plot figure - hatchling abundances
 # figB <- examples_to_plot %>%
@@ -558,13 +565,13 @@ option2
 
 
 
-final_fig
+final_fig <- option3
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('abundance_sexratios_temps.png', sep = ''),
+       filename = paste('sample_outputs.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 8.5, height = 12)
+       width = 8.5, height = 11)
 
 # plot figure - hatchling sex ratios across all temps and OSRs
 figF <- sample_plot_values %>%
