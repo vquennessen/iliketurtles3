@@ -197,7 +197,7 @@ b <- diff(ylim_prim) / diff(ylim_sec)
 a <- ylim_prim[1] - b*ylim_sec[1]
 
 # plot figure - temperatures
-figAB <- examples_to_plot %>%
+figAB1 <- examples_to_plot %>%
   filter(Abundance_Median > 0) %>%
   ggplot(aes(x = Year, 
              y = Temperature, 
@@ -211,6 +211,35 @@ figAB <- examples_to_plot %>%
             lwd = 1, lty = 4) +
   scale_y_continuous("Temperature", 
                      sec.axis = sec_axis(~ (. - a)/b, 
+                                         name = "")) +
+  theme_bw() +
+  theme(panel.border = element_blank()) +
+  theme(axis.line.y.right = element_line(linetype = 4, linewidth = 1), 
+        axis.line.y.left = element_line(linetype = 1, linewidth = 1), 
+        axis.line.x.bottom = element_line(linetype = 1, linewidth = 0.5, color = 'black'), 
+        axis.line.x = element_line(linetype = 1, linewidth = 0.5, color = 'black')) +
+  annotate(geom = 'segment', y = Inf, yend = Inf, color = 'black', x = -Inf, xend = Inf) +
+  xlab('') +
+  ylab('temperature (\u00B0C)') +
+  guides(color = 'none')
+
+figAB1
+
+# plot figure - temperatures
+figAB2 <- examples_to_plot %>%
+  filter(Abundance_Median > 0) %>%
+  ggplot(aes(x = Year, 
+             y = Temperature, 
+             color = Scenario 
+             # lty = OSR
+  )) + 
+  geom_line(lwd = 1) + 
+  geom_line(aes(x = Year, 
+                y = a + Emergence_Success*b, 
+                col = Scenario), 
+            lwd = 1, lty = 4) +
+  scale_y_continuous("", 
+                     sec.axis = sec_axis(~ (. - a)/b, 
                                          name = "Emergence Success")) +
   theme_bw() +
   theme(panel.border = element_blank()) +
@@ -219,10 +248,74 @@ figAB <- examples_to_plot %>%
         axis.line.x.bottom = element_line(linetype = 1, linewidth = 0.5, color = 'black'), 
         axis.line.x = element_line(linetype = 1, linewidth = 0.5, color = 'black')) +
   annotate(geom = 'segment', y = Inf, yend = Inf, color = 'black', x = -Inf, xend = Inf) +
-  xlab('Year') +
-  ylab('temperature (\u00B0C)')
+  xlab('') +
+  ylab('') +
+  theme(plot.margin = unit(c(0, 0, 0, -1), 'cm'))
 
-figAB
+figAB2
+
+# plot figure - just temperatures
+figA1 <- examples_to_plot %>%
+  filter(Abundance_Median > 0) %>%
+  ggplot(aes(x = Year, 
+             y = Temperature, 
+             color = Scenario 
+             # lty = OSR
+  )) + 
+  geom_line(lwd = 1) + 
+  theme_bw() +
+  xlab('') +
+  ylab('temperature (\u00B0C)') +
+  guides(color = 'none')
+  
+figA1
+
+# plot figure - just temperatures
+figA2 <- examples_to_plot %>%
+  filter(Abundance_Median > 0) %>%
+  ggplot(aes(x = Year, 
+             y = Temperature, 
+             color = Scenario 
+             # lty = OSR
+  )) + 
+  geom_line(lwd = 1) + 
+  theme_bw() +
+  xlab('') +
+  ylab('')
+
+figA2
+
+# plot figure - just emergence success
+figB1 <- examples_to_plot %>%
+  filter(Abundance_Median > 0) %>%
+  ggplot(aes(x = Year, 
+             y = Emergence_Success, 
+             color = Scenario 
+             # lty = OSR
+  )) + 
+  geom_line(lwd = 1) + 
+  theme_bw() +
+  xlab('') +
+  ylab('Emergence \n Success') +
+  guides(color = 'none')
+
+figB1
+
+# plot figure - just emergence success
+figB2 <- examples_to_plot %>%
+  filter(Abundance_Median > 0) %>%
+  ggplot(aes(x = Year, 
+             y = Emergence_Success, 
+             color = Scenario 
+             # lty = OSR
+  )) + 
+  geom_line(lwd = 1) + 
+  theme_bw() +
+  xlab('') +
+  ylab('') +
+  guides(color = 'none')
+
+figB2
 
 # plot figure - hatchling sex ratios, P base
 figC <- examples_to_plot %>%
@@ -246,11 +339,12 @@ figC <- examples_to_plot %>%
   geom_path(lwd = 1) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('Year') +
+  xlab('') +
   theme_bw() +
   ylim(c(0, 0.25)) +
-  guides(color = "none") +
-  ylab('median hatchling sex ratio')
+  guides(color = "none", 
+         lty = 'none') +
+  ylab('median hatchling \n sex ratio')
 
 figC
 
@@ -276,11 +370,11 @@ figD <- examples_to_plot %>%
   geom_path(lwd = 1) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('Year') +
+  xlab('') +
   theme_bw() +
-  ylim(c(0, 0.45)) +
-  guides(color = "none", lty = 'none') +
-  ylab('median hatchling sex ratio')
+  ylim(c(0, 0.25)) +
+  guides(color = "none") +
+  ylab('')
 
 figD
 
@@ -306,11 +400,11 @@ figE <- examples_to_plot %>%
   geom_path(lwd = 1) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('Year') +
+  xlab('') +
   theme_bw() +
   ylim(c(0, 0.45)) +
   guides(color = "none", lty = 'none') +
-  ylab('median operational sex ratio') 
+  ylab('median operational \n sex ratio') 
 
 figE
 
@@ -336,11 +430,11 @@ figF <- examples_to_plot %>%
   geom_path(lwd = 1) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('Year') +
+  xlab('') +
   theme_bw() +
   ylim(c(0, 0.45)) +
   guides(color = "none", lty = 'none') +
-  ylab('median operational sex ratio') 
+  ylab('') 
 
 figF
 
@@ -360,18 +454,19 @@ figG <- examples_to_plot %>%
                   fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
-  geom_line(lwd = 2) +
+  geom_line(lwd = 1) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('') +
+  xlab('Year') +
   ylab('median \n mature abundance') +
+  ylim(c(0, 4000)) +
   theme_bw() +
   guides(color = "none", 
          lty = "none")
 
 figG
 
-# plot figure - mature abundances, P base
+# plot figure - mature abundances, GM base
 figH <- examples_to_plot %>%
   filter(Age == 'Mature') %>%
   filter(Abundance_Median > 0) %>%
@@ -386,20 +481,39 @@ figH <- examples_to_plot %>%
                   fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
-  geom_line(lwd = 2) +
+  geom_line(lwd = 1) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('') +
-  ylab('median \n mature abundance') +
+  xlab('Year') +
+  ylab('') +
+  ylim(c(0, 4000)) +
   theme_bw() +
   guides(color = "none", 
          lty = "none")
 
 figH
 
+# figA/B: temperatures and emergence success
+# figB: emergence success
+# figC: hatchling sex ratios (P base)
+# figD: hatchling sex ratios (GM base)
+# figE: mature sex ratios (P base)
+# figF: mature sex ratios (GM base)
+# figG: mature abundance (P base)
+# figH: mature abundance (GM base)
 
 
+option1 <- (figA1 + figA2) / (figB1 + figB2) / (figC + figD) / (figE + figF) / (figG + figH) +
+  plot_layout(heights = c(-1, -1, -1, -1, -1)) +
+  plot_annotation(tag_levels = "A")
 
+option1
+
+option2 <- (figAB1 + figAB2) / (figC + figD) / (figE + figF) / (figG + figH) +
+  plot_annotation(tag_levels = "A") +
+  plot_layout(ncol = 1, nrow = 4, widths = c(6), heights = c(2, 2, 2, 2))
+
+option2
 
 # # plot figure - hatchling abundances
 # figB <- examples_to_plot %>%
@@ -442,15 +556,7 @@ figH
 #          lty = "none") +
 #   ylab('hatchling \n emergence success')
 
-# figA: temperatures
-# figB: emergence success
-# figC: sex ratios
-# figD: temperatures
-# figE: emergence success
 
-final_fig <- figD/figE/figB/figC/figA +
-  plot_layout(heights = c(-1, -1, -1, -1, -1)) +
-  plot_annotation(tag_levels = "A")
 
 final_fig
 
