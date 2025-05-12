@@ -1,14 +1,19 @@
 # testing initialize population script
 
+# load libraries
+library(magrittr)
+library(tidyr)
+
 # scenario parameters
 model <- 'P_base'
 scenario <- '0.5C'
 beta <- 20.63
+burn_in <- 100
 
 # model parameters to modulate
 temp_mu <- 31.80                        # base incubation temp mean
 climate_stochasticity <- TRUE           # whether or not to add in
-noise <- 'Red'                          # noise: White or Red
+noise <- 'White'                          # noise: White or Red
 temp_sd <- 0.84                         # base incubation temp sd
 AC <- 0.5                               # autocorrelation coefficient
 
@@ -44,10 +49,6 @@ conservation <- FALSE
 F_initial <- 170                          # initial adult F
 M_initial <- 30                           # initial adult M
 
-# dimensions
-A <- max_age
-Y <- years
-
 ##### maturity ogive
 M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
 
@@ -81,9 +82,9 @@ N <- array(rep(0, times = 2 * max_age * burn_in),
 
 # initial pop size
 # hatchlings
-N[ , 1, 1] <- 100
+N[ , 1, 1] <- 1000
 # not hatchlings
-N[ , 2:max_age, 1] <- 1
+N[ , 2:max_age, 1] <- 10
 
 # move population forward in time burn_in years
 for (y in 2:burn_in) {
@@ -157,14 +158,19 @@ for (y in 2:burn_in) {
     
   }
   
+  print(y)
+  
 }
 
 # plot results - females
+females_raw <- N[1, , ]
+View(females_raw)
 
 females <- data.frame(N[1, , ]) %>%
   pivot_longer(cols = 1:(dim(N)[3]),
                names_to = "Year", 
-               values_to = "Abundance") 
+               values_to = "Abundance")
+View(females)
 
 females <- data.frame(Age = rep(1:max_age, times = burn_in), 
                       Year = rep(1:burn_ing), 
