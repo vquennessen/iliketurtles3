@@ -14,7 +14,7 @@ source('mating function/OSRs_to_betas.R')
 x <- seq(from = 0, to = 0.5, by = 0.001)
 
 # OSR values
-OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
+OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
 
 # beta values to cycle through
 betas <- as.numeric(OSRs_to_betas(OSRs))
@@ -48,7 +48,7 @@ fig <- ggplot(data = DF, aes(x = Operational_Sex_Ratio,
   scale_color_manual(values = rev(colors)[-1], 
                      labels = rev(OSRs)) +
   # for replacement legend - delete for legend with beta values
-  labs(color = 'OSR needed \n for 100% \n reproductive \n success') +
+  labs(color = 'OSR needed \n for 99% \n reproductive \n success') +
   ylab('Reproductive Success') +
   xlab('Operational Sex Ratio (Proportion Male)') +
   ggtitle('Hypothetical mating functions') +
