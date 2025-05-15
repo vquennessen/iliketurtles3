@@ -31,13 +31,13 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
     
     if (noise == 'White') {
       
-    # generate stochastic temperatures from means given temp_sd
-    temperatures <- temp_mus + white_noise
-    
+      # generate stochastic temperatures from means given temp_sd
+      temperatures <- temp_mus + white_noise
+      
     }
     
     if (noise == 'Red') {
-
+      
       # initialize deviations
       deviations <- rep(NA, times = years)
       
@@ -48,7 +48,7 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
       for (i in 2:years) {
         
         deviations[i] <- AC * deviations[i - 1] + white_noise[i]
-          
+        
       }
       
       temperatures <- temp_mus + deviations
@@ -60,13 +60,8 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
   
   ##### pivotal temperatures ###################################################
   
-  # delta vectors for just phenotypic variation - pivotal temperatures
-  Delta_piv <- rnorm(n = years, 
-                     mean = 0, 
-                     sd = sqrt(ag_var_piv / h2_piv))
-  
-  # if evolution_piv is turned on, create gamma and epsilon vectors
-  if (evolution_piv == TRUE) {
+  # if evolution_piv is turned on, create gamma, epsilon, and delta vectors
+  if (evolution_piv == TRUE) {  
     
     # distribution of G - starting genotypes plus genotypic variation - one for 
     # each age
@@ -94,12 +89,19 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
     Epsilon_piv <- rnorm(n = years, 
                          mean = 0, 
                          sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))
+    
+    # phenotypic variation - pivotal temperatures
+    Delta_piv <- rnorm(n = years, 
+                       mean = 0, 
+                       sd = sqrt(ag_var_piv / h2_piv))
+    
   } else {
     
     # pivotal temperatures without evolution
-    Pivotal_temps <- T_piv + Delta_piv
+    Pivotal_temps <- rep(T_piv, times = years)
     
-    # no G, P, epsilon,  or gamma vectors
+    # no Delta, G, P, epsilon,  or gamma vectors
+    Delta_piv         <- NULL
     G_piv             <- NULL
     P_piv             <- NULL
     Epsilon_piv       <- NULL 
@@ -107,15 +109,10 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
     
   }
   
-##### threshold temperatures ###################################################  
+  ##### threshold temperatures ###################################################  
   
-  # delta vectors for just phenotypic variation - threshold temperatures
-  Delta_threshold <- rnorm(n = years, 
-                           mean = 0, 
-                           sd = sqrt(ag_var_threshold / h2_threshold))
-  
-  # if evolution_threshold is turned on, create epsilon and delta vectors
-  if (evolution_threshold == TRUE) {
+  # if evolution_threshold is turned on, create gamma, epsilon, and delta vectors
+  if (evolution_threshold == TRUE) {  
     
     # distribution of G - starting genotypes plus genotypic variation
     G_threshold <- rnorm(n = max_age, 
@@ -140,25 +137,31 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
     
     # gamma, error term for the expected genotype
     Gamma_threshold <- rnorm(n = years, 
-                       mean = 0, 
-                       sd = sqrt(ag_var_threshold / 2))       
+                             mean = 0, 
+                             sd = sqrt(ag_var_threshold / 2))       
     
     # epsilon, error term for the expected threshold temperature
     Epsilon_threshold <- rnorm(n = years, 
-                         mean = 0, 
-                         sd = sqrt((ag_var_threshold / 
-                                      h2_threshold - 
-                                      ag_var_threshold)))
+                               mean = 0, 
+                               sd = sqrt((ag_var_threshold / 
+                                            h2_threshold - 
+                                            ag_var_threshold)))
+    # phenotypic variation - threshold temperatures
+    Delta_threshold <- rnorm(n = years, 
+                             mean = 0, 
+                             sd = sqrt(ag_var_threshold / h2_threshold))
+    
   } else {
     
     # threshold temperatures without evolution
-    Threshold_temps <- T_threshold + Delta_threshold
+    Threshold_temps <- rep(T_threshold, times = years)
     
-    # no G, P, epsilon, or gamma vectors
+    # no G, P, epsilon, gamma, or delta vectors
     G_threshold             <- NULL
     P_threshold             <- NULL
     Epsilon_threshold       <- NULL 
     Gamma_threshold         <- NULL
+    Delta_threshold         <- NULL
     
   }
   
@@ -180,11 +183,11 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
   
   # output
   output <- list(N, temperatures,
-                 Delta_piv, G_piv, P_piv, Pivotal_temps, Gamma_piv, Epsilon_piv, 
-                 Delta_threshold, G_threshold, P_threshold, Threshold_temps,
-                 Gamma_threshold, Epsilon_threshold, 
+                 G_piv, P_piv, Gamma_piv, Epsilon_piv, Delta_piv, Pivotal_temps, 
+                 G_threshold, P_threshold, Gamma_threshold, Epsilon_threshold, 
+                 Delta_threshold, Threshold_temps, 
                  OSR)
   
   return(output)
   
-  }
+}

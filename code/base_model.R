@@ -23,18 +23,18 @@ base_model <- function(scenario, beta, years, max_age,
   
   N                  <- init_output[[1]]    # population size array
   temperatures       <- init_output[[2]]    # incubation temperatures
-  Delta_piv          <- init_output[[3]]    # phenotypic variance
-  G_piv              <- init_output[[4]]    # genotypes array
-  P_piv              <- init_output[[5]]    # expected phenotypes array
-  Pivotal_temps      <- init_output[[6]]    # pivotal temperature
-  Gamma_piv          <- init_output[[7]]    # error around expected genotype
-  Epsilon_piv        <- init_output[[8]]    # error around expected phenotype
-  Delta_threshold    <- init_output[[9]]    # phenotypic variance
-  G_threshold        <- init_output[[10]]   # genotypes array
-  P_threshold        <- init_output[[11]]   # expected phenotypes array
-  Threshold_temps    <- init_output[[12]]   # threshold temperature
-  Gamma_threshold    <- init_output[[13]]   # error around expected genotype
-  Epsilon_threshold  <- init_output[[14]]   # error around expected phenotype
+  G_piv              <- init_output[[3]]    # genotypes array
+  P_piv              <- init_output[[4]]    # expected phenotypes array
+  Gamma_piv          <- init_output[[5]]    # error around expected genotype
+  Epsilon_piv        <- init_output[[6]]    # error around expected phenotype
+  Delta_piv          <- init_output[[7]]    # phenotypic variance
+  Pivotal_temps      <- init_output[[8]]    # pivotal temperature
+  G_threshold        <- init_output[[9]]    # genotypes array
+  P_threshold        <- init_output[[10]]   # expected phenotypes array
+  Gamma_threshold    <- init_output[[11]]   # error around expected genotype
+  Epsilon_threshold  <- init_output[[12]]   # error around expected phenotype  
+  Delta_threshold    <- init_output[[13]]   # phenotypic variance
+  Threshold_temps    <- init_output[[14]]   # threshold temperature
   OSR                <- init_output[[15]]   # operational sex ratio
   
   ##### model ##################################################################

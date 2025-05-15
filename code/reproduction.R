@@ -35,8 +35,8 @@ reproduction <- function(N, M, y, beta, max_age,
     
     # number of nests per female (round to nearest integer)
     nests <- round(rnorm(n = round(n_breeding_F), 
-                   mean = nests_mu, 
-                   sd = nests_sd))
+                         mean = nests_mu, 
+                         sd = nests_sd))
     
     # replace any number < 1 with +1
     nests[which(nests < 1)] <- 1
@@ -44,13 +44,13 @@ reproduction <- function(N, M, y, beta, max_age,
     # initialize eggs vector
     eggs <- rep(NA, times = length(nests))
     
-    # number of eggs per nest (round to nearest integer)
+    # number of eggs per n_breeding_F (round to nearest integer)
     for (f in 1:length(nests)) {
       
       eggs[f] <- sum(round(rnorm(n = nests[f], 
-                           mean = eggs_mu, 
-                           sd = eggs_sd), 
-                     na.rm = TRUE))
+                                 mean = eggs_mu, 
+                                 sd = eggs_sd)), 
+                     na.rm = TRUE)
       
     }
     
@@ -69,11 +69,11 @@ reproduction <- function(N, M, y, beta, max_age,
       
       # if there are more than 0.5 hatchlings
     } else { 
-        
-        # determine proportion of male hatchlings based on temperature and 
-        # phenotypic variation
-        prop_male <- 1/(1 + exp(-k_piv * (temperatures[y] - (Pivotal_temps[y]))))
-
+      
+      # determine proportion of male hatchlings based on temperature and 
+      # phenotypic variation
+      prop_male <- 1/(1 + exp(-k_piv * (temperatures[y] - (Pivotal_temps[y]))))
+      
       # number of male and female hatchlings
       female_hatchlings <- round(hatchlings * (1 - prop_male))
       male_hatchlings <- round(hatchlings * prop_male)

@@ -10,30 +10,29 @@ run_base_model <- function(arguments) {
   model     <- arguments$Var1
   scenario  <- arguments$Var2
   beta      <- arguments$Var3
-  # intensity <- arguments$Var4
-  # frequency <- arguments$Var5
-  # years     <- arguments$Var6
-  # nsims     <- arguments$Var7
   years     <- arguments$Var4
-  nsims     <- arguments$Var5
+  nsims     <- arguments$Var5  
+  # intensity <- arguments$Var6
+  # frequency <- arguments$Var7
+  
+  # troubleshooting
+  model <- 'P_base'
+  scenario <- '0.5C'
+  beta <- 1.17
+  nsims <- 10  
   
   # model parameters to modulate
   temp_mu <- 31.80                        # base incubation temp mean
   climate_stochasticity <- TRUE           # whether or not to add in
-  noise <- 'Red'                          # noise: White or Red
+  noise <- 'White'                          # noise: White or Red
   temp_sd <- 0.84                         # base incubation temp sd
   AC <- 0.5                               # autocorrelation coefficient
-
-  # troubleshooting
-  # scenario <- 0.5
-  # beta <- 1
-  # nsims <- 100
   
   # turtle demographics
   max_age <- 85                                         # lifespan
-  F_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - F
+  F_survival_years <- c(1, 2, 7, 12, (max_age - (1 + 2 + 7 + 12)))                 # years per stage - F
   F_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - F
-  M_survival_years <- c(1, 2, 7, 12, 1)                 # years per stage - M
+  M_survival_years <- c(1, 2, 7, 12, (max_age - (1 + 2 + 7 + 12)))                 # years per stage - M
   M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
   age_maturity_mu <- 25                     # age at first reproduction, mean
   age_maturity_sd <- 2.5                    # age at first reproduction, SD
@@ -47,19 +46,18 @@ run_base_model <- function(arguments) {
   hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
   T_piv <- 29.2                             # thermal reaction norm midpoint
-  ag_var_piv <- 0.017                       # phenotypic variance - pivotal temp
   T_threshold <- 35                         # lethal temperature threshold
-  ag_var_threshold <- 0.017                 # phenotypic variance - threshold
-  
   
   ##### parameters that are model and scenario dependent #######################
   if (model == 'P_base') {
     
     k_piv <- -1.4
-    h2_piv <- 0.135
-    h2_threshold <- 0.20
     evolution_piv <- FALSE 
+    h2_piv <- NULL
+    ag_var_piv <- NULL                       
     evolution_threshold <- FALSE
+    h2_threshold <- NULL
+    ag_var_threshold <- NULL                 
     conservation <- FALSE
     
   }
@@ -67,10 +65,12 @@ run_base_model <- function(arguments) {
   if (model == 'P_evol_piv') {
     
     k_piv <- -1.4
-    h2_piv <- 0.135
-    h2_threshold <- 0.20
     evolution_piv <- TRUE 
+    h2_piv <- 0.135
+    ag_var_piv <- 0.017
     evolution_threshold <- FALSE
+    h2_threshold <- NULL
+    ag_var_threshold <- NULL                 
     conservation <- FALSE
     
   }
@@ -78,10 +78,12 @@ run_base_model <- function(arguments) {
   if (model == 'P_evol_piv_high_H') {
     
     k_piv <- -1.4
-    h2_piv <- 0.351
-    h2_threshold <- 0.20
     evolution_piv <- TRUE 
+    h2_piv <- 0.351
+    ag_var_piv <- 0.017
     evolution_threshold <- FALSE
+    h2_threshold <- NULL
+    ag_var_threshold <- NULL                 
     conservation <- FALSE
     
   }
@@ -89,10 +91,12 @@ run_base_model <- function(arguments) {
   if (model == 'P_evol_threshold') {
     
     k_piv <- -1.4
-    h2_piv <- 0.135
-    h2_threshold <- 0.20
     evolution_piv <- FALSE 
+    h2_piv <- NULL
+    ag_var_piv <- NULL                       
     evolution_threshold <- TRUE
+    h2_threshold <- 0.20
+    ag_var_threshold <- 0.017    
     conservation <- FALSE
     
   }
@@ -100,10 +104,12 @@ run_base_model <- function(arguments) {
   if (model == 'P_evol_threshold_high_H') {
     
     k_piv <- -1.4
-    h2_piv <- 0.135
-    h2_threshold <- 0.38
     evolution_piv <- FALSE 
+    h2_piv <- NULL
+    ag_var_piv <- NULL                       
     evolution_threshold <- TRUE
+    h2_threshold <- 0.38
+    ag_var_threshold <- 0.017    
     conservation <- FALSE
     
   }
@@ -111,10 +117,12 @@ run_base_model <- function(arguments) {
   if (model == 'GM_base') {
     
     k_piv <- -0.561
-    h2_piv <- 0.135
-    h2_threshold <- 0.20
     evolution_piv <- FALSE 
+    h2_piv <- NULL
+    ag_var_piv <- NULL                       
     evolution_threshold <- FALSE
+    h2_threshold <- NULL
+    ag_var_threshold <- NULL                 
     conservation <- FALSE
     
   }
@@ -122,10 +130,12 @@ run_base_model <- function(arguments) {
   if (model == 'GM_evol_piv') {
     
     k_piv <- -0.561
-    h2_piv <- 0.135
-    h2_threshold <- 0.20
     evolution_piv <- TRUE 
+    h2_piv <- 0.135
+    ag_var_piv <- 0.017
     evolution_threshold <- FALSE
+    h2_threshold <- NULL
+    ag_var_threshold <- NULL                 
     conservation <- FALSE
     
   }
@@ -133,10 +143,12 @@ run_base_model <- function(arguments) {
   if (model == 'GM_evol_piv_high_H') {
     
     k_piv <- -0.561
-    h2_piv <- 0.351
-    h2_threshold <- 0.20
     evolution_piv <- TRUE 
+    h2_piv <- 0.351
+    ag_var_piv <- 0.017
     evolution_threshold <- FALSE
+    h2_threshold <- NULL
+    ag_var_threshold <- NULL                 
     conservation <- FALSE
     
   }
@@ -144,10 +156,12 @@ run_base_model <- function(arguments) {
   if (model == 'GM_evol_threshold') {
     
     k_piv <- -0.561
-    h2_piv <- 0.135
-    h2_threshold <- 0.20
     evolution_piv <- FALSE 
+    h2_piv <- NULL
+    ag_var_piv <- NULL                       
     evolution_threshold <- TRUE
+    h2_threshold <- 0.20
+    ag_var_threshold <- 0.017    
     conservation <- FALSE
     
   }
@@ -155,10 +169,12 @@ run_base_model <- function(arguments) {
   if (model == 'GM_evol_threshold_high_H') {
     
     k_piv <- -0.561
-    h2_piv <- 0.135
-    h2_threshold <- 0.38
     evolution_piv <- FALSE 
+    h2_piv <- NULL
+    ag_var_piv <- NULL                       
     evolution_threshold <- TRUE
+    h2_threshold <- 0.38
+    ag_var_threshold <- 0.017    
     conservation <- FALSE
     
   }
@@ -166,10 +182,12 @@ run_base_model <- function(arguments) {
   if (model == 'GM_conservation') {
     
     k_piv <- -0.561
-    h2_piv <- 0.135
-    h2_threshold <- 0.20
     evolution_piv <- FALSE 
+    h2_piv <- NULL
+    ag_var_piv <- NULL                       
     evolution_threshold <- FALSE
+    h2_threshold <- NULL
+    ag_var_threshold <- NULL                 
     conservation <- TRUE
     
   }
@@ -180,10 +198,6 @@ run_base_model <- function(arguments) {
   # based on the stable age distribution
   F_initial <- 170                          # initial adult F
   M_initial <- 30                           # initial adult M
-
-  # dimensions
-  A <- max_age
-  Y <- years
   
   ##### maturity ogive
   M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
@@ -196,49 +210,32 @@ run_base_model <- function(arguments) {
   # survival values vector - males
   M_survival <- rep(M_survival_values, times = M_survival_years)
   
-  # check it's long enough, and if not, add the last survival_value until it is
-  # females
-  if (length(F_survival) < max_age) {
-    F_survival <- c(F_survival, rep(F_survival_values[length(F_survival_values)], 
-                                    max_age - length(F_survival)))
-  }
-  
-  # males
-  if (length(M_survival) < max_age) {
-    M_survival <- c(M_survival, 
-                    rep(M_survival_values[length(M_survival_values)], 
-                        max_age - length(M_survival)))
-  }
-  
-  # make female leslie matrix for survival
-  f_matrix <- matrix(diag(F_survival[1:(max_age - 1)]), ncol = max_age - 1)
-  f_Leslie <- rbind(rep(0, max_age), cbind(f_matrix, rep(0, max_age - 1)))
-  
-  # make male leslie matrix for survival
-  m_matrix <- matrix(diag(M_survival[1:(max_age - 1)]), ncol = max_age - 1)
-  m_Leslie <- rbind(rep(0, max_age), cbind(m_matrix, rep(0, max_age - 1)))
+  # # check it's long enough, and if not, add the last survival_value until it is
+  # # females
+  # if (length(F_survival) < max_age) {
+  #   F_survival <- c(F_survival, rep(F_survival_values[length(F_survival_values)], 
+  #                                   max_age - length(F_survival)))
+  # }
+  # 
+  # # males
+  # if (length(M_survival) < max_age) {
+  #   M_survival <- c(M_survival, 
+  #                   rep(M_survival_values[length(M_survival_values)], 
+  #                       max_age - length(M_survival)))
+  # }
   
   # stable age distribution
-  SAD_output <- initialize_population(beta, burn_in = 1000, max_age, M, 
+  SAD_output <- initialize_population(beta, burn_in = 1000, max_age, 
+                                      F_survival, M_survival, M, 
                                       F_remigration_int, M_remigration_int,
                                       nests_mu, eggs_mu, hatch_success_A, 
                                       hatch_success_k, hatch_success_t0, 
-                                      k_piv, T_piv, temp_mu, f_Leslie, m_Leslie)
+                                      k_piv, T_piv, temp_mu, 
+                                      F_initial, M_initial)
   
   # separate by sex
-  SAD_F <- SAD_output[[1]]
-  SAD_M <- SAD_output[[2]]
-  # M_multiplicator <- SAD_output[[3]]
-  
-  # set first timestep to SAD times a value to get at least m_min adult males
-  # and f_min adult females
-  f_min <- F_initial / sum(SAD_F * M)
-  m_min <- M_initial / sum(SAD_M * M)
-
-  # multiplicator <- max(m_min, f_min)
-
-  F_init <- SAD_F * f_min
-  M_init <- SAD_M * m_min
+  F_init <- SAD_output[[1]]
+  M_init <- SAD_output[[2]]
   
   ##### initialize output ######################################################
   

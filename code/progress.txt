@@ -1,835 +1,277 @@
-2025-02-01 23:58:52.118265 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-01 23:58:53.467454 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-01 23:58:54.639095 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-01 23:58:55.995524 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-01 23:58:57.489617 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-01 23:58:58.638597 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-01 23:59:00.056786 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-01 23:59:01.512845 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-01 23:59:02.861149 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-01 23:59:04.024828 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-01 23:59:05.642316 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-01 23:59:38.533944 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-01 23:59:40.124568 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-01 23:59:41.370757 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-01 23:59:42.865126 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-01 23:59:44.391641 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-01 23:59:45.591773 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-01 23:59:47.106636 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-01 23:59:48.321541 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-01 23:59:49.697195 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-01 23:59:50.861664 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-01 23:59:51.987755 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 00:00:34.168085 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-02 00:00:35.541597 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 00:00:36.888569 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 00:00:38.180951 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 00:00:39.363474 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 00:00:40.856117 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 00:00:42.145618 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 00:00:43.657728 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 00:00:45.017332 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 00:00:46.280271 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 00:00:47.632614 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 00:00:47.717433 - P_evol_piv - 0.5C - beta 43.71 - 10 sims
-2025-02-02 11:54:29.479041 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-02 11:54:30.789507 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 11:54:32.126272 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 11:54:33.61191 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 11:54:35.104737 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 11:54:36.504284 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 11:54:37.889265 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 11:54:39.291657 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 11:54:40.901784 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 11:54:42.191954 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 11:54:43.549145 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 11:54:43.765833 - P_evol_piv - 0.5C - beta 43.71 - 10 sims
-2025-02-02 20:04:53.329753 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-02 20:06:10.046701 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-02 20:06:11.232031 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 20:06:12.426343 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 20:06:13.803298 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 20:06:15.073284 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 20:06:16.459183 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 20:06:17.798458 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 20:06:19.018311 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 20:06:20.097168 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 20:06:21.33218 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 20:06:22.698283 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 20:06:22.975896 - P_evol_piv - 0.5C - beta 43.71 - 10 sims
-2025-02-02 20:09:08.019833 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-02 20:09:09.547761 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 20:09:11.006807 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 20:09:12.497713 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 20:09:13.816515 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 20:09:14.977447 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 20:09:16.502443 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 20:09:17.908729 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 20:09:19.168541 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 20:09:20.466343 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 20:09:21.623882 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 20:09:21.712135 - P_evol_piv - 0.5C - beta 43.71 - 10 sims
-2025-02-02 20:25:57.979172 - P_evol_piv - 5CC - beta 43.71 - 10 sims
-2025-02-02 21:02:29.783568 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:02:31.337866 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:02:32.683563 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:02:33.992262 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:02:35.337977 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:02:36.737854 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:02:37.916641 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:02:39.141164 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:02:40.433923 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:02:42.00168 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:02:43.535332 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:02:43.631201 - P_evol_piv - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:02:45.099679 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:02:46.229151 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:02:47.520586 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:02:48.831766 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:02:50.167401 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:02:51.596371 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:02:52.888965 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:02:54.257462 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:02:55.494744 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:02:56.836477 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:07:10.190338 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:07:11.6245 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:07:12.792108 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:07:14.131021 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:07:15.597353 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:07:16.824939 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:07:17.998391 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:07:19.437081 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:07:20.832069 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:07:22.301124 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:07:23.684383 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:07:23.931145 - P_evol_piv - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:07:25.274053 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:07:26.498403 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:07:27.847499 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:07:29.300075 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:07:30.617412 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:07:31.733961 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:07:33.2184 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:07:34.552682 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:07:35.846197 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:07:37.22618 - P_evol_piv - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:07:37.354371 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:07:39.163349 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:07:40.55673 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:07:41.960344 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:07:43.259138 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:07:44.926559 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:07:46.26575 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:07:47.579084 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:07:48.920133 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:07:50.330232 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:07:51.532836 - P_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:07:51.621796 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:07:53.17826 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:07:54.694703 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:07:56.018332 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:07:57.350827 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:07:58.658061 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:08:00.185141 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:08:01.464351 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:08:03.048973 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:08:04.433479 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:08:05.719661 - P_evol_threshold - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:08:05.815307 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:08:07.589548 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:08:08.911568 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:08:10.318723 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:08:11.71543 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:08:13.009788 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:08:14.623014 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:08:15.88305 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:08:17.453858 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:08:18.783418 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:08:20.319909 - P_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:08:20.411574 - GM_base - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:08:21.706648 - GM_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:08:22.718744 - GM_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:08:23.759649 - GM_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:08:24.716952 - GM_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:08:25.59965 - GM_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:08:26.654269 - GM_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:08:27.644516 - GM_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:08:28.519412 - GM_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:08:29.556289 - GM_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:08:30.419505 - GM_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:08:30.505511 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:08:31.588023 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:08:32.490362 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:08:33.347634 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:08:34.271842 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:08:35.323325 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:08:36.196612 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:08:36.998404 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:08:37.902372 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:08:38.741951 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:08:39.764735 - GM_evol_piv - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:08:39.855319 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:08:40.993873 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:08:41.889484 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:08:42.739087 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:08:43.75133 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:08:44.750454 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:08:45.500869 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:08:46.383018 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:08:47.301906 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:08:48.156987 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:08:49.204992 - GM_evol_piv_high_H - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:08:49.292275 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:08:50.44278 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:08:51.390868 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:08:52.315924 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:08:53.210626 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:08:54.228925 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:08:55.099016 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:08:55.836297 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:08:56.744303 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:08:57.734066 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:08:58.679899 - GM_evol_threshold - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-02 21:08:58.773156 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims
-2025-02-02 21:08:59.978046 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-02 21:09:00.978751 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-02 21:09:01.848188 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-02 21:09:02.845334 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-02 21:09:03.813673 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-02 21:09:04.96974 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-02 21:09:06.058894 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-02 21:09:06.983293 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-02 21:09:07.877901 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-02 21:09:08.717108 - GM_evol_threshold_high_H - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-04 21:33:40.684915 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims
-2025-02-04 21:33:41.050415 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 10% done!
-2025-02-04 21:33:41.312155 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 20% done!
-2025-02-04 21:33:41.496145 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 30% done!
-2025-02-04 21:33:41.647207 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 40% done!
-2025-02-04 21:33:41.995664 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 50% done!
-2025-02-04 21:33:42.173168 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 60% done!
-2025-02-04 21:33:42.45881 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 70% done!
-2025-02-04 21:33:42.638667 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 80% done!
-2025-02-04 21:33:42.775655 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 90% done!
-2025-02-04 21:33:42.957068 - GM_evol_piv_high_H - 2.5C - beta 1 - 10 sims - 100% done!
-2025-02-04 21:52:43.635316 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims
-2025-02-04 21:54:56.602185 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims
-2025-02-04 21:59:08.650287 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims
-2025-02-04 21:59:08.962945 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 10% done!
-2025-02-04 21:59:09.095917 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 20% done!
-2025-02-04 21:59:09.324725 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 30% done!
-2025-02-04 21:59:09.535621 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 40% done!
-2025-02-04 21:59:09.853363 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 50% done!
-2025-02-04 21:59:10.049103 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 60% done!
-2025-02-04 21:59:10.249533 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 70% done!
-2025-02-04 21:59:10.562342 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 80% done!
-2025-02-04 21:59:10.718631 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 90% done!
-2025-02-04 21:59:10.926609 - P_evol_threshold_high_H - 5C - beta 43.71 - 10 sims - 100% done!
-2025-02-04 21:59:11.213508 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims
-2025-02-04 21:59:11.676988 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 10% done!
-2025-02-04 21:59:11.864945 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 20% done!
-2025-02-04 21:59:12.03879 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 30% done!
-2025-02-04 21:59:12.242046 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 40% done!
-2025-02-04 21:59:12.418656 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 50% done!
-2025-02-04 21:59:12.711564 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 60% done!
-2025-02-04 21:59:13.021577 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 70% done!
-2025-02-04 21:59:13.200648 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 80% done!
-2025-02-04 21:59:13.51747 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 90% done!
-2025-02-04 21:59:13.668415 - P_evol_threshold_high_H - 5C - beta 20.64 - 10 sims - 100% done!
-2025-02-04 21:59:15.484784 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims
-2025-02-04 21:59:15.620032 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 10% done!
-2025-02-04 21:59:15.838931 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 20% done!
-2025-02-04 21:59:16.023227 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 30% done!
-2025-02-04 21:59:16.153054 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 40% done!
-2025-02-04 21:59:16.489525 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 50% done!
-2025-02-04 21:59:16.617263 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 60% done!
-2025-02-04 21:59:16.791159 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 70% done!
-2025-02-04 21:59:16.933045 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 80% done!
-2025-02-04 21:59:17.219091 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 90% done!
-2025-02-04 21:59:17.372368 - P_evol_threshold_high_H - 5C - beta 12.92 - 10 sims - 100% done!
-2025-02-04 21:59:17.435534 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims
-2025-02-04 21:59:17.555613 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 10% done!
-2025-02-04 21:59:18.080609 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 20% done!
-2025-02-04 21:59:18.186776 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 30% done!
-2025-02-04 21:59:18.303886 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 40% done!
-2025-02-04 21:59:18.462811 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 50% done!
-2025-02-04 21:59:18.575832 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 60% done!
-2025-02-04 21:59:18.716678 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 70% done!
-2025-02-04 21:59:18.981577 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 80% done!
-2025-02-04 21:59:19.119923 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 90% done!
-2025-02-04 21:59:19.275217 - P_evol_threshold_high_H - 5C - beta 9.02 - 10 sims - 100% done!
-2025-02-04 21:59:19.338065 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims
-2025-02-04 21:59:19.936665 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 10% done!
-2025-02-04 21:59:20.071704 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 20% done!
-2025-02-04 21:59:20.188766 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 30% done!
-2025-02-04 21:59:20.336093 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 40% done!
-2025-02-04 21:59:20.62209 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 50% done!
-2025-02-04 21:59:20.732896 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 60% done!
-2025-02-04 21:59:20.873534 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 70% done!
-2025-02-04 21:59:20.958306 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 80% done!
-2025-02-04 21:59:21.077704 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 90% done!
-2025-02-04 21:59:21.222719 - P_evol_threshold_high_H - 5C - beta 6.65 - 10 sims - 100% done!
-2025-02-04 21:59:21.318732 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims
-2025-02-04 21:59:21.725696 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 10% done!
-2025-02-04 21:59:21.846328 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 20% done!
-2025-02-04 21:59:21.991837 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 30% done!
-2025-02-04 21:59:22.092177 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 40% done!
-2025-02-04 21:59:22.241045 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 50% done!
-2025-02-04 21:59:22.341385 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 60% done!
-2025-02-04 21:59:22.479289 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 70% done!
-2025-02-04 21:59:22.584938 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 80% done!
-2025-02-04 21:59:22.832668 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 90% done!
-2025-02-04 21:59:22.943077 - P_evol_threshold_high_H - 5C - beta 5.03 - 10 sims - 100% done!
-2025-02-04 21:59:23.098553 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims
-2025-02-04 21:59:24.10142 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 10% done!
-2025-02-04 21:59:24.209692 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 20% done!
-2025-02-04 21:59:24.290138 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 30% done!
-2025-02-04 21:59:24.409574 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 40% done!
-2025-02-04 21:59:24.511286 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 50% done!
-2025-02-04 21:59:24.652999 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 60% done!
-2025-02-04 21:59:24.744131 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 70% done!
-2025-02-04 21:59:24.825565 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 80% done!
-2025-02-04 21:59:24.963567 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 90% done!
-2025-02-04 21:59:25.204935 - P_evol_threshold_high_H - 5C - beta 3.83 - 10 sims - 100% done!
-2025-02-04 21:59:25.267295 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims
-2025-02-04 21:59:25.347679 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 10% done!
-2025-02-04 21:59:25.551849 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 20% done!
-2025-02-04 21:59:26.062426 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 30% done!
-2025-02-04 21:59:26.145689 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 40% done!
-2025-02-04 21:59:26.231581 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 50% done!
-2025-02-04 21:59:26.345919 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 60% done!
-2025-02-04 21:59:26.428673 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 70% done!
-2025-02-04 21:59:26.517206 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 80% done!
-2025-02-04 21:59:26.631477 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 90% done!
-2025-02-04 21:59:26.720024 - P_evol_threshold_high_H - 5C - beta 2.87 - 10 sims - 100% done!
-2025-02-04 21:59:26.783763 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims
-2025-02-04 21:59:26.926297 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 10% done!
-2025-02-04 21:59:27.304398 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 20% done!
-2025-02-04 21:59:27.396695 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 30% done!
-2025-02-04 21:59:27.464407 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 40% done!
-2025-02-04 21:59:27.523776 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 50% done!
-2025-02-04 21:59:27.740464 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 60% done!
-2025-02-04 21:59:27.805397 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 70% done!
-2025-02-04 21:59:27.867858 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 80% done!
-2025-02-04 21:59:27.968535 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 90% done!
-2025-02-04 21:59:28.181052 - P_evol_threshold_high_H - 5C - beta 2.01 - 10 sims - 100% done!
-2025-02-04 21:59:28.240261 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims
-2025-02-04 21:59:28.275178 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 10% done!
-2025-02-04 21:59:28.306044 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 20% done!
-2025-02-04 21:59:28.338056 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 30% done!
-2025-02-04 21:59:28.37086 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 40% done!
-2025-02-04 21:59:28.406682 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 50% done!
-2025-02-04 21:59:28.56339 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 60% done!
-2025-02-04 21:59:28.914686 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 70% done!
-2025-02-04 21:59:28.949131 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 80% done!
-2025-02-04 21:59:29.01682 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 90% done!
-2025-02-04 21:59:29.051716 - P_evol_threshold_high_H - 5C - beta 1 - 10 sims - 100% done!
-2025-02-04 22:00:52.764983 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims
-2025-02-04 22:00:53.064409 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 10% done!
-2025-02-04 22:00:53.238077 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 20% done!
-2025-02-04 22:00:53.46348 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 30% done!
-2025-02-04 22:00:53.670103 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 40% done!
-2025-02-04 22:00:53.842012 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 50% done!
-2025-02-04 22:00:54.018011 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 60% done!
-2025-02-04 22:00:54.231049 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 70% done!
-2025-02-04 22:00:54.369581 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 80% done!
-2025-02-04 22:00:54.548545 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 90% done!
-2025-02-04 22:00:54.869774 - P_evol_piv_high_H - 5C - beta 43.71 - 10 sims - 100% done!
-2025-02-04 22:00:54.934751 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims
-2025-02-04 22:00:55.411141 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 10% done!
-2025-02-04 22:00:55.584811 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 20% done!
-2025-02-04 22:00:55.728422 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 30% done!
-2025-02-04 22:00:55.921015 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 40% done!
-2025-02-04 22:00:56.065138 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 50% done!
-2025-02-04 22:00:56.257044 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 60% done!
-2025-02-04 22:00:56.434649 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 70% done!
-2025-02-04 22:00:56.589884 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 80% done!
-2025-02-04 22:00:56.905982 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 90% done!
-2025-02-04 22:00:57.054821 - P_evol_piv_high_H - 5C - beta 20.64 - 10 sims - 100% done!
-2025-02-04 22:00:57.118877 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims
-2025-02-04 22:00:57.690946 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 10% done!
-2025-02-04 22:00:57.797179 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 20% done!
-2025-02-04 22:00:57.92811 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 30% done!
-2025-02-04 22:00:58.084849 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 40% done!
-2025-02-04 22:00:58.204601 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 50% done!
-2025-02-04 22:00:58.370169 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 60% done!
-2025-02-04 22:00:58.495068 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 70% done!
-2025-02-04 22:00:58.834941 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 80% done!
-2025-02-04 22:00:58.960021 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 90% done!
-2025-02-04 22:00:59.138113 - P_evol_piv_high_H - 5C - beta 12.92 - 10 sims - 100% done!
-2025-02-04 22:00:59.202582 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims
-2025-02-04 22:00:59.545559 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 10% done!
-2025-02-04 22:00:59.964603 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 20% done!
-2025-02-04 22:01:00.089941 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 30% done!
-2025-02-04 22:01:00.338797 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 40% done!
-2025-02-04 22:01:00.485655 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 50% done!
-2025-02-04 22:01:00.632908 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 60% done!
-2025-02-04 22:01:00.789451 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 70% done!
-2025-02-04 22:01:00.932973 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 80% done!
-2025-02-04 22:01:01.12147 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 90% done!
-2025-02-04 22:01:01.291052 - P_evol_piv_high_H - 5C - beta 9.02 - 10 sims - 100% done!
-2025-02-04 22:01:01.362606 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims
-2025-02-04 22:01:01.602024 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 10% done!
-2025-02-04 22:01:01.980704 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 20% done!
-2025-02-04 22:01:02.119801 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 30% done!
-2025-02-04 22:01:02.362085 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 40% done!
-2025-02-04 22:01:02.471546 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 50% done!
-2025-02-04 22:01:02.620985 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 60% done!
-2025-02-04 22:01:02.733701 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 70% done!
-2025-02-04 22:01:02.875604 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 80% done!
-2025-02-04 22:01:03.000116 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 90% done!
-2025-02-04 22:01:03.125485 - P_evol_piv_high_H - 5C - beta 6.65 - 10 sims - 100% done!
-2025-02-04 22:01:03.220042 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims
-2025-02-04 22:01:03.507357 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 10% done!
-2025-02-04 22:01:03.902413 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 20% done!
-2025-02-04 22:01:04.024353 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 30% done!
-2025-02-04 22:01:04.123998 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 40% done!
-2025-02-04 22:01:04.220431 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 50% done!
-2025-02-04 22:01:04.349808 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 60% done!
-2025-02-04 22:01:04.443296 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 70% done!
-2025-02-04 22:01:04.590246 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 80% done!
-2025-02-04 22:01:04.69991 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 90% done!
-2025-02-04 22:01:04.791875 - P_evol_piv_high_H - 5C - beta 5.03 - 10 sims - 100% done!
-2025-02-04 22:01:04.951097 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims
-2025-02-04 22:01:05.915037 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 10% done!
-2025-02-04 22:01:06.015705 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 20% done!
-2025-02-04 22:01:06.104728 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 30% done!
-2025-02-04 22:01:06.214271 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 40% done!
-2025-02-04 22:01:06.292908 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 50% done!
-2025-02-04 22:01:06.530772 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 60% done!
-2025-02-04 22:01:06.622804 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 70% done!
-2025-02-04 22:01:06.744896 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 80% done!
-2025-02-04 22:01:06.840558 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 90% done!
-2025-02-04 22:01:07.084084 - P_evol_piv_high_H - 5C - beta 3.83 - 10 sims - 100% done!
-2025-02-04 22:01:07.146135 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims
-2025-02-04 22:01:07.220441 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 10% done!
-2025-02-04 22:01:07.431067 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 20% done!
-2025-02-04 22:01:07.793108 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 30% done!
-2025-02-04 22:01:07.878653 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 40% done!
-2025-02-04 22:01:07.963058 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 50% done!
-2025-02-04 22:01:08.04651 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 60% done!
-2025-02-04 22:01:08.265631 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 70% done!
-2025-02-04 22:01:08.345631 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 80% done!
-2025-02-04 22:01:08.449488 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 90% done!
-2025-02-04 22:01:08.531989 - P_evol_piv_high_H - 5C - beta 2.87 - 10 sims - 100% done!
-2025-02-04 22:01:08.594086 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims
-2025-02-04 22:01:09.103005 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 10% done!
-2025-02-04 22:01:09.161309 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 20% done!
-2025-02-04 22:01:09.257054 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 30% done!
-2025-02-04 22:01:09.316427 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 40% done!
-2025-02-04 22:01:09.374308 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 50% done!
-2025-02-04 22:01:09.446118 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 60% done!
-2025-02-04 22:01:09.533027 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 70% done!
-2025-02-04 22:01:09.585859 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 80% done!
-2025-02-04 22:01:09.640367 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 90% done!
-2025-02-04 22:01:09.694682 - P_evol_piv_high_H - 5C - beta 2.01 - 10 sims - 100% done!
-2025-02-04 22:01:09.791931 - P_evol_piv_high_H - 5C - beta 1 - 10 sims
-2025-02-04 22:01:09.822664 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 10% done!
-2025-02-04 22:01:09.855896 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 20% done!
-2025-02-04 22:01:09.886352 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 30% done!
-2025-02-04 22:01:09.920428 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 40% done!
-2025-02-04 22:01:09.954865 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 50% done!
-2025-02-04 22:01:10.347254 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 60% done!
-2025-02-04 22:01:10.381211 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 70% done!
-2025-02-04 22:01:10.415745 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 80% done!
-2025-02-04 22:01:10.449675 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 90% done!
-2025-02-04 22:01:10.494294 - P_evol_piv_high_H - 5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:41:11.331767 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-18 12:41:13.209664 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:41:14.284886 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:41:15.765421 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:41:16.673949 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:41:18.100152 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:41:19.495689 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:41:20.588769 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:41:21.866273 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:41:23.076949 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:41:24.418437 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:41:24.510086 - GM_base - 0.5C - beta 43.71 - 10 sims
-2025-02-18 12:41:25.556133 - GM_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:41:26.326051 - GM_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:41:27.24965 - GM_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:41:28.356902 - GM_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:41:29.302708 - GM_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:41:30.435898 - GM_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:41:31.68882 - GM_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:41:32.655333 - GM_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:41:33.592747 - GM_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:41:34.808114 - GM_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:41:35.085147 - P_base - 2.5C - beta 43.71 - 10 sims
-2025-02-18 12:41:35.625214 - P_base - 2.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:41:36.035291 - P_base - 2.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:41:36.639399 - P_base - 2.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:41:37.084814 - P_base - 2.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:41:37.545822 - P_base - 2.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:41:37.872004 - P_base - 2.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:41:38.282006 - P_base - 2.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:41:38.816918 - P_base - 2.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:41:39.246865 - P_base - 2.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:41:39.691505 - P_base - 2.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:41:39.81679 - GM_base - 2.5C - beta 43.71 - 10 sims
-2025-02-18 12:41:40.596218 - GM_base - 2.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:41:40.933307 - GM_base - 2.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:41:41.531957 - GM_base - 2.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:41:41.786829 - GM_base - 2.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:41:42.258663 - GM_base - 2.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:41:42.630545 - GM_base - 2.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:41:43.044643 - GM_base - 2.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:41:43.595779 - GM_base - 2.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:41:43.900078 - GM_base - 2.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:41:44.245973 - GM_base - 2.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:41:44.323025 - P_base - 5C - beta 43.71 - 10 sims
-2025-02-18 12:41:44.92233 - P_base - 5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:41:45.316845 - P_base - 5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:41:45.498777 - P_base - 5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:41:45.722383 - P_base - 5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:41:45.946989 - P_base - 5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:41:46.081725 - P_base - 5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:41:46.479975 - P_base - 5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:41:46.620938 - P_base - 5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:41:47.116095 - P_base - 5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:41:47.320754 - P_base - 5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:41:47.387116 - GM_base - 5C - beta 43.71 - 10 sims
-2025-02-18 12:41:47.8283 - GM_base - 5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:41:48.377997 - GM_base - 5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:41:48.756907 - GM_base - 5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:41:48.938211 - GM_base - 5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:41:49.166064 - GM_base - 5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:41:49.346169 - GM_base - 5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:41:49.710921 - GM_base - 5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:41:49.840747 - GM_base - 5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:41:50.014076 - GM_base - 5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:41:50.321136 - GM_base - 5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:41:50.389607 - P_base - 0.5C - beta 6.65 - 10 sims
-2025-02-18 12:41:51.489519 - P_base - 0.5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:41:52.232299 - P_base - 0.5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:41:52.958458 - P_base - 0.5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:41:53.632279 - P_base - 0.5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:41:54.337362 - P_base - 0.5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:41:55.007442 - P_base - 0.5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:41:55.748973 - P_base - 0.5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:41:56.456737 - P_base - 0.5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:41:57.354465 - P_base - 0.5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:41:58.088585 - P_base - 0.5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:41:58.242189 - GM_base - 0.5C - beta 6.65 - 10 sims
-2025-02-18 12:41:59.879643 - GM_base - 0.5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:42:00.728821 - GM_base - 0.5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:42:01.724118 - GM_base - 0.5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:42:02.672501 - GM_base - 0.5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:42:03.570421 - GM_base - 0.5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:42:04.463535 - GM_base - 0.5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:42:05.300562 - GM_base - 0.5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:42:06.262571 - GM_base - 0.5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:42:07.148162 - GM_base - 0.5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:42:08.065283 - GM_base - 0.5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:42:08.151833 - P_base - 2.5C - beta 6.65 - 10 sims
-2025-02-18 12:42:08.761592 - P_base - 2.5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:42:09.231269 - P_base - 2.5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:42:09.581304 - P_base - 2.5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:42:09.766264 - P_base - 2.5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:42:10.197556 - P_base - 2.5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:42:10.440671 - P_base - 2.5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:42:11.000187 - P_base - 2.5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:42:11.181789 - P_base - 2.5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:42:11.410628 - P_base - 2.5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:42:11.725076 - P_base - 2.5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:42:11.806039 - GM_base - 2.5C - beta 6.65 - 10 sims
-2025-02-18 12:42:12.778969 - GM_base - 2.5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:42:13.147064 - GM_base - 2.5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:42:13.627092 - GM_base - 2.5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:42:13.920936 - GM_base - 2.5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:42:14.414288 - GM_base - 2.5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:42:14.784245 - GM_base - 2.5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:42:15.129149 - GM_base - 2.5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:42:15.728818 - GM_base - 2.5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:42:16.074099 - GM_base - 2.5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:42:16.468597 - GM_base - 2.5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:42:16.544719 - P_base - 5C - beta 6.65 - 10 sims
-2025-02-18 12:42:16.653978 - P_base - 5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:42:17.290896 - P_base - 5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:42:17.437291 - P_base - 5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:42:17.581318 - P_base - 5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:42:17.812046 - P_base - 5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:42:17.933934 - P_base - 5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:42:18.034075 - P_base - 5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:42:18.178021 - P_base - 5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:42:18.304893 - P_base - 5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:42:18.663689 - P_base - 5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:42:18.725467 - GM_base - 5C - beta 6.65 - 10 sims
-2025-02-18 12:42:19.306459 - GM_base - 5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:42:19.685315 - GM_base - 5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:42:19.845234 - GM_base - 5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:42:20.225039 - GM_base - 5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:42:20.467597 - GM_base - 5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:42:20.637945 - GM_base - 5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:42:20.987716 - GM_base - 5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:42:21.158128 - GM_base - 5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:42:21.316775 - GM_base - 5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:42:21.618228 - GM_base - 5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:42:21.747063 - P_base - 0.5C - beta 1 - 10 sims
-2025-02-18 12:42:22.686754 - P_base - 0.5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:42:22.761459 - P_base - 0.5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:42:23.139552 - P_base - 0.5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:42:23.188983 - P_base - 0.5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:42:23.251475 - P_base - 0.5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:42:23.38956 - P_base - 0.5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:42:23.452866 - P_base - 0.5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:42:23.513948 - P_base - 0.5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:42:23.821417 - P_base - 0.5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:42:23.88229 - P_base - 0.5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:42:23.947071 - GM_base - 0.5C - beta 1 - 10 sims
-2025-02-18 12:42:24.904521 - GM_base - 0.5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:42:25.546675 - GM_base - 0.5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:42:25.937801 - GM_base - 0.5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:42:26.519458 - GM_base - 0.5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:42:27.187134 - GM_base - 0.5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:42:27.623274 - GM_base - 0.5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:42:28.050546 - GM_base - 0.5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:42:28.518328 - GM_base - 0.5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:42:28.90297 - GM_base - 0.5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:42:29.477771 - GM_base - 0.5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:42:29.554584 - P_base - 2.5C - beta 1 - 10 sims
-2025-02-18 12:42:29.600657 - P_base - 2.5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:42:29.776853 - P_base - 2.5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:42:30.101647 - P_base - 2.5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:42:30.136977 - P_base - 2.5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:42:30.293641 - P_base - 2.5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:42:30.339989 - P_base - 2.5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:42:30.624134 - P_base - 2.5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:42:30.671155 - P_base - 2.5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:42:30.71501 - P_base - 2.5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:42:31.015962 - P_base - 2.5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:42:31.073838 - GM_base - 2.5C - beta 1 - 10 sims
-2025-02-18 12:42:31.201293 - GM_base - 2.5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:42:31.95036 - GM_base - 2.5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:42:32.083212 - GM_base - 2.5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:42:32.269973 - GM_base - 2.5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:42:32.448793 - GM_base - 2.5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:42:32.615894 - GM_base - 2.5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:42:32.903274 - GM_base - 2.5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:42:33.290827 - GM_base - 2.5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:42:33.409577 - GM_base - 2.5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:42:33.591302 - GM_base - 2.5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:42:33.673416 - P_base - 5C - beta 1 - 10 sims
-2025-02-18 12:42:33.706752 - P_base - 5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:42:33.735257 - P_base - 5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:42:33.766808 - P_base - 5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:42:34.506683 - P_base - 5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:42:34.540107 - P_base - 5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:42:34.60757 - P_base - 5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:42:34.63988 - P_base - 5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:42:34.672678 - P_base - 5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:42:34.943314 - P_base - 5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:42:34.974717 - P_base - 5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:42:35.111379 - GM_base - 5C - beta 1 - 10 sims
-2025-02-18 12:42:35.56898 - GM_base - 5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:42:35.880711 - GM_base - 5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:42:35.965144 - GM_base - 5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:42:36.071618 - GM_base - 5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:42:36.449411 - GM_base - 5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:42:36.567998 - GM_base - 5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:42:36.883904 - GM_base - 5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:42:36.969685 - GM_base - 5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:42:37.082023 - GM_base - 5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:42:37.439998 - GM_base - 5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:47:47.262398 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-18 12:48:58.490749 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-18 12:49:32.496685 - P_base - 0.5C - beta 43.71 - 10 sims
-2025-02-18 12:49:34.39649 - P_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:49:36.394685 - P_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:49:38.04041 - P_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:49:39.795834 - P_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:49:41.629381 - P_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:49:43.321961 - P_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:49:45.054631 - P_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:49:46.70288 - P_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:49:48.36385 - P_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:49:50.184239 - P_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:49:50.270273 - GM_base - 0.5C - beta 43.71 - 10 sims
-2025-02-18 12:49:51.43546 - GM_base - 0.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:49:52.66035 - GM_base - 0.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:49:54.051595 - GM_base - 0.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:49:55.248694 - GM_base - 0.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:49:56.65594 - GM_base - 0.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:49:58.174936 - GM_base - 0.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:49:59.281037 - GM_base - 0.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:50:00.509316 - GM_base - 0.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:50:01.864577 - GM_base - 0.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:50:03.214155 - GM_base - 0.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:50:03.295195 - P_base - 2.5C - beta 43.71 - 10 sims
-2025-02-18 12:50:03.846109 - P_base - 2.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:50:04.22257 - P_base - 2.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:50:04.598285 - P_base - 2.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:50:05.059957 - P_base - 2.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:50:05.667506 - P_base - 2.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:50:06.144074 - P_base - 2.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:50:06.532369 - P_base - 2.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:50:06.919773 - P_base - 2.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:50:07.424382 - P_base - 2.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:50:07.769256 - P_base - 2.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:50:07.957282 - GM_base - 2.5C - beta 43.71 - 10 sims
-2025-02-18 12:50:09.25207 - GM_base - 2.5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:50:09.691127 - GM_base - 2.5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:50:10.023947 - GM_base - 2.5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:50:10.560769 - GM_base - 2.5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:50:10.894599 - GM_base - 2.5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:50:11.311702 - GM_base - 2.5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:50:11.849499 - GM_base - 2.5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:50:12.280579 - GM_base - 2.5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:50:12.614926 - GM_base - 2.5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:50:12.982957 - GM_base - 2.5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:50:13.058169 - P_base - 5C - beta 43.71 - 10 sims
-2025-02-18 12:50:13.222561 - P_base - 5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:50:13.798783 - P_base - 5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:50:13.937059 - P_base - 5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:50:14.11 - P_base - 5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:50:14.255748 - P_base - 5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:50:14.426348 - P_base - 5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:50:14.688956 - P_base - 5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:50:14.829836 - P_base - 5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:50:14.98694 - P_base - 5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:50:15.357871 - P_base - 5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:50:15.41781 - GM_base - 5C - beta 43.71 - 10 sims
-2025-02-18 12:50:16.025043 - GM_base - 5C - beta 43.71 - 10 sims - 10% done!
-2025-02-18 12:50:16.166529 - GM_base - 5C - beta 43.71 - 10 sims - 20% done!
-2025-02-18 12:50:16.290382 - GM_base - 5C - beta 43.71 - 10 sims - 30% done!
-2025-02-18 12:50:16.458272 - GM_base - 5C - beta 43.71 - 10 sims - 40% done!
-2025-02-18 12:50:16.654032 - GM_base - 5C - beta 43.71 - 10 sims - 50% done!
-2025-02-18 12:50:17.060515 - GM_base - 5C - beta 43.71 - 10 sims - 60% done!
-2025-02-18 12:50:17.22339 - GM_base - 5C - beta 43.71 - 10 sims - 70% done!
-2025-02-18 12:50:17.347515 - GM_base - 5C - beta 43.71 - 10 sims - 80% done!
-2025-02-18 12:50:17.541993 - GM_base - 5C - beta 43.71 - 10 sims - 90% done!
-2025-02-18 12:50:17.702521 - GM_base - 5C - beta 43.71 - 10 sims - 100% done!
-2025-02-18 12:50:17.862187 - P_base - 0.5C - beta 6.65 - 10 sims
-2025-02-18 12:50:18.790622 - P_base - 0.5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:50:19.603425 - P_base - 0.5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:50:20.401669 - P_base - 0.5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:50:21.130778 - P_base - 0.5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:50:21.673191 - P_base - 0.5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:50:22.319464 - P_base - 0.5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:50:22.866634 - P_base - 0.5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:50:23.68029 - P_base - 0.5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:50:24.397349 - P_base - 0.5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:50:25.13509 - P_base - 0.5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:50:25.210064 - GM_base - 0.5C - beta 6.65 - 10 sims
-2025-02-18 12:50:26.49722 - GM_base - 0.5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:50:27.669988 - GM_base - 0.5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:50:29.121998 - GM_base - 0.5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:50:30.242508 - GM_base - 0.5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:50:31.489817 - GM_base - 0.5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:50:32.672368 - GM_base - 0.5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:50:33.846329 - GM_base - 0.5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:50:35.136627 - GM_base - 0.5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:50:36.382675 - GM_base - 0.5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:50:37.757406 - GM_base - 0.5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:50:38.010239 - P_base - 2.5C - beta 6.65 - 10 sims
-2025-02-18 12:50:39.102435 - P_base - 2.5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:50:39.319506 - P_base - 2.5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:50:39.575551 - P_base - 2.5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:50:39.77866 - P_base - 2.5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:50:39.974848 - P_base - 2.5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:50:40.199878 - P_base - 2.5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:50:40.488007 - P_base - 2.5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:50:40.75535 - P_base - 2.5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:50:41.165747 - P_base - 2.5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:50:41.353269 - P_base - 2.5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:50:42.350292 - GM_base - 2.5C - beta 6.65 - 10 sims
-2025-02-18 12:50:42.784732 - GM_base - 2.5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:50:43.131283 - GM_base - 2.5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:50:43.682005 - GM_base - 2.5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:50:44.149231 - GM_base - 2.5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:50:44.505814 - GM_base - 2.5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:50:44.850459 - GM_base - 2.5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:50:45.299002 - GM_base - 2.5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:50:45.653098 - GM_base - 2.5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:50:46.015878 - GM_base - 2.5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:50:46.469168 - GM_base - 2.5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:50:46.55198 - P_base - 5C - beta 6.65 - 10 sims
-2025-02-18 12:50:46.713712 - P_base - 5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:50:47.092431 - P_base - 5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:50:47.234241 - P_base - 5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:50:47.372412 - P_base - 5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:50:47.543695 - P_base - 5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:50:47.657396 - P_base - 5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:50:47.791895 - P_base - 5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:50:47.895006 - P_base - 5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:50:48.229363 - P_base - 5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:50:48.395957 - P_base - 5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:50:48.65157 - GM_base - 5C - beta 6.65 - 10 sims
-2025-02-18 12:50:49.056972 - GM_base - 5C - beta 6.65 - 10 sims - 10% done!
-2025-02-18 12:50:49.211086 - GM_base - 5C - beta 6.65 - 10 sims - 20% done!
-2025-02-18 12:50:49.338703 - GM_base - 5C - beta 6.65 - 10 sims - 30% done!
-2025-02-18 12:50:49.823907 - GM_base - 5C - beta 6.65 - 10 sims - 40% done!
-2025-02-18 12:50:49.97931 - GM_base - 5C - beta 6.65 - 10 sims - 50% done!
-2025-02-18 12:50:50.345883 - GM_base - 5C - beta 6.65 - 10 sims - 60% done!
-2025-02-18 12:50:50.533708 - GM_base - 5C - beta 6.65 - 10 sims - 70% done!
-2025-02-18 12:50:50.747519 - GM_base - 5C - beta 6.65 - 10 sims - 80% done!
-2025-02-18 12:50:51.098982 - GM_base - 5C - beta 6.65 - 10 sims - 90% done!
-2025-02-18 12:50:51.226605 - GM_base - 5C - beta 6.65 - 10 sims - 100% done!
-2025-02-18 12:50:51.387654 - P_base - 0.5C - beta 1 - 10 sims
-2025-02-18 12:50:52.398988 - P_base - 0.5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:50:52.450029 - P_base - 0.5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:50:52.493046 - P_base - 0.5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:50:52.786066 - P_base - 0.5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:50:52.84441 - P_base - 0.5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:50:52.900178 - P_base - 0.5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:50:53.121002 - P_base - 0.5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:50:53.173756 - P_base - 0.5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:50:53.273869 - P_base - 0.5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:50:53.592522 - P_base - 0.5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:50:53.651546 - GM_base - 0.5C - beta 1 - 10 sims
-2025-02-18 12:50:54.602925 - GM_base - 0.5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:50:55.019107 - GM_base - 0.5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:50:55.391622 - GM_base - 0.5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:50:55.796807 - GM_base - 0.5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:50:56.279951 - GM_base - 0.5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:50:56.849362 - GM_base - 0.5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:50:57.316808 - GM_base - 0.5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:50:57.890419 - GM_base - 0.5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:50:58.248955 - GM_base - 0.5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:50:58.676338 - GM_base - 0.5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:50:58.750669 - P_base - 2.5C - beta 1 - 10 sims
-2025-02-18 12:50:58.794025 - P_base - 2.5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:50:59.104041 - P_base - 2.5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:50:59.140694 - P_base - 2.5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:50:59.568851 - P_base - 2.5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:50:59.607015 - P_base - 2.5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:50:59.650314 - P_base - 2.5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:50:59.927634 - P_base - 2.5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:50:59.967934 - P_base - 2.5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:51:00.002615 - P_base - 2.5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:51:00.035621 - P_base - 2.5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:51:00.194729 - GM_base - 2.5C - beta 1 - 10 sims
-2025-02-18 12:51:01.300474 - GM_base - 2.5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:51:01.446098 - GM_base - 2.5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:51:01.934576 - GM_base - 2.5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:51:02.103797 - GM_base - 2.5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:51:02.476166 - GM_base - 2.5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:51:02.636126 - GM_base - 2.5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:51:03.003071 - GM_base - 2.5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:51:03.250709 - GM_base - 2.5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:51:03.413432 - GM_base - 2.5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:51:03.791991 - GM_base - 2.5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:51:03.861719 - P_base - 5C - beta 1 - 10 sims
-2025-02-18 12:51:04.359915 - P_base - 5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:51:04.389116 - P_base - 5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:51:04.459038 - P_base - 5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:51:04.499896 - P_base - 5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:51:04.530595 - P_base - 5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:51:04.564233 - P_base - 5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:51:04.595577 - P_base - 5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:51:04.629995 - P_base - 5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:51:04.901988 - P_base - 5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:51:04.935967 - P_base - 5C - beta 1 - 10 sims - 100% done!
-2025-02-18 12:51:05.097937 - GM_base - 5C - beta 1 - 10 sims
-2025-02-18 12:51:05.548661 - GM_base - 5C - beta 1 - 10 sims - 10% done!
-2025-02-18 12:51:05.861983 - GM_base - 5C - beta 1 - 10 sims - 20% done!
-2025-02-18 12:51:05.934216 - GM_base - 5C - beta 1 - 10 sims - 30% done!
-2025-02-18 12:51:06.009209 - GM_base - 5C - beta 1 - 10 sims - 40% done!
-2025-02-18 12:51:06.329479 - GM_base - 5C - beta 1 - 10 sims - 50% done!
-2025-02-18 12:51:06.524127 - GM_base - 5C - beta 1 - 10 sims - 60% done!
-2025-02-18 12:51:06.600914 - GM_base - 5C - beta 1 - 10 sims - 70% done!
-2025-02-18 12:51:06.709348 - GM_base - 5C - beta 1 - 10 sims - 80% done!
-2025-02-18 12:51:07.02661 - GM_base - 5C - beta 1 - 10 sims - 90% done!
-2025-02-18 12:51:07.102812 - GM_base - 5C - beta 1 - 10 sims - 100% done!
+2025-05-14 12:40:52 - P_base - 0.5C - beta 43.7 - 10 sims
+2025-05-14 12:40:55 - P_base - 0.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:40:58 - P_base - 0.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:41:01 - P_base - 0.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:41:03 - P_base - 0.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:41:04 - P_base - 0.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:41:08 - P_base - 0.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:41:11 - P_base - 0.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:41:13 - P_base - 0.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:41:16 - P_base - 0.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:41:18 - P_base - 0.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:48:48 - P_base - 0.5C - beta 43.7 - 10 sims
+2025-05-14 12:48:51 - P_base - 0.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:48:54 - P_base - 0.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:48:57 - P_base - 0.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:49:00 - P_base - 0.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:49:02 - P_base - 0.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:49:05 - P_base - 0.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:49:07 - P_base - 0.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:49:09 - P_base - 0.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:49:12 - P_base - 0.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:49:15 - P_base - 0.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:49:19 - GM_base - 0.5C - beta 43.7 - 10 sims
+2025-05-14 12:49:21 - GM_base - 0.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:49:23 - GM_base - 0.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:49:26 - GM_base - 0.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:49:27 - GM_base - 0.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:49:29 - GM_base - 0.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:49:31 - GM_base - 0.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:49:33 - GM_base - 0.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:49:34 - GM_base - 0.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:49:35 - GM_base - 0.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:49:37 - GM_base - 0.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:49:40 - P_base - 2.5C - beta 43.7 - 10 sims
+2025-05-14 12:49:41 - P_base - 2.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:49:42 - P_base - 2.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:49:43 - P_base - 2.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:49:45 - P_base - 2.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:49:46 - P_base - 2.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:49:47 - P_base - 2.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:49:48 - P_base - 2.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:49:49 - P_base - 2.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:49:50 - P_base - 2.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:49:51 - P_base - 2.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:49:54 - GM_base - 2.5C - beta 43.7 - 10 sims
+2025-05-14 12:49:55 - GM_base - 2.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:49:56 - GM_base - 2.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:49:56 - GM_base - 2.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:49:57 - GM_base - 2.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:49:58 - GM_base - 2.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:49:58 - GM_base - 2.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:49:59 - GM_base - 2.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:50:00 - GM_base - 2.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:50:00 - GM_base - 2.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:50:01 - GM_base - 2.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:50:04 - P_base - 5C - beta 43.7 - 10 sims
+2025-05-14 12:50:05 - P_base - 5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:50:05 - P_base - 5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:50:06 - P_base - 5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:50:06 - P_base - 5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:50:07 - P_base - 5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:50:07 - P_base - 5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:50:08 - P_base - 5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:50:08 - P_base - 5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:50:09 - P_base - 5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:50:09 - P_base - 5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:50:12 - GM_base - 5C - beta 43.7 - 10 sims
+2025-05-14 12:50:12 - GM_base - 5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:50:13 - GM_base - 5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:50:13 - GM_base - 5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:50:13 - GM_base - 5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:50:14 - GM_base - 5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:50:14 - GM_base - 5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:50:14 - GM_base - 5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:50:15 - GM_base - 5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:50:15 - GM_base - 5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:50:15 - GM_base - 5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:50:18 - P_base - 0.5C - beta 6.64 - 10 sims
+2025-05-14 12:50:19 - P_base - 0.5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:50:20 - P_base - 0.5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:50:21 - P_base - 0.5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:50:22 - P_base - 0.5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:50:23 - P_base - 0.5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:50:24 - P_base - 0.5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:50:26 - P_base - 0.5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:50:27 - P_base - 0.5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:50:28 - P_base - 0.5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:50:30 - P_base - 0.5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:50:33 - GM_base - 0.5C - beta 6.64 - 10 sims
+2025-05-14 12:50:35 - GM_base - 0.5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:50:36 - GM_base - 0.5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:50:38 - GM_base - 0.5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:50:39 - GM_base - 0.5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:50:41 - GM_base - 0.5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:50:42 - GM_base - 0.5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:50:43 - GM_base - 0.5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:50:45 - GM_base - 0.5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:50:47 - GM_base - 0.5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:50:48 - GM_base - 0.5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:50:51 - P_base - 2.5C - beta 6.64 - 10 sims
+2025-05-14 12:50:51 - P_base - 2.5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:50:52 - P_base - 2.5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:50:52 - P_base - 2.5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:50:52 - P_base - 2.5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:50:53 - P_base - 2.5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:50:54 - P_base - 2.5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:50:54 - P_base - 2.5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:50:54 - P_base - 2.5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:50:55 - P_base - 2.5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:50:56 - P_base - 2.5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:50:59 - GM_base - 2.5C - beta 6.64 - 10 sims
+2025-05-14 12:51:00 - GM_base - 2.5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:51:00 - GM_base - 2.5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:51:01 - GM_base - 2.5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:51:01 - GM_base - 2.5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:51:02 - GM_base - 2.5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:51:02 - GM_base - 2.5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:51:03 - GM_base - 2.5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:51:04 - GM_base - 2.5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:51:04 - GM_base - 2.5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:51:05 - GM_base - 2.5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:51:07 - P_base - 5C - beta 6.64 - 10 sims
+2025-05-14 12:51:08 - P_base - 5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:51:08 - P_base - 5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:51:08 - P_base - 5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:51:08 - P_base - 5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:51:09 - P_base - 5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:51:09 - P_base - 5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:51:09 - P_base - 5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:51:10 - P_base - 5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:51:10 - P_base - 5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:51:10 - P_base - 5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:51:14 - GM_base - 5C - beta 6.64 - 10 sims
+2025-05-14 12:51:14 - GM_base - 5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:51:14 - GM_base - 5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:51:15 - GM_base - 5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:51:15 - GM_base - 5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:51:15 - GM_base - 5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:51:16 - GM_base - 5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:51:16 - GM_base - 5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:51:16 - GM_base - 5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:51:17 - GM_base - 5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:51:17 - GM_base - 5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:51:19 - P_base - 0.5C - beta 1.17 - 10 sims
+2025-05-14 12:56:15 - P_base - 0.5C - beta 43.7 - 10 sims
+2025-05-14 12:56:18 - P_base - 0.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:56:21 - P_base - 0.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:56:25 - P_base - 0.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:56:32 - P_base - 0.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:56:36 - P_base - 0.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:56:42 - P_base - 0.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:56:48 - P_base - 0.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:56:54 - P_base - 0.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:57:02 - P_base - 0.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:57:08 - P_base - 0.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:57:16 - GM_base - 0.5C - beta 43.7 - 10 sims
+2025-05-14 12:57:21 - GM_base - 0.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:57:24 - GM_base - 0.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:57:28 - GM_base - 0.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:57:31 - GM_base - 0.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:57:35 - GM_base - 0.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:57:39 - GM_base - 0.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:57:43 - GM_base - 0.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:57:47 - GM_base - 0.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:57:50 - GM_base - 0.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:57:54 - GM_base - 0.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:58:06 - P_base - 2.5C - beta 43.7 - 10 sims
+2025-05-14 12:58:09 - P_base - 2.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:58:12 - P_base - 2.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:58:15 - P_base - 2.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:58:17 - P_base - 2.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:58:20 - P_base - 2.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:58:23 - P_base - 2.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:58:26 - P_base - 2.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:58:29 - P_base - 2.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:58:31 - P_base - 2.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:58:33 - P_base - 2.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:58:41 - GM_base - 2.5C - beta 43.7 - 10 sims
+2025-05-14 12:58:42 - GM_base - 2.5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:58:44 - GM_base - 2.5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:58:45 - GM_base - 2.5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:58:45 - GM_base - 2.5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:58:46 - GM_base - 2.5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:58:47 - GM_base - 2.5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:58:48 - GM_base - 2.5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:58:48 - GM_base - 2.5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:58:49 - GM_base - 2.5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:58:50 - GM_base - 2.5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:58:54 - P_base - 5C - beta 43.7 - 10 sims
+2025-05-14 12:58:54 - P_base - 5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:58:55 - P_base - 5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:58:55 - P_base - 5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:58:56 - P_base - 5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:58:56 - P_base - 5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:58:57 - P_base - 5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:58:57 - P_base - 5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:58:58 - P_base - 5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:58:58 - P_base - 5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:58:59 - P_base - 5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:59:03 - GM_base - 5C - beta 43.7 - 10 sims
+2025-05-14 12:59:03 - GM_base - 5C - beta 43.7 - 10 sims - 10% done!
+2025-05-14 12:59:04 - GM_base - 5C - beta 43.7 - 10 sims - 20% done!
+2025-05-14 12:59:04 - GM_base - 5C - beta 43.7 - 10 sims - 30% done!
+2025-05-14 12:59:04 - GM_base - 5C - beta 43.7 - 10 sims - 40% done!
+2025-05-14 12:59:05 - GM_base - 5C - beta 43.7 - 10 sims - 50% done!
+2025-05-14 12:59:05 - GM_base - 5C - beta 43.7 - 10 sims - 60% done!
+2025-05-14 12:59:06 - GM_base - 5C - beta 43.7 - 10 sims - 70% done!
+2025-05-14 12:59:06 - GM_base - 5C - beta 43.7 - 10 sims - 80% done!
+2025-05-14 12:59:06 - GM_base - 5C - beta 43.7 - 10 sims - 90% done!
+2025-05-14 12:59:07 - GM_base - 5C - beta 43.7 - 10 sims - 100% done!
+2025-05-14 12:59:09 - P_base - 0.5C - beta 6.64 - 10 sims
+2025-05-14 12:59:11 - P_base - 0.5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:59:13 - P_base - 0.5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:59:14 - P_base - 0.5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:59:15 - P_base - 0.5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:59:17 - P_base - 0.5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:59:18 - P_base - 0.5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:59:19 - P_base - 0.5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:59:20 - P_base - 0.5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:59:21 - P_base - 0.5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:59:22 - P_base - 0.5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:59:25 - GM_base - 0.5C - beta 6.64 - 10 sims
+2025-05-14 12:59:27 - GM_base - 0.5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:59:28 - GM_base - 0.5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:59:29 - GM_base - 0.5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:59:31 - GM_base - 0.5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:59:33 - GM_base - 0.5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:59:34 - GM_base - 0.5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:59:36 - GM_base - 0.5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:59:37 - GM_base - 0.5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:59:39 - GM_base - 0.5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:59:40 - GM_base - 0.5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:59:43 - P_base - 2.5C - beta 6.64 - 10 sims
+2025-05-14 12:59:44 - P_base - 2.5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:59:45 - P_base - 2.5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:59:45 - P_base - 2.5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 12:59:46 - P_base - 2.5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 12:59:46 - P_base - 2.5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 12:59:47 - P_base - 2.5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 12:59:47 - P_base - 2.5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 12:59:48 - P_base - 2.5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 12:59:49 - P_base - 2.5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 12:59:49 - P_base - 2.5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 12:59:57 - GM_base - 2.5C - beta 6.64 - 10 sims
+2025-05-14 12:59:58 - GM_base - 2.5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 12:59:58 - GM_base - 2.5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 12:59:59 - GM_base - 2.5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 13:00:00 - GM_base - 2.5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 13:00:01 - GM_base - 2.5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 13:00:02 - GM_base - 2.5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 13:00:02 - GM_base - 2.5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 13:00:03 - GM_base - 2.5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 13:00:04 - GM_base - 2.5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 13:00:04 - GM_base - 2.5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 13:00:07 - P_base - 5C - beta 6.64 - 10 sims
+2025-05-14 13:00:09 - P_base - 5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 13:00:10 - P_base - 5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 13:00:10 - P_base - 5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 13:00:10 - P_base - 5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 13:00:10 - P_base - 5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 13:00:11 - P_base - 5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 13:00:11 - P_base - 5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 13:00:11 - P_base - 5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 13:00:12 - P_base - 5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 13:00:12 - P_base - 5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 13:00:15 - GM_base - 5C - beta 6.64 - 10 sims
+2025-05-14 13:00:16 - GM_base - 5C - beta 6.64 - 10 sims - 10% done!
+2025-05-14 13:00:16 - GM_base - 5C - beta 6.64 - 10 sims - 20% done!
+2025-05-14 13:00:16 - GM_base - 5C - beta 6.64 - 10 sims - 30% done!
+2025-05-14 13:00:17 - GM_base - 5C - beta 6.64 - 10 sims - 40% done!
+2025-05-14 13:00:17 - GM_base - 5C - beta 6.64 - 10 sims - 50% done!
+2025-05-14 13:00:18 - GM_base - 5C - beta 6.64 - 10 sims - 60% done!
+2025-05-14 13:00:18 - GM_base - 5C - beta 6.64 - 10 sims - 70% done!
+2025-05-14 13:00:19 - GM_base - 5C - beta 6.64 - 10 sims - 80% done!
+2025-05-14 13:00:19 - GM_base - 5C - beta 6.64 - 10 sims - 90% done!
+2025-05-14 13:00:19 - GM_base - 5C - beta 6.64 - 10 sims - 100% done!
+2025-05-14 13:00:20 - P_base - 0.5C - beta 1.17 - 10 sims
