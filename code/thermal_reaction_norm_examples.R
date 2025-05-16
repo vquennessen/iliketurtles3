@@ -10,28 +10,33 @@ hatch_success_k <- -1.7                   # logistic by temp - beta
 hatch_success_t0 <- 32.7                  # logistic by temp - t0
 
 # temperatures
-x <- seq(from = 20, to = 40, length = 100)
+x <- seq(from = 20, to = 40, by = 0.01)
 
 # patricio et al.
 t_piv1 <- 29.2
-k1 <- -1.4
-y1 <- 1/(1 + exp(-k1*(x - t_piv1)))
+# k1 <- -1.4 # Patricio et al 2017, TRT 
+k1 <- -1.34
+y1 <- round(1/(1 + exp(-k1*(x - t_piv1))), 5)
 
 # embryogrowth (all greens)
 t_piv2 <- 29.2
-k2 <- -0.56
-y2 <- 1/(1 + exp(-k2*(x - t_piv2)))
+k2 <- -0.561
+y2 <- round(1/(1 + exp(-k2*(x - t_piv2))), 5)
 
 # emergence success
-ES <- hatch_success_A / (1 + exp(-hatch_success_k * (x - hatch_success_t0)))
+# ES <- hatch_success_A / (1 + exp(-hatch_success_k * (x - hatch_success_t0)))
 
 
 # make dataframe
 TRN <- data.frame(Temperature = x,
                   Population = rep(c('West Africa', 
-                                     'Suriname', 
-                                     'Emergence Success'), each = 100),
-                  Proportion_Male = c(y1, y2, ES))
+                                     'Suriname'
+                                     # 'Emergence Success'
+                                     ), each = length(x)),
+                  Proportion_Male = c(y1, 
+                                      y2 
+                                      # ES
+                                      ))
 
 # WA <- subset(TRN, Model == 'West Africa')
 # SN <- subset(TRN, Model == 'Suriname')
@@ -44,15 +49,19 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
   geom_vline(xintercept = 31.8, col = 'gray80', lwd = 1, lty = 1) +
   geom_vline(xintercept = 27, col = '#6600FF', lty = 5, 
              lwd = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = 31.3, col = '#6600FF', lty = 5, 
+  geom_vline(xintercept = 31.4, col = '#6600FF', lty = 5, 
              lwd = 0.75, alpha = 0.5) +
   geom_vline(xintercept = 34.4, col = '#FF3300', lty = 4, 
              lwd = 0.75, alpha = 0.5) +
   geom_vline(xintercept = 23.8, col = '#FF3300', lty = 4, 
              lwd = 0.75, alpha = 0.5) +
   geom_line(lwd = 2) +
-  scale_color_manual(values = c('#33CC33', '#FF3300', '#6600FF')) +
-  scale_linetype_manual(values = c(1, 4, 5)) +
+  scale_color_manual(values = c(
+    # '#33CC33', 
+                                '#FF3300', '#6600FF')) +
+  scale_linetype_manual(values = c(
+    # 1, 
+    4, 5)) +
   ylab('Proportion hatchlings male \n Hatchling emergence success') +
   xlab('Temperature (\u00B0C)') +
   theme_bw() +
@@ -79,7 +88,7 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
 
 fig
 
-ggsave("figures/thermal_reaction_norms.png", 
-       plot = last_plot(), 
-       height = 5, 
-       width = 8)
+# ggsave("figures/thermal_reaction_norms.png", 
+#        plot = last_plot(), 
+#        height = 5, 
+#        width = 8)

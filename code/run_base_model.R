@@ -5,7 +5,7 @@ run_base_model <- function(arguments) {
   
   
   ###### model inputs ##########################################################
-
+  
   # function arguments
   model     <- arguments$Var1
   scenario  <- arguments$Var2
@@ -15,24 +15,30 @@ run_base_model <- function(arguments) {
   # intensity <- arguments$Var6
   # frequency <- arguments$Var7
   
-  # troubleshooting
-  model <- 'P_base'
-  scenario <- '0.5C'
-  beta <- 1.17
-  nsims <- 10  
+  # write to progress text file
+  update <- paste(lubridate::now(), ' - ', model, ' - ', scenario, 'C - beta ', 
+                  beta, ' - ', nsims, ' sims', sep = '')
+  write(update, file = 'progress.txt', append = TRUE)
   
+  # # troubleshooting
+  # model <- 'P_base'
+  # scenario <- 0.5
+  # beta <- 43.7
+  # nsims <- 10
+  # 
   # model parameters to modulate
-  temp_mu <- 31.80                        # base incubation temp mean
+  temp_mu <- 30.5                         # base incubation temp mean
   climate_stochasticity <- TRUE           # whether or not to add in
-  noise <- 'White'                          # noise: White or Red
+  noise <- 'White'                        # noise: White or Red
   temp_sd <- 0.84                         # base incubation temp sd
   AC <- 0.5                               # autocorrelation coefficient
   
   # turtle demographics
-  max_age <- 85                                         # lifespan
-  F_survival_years <- c(1, 2, 7, 12, (max_age - (1 + 2 + 7 + 12)))                 # years per stage - F
+  max_age <- 85                             # lifespan
+  # max_age - (1 + 2 + 7 + 12)              # years for last ageclass
+  F_survival_years <- c(1, 2, 7, 12, 63)                # years per stage - F
   F_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - F
-  M_survival_years <- c(1, 2, 7, 12, (max_age - (1 + 2 + 7 + 12)))                 # years per stage - M
+  M_survival_years <- c(1, 2, 7, 12, 63)                # years per stage - M
   M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
   age_maturity_mu <- 25                     # age at first reproduction, mean
   age_maturity_sd <- 2.5                    # age at first reproduction, SD
@@ -51,7 +57,7 @@ run_base_model <- function(arguments) {
   ##### parameters that are model and scenario dependent #######################
   if (model == 'P_base') {
     
-    k_piv <- -1.4
+    k_piv <- -1.34
     evolution_piv <- FALSE 
     h2_piv <- NULL
     ag_var_piv <- NULL                       
@@ -64,7 +70,7 @@ run_base_model <- function(arguments) {
   
   if (model == 'P_evol_piv') {
     
-    k_piv <- -1.4
+    k_piv <- -1.34
     evolution_piv <- TRUE 
     h2_piv <- 0.135
     ag_var_piv <- 0.017
@@ -77,7 +83,7 @@ run_base_model <- function(arguments) {
   
   if (model == 'P_evol_piv_high_H') {
     
-    k_piv <- -1.4
+    k_piv <- -1.34
     evolution_piv <- TRUE 
     h2_piv <- 0.351
     ag_var_piv <- 0.017
@@ -90,7 +96,7 @@ run_base_model <- function(arguments) {
   
   if (model == 'P_evol_threshold') {
     
-    k_piv <- -1.4
+    k_piv <- -1.34
     evolution_piv <- FALSE 
     h2_piv <- NULL
     ag_var_piv <- NULL                       
@@ -103,7 +109,7 @@ run_base_model <- function(arguments) {
   
   if (model == 'P_evol_threshold_high_H') {
     
-    k_piv <- -1.4
+    k_piv <- -1.34
     evolution_piv <- FALSE 
     h2_piv <- NULL
     ag_var_piv <- NULL                       
@@ -239,11 +245,6 @@ run_base_model <- function(arguments) {
   
   ##### initialize output ######################################################
   
-  # write to progress text file
-  update <- paste(Sys.time(), ' - ', model, ' - ', scenario, 'C - beta ', 
-                  beta, ' - ', nsims, ' sims', sep = '')
-  write(update, file = 'progress.txt', append = TRUE)
-  
   # initialize yield and biomass arrays
   
   # initialize population size array by age class and sex
@@ -266,10 +267,10 @@ run_base_model <- function(arguments) {
                     dim = c(years, nsims)) 
   
   sims_piv <- array(rep(NA, times = years * nsims), 
-                       dim = c(years, nsims))
-    
+                    dim = c(years, nsims))
+  
   sims_threshold <- array(rep(NA, times = years * nsims), 
-                            dim = c(years, nsims))
+                          dim = c(years, nsims))
   
   ##### run sims and save output ###############################################
   
@@ -298,7 +299,7 @@ run_base_model <- function(arguments) {
     
     # write to progress text file
     if ((i/nsims*100) %% 10 == 0) {
-      update <- paste(Sys.time(), ' - ', model, ' - ', scenario, 'C - beta ', 
+      update <- paste(lubridate::now(), ' - ', model, ' - ', scenario, 'C - beta ', 
                       beta, ' - ', nsims, ' sims - ', i/nsims*100, '% done!', 
                       sep = '')
       write(update, file = 'progress.txt', append = TRUE)
@@ -328,7 +329,7 @@ run_base_model <- function(arguments) {
   save(sims_abundance_total, file = filepath4)
   save(sims_abundance_mature, file = filepath5)
   save(sims_OSR, file = filepath6)
-
+  
   if (evolution_piv == TRUE) {
     
     filepath7 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
@@ -348,4 +349,3 @@ run_base_model <- function(arguments) {
   
 }
 
-    

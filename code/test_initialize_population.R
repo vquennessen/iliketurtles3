@@ -10,18 +10,20 @@ library(ggplot2)
 # scenario parameters
 model <- 'P_base'
 scenario <- '0.5C'
-beta <- 2.86
+beta <- 1.17
 burn_in <- 5000
 
 # model parameters to modulate
-temp_mu <- 31.80                        # base incubation temp mean
-temp_sd <- 0.84
+# temp_mu <- 31.80                        # FdN alone
+temp_mu <- 30.5                         # mean of FdN, P, GM
+
+temp_sd <- 0
 
 # turtle demographics
 max_age <- 85                                         # lifespan
-F_survival_years <- c(1, 2, 7, 12, (max_age - (1 + 2 + 7 + 12)))                 # years per stage - F
+F_survival_years <- c(1, 2, 7, 12, 63)                 # years per stage - F
 F_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - F
-M_survival_years <- c(1, 2, 7, 12, (max_age - (1 + 2 + 7 + 12)))                 # years per stage - M
+M_survival_years <- c(1, 2, 7, 12, 63)                 # years per stage - M
 M_survival_values <- c(0.35, 0.8, 0.85, 0.85, 0.799)  # survival per stage - M
 age_maturity_mu <- 25                     # age at first reproduction, mean
 age_maturity_sd <- 2.5                    # age at first reproduction, SD
@@ -37,7 +39,9 @@ T_piv <- 29.2                             # thermal reaction norm midpoint
 F_initial <- 170                          # initial adult F
 M_initial <- 30                           # initial adult M
 
-if (model == 'P_base') { k_piv <- -1.4 }
+# if (model == 'P_base') { k_piv <- -1.4 }
+if (model == 'P_base') { k_piv <- -1.34 }
+
 if (model == 'GM_base') { k_piv <- -0.561 }
 
 ##### maturity ogive
@@ -62,12 +66,12 @@ N <- array(rep(0, times = 2 * max_age * burn_in),
 N[ , 1, 1] <- 10000
 # not hatchlings
 N[ , 2:max_age, 1] <- 10
- 
-   # temperatures
-    white_noise <- rnorm(n = burn_in, mean = 0, sd = temp_sd)
-    temperatures <- temp_mu + white_noise
 
-    # move population forward in time burn_in years
+# temperatures
+white_noise <- rnorm(n = burn_in, mean = 0, sd = temp_sd)
+temperatures <- temp_mu + white_noise
+
+# move population forward in time burn_in years
 for (y in 2:burn_in) {
   
   # females
@@ -95,7 +99,7 @@ for (y in 2:burn_in) {
   # n_breeding_M <- round(sum(all_mature_M) / M_remigration_int)
   
   n_breeding_F <- round(sum(round(N[1, , y] * M), na.rm = TRUE) / F_remigration_int)
-
+  
   # males only breed every M_remigration_int years
   n_breeding_M <- round(sum(round(N[2, , y] * M), na.rm = TRUE) / M_remigration_int)
   
@@ -116,7 +120,7 @@ for (y in 2:burn_in) {
     # number of eggs
     eggs <- sum(n_breeding_F * round(nests_mu) * round(eggs_mu))
     
-
+    
     
     # hatching success
     hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (temperatures[y] - hatch_success_t0)))
@@ -146,10 +150,10 @@ for (y in 2:burn_in) {
 
 # plot results - females
 females_raw <- as.data.frame(N[1, , ])
-View(females_raw)
+# View(females_raw)
 
 males_raw <- as.data.frame(N[2, , ])
-View(males_raw)
+# View(males_raw)
 
 females <- females_raw %>%
   mutate(Age = 1:max_age) %>%

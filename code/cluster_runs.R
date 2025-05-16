@@ -3,6 +3,9 @@
 # load libraries
 library(parallel)
 library(dplyr)
+library(tidyr)
+library(magrittr)
+library(readr)
 
 # set working directory
 # setwd('~/Projects/iliketurtles3/code')
@@ -44,7 +47,7 @@ frequency <- c(1)
 years <- 100
 
 # number of simulations to run
-num_sims <- c(10000)
+num_sims <- c(1000)
 
 # make dataframe of all combinations of arguments
 # DF <- expand.grid(models, scenarios, betas, intensity, frequency, years, num_sims)

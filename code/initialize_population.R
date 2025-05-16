@@ -31,23 +31,23 @@ initialize_population <- function(beta, burn_in, max_age,
     
     ##### reproduction
     
-    # females only breed every F_remigration_int years
-    all_mature_F <- rbinom(n = max_age, 
-                           size = round(N[1, , y-1]), 
-                           prob = M)
-    
-    n_breeding_F <- round(all_mature_F / F_remigration_int)
-    
-    all_mature_M <- rbinom(n = max_age, 
-                           size = round(N[2, , y-1]), 
-                           prob = M)
-    
-    n_breeding_M <- round(all_mature_M / M_remigration_int)
-    
-    # n_breeding_F <- round(sum(round(N[1, , y] * M), na.rm = TRUE) / F_remigration_int)
+    # # females only breed every F_remigration_int years
+    # all_mature_F <- rbinom(n = max_age, 
+    #                        size = round(N[1, , y - 1]), 
+    #                        prob = M)
     # 
-    # # males only breed every M_remigration_int years
-    # n_breeding_M <- round(sum(round(N[2, , y] * M), na.rm = TRUE) / M_remigration_int)
+    # n_breeding_F <- round(all_mature_F / F_remigration_int)
+    # 
+    # all_mature_M <- rbinom(n = max_age, 
+    #                        size = round(N[2, , y-1]), 
+    #                        prob = M)
+    # 
+    # n_breeding_M <- round(all_mature_M / M_remigration_int)
+    
+    n_breeding_F <- round(sum(round(N[1, , y] * M), na.rm = TRUE) / F_remigration_int)
+
+    # males only breed every M_remigration_int years
+    n_breeding_M <- round(sum(round(N[2, , y] * M), na.rm = TRUE) / M_remigration_int)
     
     # as long as there is at least one mature female and one mature male:
     if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
@@ -121,7 +121,7 @@ initialize_population <- function(beta, burn_in, max_age,
     mutate(TotalPropFemale = Female/Total) %>%
     mutate(TotalPropMale = Male/Total)
   
-  save(abundances, file = '../output/initial_population.Rda')
+  # save(abundances, file = '../output/initial_population.Rda')
   
   # final SAD for total population (both sexes)
   final_total_SAD <- abundances %>%
