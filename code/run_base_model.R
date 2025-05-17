@@ -17,7 +17,7 @@ run_base_model <- function(arguments) {
   
   # write to progress text file
   update <- paste(lubridate::now(), ' - ', model, ' - ', scenario, 'C - beta ', 
-                  beta, ' - ', nsims, ' sims', sep = '')
+                  beta, ' - ', nsims, ' sims - ', years, ' years', sep = '')
   write(update, file = 'progress.txt', append = TRUE)
   
   # # troubleshooting
@@ -300,8 +300,8 @@ run_base_model <- function(arguments) {
     # write to progress text file
     if ((i/nsims*100) %% 10 == 0) {
       update <- paste(lubridate::now(), ' - ', model, ' - ', scenario, 'C - beta ', 
-                      beta, ' - ', nsims, ' sims - ', i/nsims*100, '% done!', 
-                      sep = '')
+                      beta, ' - ', nsims, ' sims - ', years, ' years -',  
+                      i/nsims*100, , '% done!', sep = '')
       write(update, file = 'progress.txt', append = TRUE)
       
     }

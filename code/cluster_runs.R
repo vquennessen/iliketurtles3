@@ -44,7 +44,7 @@ intensity <- c(0.1)
 frequency <- c(1)
 
 # years to run the model for
-years <- 100
+years <- 200
 
 # number of simulations to run
 num_sims <- c(1000)
