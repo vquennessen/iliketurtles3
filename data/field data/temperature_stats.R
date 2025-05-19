@@ -127,7 +127,7 @@ for (s in 1:length(seasons)) {
   
 }
 
-save(incubation, file = '../../data/incubation.Rdata')
+save(incubation, file = 'incubation_temps.Rda')
 
 ##### stats ####################################################################
 

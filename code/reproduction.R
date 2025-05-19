@@ -38,6 +38,42 @@ reproduction <- function(N, M, y, beta, max_age,
                          mean = nests_mu, 
                          sd = nests_sd))
     
+    # calculate nest temperatures
+    
+    # if we're including climate stochasticity in the model
+    if (climate_stochasticity == TRUE) {
+
+      white_noise <- rnorm(n = sum(nests, na.rm = TRUE), mean = 0, sd = temp_sd)
+
+      if (noise == 'White') {
+
+        # generate stochastic temperatures from means given temp_sd
+        temperatures <- temp_mus + white_noise
+
+      }
+
+      if (noise == 'Red') {
+
+        # initialize deviations
+        deviations <- rep(NA, times = length(nests))
+
+        # first deviation term
+        deviations[1] <- rnorm(n = 1, mean = 0, sd = temp_sd) + white_noise[1]
+
+        # autocorrelated deviation series
+        for (i in 2:years) {
+
+          deviations[i] <- AC * deviations[i - 1] + white_noise[i]
+
+        }
+
+        temperatures <- temp_mus + deviations
+
+      }
+
+      # if no climate stochasticity, the temperatures are just the means
+    } else { temperatures <- temp_mus }
+    
     # replace any number < 1 with +1
     nests[which(nests < 1)] <- 1
     

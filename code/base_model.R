@@ -22,7 +22,7 @@ base_model <- function(scenario, beta, years, max_age,
                                    temp_sd, AC)
   
   N                  <- init_output[[1]]    # population size array
-  temperatures       <- init_output[[2]]    # incubation temperatures
+  temp_mus           <- init_output[[2]]    # incubation temperatures
   G_piv              <- init_output[[3]]    # genotypes array
   P_piv              <- init_output[[4]]    # expected phenotypes array
   Gamma_piv          <- init_output[[5]]    # error around expected genotype
@@ -63,55 +63,55 @@ base_model <- function(scenario, beta, years, max_age,
       
     }
     
-    # if temp is over threshold temperature, then hatching success is zero, 
-    # so there's no age 1, skip reproduction step
-    if (temperatures[y] > Threshold_temps[y]) { 
-      N[1, 1, y] <- 0
-      N[2, 1, y] <- 0 } else {
-        
-        # reproduction
-        rep_output <- reproduction(N, M, y, beta, max_age,
-                                   F_remigration_int, M_remigration_int,
-                                   nests_mu, nests_sd, eggs_mu, eggs_sd, 
-                                   hatch_success_A, hatch_success_k, 
-                                   hatch_success_t0, temperatures,
-                                   k_piv, Pivotal_temps, Threshold_temps)
-        
-        # add recruits to population size array
-        N[1, 1, y]       <- rep_output[[1]]
-        N[2, 1, y]       <- rep_output[[2]]
-        OSR[y]           <- rep_output[[3]]
-        
-      }
+    # # if temp is over threshold temperature, then hatching success is zero, 
+    # # so there's no age 1, skip reproduction step
+    # if (temperatures[y] > Threshold_temps[y]) { 
+    #   N[1, 1, y] <- 0
+    #   N[2, 1, y] <- 0 } else {
     
-    # break out of loop if there are zero males or females at any age
-    if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], na.rm = TRUE) < 0.5) {
-      break }
+    # reproduction
+    rep_output <- reproduction(N, M, y, beta, max_age,
+                               F_remigration_int, M_remigration_int,
+                               nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                               hatch_success_A, hatch_success_k, 
+                               hatch_success_t0, temperatures,
+                               k_piv, Pivotal_temps, Threshold_temps)
+    
+    # add recruits to population size array
+    N[1, 1, y]       <- rep_output[[1]]
+    N[2, 1, y]       <- rep_output[[2]]
+    OSR[y]           <- rep_output[[3]]
+    
   }
   
-  ##### output #################################################################
-  
-  # create abundance array
-  abundance_F <- colSums(N[1, , ], dims = 1)
-  abundance_M <- colSums(N[2, , ], dims = 1)
-  abundance_total <- colSums(N, dims = 2)
-  abundance_mature <- colSums(round(N[, , ]*M, 2), dims = 2)
-  
-  # output N and abundance arrays
-  
-  if (evolution_piv == FALSE) { Pivotal_temps <- NA }
-  
-  if (evolution_threshold == FALSE) { Threshold_temps <- NA }
-    
-    output <- list(N, 
-                   abundance_F, 
-                   abundance_M, 
-                   abundance_total, 
-                   abundance_mature, 
-                   OSR,
-                   Pivotal_temps, 
-                   Threshold_temps)
-  
-  return(output)
-  
+  # break out of loop if there are zero males or females at any age
+  if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], na.rm = TRUE) < 0.5) {
+    break }
+}
+
+##### output #################################################################
+
+# create abundance array
+abundance_F <- colSums(N[1, , ], dims = 1)
+abundance_M <- colSums(N[2, , ], dims = 1)
+abundance_total <- colSums(N, dims = 2)
+abundance_mature <- colSums(round(N[, , ]*M, 2), dims = 2)
+
+# output N and abundance arrays
+
+if (evolution_piv == FALSE) { Pivotal_temps <- NA }
+
+if (evolution_threshold == FALSE) { Threshold_temps <- NA }
+
+output <- list(N, 
+               abundance_F, 
+               abundance_M, 
+               abundance_total, 
+               abundance_mature, 
+               OSR,
+               Pivotal_temps, 
+               Threshold_temps)
+
+return(output)
+
 }
