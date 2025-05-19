@@ -9,6 +9,7 @@ library(lubridate)
 library(readxl)
 library(readr)
 library(ggplot2)
+library(car)
 
 ##### create incubation data frame #############################################
 
@@ -139,20 +140,78 @@ sd_CTE <- data %>%
   summarise(sd(CTE, na.rm = TRUE))
 # sd = 0.8333391
   
-ggplot(data, aes(x = as.factor(month), y = CTE, col = as.factor(season))) +
+# density plot
+incubation %>%
+  filter(season != 1) %>%
+  filter(month %in% c(2, 3, 4)) %>%
+  ggplot(aes(x = CTE, fill = factor(season))) + 
+  geom_density(aes(group = factor(season), alpha = 0.5))
+
+# box and whisker plot by month
+ggplot(data, aes(x = as.factor(month), y = CTE, fill = as.factor(season))) +
   geom_boxplot()
 
-stats <- data %>%
-  group_by(month) %>%
+# season stats
+season_stats <- incubation %>%
+  group_by(season) %>%
   summarise(mean = mean(CTE), 
             median = median(CTE), 
-            count = n()) %>%
-  mutate(frequency = count/sum(count))
+            var = var(CTE))
 
-# calculate average temperature given proportion and CTE in each month
-sum(stats$mean*stats$frequency)
-# 31.80488
-# with median = 31.8335
+# season  mean    median    var
+# 1       32.2    32.2      0.311
+# 2       32.4    32.4      0.628
+# 3       31.8    32.1      1.20 
+# 4       31.5    31.6      0.356
+
+season_and_month_stats <- data %>%
+  group_by(season, month) %>%
+  summarise(mean = mean(CTE), 
+            median = median(CTE), 
+            count = n(), 
+            variance = var(CTE)) %>%
+  mutate(frequency = count/sum(count)) %>%
+  group_by(season) %>%
+  mutate(month_mean_temp = mean*frequency) %>%
+  mutate(month_median_temp = median*frequency) 
+
+season_stats <- season_and_month_stats %>%
+  group_by(season) %>%
+  summarise(across(c(month_mean_temp, month_median_temp), sum))
+
+##### variation values to use ##################################################
+
+# between clutch variation (within seasons) = mean(season variances)
+mean(season_stats$var, na.rm = TRUE)
+# 0.6239801
+
+# between season variation = var(season means)
+var(season_stats$mean, na.rm = TRUE)
+# 0.1328419
+
+##### are variances significantly different? ##### YES #########################
+leveneTest(CTE ~ factor(season), incubation)
+
+# Levene's Test for Homogeneity of Variance (center = median)
+#        Df F value    Pr(>F)    
+# group   3  9.3015 8.527e-06 ***
+#       206                      
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+bartlett.test(CTE ~ factor(season), incubation)
+# Bartlett test of homogeneity of variances
+# 
+# data:  CTE by factor(season)
+# Bartlett's K-squared = 28.101, df = 3, p-value = 3.46e-06
+# 
+fligner.test(CTE ~ factor(season), incubation)
+# 	Fligner-Killeen test of homogeneity of variances
+# 
+# data:  CTE by factor(season)
+# Fligner-Killeen:med chi-squared = 23.187, df = 3, p-value = 3.692e-05
+
+##### hatching success stuff ###################################################
 
 # calculate relationship between CTE and hatching success
 data2 <- incubation %>%
