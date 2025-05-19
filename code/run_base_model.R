@@ -29,8 +29,9 @@ run_base_model <- function(arguments) {
   # model parameters to modulate
   temp_mu <- 30.5                         # base incubation temp mean
   climate_stochasticity <- TRUE           # whether or not to add in
+  season_temp_sd <- 0.364                 # variance in temp at season level
+  clutch_temp_sd <- 0.790                 # variance in temp at clutch level
   noise <- 'White'                        # noise: White or Red
-  temp_sd <- 0.84                         # base incubation temp sd
   AC <- 0.5                               # autocorrelation coefficient
   
   # turtle demographics
@@ -44,10 +45,10 @@ run_base_model <- function(arguments) {
   age_maturity_sd <- 2.5                    # age at first reproduction, SD
   F_remigration_int <- 3.87                 # remigration interval - females
   M_remigration_int <- 1.47                 # remigration interval - males
-  nests_mu <- 4.95                          # mean # of nests/F/season
-  nests_sd <- 2.09                          # sd of # of nests/F/season
-  eggs_mu <- 100.58                         # mean number of eggs/nest - 100.58
-  eggs_sd <- 22.61                          # sd of number of eggs/nest - 22.61
+  clutches_mu <- 4.95                       # mean # of clutches/F/season
+  clutches_sd <- 2.09                       # sd of # of clutches/F/season
+  eggs_mu <- 100.58                         # mean number of eggs/clutch - 100.58
+  eggs_sd <- 22.61                          # sd of number of eggs/clutch - 22.61
   hatch_success_A <- 0.86                   # logistic by temp - A
   hatch_success_k <- -1.7                   # logistic by temp - beta
   hatch_success_t0 <- 32.7                  # logistic by temp - t0
@@ -234,7 +235,7 @@ run_base_model <- function(arguments) {
   SAD_output <- initialize_population(beta, burn_in = 1000, max_age, 
                                       F_survival, M_survival, M, 
                                       F_remigration_int, M_remigration_int,
-                                      nests_mu, eggs_mu, hatch_success_A, 
+                                      clutches_mu, eggs_mu, hatch_success_A, 
                                       hatch_success_k, hatch_success_t0, 
                                       k_piv, T_piv, temp_mu, 
                                       F_initial, M_initial)
@@ -280,12 +281,13 @@ run_base_model <- function(arguments) {
     output <- base_model(scenario, beta, years, max_age,
                          F_survival, M_survival, F_init, M_init, 
                          M, F_remigration_int, M_remigration_int,
-                         nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                         clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                          hatch_success_A, hatch_success_k, hatch_success_t0, 
                          T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
                          T_threshold, h2_threshold, ag_var_threshold, 
                          evolution_threshold,
-                         temp_mu, climate_stochasticity, noise, temp_sd, AC)
+                         temp_mu, climate_stochasticity, 
+                         season_temp_sd, clutch_temp_sd, noise, AC)
     
     # save the N and abundance arrays 
     sims_N[, , , i]             <- output[[1]]

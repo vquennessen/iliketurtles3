@@ -1,7 +1,7 @@
 initialize_population <- function(beta, burn_in, max_age, 
                                   F_survival, M_survival, M, 
                                   F_remigration_int, M_remigration_int,
-                                  nests_mu, eggs_mu, hatch_success_A,
+                                  clutches_mu, eggs_mu, hatch_success_A,
                                   hatch_success_k, hatch_success_t0,
                                   k_piv, T_piv, temp_mu, 
                                   F_initial, M_initial) {
@@ -64,7 +64,7 @@ initialize_population <- function(beta, burn_in, max_age,
       } else { breeding_success <- 1 }
       
       # number of potential eggs, assuming full reproductive success
-      eggs <- sum(n_breeding_F * round(nests_mu) * round(eggs_mu))
+      eggs <- sum(n_breeding_F * round(clutches_mu) * round(eggs_mu))
       
       # hatching success
       hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (temp_mu - hatch_success_t0)))

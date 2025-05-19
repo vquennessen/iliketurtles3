@@ -6,6 +6,7 @@ setwd('~/Projects/iliketurtles3/code')
 # load libraries
 library(dplyr)
 library(parallel)
+library(tidyr)
 
 # source functions
 source('run_base_model.R')

@@ -3,12 +3,13 @@
 base_model <- function(scenario, beta, years, max_age,
                        F_survival, M_survival, F_init, M_init, 
                        M, F_remigration_int, M_remigration_int,
-                       nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                       clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                        hatch_success_A, hatch_success_k, hatch_success_t0, 
                        T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv, 
                        T_threshold, h2_threshold, ag_var_threshold, 
                        evolution_threshold,
-                       temp_mu, climate_stochasticity, noise, temp_sd, AC) {
+                       temp_mu, climate_stochasticity, 
+                       season_temp_sd, clutch_temp_sd, noise, AC) {
   
   ##### source initialized arrays ##############################################
   
@@ -18,11 +19,11 @@ base_model <- function(scenario, beta, years, max_age,
                                    evolution_piv,
                                    T_threshold, h2_threshold, ag_var_threshold, 
                                    evolution_threshold,
-                                   temp_mu, climate_stochasticity, noise, 
-                                   temp_sd, AC)
+                                   temp_mu, climate_stochasticity, 
+                                   season_temp_sd, clutch_temp_sd, noise, AC)
   
   N                  <- init_output[[1]]    # population size array
-  temp_mus           <- init_output[[2]]    # incubation temperatures
+  season_temp_mus    <- init_output[[2]]    # mean temps at the season level
   G_piv              <- init_output[[3]]    # genotypes array
   P_piv              <- init_output[[4]]    # expected phenotypes array
   Gamma_piv          <- init_output[[5]]    # error around expected genotype
@@ -63,26 +64,25 @@ base_model <- function(scenario, beta, years, max_age,
       
     }
     
-    # # if temp is over threshold temperature, then hatching success is zero, 
+    # # if temp is over threshold temperature, then hatching success is zero,
     # # so there's no age 1, skip reproduction step
-    # if (temperatures[y] > Threshold_temps[y]) { 
+    # if (temperatures[y] > Threshold_temps[y]) {
     #   N[1, 1, y] <- 0
     #   N[2, 1, y] <- 0 } else {
     
     # reproduction
     rep_output <- reproduction(N, M, y, beta, max_age,
                                F_remigration_int, M_remigration_int,
-                               nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                               clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                                hatch_success_A, hatch_success_k, 
-                               hatch_success_t0, temperatures,
+                               hatch_success_t0, 
+                               season_temp_sd, clutch_temp_sd,
                                k_piv, Pivotal_temps, Threshold_temps)
     
     # add recruits to population size array
     N[1, 1, y]       <- rep_output[[1]]
     N[2, 1, y]       <- rep_output[[2]]
     OSR[y]           <- rep_output[[3]]
-    
-  }
   
   # break out of loop if there are zero males or females at any age
   if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], na.rm = TRUE) < 0.5) {

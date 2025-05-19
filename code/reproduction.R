@@ -2,9 +2,10 @@
 
 reproduction <- function(N, M, y, beta, max_age,
                          F_remigration_int, M_remigration_int,
-                         nests_mu, nests_sd, eggs_mu, eggs_sd, 
+                         clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                          hatch_success_A, hatch_success_k, 
-                         hatch_success_t0, temperatures,
+                         hatch_success_t0, 
+                         season_temp_mus, clutch_temp_sd,
                          k_piv, Pivotal_temps, Threshold_temps) {
   
   # calculate number of breeding adults
@@ -33,65 +34,38 @@ reproduction <- function(N, M, y, beta, max_age,
       # if OSR > 0.5 all the females get to mate
     } else { breeding_success <- 1 }
     
-    # number of nests per female (round to nearest integer)
-    nests <- round(rnorm(n = round(n_breeding_F), 
-                         mean = nests_mu, 
-                         sd = nests_sd))
-    
-    # calculate nest temperatures
-    
-    # if we're including climate stochasticity in the model
-    if (climate_stochasticity == TRUE) {
-
-      white_noise <- rnorm(n = sum(nests, na.rm = TRUE), mean = 0, sd = temp_sd)
-
-      if (noise == 'White') {
-
-        # generate stochastic temperatures from means given temp_sd
-        temperatures <- temp_mus + white_noise
-
-      }
-
-      if (noise == 'Red') {
-
-        # initialize deviations
-        deviations <- rep(NA, times = length(nests))
-
-        # first deviation term
-        deviations[1] <- rnorm(n = 1, mean = 0, sd = temp_sd) + white_noise[1]
-
-        # autocorrelated deviation series
-        for (i in 2:years) {
-
-          deviations[i] <- AC * deviations[i - 1] + white_noise[i]
-
-        }
-
-        temperatures <- temp_mus + deviations
-
-      }
-
-      # if no climate stochasticity, the temperatures are just the means
-    } else { temperatures <- temp_mus }
+    # number of clutches per female (round to nearest integer)
+    clutches <- round(rnorm(n = round(n_breeding_F), 
+                            mean = clutches_mu, 
+                            sd = clutches_sd))
     
     # replace any number < 1 with +1
-    nests[which(nests < 1)] <- 1
+    clutches[which(clutches < 1)] <- 1
     
     # initialize eggs vector
-    eggs <- rep(NA, times = length(nests))
+    eggs <- rep(NA, times = length(clutches))
     
     # number of eggs per n_breeding_F (round to nearest integer)
-    for (f in 1:length(nests)) {
+    for (f in 1:length(clutches)) {
       
-      eggs[f] <- sum(round(rnorm(n = nests[f], 
-                                 mean = eggs_mu, 
-                                 sd = eggs_sd)), 
-                     na.rm = TRUE)
+      eggs_potential <- round(rnorm(n = clutches[f], 
+                                    mean = eggs_mu, 
+                                    sd = eggs_sd))
+      
+      # clutch temperatures
+      clutch_temps <- season_temp_mus[y] + rnorm(n = clutches[f], 
+                                                 mean = 0, 
+                                                 sd = clutch_temp_sd)
+      
+      # hatching success
+      hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (clutch_temps - hatch_success_t0)))   
+      
+      # number of eggs that hatch successfully
+      eggs[f] <- sum(round(eggs_potential * hatch_success))
       
     }
     
-    # hatching success
-    hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (temperatures[y] - hatch_success_t0)))
+    
     
     # total hatchlings = breeding success * total eggs * hatching success
     # (round to nearest integer)
