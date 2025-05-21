@@ -18,7 +18,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 # category titles
 TRTs <- c('Narrow', 'Wide')
 ages <- c('Hatchling', 'Mature')
-folder <- '2025_05_15_test_with_new_SAD'
+folder <- '2025_05_20_temp_var_clutch_level'
 nsims <- 1000
 desktop <- FALSE
 user <- ifelse(desktop == TRUE, 'Vic', 'vique')
@@ -160,7 +160,7 @@ for (t in 1:length(TRTs)) {
         SDF <- rbind(SDF, subset)
         
         # update tracker
-        print(paste(scenarios[s], 'beta ', betas[b], ages[a], 'all done!', 
+        print(paste(model, ' - ', scenarios[s], 'beta ', betas[b], ages[a], 'all done!', 
                     sep = ' - '))
         print(paste('length SDF = ', nrow(SDF), sep = ''))
         

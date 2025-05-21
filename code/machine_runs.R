@@ -46,10 +46,11 @@ frequency <- c(1)
 years <- 100
 
 # number of simulations to run
-num_sims <- c(10)
+nsims <- c(10)
 
 # make dataframe of all combinations of arguments
-DF <- expand.grid(models, scenarios, betas, years, num_sims)
+DF <- expand.grid(models, scenarios, betas, years, nsims, 
+                  intensity, frequency)
 
 # initialize empty arguments list
 arguments <- list()

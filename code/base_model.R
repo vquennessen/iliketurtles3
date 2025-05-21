@@ -76,7 +76,7 @@ base_model <- function(scenario, beta, years, max_age,
                                clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                                hatch_success_A, hatch_success_k, 
                                hatch_success_t0, 
-                               season_temp_sd, clutch_temp_sd,
+                               season_temp_mus, clutch_temp_sd,
                                k_piv, Pivotal_temps, Threshold_temps)
     
     # add recruits to population size array
