@@ -15,7 +15,7 @@ reproduction <- function(N, M, y, beta, max_age,
   # males only breed every M_remigration_int years
   n_breeding_M <- round(sum(round(N[2, , y - 1] * M), na.rm = TRUE) / M_remigration_int)  
   
-  if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
+  if (n_breeding_F > 0 & n_breeding_M > 0) {
     
     # operational sex ratio - proportion of males
     # multiply by 2 to transform to beta function with x from 0 to 0.5 instead 
@@ -26,7 +26,7 @@ reproduction <- function(N, M, y, beta, max_age,
     # if 50% males or fewer, use beta function to calculate breeding success
     # multiply OSR by 2 to transform to beta function with x from 0 to 0.5 
     # instead of 0 to 1
-    if (OSR <= 0.5) {
+    if (OSR < 0.5) {
       breeding_success <- pbeta(2 * OSR, 
                                 shape1 = 1, 
                                 shape2 = beta) 
@@ -42,55 +42,29 @@ reproduction <- function(N, M, y, beta, max_age,
     # replace any number < 1 with +1
     clutches[which(clutches < 1)] <- 1
     
-    # initialize eggs vector
-    eggs <- rep(NA, times = length(clutches))
+    # potential eggs vector, one number for each clutch
+    potential_eggs <- round(rnorm(n = sum(clutches), 
+                                  mean = eggs_mu, 
+                                  sd = eggs_sd))
     
-    # number of eggs per n_breeding_F (round to nearest integer)
-    for (f in 1:length(clutches)) {
-      
-      eggs_potential <- round(rnorm(n = clutches[f], 
-                                    mean = eggs_mu, 
-                                    sd = eggs_sd))
-      
-      # clutch temperatures
-      clutch_temps <- season_temp_mus[y] + rnorm(n = clutches[f], 
-                                                 mean = 0, 
-                                                 sd = clutch_temp_sd)
-      
-      # hatching success
-      hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (clutch_temps - hatch_success_t0)))   
-      
-      # number of eggs that hatch successfully
-      eggs[f] <- sum(round(eggs_potential * hatch_success))
-      
-    }
+    # clutch temperature vector, one number for each clutch 
+    clutch_temps <-rnorm(n = sum(clutches), 
+                         mean = season_temp_mus[y], 
+                         sd = clutch_temp_sd)
     
+    # hatching successes vector, one number for each clutch 
+    hatch_successes <- hatch_success_A / (1 + exp(-hatch_success_k * (clutch_temps - hatch_success_t0)))   
     
+    # proportions male vector, one number for each clutch 
+    props_male <- 1/(1 + exp(-k_piv * (clutch_temps - (Pivotal_temps[y]))))
     
-    # total hatchlings = breeding success * total eggs * hatching success
-    # (round to nearest integer)
-    hatchlings <- round(breeding_success * sum(eggs, na.rm = TRUE) * hatch_success)
+    # numbers of hatchlings vector, one number for each clutch 
+    hatchlings <- round(breeding_success * potential_eggs * hatch_successes)
     
-    # if fewer than 1 hatchling (rounded), no hatchlings for this cohort
-    if (hatchlings < 1) { 
-      
-      female_hatchlings <- 0
-      male_hatchlings <- 0  
-      
-      # if there are more than 0.5 hatchlings
-    } else { 
-      
-      # determine proportion of male hatchlings based on temperature and 
-      # phenotypic variation
-      prop_male <- 1/(1 + exp(-k_piv * (temperatures[y] - (Pivotal_temps[y]))))
-      
-      # number of male and female hatchlings
-      female_hatchlings <- round(hatchlings * (1 - prop_male))
-      male_hatchlings <- round(hatchlings * prop_male)
-      
-    } 
+    # male and female hatchlings summed across all clutches
+    female_hatchlings <- sum(round(hatchlings * (1 - props_male)))
+    male_hatchlings <- sum(round(hatchlings * props_male))    
     
-    # if there are no mature females or no mature males
   } else {     
     
     OSR <- NA
