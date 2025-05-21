@@ -22,19 +22,7 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
   ##### incubation temperatures ################################################
   
   # generate mean temperature values that go up linearly 
-  
-  if (years == 100) {
   temp_mus <- seq(from = temp_mu, to = temp_mu + scenario, length = years)
-  } 
-  
-  if (years > 100) {
-    initial_temps <- seq(from = temp_mu, to = temp_mu + scenario, length = 100)
-    temp_mus <- c(initial_temps[1 - 99], 
-                  seq(from = initial_temps[1], 
-                      by = intial_temps[100] - initial_temps[99], 
-                      length = years - 100))
-    
-  }
   
   # if we're including climate stochasticity in the model
   if (climate_stochasticity == TRUE) {
