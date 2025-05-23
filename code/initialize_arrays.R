@@ -43,9 +43,9 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
       deviations <- rep(NA, times = years)
 
       # first deviation term
-      deviations[1] <- white_noise[1] + rnorm(n = 1, 
-                                              mean = 0, 
-                                              sd = season_temp_sd)
+      deviations[1] <- rnorm(n = 1, 
+                             mean = white_noise[1], 
+                             sd = season_temp_sd)
 
       # autocorrelated deviation series
       for (i in 2:years) {
