@@ -186,6 +186,19 @@ for (t in 1:length(TRTs)) {
                                                                na.rm = TRUE)
       )
       
+      # add in breeding success
+      SDF$Breeding_Success_Median <- pbeta(2 * SDF$Mature_Sex_Ratio_Median, 
+                                           shape1 = 1, 
+                                           shape2 = betas[b])
+      
+      SDF$Breeding_Success_Q25 <- pbeta(2 * SDF$Mature_Sex_Ratio_Q25, 
+                                        shape1 = 1, 
+                                        shape2 = betas[b])
+      
+      SDF$Breeding_Success_Q75 <- pbeta(2 * SDF$Mature_Sex_Ratio_Q75, 
+                                        shape1 = 1, 
+                                        shape2 = betas[b])
+      
       # tack subset onto SDF
       SDF <- rbind(SDF, subset)
       
@@ -204,10 +217,7 @@ for (t in 1:length(TRTs)) {
 # add in emergence success
 SDF$Emergence_Success <- 0.86 / (1 + exp(1.7 * (SDF$Temperature - 32.7)))
 
-# add in breeding success
-SDF$Female_Reproductive_Success <- pbeta(2 * SDF$Mature_Sex_Ratio_Median, 
-                                         shape1 = 1, 
-                                         shape2 = betas[b])
+
 
 example_outputs <- SDF
 
@@ -230,11 +240,15 @@ examples_to_plot <- example_outputs %>%
   filter(OSR %in% c('0.1', '0.45')) %>%
   filter(Scenario %in% c('0.5C', '4.5C'))
 
+##### helpful for plots
+osr0.1_title <- 'minimum OSR 0.1 (steep mating function)'
+osr0.45_title <- 'minimum OSR 0.45 (shallow mating function)'
+
 ###### temperature plot - min OSR = 0.1
 temps_osr_0.1 <- ggplot(examples_to_plot, 
                         aes(x = Year, y = Temperature, col = Scenario, lty = TRT)) +
   ylab('Temperature (\u00B0C)') +
-  ggtitle('Minimum OSR Required for \n 99% F Reproductive Success = 0.1') +
+  ggtitle(osr0.1_title) +
   scale_linetype_discrete(name = 'Transitional Range \n of Temperatures \n Upper Limit', 
                           c(1, 2), 
                           labels = c('Wide TRT', 'Narrow TRT')) +
@@ -265,7 +279,7 @@ temps_osr_0.45 <- ggplot(examples_to_plot,
                          aes(x = Year, y = Temperature, 
                              col = Scenario, lty = TRT)) +
   ylab('Temperature (\u00B0C)') +
-  ggtitle('Minimum OSR Required for \n 99% F Reproductive Success = 0.45') +
+  ggtitle(osr0.45_title) +
   scale_linetype_discrete(name = 'Population', 
                           c(1, 2), 
                           labels = c('Wide TRT', 'Narrow TRT')) +
@@ -302,12 +316,15 @@ emergence <- ggplot(examples_to_plot,
 
 emergence
 
-# hatchling sex ratios, min OSR = 0.45
-hatchling_sex_ratio <- ggplot(examples_to_plot, 
-                              aes(x = Year, 
-                                  y = Hatchling_Sex_Ratio_Median, 
-                                  col = Scenario, 
-                                  lty = TRT)) +
+# hatchling sex ratios, min OSR = 0.1, 
+# only horizontal line affected by mating function
+hatchling_sex_ratio_osr_0.1 <- examples_to_plot %>%
+  filter(OSR == '0.1') %>%
+  ggplot(aes(x = Year, 
+             y = Hatchling_Sex_Ratio_Median, 
+             col = Scenario, 
+             lty = TRT)) +
+  geom_hline(yintercept = 0.04, lwd = 1, lty = 4) +
   geom_ribbon(aes(ymin = Hatchling_Sex_Ratio_Q25,
                   ymax = Hatchling_Sex_Ratio_Q75,
                   col = NULL,
@@ -315,19 +332,139 @@ hatchling_sex_ratio <- ggplot(examples_to_plot,
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
+  ggtitle(osr0.1_title) +
   ylab('Median Hatchling Sex Ratio') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   scale_linetype_discrete(name = 'Population', 
                           c(1, 2), 
-                          labels = c('Wide TRT', 'Narrow TRT')) +
-  geom_hline(yintercept = 0.04, lwd = 1, lty = 4)
+                          labels = c('Wide TRT', 'Narrow TRT'))
 
-hatchling_sex_ratio
+hatchling_sex_ratio_osr_0.1
 
-##### operational sex ratio, does depend on mating function
+# hatchling sex ratios, min OSR = 0.45 
+# only horizontal line affected by mating function
+hatchling_sex_ratio_osr_0.45 <- examples_to_plot %>%
+  filter(OSR == '0.45') %>%
+  ggplot(aes(x = Year, 
+             y = Hatchling_Sex_Ratio_Median, 
+             col = Scenario, 
+             lty = TRT)) +
+  geom_hline(yintercept = 0.237, lwd = 1, lty = 4) +
+  geom_ribbon(aes(ymin = Hatchling_Sex_Ratio_Q25,
+                  ymax = Hatchling_Sex_Ratio_Q75,
+                  col = NULL,
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  ggtitle(osr0.45_title) +
+  ylab('Median Hatchling Sex Ratio') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
 
+hatchling_sex_ratio_osr_0.45
 
+##### operational sex ratio, does depend on mating function, min = 0.1
+OSR_min_osr_0.1 <- examples_to_plot %>%
+  filter(OSR == '0.1') %>%
+  ggplot(aes(x = Year, 
+             y = Mature_Sex_Ratio_Median, 
+             col = Scenario, 
+             lty = TRT)) +
+  geom_hline(yintercept = 0.1, lwd = 1, lty = 4) +
+  geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
+                  ymax = Mature_Sex_Ratio_Q75,
+                  col = NULL,
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  ggtitle(osr0.1_title) +
+  ylab('Median Operational Sex Ratio') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
+
+OSR_min_osr_0.1
+
+##### operational sex ratio, does depend on mating function, min = 0.45
+OSR_min_osr_0.45 <- examples_to_plot %>%
+  filter(OSR == '0.45') %>%
+  ggplot(aes(x = Year, 
+             y = Mature_Sex_Ratio_Median, 
+             col = Scenario, 
+             lty = TRT)) +
+  geom_hline(yintercept = 0.45, lwd = 1, lty = 4) +
+  geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
+                  ymax = Mature_Sex_Ratio_Q75,
+                  col = NULL,
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  ggtitle(osr0.45_title) +
+  ylab('Median Operational Sex Ratio') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
+
+OSR_min_osr_0.45
+
+##### breeding success, does depend on mating function, min = 0.1
+breeding_success_osr_0.1 <- examples_to_plot %>%
+  filter(OSR == '0.1') %>%
+  ggplot(aes(x = Year, 
+             y = Breeding_Success_Median, 
+             col = Scenario, 
+             lty = TRT)) +
+  geom_ribbon(aes(ymin = Breeding_Success_Q25,
+                  ymax = Breeding_Success_Q75,
+                  col = NULL,
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  ggtitle(osr0.1_title) +
+  ylab('Median Operational Sex Ratio') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
+
+breeding_success_osr_0.1
+
+##### operational sex ratio, does depend on mating function, min = 0.45
+breeding_success_osr_0.45 <- examples_to_plot %>%
+  filter(OSR == '0.45') %>%
+  ggplot(aes(x = Year, 
+             y = Breeding_Success_Median, 
+             col = Scenario, 
+             lty = TRT)) +
+  geom_ribbon(aes(ymin = Breeding_Success_Q25,
+                  ymax = Breeding_Success_Q75,
+                  col = NULL,
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  ggtitle(osr0.45_title) +
+  ylab('Median Operational Sex Ratio') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
+
+breeding_success_osr_0.45
 
 ##### old figures ##############################################################
 
