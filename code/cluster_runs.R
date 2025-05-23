@@ -6,6 +6,7 @@ library(dplyr)
 library(tidyr)
 library(magrittr)
 library(readr)
+library(lubridate)
 
 # set working directory
 # setwd('~/Projects/iliketurtles3/code')
@@ -27,10 +28,10 @@ source('evolution.R')
 models <- c('P_base', 'GM_base')
 
 # years to run the model for
-years <- 250
+years <- 200
 
 # total temp increases
-scenarios <- years / 100 * c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
+scenarios <- years / 100 * c(5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5)
 # scenarios <- c(4, 5)
 
 # OSR values to get full fertilization of females
