@@ -45,8 +45,8 @@ TRN <- data.frame(Temperature = x,
 fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, 
                               col = Population, lty = Population)) +
   geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
-  geom_vline(xintercept = 29.2, col = 'gray50', lwd = 1, lty = 1) +
-  geom_vline(xintercept = 31.8, col = 'gray80', lwd = 1, lty = 1) +
+  geom_vline(xintercept = 29.2, col = 'black', lwd = 1.5, lty = 1) +
+  geom_vline(xintercept = 30.5, col = 'gray60', lwd = 1, lty = 1) +
   geom_vline(xintercept = 27, col = '#6600FF', lty = 5, 
              lwd = 0.75, alpha = 0.5) +
   geom_vline(xintercept = 31.4, col = '#6600FF', lty = 5, 
@@ -79,14 +79,15 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
   annotate("label", x = 39.4, y = 0.55, label = "0.50", size = 5, 
            label.size = 0) +
   annotate("label", x = 39.4, y = 1.00, label = "0.95", size = 5, 
-           label.size = 0) +
-  annotate("label", x = 28.4, y = 0, label = "29.2\u00B0C", size = 5, 
-           label.size = 0) +
-  annotate("label", x = 32.65, y = 1, label = "31.8\u00B0C", size = 5, 
            label.size = 0)
+  # annotate("label", x = 28.4, y = 0, label = "29.2\u00B0C", size = 5, 
+  #          label.size = 0) +
+  # annotate("label", x = 32.65, y = 1, label = "30.5\u00B0C", size = 5, 
+  #          label.size = 0)
 
 
 fig
+
 
 # ggsave("figures/thermal_reaction_norms.png", 
 #        plot = last_plot(), 

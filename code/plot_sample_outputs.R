@@ -19,6 +19,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 TRTs <- c('Narrow', 'Wide')
 ages <- c('Hatchling', 'Mature')
 folder <- '2025_05_20_temp_var_clutch_level'
+years <- 100
 nsims <- 1000
 desktop <- FALSE
 user <- ifelse(desktop == TRUE, 'Vic', 'vique')
@@ -28,8 +29,32 @@ scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
 
 # osrs
 osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
-betas <- OSRs_to_betas(osrs)
+betas <- as.numeric(OSRs_to_betas(osrs))
 # betas <- c(43.71, 20.64, 12.92, 9.02, 6.65, 5.03, 3.83, 2.87, 2.01, 1)
+
+# ideal hatchling sex ratios based on mating system
+IHSR <- (1.47 * osrs) / (1.47 * osrs + 3.87 * (1 - osrs))
+# [1] 0.01960000 [2] 0.04049587 [3] 0.06282051 [4] 0.08672566 [5] 0.11238532 
+# [6] 0.14000000 [7] 0.16980198 [8] 0.20206186 [9] 0.23709677 [10] 0.26737194
+
+# temperatures that give those IHSRs based on thermal reaction norm
+# narrow TRT population; k = -1.34, pivotal temp = 29.2
+ITemps_narrow <- (log( 1 / IHSR - 1) + 1.34 * 29.2) / 1.34
+# [1] 32.11972 [2] 31.56210 [3] 31.21686 [4] 30.95693 [5] 30.74224 
+# [6] 30.55469 [7] 30.38435 [8] 30.22497 [9] 30.07214 [10] 29.95224
+
+# wide TRT population, k = -0.561, pivotal temp = 29.2
+ITemps_wide <- (log( 1 / IHSR - 1) + 0.561 * 29.2) / 0.561
+# [1] 36.17403 [2] 34.84210 [3] 34.01746 [4] 33.39659 [5] 32.88379 
+# [6] 32.43581 [7] 32.02893 [8] 31.64823 [9] 31.28318 [10] 30.99679
+
+# ideal values
+ideals <- data.frame(
+  Min_OSR = osrs, 
+  Ideal_Hatchling_Sex_Ratio = IHSR, 
+  Ideal_temps_narrow = ITemps_narrow, 
+  Ideal_temps_wide = ITemps_wide
+)
 
 beta_names <- paste('beta', betas, sep = '')
 
@@ -48,16 +73,21 @@ temp_mu <- 30.5
 SDF <- data.frame(TRT = NULL,
                   Scenario = NULL, 
                   OSR = NULL,
-                  Combo = NULL,
+                  Female_Reproductive_Success = NULL, 
                   Year = NULL,
                   Temperature = NULL,
-                  Age = NULL,
-                  Abundance_Median = NULL, 
-                  Abundance_Q25 = NULL, 
-                  Abundance_Q75 = NULL, 
-                  Sex_Ratio_Median = NULL, 
-                  Sex_Ratio_Q25 = NULL, 
-                  Sex_Ratio_Q75 = NULL
+                  Hatchling_Abundance_Median = NULL, 
+                  Hatchling_Abundance_Q25 = NULL, 
+                  Hatchling_Abundance_Q75 = NULL, 
+                  Hatchling_Sex_Ratio_Median = NULL, 
+                  Hatchling_Sex_Ratio_Q25 = NULL, 
+                  Hatchling_Sex_Ratio_Q75 = NULL, 
+                  Mature_Abundance_Median = NULL, 
+                  Mature_Abundance_Q25 = NULL, 
+                  Mature_Abundance_Q75 = NULL, 
+                  Mature_Sex_Ratio_Median = NULL, 
+                  Mature_Sex_Ratio_Q25 = NULL, 
+                  Hatchling_Sex_Ratio_Q75 = NULL
 )
 
 # for each population / TRT
@@ -71,7 +101,9 @@ for (t in 1:length(TRTs)) {
     
     temp_increases <- parse_number(scenarios)
     
-    temps <- seq(from = temp_mu, to = temp_mu + temp_increases[s], length = 100)
+    temps <- seq(from = temp_mu, 
+                 to = temp_mu + temp_increases[s], 
+                 length = years)
     
     # for each osr
     for (b in 1:length(betas)) {
@@ -102,10 +134,10 @@ for (t in 1:length(TRTs)) {
       hatchling_sex_ratio[!is.finite(hatchling_sex_ratio)] <- NA
       
       # extract mature F
-      mature_F <- colSums(sims_N[1, , , ]*M, dims = 1)
+      mature_F <- colSums(sims_N[1, , , ] * M, dims = 1)
       
       # extract mature M
-      mature_M <- colSums(sims_N[2, , , ]*M, dims = 1)
+      mature_M <- colSums(sims_N[2, , , ] * M, dims = 1)
       
       # mature total
       mature_total <- mature_F + mature_M
@@ -114,57 +146,53 @@ for (t in 1:length(TRTs)) {
       OSR <- sims_OSR
       OSR[!is.finite(OSR)] <- NA
       
-      # remove NaNs
+      # add values to data frame
+      subset <- data.frame(TRT = TRTs[t],
+                           Scenario = scenarios[s], 
+                           OSR = osrs[b], 
+                           Year = 1:100,
+                           Temperature = temps,
+                           Hatchling_Abundance_Median = rowMedians(hatchlings_total, 
+                                                                   na.rm = TRUE), 
+                           Hatchling_Abundance_Q25 = rowQuantiles(hatchlings_total, 
+                                                                  prob = 0.25, 
+                                                                  na.rm = TRUE), 
+                           Hatchling_Abundance_Q75 = rowQuantiles(hatchlings_total, 
+                                                                  prob = 0.75, 
+                                                                  na.rm = TRUE), 
+                           Hatchling_Sex_Ratio_Median = rowMedians(hatchling_sex_ratio, 
+                                                                   na.rm = TRUE), 
+                           Hatchling_Sex_Ratio_Q25 = rowQuantiles(hatchling_sex_ratio, 
+                                                                  prob = 0.25, 
+                                                                  na.rm = TRUE), 
+                           Hatchling_Sex_Ratio_Q75 = rowQuantiles(hatchling_sex_ratio, 
+                                                                  prob = 0.75, 
+                                                                  na.rm = TRUE),
+                           Mature_Abundance_Median = rowMedians(mature_total, 
+                                                                na.rm = TRUE), 
+                           Mature_Abundance_Q25 = rowQuantiles(mature_total, 
+                                                               prob = 0.25, 
+                                                               na.rm = TRUE), 
+                           Mature_Abundance_Q75 = rowQuantiles(mature_total, 
+                                                               prob = 0.75, 
+                                                               na.rm = TRUE), 
+                           Mature_Sex_Ratio_Median = rowMedians(OSR, 
+                                                                na.rm = TRUE), 
+                           Mature_Sex_Ratio_Q25 = rowQuantiles(OSR, 
+                                                               prob = 0.25, 
+                                                               na.rm = TRUE), 
+                           Mature_Sex_Ratio_Q75 = rowQuantiles(OSR, 
+                                                               prob = 0.75, 
+                                                               na.rm = TRUE)
+      )
       
-      for (a in 1:length(ages)) {
-        
-        if (ages[a] == 'Hatchling') {
-          
-          abundances <- hatchlings_total
-          sex_ratio <- hatchling_sex_ratio
-          
-        } else {
-          
-          abundances <- mature_total
-          sex_ratio <- OSR
-          
-        }
-        
-        subset <- data.frame(TRT = TRTs[t],
-                             Scenario = scenarios[s], 
-                             OSR = osrs[b], 
-                             Combo = paste(scenarios[s], ' - OSR ', osrs[b], 
-                                           sep = ''),
-                             Year = 1:100,
-                             Temperature = temps,
-                             Age = ages[a],
-                             Abundance_Median = rowMedians(abundances, 
-                                                           na.rm = TRUE), 
-                             Abundance_Q25 = rowQuantiles(abundances, 
-                                                          prob = 0.25, 
-                                                          na.rm = TRUE), 
-                             Abundance_Q75 = rowQuantiles(abundances, 
-                                                          prob = 0.75, 
-                                                          na.rm = TRUE), 
-                             Sex_Ratio_Median = rowMedians(sex_ratio, 
-                                                           na.rm = TRUE), 
-                             Sex_Ratio_Q25 = rowQuantiles(sex_ratio, 
-                                                          prob = 0.25, 
-                                                          na.rm = TRUE), 
-                             Sex_Ratio_Q75 = rowQuantiles(sex_ratio, 
-                                                          prob = 0.75, 
-                                                          na.rm = TRUE)
-        )
-        
-        # tack subset onto SDF
-        SDF <- rbind(SDF, subset)
-        
-        # update tracker
-        print(paste(model, ' - ', scenarios[s], 'beta ', betas[b], ages[a], 'all done!', 
-                    sep = ' - '))
-        print(paste('length SDF = ', nrow(SDF), sep = ''))
-        
-      }
+      # tack subset onto SDF
+      SDF <- rbind(SDF, subset)
+      
+      # update tracker
+      print(paste(model, ' - ', scenarios[s], ' - beta ', betas[b], 
+                  ' - all done!', sep = ''))
+      print(paste('length SDF = ', nrow(SDF), sep = ''))
       
     }
     
@@ -172,11 +200,16 @@ for (t in 1:length(TRTs)) {
   
 }
 
-example_outputs <- SDF
 
 # add in emergence success
-example_outputs$Emergence_Success <-
-  0.86 / (1 + exp(1.7 * (example_outputs$Temperature - 32.7)))
+SDF$Emergence_Success <- 0.86 / (1 + exp(1.7 * (SDF$Temperature - 32.7)))
+
+# add in breeding success
+SDF$Female_Reproductive_Success <- pbeta(2 * SDF$Mature_Sex_Ratio_Median, 
+                                         shape1 = 1, 
+                                         shape2 = betas[b])
+
+example_outputs <- SDF
 
 save(example_outputs, 
      file = '~/Projects/iliketurtles3/output/example_outputs.Rdata')
@@ -195,7 +228,108 @@ example_outputs$OSR <- factor(example_outputs$OSR,
 # filter scenarios and OSRs to plot
 examples_to_plot <- example_outputs %>%
   filter(OSR %in% c('0.1', '0.45')) %>%
-  filter(Scenario %in% c('0.5C', '3.5C'))
+  filter(Scenario %in% c('0.5C', '4.5C'))
+
+###### temperature plot - min OSR = 0.1
+temps_osr_0.1 <- ggplot(examples_to_plot, 
+                        aes(x = Year, y = Temperature, col = Scenario, lty = TRT)) +
+  ylab('Temperature (\u00B0C)') +
+  ggtitle('Minimum OSR Required for \n 99% F Reproductive Success = 0.1') +
+  scale_linetype_discrete(name = 'Transitional Range \n of Temperatures \n Upper Limit', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT')) +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) + 
+  
+  # pivotal temperature
+  geom_hline(yintercept = 29.2, lwd = 1, lty = 3) +
+  
+  # upper TRT limit, wide TRT population
+  geom_hline(yintercept = 34.4, lwd = 1, lty = 1) +
+  
+  # upper TRT limit, narrow TRT population
+  geom_hline(yintercept = 31.4, lwd = 1, lty = 2) +
+  
+  # ideal temperature, wide TRT population
+  geom_hline(yintercept = 34.84, lwd = 1, lty = 1, col = 'gray60') +  
+  
+  # ideal temperature, narrow TRT population
+  geom_hline(yintercept = 31.56, lwd = 1, lty = 2, col = 'gray60') +
+  
+  # actual temperatures
+  geom_path(lwd = 1)
+
+temps_osr_0.1
+
+# temperature plot - min OSR = 0.45
+temps_osr_0.45 <- ggplot(examples_to_plot, 
+                         aes(x = Year, y = Temperature, 
+                             col = Scenario, lty = TRT)) +
+  ylab('Temperature (\u00B0C)') +
+  ggtitle('Minimum OSR Required for \n 99% F Reproductive Success = 0.45') +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT')) +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) + 
+  
+  # pivotal temperature
+  geom_hline(yintercept = 29.2, lwd = 1, lty = 3) +
+  
+  # upper TRT limit, wide TRT population
+  geom_hline(yintercept = 34.4, lwd = 1, lty = 1) +
+  
+  # upper TRT limit, narrow TRT population
+  geom_hline(yintercept = 31.4, lwd = 1, lty = 2) +
+  
+  # ideal temperature, wide TRT population
+  geom_hline(yintercept = 31.28, lwd = 1, lty = 1, col = 'gray60') +  
+  
+  # ideal temperature, narrow TRT population
+  geom_hline(yintercept = 30.07, lwd = 1, lty = 2, col = 'gray60') +
+  
+  # actual temperatures
+  geom_path(lwd = 1)
+
+temps_osr_0.45
+
+##### emergence success (same between mating functions, only affected by temp)
+emergence <- ggplot(examples_to_plot, 
+                    aes(x = Year, 
+                        y = Emergence_Success, 
+                        col = Scenario)) +
+  geom_line(lwd = 1) +
+  ylab('Emergence Success') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D'))
+
+emergence
+
+# hatchling sex ratios, min OSR = 0.45
+hatchling_sex_ratio <- ggplot(examples_to_plot, 
+                              aes(x = Year, 
+                                  y = Hatchling_Sex_Ratio_Median, 
+                                  col = Scenario, 
+                                  lty = TRT)) +
+  geom_ribbon(aes(ymin = Hatchling_Sex_Ratio_Q25,
+                  ymax = Hatchling_Sex_Ratio_Q75,
+                  col = NULL,
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  ylab('Median Hatchling Sex Ratio') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT')) +
+  geom_hline(yintercept = 0.04, lwd = 1, lty = 4)
+
+hatchling_sex_ratio
+
+##### operational sex ratio, does depend on mating function
+
+
+
+##### old figures ##############################################################
 
 # # second axis calculations
 # ylim_prim <- c(30.5, 35.5)
@@ -276,7 +410,7 @@ figA1 <- examples_to_plot %>%
   xlab('') +
   ylab('\n temperature (\u00B0C)') +
   guides(color = 'none')
-  
+
 figA1
 
 # # plot figure - just temperatures
@@ -497,20 +631,75 @@ figH <- examples_to_plot %>%
   guides(color = "none", 
          lty = "none")
 
-figH
+# plot figure - hatchling abundances, P base
+figI <- examples_to_plot %>%
+  filter(Age == 'Hatchling') %>%
+  filter(Abundance_Median > 0) %>%
+  filter(TRT == 'Narrow') %>%
+  ggplot(aes(x = Year, 
+             y = Abundance_Median, 
+             color = Scenario, 
+             lty = OSR)) + 
+  geom_ribbon(aes(ymin = Abundance_Q25,
+                  ymax = Abundance_Q75, 
+                  col = NULL, 
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  xlab('Year') +
+  ylab('median \n mature abundance') +
+  # ylim(c(0, 10500)) +
+  theme_bw() +
+  guides(color = "none", 
+         lty = "none")
+
+figI
+
+# plot figure - hatchling abundances, GM base
+figJ <- examples_to_plot %>%
+  filter(Age == 'Hatchling') %>%
+  filter(Abundance_Median > 0) %>%
+  filter(TRT == 'Wide') %>%
+  ggplot(aes(x = Year, 
+             y = Abundance_Median, 
+             color = Scenario, 
+             lty = OSR)) + 
+  geom_ribbon(aes(ymin = Abundance_Q25,
+                  ymax = Abundance_Q75, 
+                  col = NULL, 
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  xlab('Year') +
+  ylab('') +
+  # ylim(c(0, 10500)) +
+  theme_bw() +
+  guides(color = "none", 
+         lty = "none")
+
+figJ
 
 # figA/B: temperatures and emergence success
 # figB: emergence success
 # figC: hatchling sex ratios (P base)
 # figD: hatchling sex ratios (GM base)
+# figI: hatchling abundance (P base)
+# figJ: hatchling abundance (GM base)
 # figE: mature sex ratios (P base)
 # figF: mature sex ratios (GM base)
 # figG: mature abundance (P base)
 # figH: mature abundance (GM base)
 
 
-option1 <- (figA1 + figB2) / (figC + figD) / (figE + figF) / (figG + figH) +
-  plot_layout(heights = c(1, 1, 1, 1)) +
+
+option1 <- (figA1 + figB2) / (figC + figD) / (figI + figJ) / (figE + figF) / (figG + figH) +
+  plot_layout(heights = c(1, 1, 1, 1, 1)) +
   plot_annotation(tag_levels = "A")
 
 option1
