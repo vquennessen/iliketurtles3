@@ -21,11 +21,13 @@ ages <- c('Hatchling', 'Mature')
 folder <- '2025_05_20_temp_var_clutch_level'
 years <- 100
 nsims <- 1000
+temp_mu <- 30.5
 desktop <- FALSE
 user <- ifelse(desktop == TRUE, 'Vic', 'vique')
 
 # scenarios
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
+final_temps <- paste(c(temp_mu + parse_number(scenarios)), ' \u00B0C', sep = '')
 
 # osrs
 osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
@@ -72,8 +74,8 @@ temp_mu <- 30.5
 # initialize super data frame (SDF)
 SDF <- data.frame(TRT = NULL,
                   Scenario = NULL, 
+                  Final_Temp = NULL,
                   OSR = NULL,
-                  Female_Reproductive_Success = NULL, 
                   Year = NULL,
                   Temperature = NULL,
                   Hatchling_Abundance_Median = NULL, 
@@ -87,7 +89,13 @@ SDF <- data.frame(TRT = NULL,
                   Mature_Abundance_Q75 = NULL, 
                   Mature_Sex_Ratio_Median = NULL, 
                   Mature_Sex_Ratio_Q25 = NULL, 
-                  Hatchling_Sex_Ratio_Q75 = NULL
+                  Mature_Sex_Ratio_Q75 = NULL, 
+                  Breeding_Success_Median = NULL, 
+                  Breeding_Success_Q25 = NULL,
+                  Breeding_success_Q75 = NULL, 
+                  Eggs_to_hatch_Median = NULL,
+                  Eggs_to_hatch_Q25 = NULL, 
+                  Eggs_to_hatch_Q75 = NULL
 )
 
 # for each population / TRT
@@ -149,6 +157,7 @@ for (t in 1:length(TRTs)) {
       # add values to data frame
       subset <- data.frame(TRT = TRTs[t],
                            Scenario = scenarios[s], 
+                           Final_Temp = final_temps[s],
                            OSR = osrs[b], 
                            Year = 1:100,
                            Temperature = temps,
@@ -187,17 +196,17 @@ for (t in 1:length(TRTs)) {
       )
       
       # add in breeding success
-      SDF$Breeding_Success_Median <- pbeta(2 * SDF$Mature_Sex_Ratio_Median, 
+      subset$Breeding_Success_Median <- pbeta(2 * subset$Mature_Sex_Ratio_Median, 
+                                              shape1 = 1, 
+                                              shape2 = betas[b])
+      
+      subset$Breeding_Success_Q25 <- pbeta(2 * subset$Mature_Sex_Ratio_Q25, 
                                            shape1 = 1, 
                                            shape2 = betas[b])
       
-      SDF$Breeding_Success_Q25 <- pbeta(2 * SDF$Mature_Sex_Ratio_Q25, 
-                                        shape1 = 1, 
-                                        shape2 = betas[b])
-      
-      SDF$Breeding_Success_Q75 <- pbeta(2 * SDF$Mature_Sex_Ratio_Q75, 
-                                        shape1 = 1, 
-                                        shape2 = betas[b])
+      subset$Breeding_Success_Q75 <- pbeta(2 * subset$Mature_Sex_Ratio_Q75, 
+                                           shape1 = 1, 
+                                           shape2 = betas[b])
       
       # tack subset onto SDF
       SDF <- rbind(SDF, subset)
@@ -217,7 +226,10 @@ for (t in 1:length(TRTs)) {
 # add in emergence success
 SDF$Emergence_Success <- 0.86 / (1 + exp(1.7 * (SDF$Temperature - 32.7)))
 
-
+# add in proportion of eggs that successfully hatch
+SDF$Eggs_to_hatch_Median <- SDF$Emergence_Success * SDF$Breeding_Success_Median
+SDF$Eggs_to_hatch_Q25 <- SDF$Emergence_Success * SDF$Breeding_Success_Q25
+SDF$Eggs_to_hatch_Q75 <- SDF$Emergence_Success * SDF$Breeding_Success_Q75
 
 example_outputs <- SDF
 
@@ -231,14 +243,16 @@ load("~/Projects/iliketurtles3/output/example_outputs.Rdata")
 
 # make scenario and OSR a factor
 example_outputs$Scenario <- factor(example_outputs$Scenario, 
-                                   levels = as.factor(scenarios))
+                                   levels = as.factor(unique(example_outputs$Scenario)))
+example_outputs$Final_Temp <- factor(example_outputs$Final_Temp, 
+                                   levels = as.factor(unique(example_outputs$Final_Temp)))
 example_outputs$OSR <- factor(example_outputs$OSR, 
-                              levels = as.factor(osrs))
+                              levels = as.factor(unique(example_outputs$OSR)))
 
 # filter scenarios and OSRs to plot
 examples_to_plot <- example_outputs %>%
   filter(OSR %in% c('0.1', '0.45')) %>%
-  filter(Scenario %in% c('0.5C', '4.5C'))
+  filter(Final_Temp %in% c('31 \u00B0C', '35 \u00B0C'))
 
 ##### helpful for plots
 osr0.1_title <- 'minimum OSR 0.1 (steep mating function)'
@@ -246,7 +260,10 @@ osr0.45_title <- 'minimum OSR 0.45 (shallow mating function)'
 
 ###### temperature plot - min OSR = 0.1
 temps_osr_0.1 <- ggplot(examples_to_plot, 
-                        aes(x = Year, y = Temperature, col = Scenario, lty = TRT)) +
+                        aes(x = Year, 
+                            y = Temperature, 
+                            col = Final_Temp, 
+                            lty = TRT)) +
   ylab('Temperature (\u00B0C)') +
   ggtitle(osr0.1_title) +
   scale_linetype_discrete(name = 'Transitional Range \n of Temperatures \n Upper Limit', 
@@ -277,7 +294,7 @@ temps_osr_0.1
 # temperature plot - min OSR = 0.45
 temps_osr_0.45 <- ggplot(examples_to_plot, 
                          aes(x = Year, y = Temperature, 
-                             col = Scenario, lty = TRT)) +
+                             col = Final_Temp, lty = TRT)) +
   ylab('Temperature (\u00B0C)') +
   ggtitle(osr0.45_title) +
   scale_linetype_discrete(name = 'Population', 
@@ -309,7 +326,7 @@ temps_osr_0.45
 emergence <- ggplot(examples_to_plot, 
                     aes(x = Year, 
                         y = Emergence_Success, 
-                        col = Scenario)) +
+                        col = Final_Temp)) +
   geom_line(lwd = 1) +
   ylab('Emergence Success') +
   scale_color_manual(values = c('#00BFC4', '#F8766D'))
@@ -333,7 +350,7 @@ hatchling_sex_ratio_osr_0.1 <- examples_to_plot %>%
               show.legend = FALSE) +
   geom_line(lwd = 1) +
   ggtitle(osr0.1_title) +
-  ylab('Median Hatchling Sex Ratio') +
+  ylab('Median Hatchling \n Sex Ratio') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   scale_linetype_discrete(name = 'Population', 
@@ -348,23 +365,24 @@ hatchling_sex_ratio_osr_0.45 <- examples_to_plot %>%
   filter(OSR == '0.45') %>%
   ggplot(aes(x = Year, 
              y = Hatchling_Sex_Ratio_Median, 
-             col = Scenario, 
+             col = Final_Temp, 
              lty = TRT)) +
   geom_hline(yintercept = 0.237, lwd = 1, lty = 4) +
   geom_ribbon(aes(ymin = Hatchling_Sex_Ratio_Q25,
                   ymax = Hatchling_Sex_Ratio_Q75,
                   col = NULL,
-                  fill = Scenario),
+                  fill = Final_Temp),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
   ggtitle(osr0.45_title) +
-  ylab('Median Hatchling Sex Ratio') +
+  ylab('Median Hatchling \n Sex Ratio') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   scale_linetype_discrete(name = 'Population', 
                           c(1, 2), 
-                          labels = c('Wide TRT', 'Narrow TRT'))
+                          labels = c('Wide TRT', 'Narrow TRT')) +
+  guides(color = guide_legend(title = "Final \n Incubation \n Temperature"))
 
 hatchling_sex_ratio_osr_0.45
 
@@ -373,18 +391,18 @@ OSR_min_osr_0.1 <- examples_to_plot %>%
   filter(OSR == '0.1') %>%
   ggplot(aes(x = Year, 
              y = Mature_Sex_Ratio_Median, 
-             col = Scenario, 
+             col = Final_Temp, 
              lty = TRT)) +
   geom_hline(yintercept = 0.1, lwd = 1, lty = 4) +
   geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
                   ymax = Mature_Sex_Ratio_Q75,
                   col = NULL,
-                  fill = Scenario),
+                  fill = Final_Temp),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
   ggtitle(osr0.1_title) +
-  ylab('Median Operational Sex Ratio') +
+  ylab('Median Operational \n Sex Ratio') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   scale_linetype_discrete(name = 'Population', 
@@ -398,18 +416,18 @@ OSR_min_osr_0.45 <- examples_to_plot %>%
   filter(OSR == '0.45') %>%
   ggplot(aes(x = Year, 
              y = Mature_Sex_Ratio_Median, 
-             col = Scenario, 
+             col = Final_Temp, 
              lty = TRT)) +
   geom_hline(yintercept = 0.45, lwd = 1, lty = 4) +
   geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
                   ymax = Mature_Sex_Ratio_Q75,
                   col = NULL,
-                  fill = Scenario),
+                  fill = Final_Temp),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
   ggtitle(osr0.45_title) +
-  ylab('Median Operational Sex Ratio') +
+  ylab('Median Operational \n Sex Ratio') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   scale_linetype_discrete(name = 'Population', 
@@ -423,17 +441,22 @@ breeding_success_osr_0.1 <- examples_to_plot %>%
   filter(OSR == '0.1') %>%
   ggplot(aes(x = Year, 
              y = Breeding_Success_Median, 
-             col = Scenario, 
+             col = Final_Temp, 
              lty = TRT)) +
+  geom_line(aes(x = Year, 
+                y = Emergence_Success), 
+            lwd = 1,
+            alpha = 0.5, 
+            lty = 4) +
   geom_ribbon(aes(ymin = Breeding_Success_Q25,
                   ymax = Breeding_Success_Q75,
                   col = NULL,
-                  fill = Scenario),
+                  fill = Final_Temp),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
   ggtitle(osr0.1_title) +
-  ylab('Median Operational Sex Ratio') +
+  ylab('Median \n Breeding Success') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   scale_linetype_discrete(name = 'Population', 
@@ -442,22 +465,27 @@ breeding_success_osr_0.1 <- examples_to_plot %>%
 
 breeding_success_osr_0.1
 
-##### operational sex ratio, does depend on mating function, min = 0.45
+##### breeding success, does depend on mating function, min = 0.45
 breeding_success_osr_0.45 <- examples_to_plot %>%
   filter(OSR == '0.45') %>%
   ggplot(aes(x = Year, 
              y = Breeding_Success_Median, 
-             col = Scenario, 
+             col = Final_Temp, 
              lty = TRT)) +
+  geom_line(aes(x = Year, 
+                y = Emergence_Success), 
+            lwd = 1,
+            alpha = 0.5, 
+            lty = 4) +
   geom_ribbon(aes(ymin = Breeding_Success_Q25,
                   ymax = Breeding_Success_Q75,
                   col = NULL,
-                  fill = Scenario),
+                  fill = Final_Temp),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
   ggtitle(osr0.45_title) +
-  ylab('Median Operational Sex Ratio') +
+  ylab('Median \n Breeding Success') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   scale_linetype_discrete(name = 'Population', 
@@ -465,6 +493,199 @@ breeding_success_osr_0.45 <- examples_to_plot %>%
                           labels = c('Wide TRT', 'Narrow TRT'))
 
 breeding_success_osr_0.45
+
+##### mature abundance, min OSR = 0.1
+mature_abundance_osr_0.1 <- examples_to_plot %>%
+  filter(OSR == '0.1') %>%
+  ggplot(aes(x = Year, 
+             y = Mature_Abundance_Median, 
+             col = Final_Temp, 
+             lty = TRT)) +
+  geom_ribbon(aes(ymin = Mature_Abundance_Q25,
+                  ymax = Mature_Abundance_Q75,
+                  col = NULL,
+                  fill = Final_Temp),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  ggtitle(osr0.1_title) +
+  ylab('Median \n Mature Abundance') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
+
+mature_abundance_osr_0.1
+
+##### mature abundance, min OSR = 0.45
+mature_abundance_osr_0.45 <- examples_to_plot %>%
+  filter(OSR == '0.45') %>%
+  ggplot(aes(x = Year, 
+             y = Mature_Abundance_Median, 
+             col = Final_Temp, 
+             lty = TRT)) +
+  geom_ribbon(aes(ymin = Mature_Abundance_Q25,
+                  ymax = Mature_Abundance_Q75,
+                  col = NULL,
+                  fill = Final_Temp),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 1) +
+  ggtitle(osr0.45_title) +
+  ylab('Median \n Mature Abundance') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
+
+mature_abundance_osr_0.45
+
+##### proportion of eggs that successfully hatch, min OSR = 0.1
+# emergence success * breeding success, does depend on mating function
+eggs_to_hatch_osr_0.1 <- examples_to_plot %>%
+  filter(OSR == '0.1') %>%
+  ggplot(aes(x = Year, 
+             y = Eggs_to_hatch_Median, 
+             col = Final_Temp, 
+             lty = TRT)) +
+  geom_line(aes(x = Year, 
+                y = Emergence_Success), 
+            lwd = 1,
+            lty = 5) +
+  geom_line(aes(x = Year, 
+                y = Breeding_Success_Median), 
+            lwd = 1, 
+            alpha = 0.5) +
+  geom_ribbon(aes(ymin = Eggs_to_hatch_Q25,
+                  ymax = Eggs_to_hatch_Q75,
+                  col = NULL,
+                  fill = Final_Temp),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_line(lwd = 3, alpha = 0.25) +
+  ggtitle(osr0.1_title) +
+  ylab('Median \n Eggs to Hatch') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
+
+eggs_to_hatch_osr_0.1
+
+##### proportion of eggs that successfully hatch, min OSR = 0.45
+# emergence success * breeding success, does depend on mating function
+eggs_to_hatch_osr_0.45 <- examples_to_plot %>%
+  filter(OSR == '0.45') %>%
+  ggplot(aes(x = Year, 
+             y = Eggs_to_hatch_Median, 
+             col = Final_Temp, 
+             lty = TRT)) +
+  geom_line(lwd = 1.5) +
+  geom_ribbon(aes(ymin = Eggs_to_hatch_Q25,
+                  ymax = Eggs_to_hatch_Q75,
+                  col = NULL,
+                  fill = Final_Temp),
+              alpha = 0.25,
+              show.legend = FALSE) +  
+  geom_line(aes(x = Year,
+                y = Emergence_Success),
+            lwd = 0.75,
+            lty = 5,
+            alpha = 0.5) +
+  geom_line(aes(x = Year, 
+                y = Breeding_Success_Median), 
+            lwd = 0.75,
+            alpha = 0.5) +
+  ggtitle(osr0.1_title) +
+  ylab('Median \n Eggs to Hatch') +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_linetype_discrete(name = 'Population', 
+                          c(1, 2), 
+                          labels = c('Wide TRT', 'Narrow TRT'))
+
+eggs_to_hatch_osr_0.45
+
+##### put it all together in one figure ########################################
+A1 <- temps_osr_0.1 + 
+  xlab('') +
+  guides(color = 'none', lty = 'none')
+
+A2 <- temps_osr_0.45 + 
+  xlab('') +
+  ylab('') +
+  guides(color = 'none', lty = 'none')
+
+B1 <- emergence +
+  xlab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none')
+
+B2 <- emergence +
+  xlab('') +
+  ylab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none')
+
+C1 <- hatchling_sex_ratio_osr_0.1 +
+  xlab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none')
+
+C2 <- hatchling_sex_ratio_osr_0.45 +
+  xlab('') +
+  ylab('') +
+  ggtitle('')
+
+D1 <- OSR_min_osr_0.1 +
+  xlab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none')
+
+D2 <- OSR_min_osr_0.45 +
+  xlab('') +
+  ylab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none')
+
+E1 <- breeding_success_osr_0.1 +
+  xlab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none')
+
+E2 <- breeding_success_osr_0.45 +
+  xlab('') +
+  ylab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none')
+
+F1 <- mature_abundance_osr_0.1 +
+  xlab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none') +
+  ylim(0, 10000)
+
+F2 <- mature_abundance_osr_0.45 +
+  xlab('') +
+  ylab('') +
+  ggtitle('') +
+  guides(color = 'none', lty = 'none')  +
+  ylim(0, 10000)
+
+# final_fig <- (A1 + A2) / (B1 + B2) / (C1 + C2) / (D1 + D2) / (E1 + E2) / (F1 + F2)
+final_fig <- (A1 + A2) / (C1 + C2) / (D1 + D2) / (E1 + E2) / (F1 + F2) +
+  plot_annotation(tag_levels = "A")
+  # plot_layout(heights = c(0, 1, 1, 1, 1)) +
+  # plot_layout(ncol = 1, nrow = 5, widths = c(7), heights = rep(3, 5))
+
+final_fig
+
+ggsave(final_fig, 
+     file = '~/Projects/iliketurtles3/figures/sample_outputs.png', 
+     height = 12, width = 10)
 
 ##### old figures ##############################################################
 
@@ -533,22 +754,22 @@ breeding_success_osr_0.45
 # 
 # figAB2
 
-# plot figure - just temperatures
-figA1 <- examples_to_plot %>%
-  filter(Abundance_Median > 0) %>%
-  ggplot(aes(x = Year, 
-             y = Temperature, 
-             color = Scenario 
-             # lty = OSR
-  )) + 
-  geom_line(lwd = 1) + 
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  theme_bw() +
-  xlab('') +
-  ylab('\n temperature (\u00B0C)') +
-  guides(color = 'none')
-
-figA1
+# # plot figure - just temperatures
+# figA1 <- examples_to_plot %>%
+#   filter(Abundance_Median > 0) %>%
+#   ggplot(aes(x = Year, 
+#              y = Temperature, 
+#              color = Scenario 
+#              # lty = OSR
+#   )) + 
+#   geom_line(lwd = 1) + 
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   theme_bw() +
+#   xlab('') +
+#   ylab('\n temperature (\u00B0C)') +
+#   guides(color = 'none')
+# 
+# figA1
 
 # # plot figure - just temperatures
 # figA2 <- examples_to_plot %>%
@@ -581,265 +802,265 @@ figA1
 # 
 # figB1
 
-# plot figure - just emergence success
-figB2 <- examples_to_plot %>%
-  filter(Abundance_Median > 0) %>%
-  ggplot(aes(x = Year, 
-             y = Emergence_Success, 
-             color = Scenario 
-             # lty = OSR
-  )) + 
-  geom_line(lwd = 1) + 
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  theme_bw() +
-  xlab('') +
-  ylab('emergence \n success') +
-  theme(plot.margin = unit(c(0, 0, 0, -1.5), 'cm'))
-
-figB2
-
-# plot figure - hatchling sex ratios, P base
-figC <- examples_to_plot %>%
-  filter(Abundance_Median > 0) %>%
-  filter(Age == 'Hatchling') %>%
-  filter(TRT == 'Narrow') %>%
-  ggplot(aes(x = Year, 
-             y = Sex_Ratio_Median, 
-             color = Scenario, 
-             lty = OSR
-  )) +
-  # geom_hline(yintercept = 0.01) +
-  scale_linewidth_manual(values = c(1, 2)) +
-  geom_ribbon(aes(ymin = Sex_Ratio_Q25,
-                  ymax = Sex_Ratio_Q75,
-                  col = NULL,
-                  fill = Scenario),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_path(lwd = 1) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('') +
-  theme_bw() +
-  ylim(c(0, 0.41)) +
-  guides(color = "none", 
-         lty = 'none') +
-  ylab('median \n hatchling sex ratio')
-
-figC
-
-# plot figure - hatchling sex ratios, GM base
-figD <- examples_to_plot %>%
-  filter(Abundance_Median > 0) %>%  
-  filter(Age == 'Hatchling') %>%
-  filter(TRT == 'Wide') %>%
-  filter(Year > 1) %>%
-  ggplot(aes(x = Year, 
-             y = Sex_Ratio_Median, 
-             color = Scenario, 
-             lty = OSR
-  )) +
-  # geom_hline(yintercept = 0.01) +
-  scale_linewidth_manual(values = c(1, 2)) +
-  geom_ribbon(aes(ymin = Sex_Ratio_Q25,
-                  ymax = Sex_Ratio_Q75,
-                  col = NULL,
-                  fill = Scenario),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_path(lwd = 1) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('') +
-  theme_bw() +
-  ylim(c(0, 0.41)) +
-  guides(color = "none") +
-  ylab('')
-
-figD
-
-# plot figure - mature sex ratios, P base
-figE <- examples_to_plot %>%
-  filter(Abundance_Median > 0) %>%  
-  filter(Age == 'Mature') %>%
-  filter(TRT == 'Narrow') %>%
-  ggplot(aes(x = Year, 
-             y = Sex_Ratio_Median, 
-             color = Scenario, 
-             lty = OSR
-  )) +
-  # geom_hline(yintercept = 0.01) +
-  scale_linewidth_manual(values = c(1, 2)) +
-  geom_ribbon(aes(ymin = Sex_Ratio_Q25,
-                  ymax = Sex_Ratio_Q75,
-                  col = NULL,
-                  fill = Scenario),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_path(lwd = 1) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('') +
-  theme_bw() +
-  ylim(c(0, 0.7)) +
-  guides(color = "none", lty = 'none') +
-  ylab('median \n operational sex ratio') 
-
-figE
-
-# plot figure - mature sex ratios, GM base
-figF <- examples_to_plot %>%
-  filter(Abundance_Median > 0) %>%  
-  filter(Age == 'Mature') %>%
-  filter(TRT == 'Wide') %>%
-  ggplot(aes(x = Year, 
-             y = Sex_Ratio_Median, 
-             color = Scenario, 
-             lty = OSR
-  )) +
-  # geom_hline(yintercept = 0.01) +
-  scale_linewidth_manual(values = c(1, 2)) +
-  geom_ribbon(aes(ymin = Sex_Ratio_Q25,
-                  ymax = Sex_Ratio_Q75,
-                  col = NULL,
-                  fill = Scenario),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_path(lwd = 1) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('') +
-  theme_bw() +
-  ylim(c(0, 0.7)) +
-  guides(color = "none", lty = 'none') +
-  ylab('') 
-
-figF
-
-# plot figure - mature abundances, P base
-figG <- examples_to_plot %>%
-  filter(Age == 'Mature') %>%
-  filter(Abundance_Median > 0) %>%
-  filter(TRT == 'Narrow') %>%
-  ggplot(aes(x = Year, 
-             y = Abundance_Median, 
-             color = Scenario, 
-             lty = OSR)) + 
-  geom_ribbon(aes(ymin = Abundance_Q25,
-                  ymax = Abundance_Q75, 
-                  col = NULL, 
-                  fill = Scenario),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_line(lwd = 1) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('Year') +
-  ylab('median \n mature abundance') +
-  ylim(c(0, 10500)) +
-  theme_bw() +
-  guides(color = "none", 
-         lty = "none")
-
-figG
-
-# plot figure - mature abundances, GM base
-figH <- examples_to_plot %>%
-  filter(Age == 'Mature') %>%
-  filter(Abundance_Median > 0) %>%
-  filter(TRT == 'Wide') %>%
-  ggplot(aes(x = Year, 
-             y = Abundance_Median, 
-             color = Scenario, 
-             lty = OSR)) + 
-  geom_ribbon(aes(ymin = Abundance_Q25,
-                  ymax = Abundance_Q75, 
-                  col = NULL, 
-                  fill = Scenario),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_line(lwd = 1) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('Year') +
-  ylab('') +
-  ylim(c(0, 10500)) +
-  theme_bw() +
-  guides(color = "none", 
-         lty = "none")
-
-# plot figure - hatchling abundances, P base
-figI <- examples_to_plot %>%
-  filter(Age == 'Hatchling') %>%
-  filter(Abundance_Median > 0) %>%
-  filter(TRT == 'Narrow') %>%
-  ggplot(aes(x = Year, 
-             y = Abundance_Median, 
-             color = Scenario, 
-             lty = OSR)) + 
-  geom_ribbon(aes(ymin = Abundance_Q25,
-                  ymax = Abundance_Q75, 
-                  col = NULL, 
-                  fill = Scenario),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_line(lwd = 1) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('Year') +
-  ylab('median \n mature abundance') +
-  # ylim(c(0, 10500)) +
-  theme_bw() +
-  guides(color = "none", 
-         lty = "none")
-
-figI
-
-# plot figure - hatchling abundances, GM base
-figJ <- examples_to_plot %>%
-  filter(Age == 'Hatchling') %>%
-  filter(Abundance_Median > 0) %>%
-  filter(TRT == 'Wide') %>%
-  ggplot(aes(x = Year, 
-             y = Abundance_Median, 
-             color = Scenario, 
-             lty = OSR)) + 
-  geom_ribbon(aes(ymin = Abundance_Q25,
-                  ymax = Abundance_Q75, 
-                  col = NULL, 
-                  fill = Scenario),
-              alpha = 0.25,
-              show.legend = FALSE) +
-  geom_line(lwd = 1) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
-  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  xlab('Year') +
-  ylab('') +
-  # ylim(c(0, 10500)) +
-  theme_bw() +
-  guides(color = "none", 
-         lty = "none")
-
-figJ
-
-# figA/B: temperatures and emergence success
-# figB: emergence success
-# figC: hatchling sex ratios (P base)
-# figD: hatchling sex ratios (GM base)
-# figI: hatchling abundance (P base)
-# figJ: hatchling abundance (GM base)
-# figE: mature sex ratios (P base)
-# figF: mature sex ratios (GM base)
-# figG: mature abundance (P base)
-# figH: mature abundance (GM base)
-
-
-
-option1 <- (figA1 + figB2) / (figC + figD) / (figI + figJ) / (figE + figF) / (figG + figH) +
-  plot_layout(heights = c(1, 1, 1, 1, 1)) +
-  plot_annotation(tag_levels = "A")
-
-option1
+# # plot figure - just emergence success
+# figB2 <- examples_to_plot %>%
+#   filter(Abundance_Median > 0) %>%
+#   ggplot(aes(x = Year, 
+#              y = Emergence_Success, 
+#              color = Scenario 
+#              # lty = OSR
+#   )) + 
+#   geom_line(lwd = 1) + 
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   theme_bw() +
+#   xlab('') +
+#   ylab('emergence \n success') +
+#   theme(plot.margin = unit(c(0, 0, 0, -1.5), 'cm'))
+# 
+# figB2
+# 
+# # plot figure - hatchling sex ratios, P base
+# figC <- examples_to_plot %>%
+#   filter(Abundance_Median > 0) %>%
+#   filter(Age == 'Hatchling') %>%
+#   filter(TRT == 'Narrow') %>%
+#   ggplot(aes(x = Year, 
+#              y = Sex_Ratio_Median, 
+#              color = Scenario, 
+#              lty = OSR
+#   )) +
+#   # geom_hline(yintercept = 0.01) +
+#   scale_linewidth_manual(values = c(1, 2)) +
+#   geom_ribbon(aes(ymin = Sex_Ratio_Q25,
+#                   ymax = Sex_Ratio_Q75,
+#                   col = NULL,
+#                   fill = Scenario),
+#               alpha = 0.25,
+#               show.legend = FALSE) +
+#   geom_path(lwd = 1) +
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+#   xlab('') +
+#   theme_bw() +
+#   ylim(c(0, 0.41)) +
+#   guides(color = "none", 
+#          lty = 'none') +
+#   ylab('median \n hatchling sex ratio')
+# 
+# figC
+# 
+# # plot figure - hatchling sex ratios, GM base
+# figD <- examples_to_plot %>%
+#   filter(Abundance_Median > 0) %>%  
+#   filter(Age == 'Hatchling') %>%
+#   filter(TRT == 'Wide') %>%
+#   filter(Year > 1) %>%
+#   ggplot(aes(x = Year, 
+#              y = Sex_Ratio_Median, 
+#              color = Scenario, 
+#              lty = OSR
+#   )) +
+#   # geom_hline(yintercept = 0.01) +
+#   scale_linewidth_manual(values = c(1, 2)) +
+#   geom_ribbon(aes(ymin = Sex_Ratio_Q25,
+#                   ymax = Sex_Ratio_Q75,
+#                   col = NULL,
+#                   fill = Scenario),
+#               alpha = 0.25,
+#               show.legend = FALSE) +
+#   geom_path(lwd = 1) +
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+#   xlab('') +
+#   theme_bw() +
+#   ylim(c(0, 0.41)) +
+#   guides(color = "none") +
+#   ylab('')
+# 
+# figD
+# 
+# # plot figure - mature sex ratios, P base
+# figE <- examples_to_plot %>%
+#   filter(Abundance_Median > 0) %>%  
+#   filter(Age == 'Mature') %>%
+#   filter(TRT == 'Narrow') %>%
+#   ggplot(aes(x = Year, 
+#              y = Sex_Ratio_Median, 
+#              color = Scenario, 
+#              lty = OSR
+#   )) +
+#   # geom_hline(yintercept = 0.01) +
+#   scale_linewidth_manual(values = c(1, 2)) +
+#   geom_ribbon(aes(ymin = Sex_Ratio_Q25,
+#                   ymax = Sex_Ratio_Q75,
+#                   col = NULL,
+#                   fill = Scenario),
+#               alpha = 0.25,
+#               show.legend = FALSE) +
+#   geom_path(lwd = 1) +
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+#   xlab('') +
+#   theme_bw() +
+#   ylim(c(0, 0.7)) +
+#   guides(color = "none", lty = 'none') +
+#   ylab('median \n operational sex ratio') 
+# 
+# figE
+# 
+# # plot figure - mature sex ratios, GM base
+# figF <- examples_to_plot %>%
+#   filter(Abundance_Median > 0) %>%  
+#   filter(Age == 'Mature') %>%
+#   filter(TRT == 'Wide') %>%
+#   ggplot(aes(x = Year, 
+#              y = Sex_Ratio_Median, 
+#              color = Scenario, 
+#              lty = OSR
+#   )) +
+#   # geom_hline(yintercept = 0.01) +
+#   scale_linewidth_manual(values = c(1, 2)) +
+#   geom_ribbon(aes(ymin = Sex_Ratio_Q25,
+#                   ymax = Sex_Ratio_Q75,
+#                   col = NULL,
+#                   fill = Scenario),
+#               alpha = 0.25,
+#               show.legend = FALSE) +
+#   geom_path(lwd = 1) +
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+#   xlab('') +
+#   theme_bw() +
+#   ylim(c(0, 0.7)) +
+#   guides(color = "none", lty = 'none') +
+#   ylab('') 
+# 
+# figF
+# 
+# # plot figure - mature abundances, P base
+# figG <- examples_to_plot %>%
+#   filter(Age == 'Mature') %>%
+#   filter(Abundance_Median > 0) %>%
+#   filter(TRT == 'Narrow') %>%
+#   ggplot(aes(x = Year, 
+#              y = Abundance_Median, 
+#              color = Scenario, 
+#              lty = OSR)) + 
+#   geom_ribbon(aes(ymin = Abundance_Q25,
+#                   ymax = Abundance_Q75, 
+#                   col = NULL, 
+#                   fill = Scenario),
+#               alpha = 0.25,
+#               show.legend = FALSE) +
+#   geom_line(lwd = 1) +
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+#   xlab('Year') +
+#   ylab('median \n mature abundance') +
+#   ylim(c(0, 10500)) +
+#   theme_bw() +
+#   guides(color = "none", 
+#          lty = "none")
+# 
+# figG
+# 
+# # plot figure - mature abundances, GM base
+# figH <- examples_to_plot %>%
+#   filter(Age == 'Mature') %>%
+#   filter(Abundance_Median > 0) %>%
+#   filter(TRT == 'Wide') %>%
+#   ggplot(aes(x = Year, 
+#              y = Abundance_Median, 
+#              color = Scenario, 
+#              lty = OSR)) + 
+#   geom_ribbon(aes(ymin = Abundance_Q25,
+#                   ymax = Abundance_Q75, 
+#                   col = NULL, 
+#                   fill = Scenario),
+#               alpha = 0.25,
+#               show.legend = FALSE) +
+#   geom_line(lwd = 1) +
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+#   xlab('Year') +
+#   ylab('') +
+#   ylim(c(0, 10500)) +
+#   theme_bw() +
+#   guides(color = "none", 
+#          lty = "none")
+# 
+# # plot figure - hatchling abundances, P base
+# figI <- examples_to_plot %>%
+#   filter(Age == 'Hatchling') %>%
+#   filter(Abundance_Median > 0) %>%
+#   filter(TRT == 'Narrow') %>%
+#   ggplot(aes(x = Year, 
+#              y = Abundance_Median, 
+#              color = Scenario, 
+#              lty = OSR)) + 
+#   geom_ribbon(aes(ymin = Abundance_Q25,
+#                   ymax = Abundance_Q75, 
+#                   col = NULL, 
+#                   fill = Scenario),
+#               alpha = 0.25,
+#               show.legend = FALSE) +
+#   geom_line(lwd = 1) +
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+#   xlab('Year') +
+#   ylab('median \n mature abundance') +
+#   # ylim(c(0, 10500)) +
+#   theme_bw() +
+#   guides(color = "none", 
+#          lty = "none")
+# 
+# figI
+# 
+# # plot figure - hatchling abundances, GM base
+# figJ <- examples_to_plot %>%
+#   filter(Age == 'Hatchling') %>%
+#   filter(Abundance_Median > 0) %>%
+#   filter(TRT == 'Wide') %>%
+#   ggplot(aes(x = Year, 
+#              y = Abundance_Median, 
+#              color = Scenario, 
+#              lty = OSR)) + 
+#   geom_ribbon(aes(ymin = Abundance_Q25,
+#                   ymax = Abundance_Q75, 
+#                   col = NULL, 
+#                   fill = Scenario),
+#               alpha = 0.25,
+#               show.legend = FALSE) +
+#   geom_line(lwd = 1) +
+#   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+#   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+#   xlab('Year') +
+#   ylab('') +
+#   # ylim(c(0, 10500)) +
+#   theme_bw() +
+#   guides(color = "none", 
+#          lty = "none")
+# 
+# figJ
+# 
+# # figA/B: temperatures and emergence success
+# # figB: emergence success
+# # figC: hatchling sex ratios (P base)
+# # figD: hatchling sex ratios (GM base)
+# # figI: hatchling abundance (P base)
+# # figJ: hatchling abundance (GM base)
+# # figE: mature sex ratios (P base)
+# # figF: mature sex ratios (GM base)
+# # figG: mature abundance (P base)
+# # figH: mature abundance (GM base)
+# 
+# 
+# 
+# option1 <- (figA1 + figB2) / (figC + figD) / (figI + figJ) / (figE + figF) / (figG + figH) +
+#   plot_layout(heights = c(1, 1, 1, 1, 1)) +
+#   plot_annotation(tag_levels = "A")
+# 
+# option1
 
 # option2 <- (figA1 + figA2) / (figB1 + figB2) / (figC + figD) / (figE + figF) / (figG + figH) +
 #   plot_layout(heights = c(-1, -1, -1, -1, -1)) +
@@ -897,35 +1118,35 @@ option1
 
 
 
-final_fig <- option3
-
-# save to file
-ggsave(plot = final_fig,
-       filename = paste('sample_outputs.png', sep = ''),
-       path = '~/Projects/iliketurtles3/figures/',
-       width = 8.5, height = 11)
-
-# plot figure - hatchling sex ratios across all temps and OSRs
-figF <- sample_plot_values %>%
-  filter(Abundance_Median > 0) %>%  
-  filter(Age == 'Hatchling') %>%
-  ggplot(aes(x = Year, 
-             y = Sex_Ratio_Median, 
-             color = Scenario, 
-             lty = OSR 
-  )) + 
-  geom_hline(yintercept = 0.01) +
-  scale_linewidth_manual(values = c(1, 2)) +
-  geom_path() +
-  xlab('Year') +
-  theme_bw() +
-  ylim(c(0, 0.03)) +
-  ylab('Median Hatchling Sex Ratio') +
-  theme(legend.box = "horizontal")
-
-
-# save to file
-ggsave(plot = figF,
-       filename = paste('hatchling_sex_ratios.png', sep = ''),
-       path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 4)
+# final_fig <- option3
+# 
+# # save to file
+# ggsave(plot = final_fig,
+#        filename = paste('sample_outputs.png', sep = ''),
+#        path = '~/Projects/iliketurtles3/figures/',
+#        width = 8.5, height = 11)
+# 
+# # plot figure - hatchling sex ratios across all temps and OSRs
+# figF <- sample_plot_values %>%
+#   filter(Abundance_Median > 0) %>%  
+#   filter(Age == 'Hatchling') %>%
+#   ggplot(aes(x = Year, 
+#              y = Sex_Ratio_Median, 
+#              color = Scenario, 
+#              lty = OSR 
+#   )) + 
+#   geom_hline(yintercept = 0.01) +
+#   scale_linewidth_manual(values = c(1, 2)) +
+#   geom_path() +
+#   xlab('Year') +
+#   theme_bw() +
+#   ylim(c(0, 0.03)) +
+#   ylab('Median Hatchling Sex Ratio') +
+#   theme(legend.box = "horizontal")
+# 
+# 
+# # save to file
+# ggsave(plot = figF,
+#        filename = paste('hatchling_sex_ratios.png', sep = ''),
+#        path = '~/Projects/iliketurtles3/figures/',
+#        width = 8, height = 4)

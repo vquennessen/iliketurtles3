@@ -28,10 +28,10 @@ source('evolution.R')
 models <- c('P_base', 'GM_base')
 
 # years to run the model for
-years <- 200
+years <- 100
 
 # total temp increases
-scenarios <- years / 100 * c(5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5)
+scenarios <- years / 100 * c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
 # scenarios <- c(4, 5)
 
 # OSR values to get full fertilization of females
@@ -47,14 +47,13 @@ intensity <- c(0.1)
 # how often to do the conservation action (years)
 frequency <- c(1)
 
-
-
 # number of simulations to run
-num_sims <- c(1000)
+num_sims <- c(10000)
 
 # make dataframe of all combinations of arguments
 # DF <- expand.grid(models, scenarios, betas, intensity, frequency, years, num_sims)
-DF <- expand.grid(models, scenarios, betas, years, num_sims)
+DF <- expand.grid(models, scenarios, betas, years, num_sims) %>%
+  arrange(Var2)
 
 # initialize empty arguments list
 arguments <- list()
