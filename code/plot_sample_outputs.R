@@ -58,6 +58,8 @@ ideals <- data.frame(
   Ideal_temps_wide = ITemps_wide
 )
 
+write_csv(ideals, file = '../output/ideals.csv')
+
 beta_names <- paste('beta', betas, sep = '')
 
 # maturity ogive
