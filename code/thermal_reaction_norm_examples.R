@@ -47,23 +47,19 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
   geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
   geom_vline(xintercept = 29.2, col = 'black', lwd = 1.5, lty = 1) +
   geom_vline(xintercept = 30.5, col = 'gray60', lwd = 1, lty = 1) +
-  geom_vline(xintercept = 27, col = '#6600FF', lty = 5, 
+  geom_vline(xintercept = 27, col = '#6600FF', lty = 1, 
              lwd = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = 31.4, col = '#6600FF', lty = 5, 
+  geom_vline(xintercept = 31.4, col = '#6600FF', lty = 1, 
              lwd = 0.75, alpha = 0.5) +
   geom_vline(xintercept = 34.4, col = '#FF3300', lty = 4, 
              lwd = 0.75, alpha = 0.5) +
   geom_vline(xintercept = 23.8, col = '#FF3300', lty = 4, 
              lwd = 0.75, alpha = 0.5) +
   geom_line(lwd = 2) +
-  scale_color_manual(values = c(
-    # '#33CC33', 
-                                '#FF3300', '#6600FF')) +
-  scale_linetype_manual(values = c(
-    # 1, 
-    4, 5)) +
-  ylab('Proportion hatchlings male \n Hatchling emergence success') +
-  xlab('Temperature (\u00B0C)') +
+  scale_color_manual(values = c('#FF3300', '#6600FF')) +
+  scale_linetype_manual(values = c(4, 1)) +
+  ylab('Proportion hatchlings male') +
+  xlab('Incubation temperature (\u00B0C)') +
   theme_bw() +
   theme(axis.text = element_text(size = 12), 
         axis.title = element_text(size = 15),
@@ -79,17 +75,17 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
   annotate("label", x = 39.4, y = 0.55, label = "0.50", size = 5, 
            label.size = 0) +
   annotate("label", x = 39.4, y = 1.00, label = "0.95", size = 5, 
+           label.size = 0) +
+  annotate("label", x = 28.4, y = 0, label = "29.2\u00B0C", size = 5,
+           label.size = 0) +
+  annotate("label", x = 32.65, y = 1, label = "30.5\u00B0C", size = 5,
            label.size = 0)
-  # annotate("label", x = 28.4, y = 0, label = "29.2\u00B0C", size = 5, 
-  #          label.size = 0) +
-  # annotate("label", x = 32.65, y = 1, label = "30.5\u00B0C", size = 5, 
-  #          label.size = 0)
 
 
 fig
 
 
-# ggsave("figures/thermal_reaction_norms.png", 
-#        plot = last_plot(), 
-#        height = 5, 
-#        width = 8)
+ggsave("figures/thermal_reaction_norms.png",
+       plot = last_plot(),
+       height = 5,
+       width = 8)
