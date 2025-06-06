@@ -4,7 +4,7 @@
 # persistence, then use separate scripts to make the figures
 
 # # set working directory - desktop
-# setwd('~/Projects/iliketurtles3')
+setwd('~/Projects/iliketurtles3')
 
 # load libraries
 library(ggplot2)
@@ -23,20 +23,21 @@ desktop <- TRUE
 nsims <- 10000
 
 # combos - no vs. temp stochasticity
-stochasticity <- c('no_temp_stochasticity', 'temp_stochasticity',
-                   'temp_stochasticity/red noise 0.1',
-                   'temp_stochasticity/red noise 0.3',
-                   'temp_stochasticity/red noise 0.5')
-# stochasticity <- c('no_temp_stochasticity', 'temp_stochasticity', 
-#                    'temp_stochasticity/red noise 0.1')
+# stochasticity <- c('no_temp_stochasticity', 'temp_stochasticity',
+#                    'temp_stochasticity/red noise 0.1',
+#                    'temp_stochasticity/red noise 0.3',
+#                    'temp_stochasticity/red noise 0.5')
+stochasticity <- c('2025_05_24_temp_stochasticity')
 
 models <- c('P_base', 'GM_base')
 # models <- c('P_base')
 
-stochasticity_names <- rep(c('no temperature stochasticity', 'white noise',
-                         'red noise 0.1', 'red noise 0.3', 'red noise 0.5'),
+# stochasticity_names <- rep(c('white noise',
+#                          'red noise 0.1', 'red noise 0.3', 'red noise 0.5'),
+stochasticity_names <- rep(c('white noise'),
                          times = length(models))
-stochasticity_names_short <- rep(c('nTS', 'TS', 'red0.1', 'red0.3', 'red0.5'),
+# stochasticity_names_short <- rep(c('nTS', 'TS', 'red0.1', 'red0.3', 'red0.5'),
+stochasticity_names_short <- rep(c('TS'),
                                  times = length(models))
 pops <- c('West Africa', 'Suriname')
 model_names <- c('base model', 'base model')
@@ -65,22 +66,26 @@ model_names <- c('base model', 'base model')
 #                            'threshold_evol_persistence_combined')
 
 # which year to track
-years_to_plot <- c(100)
+years_to_plot <- c(25, 50, 75, 100)
 
 # temperature increase scenarios
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
 # scenarios <- paste(c(1), 'C', sep = '')
 
 # operational sex ratios to get 100% reproductive success
-osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
+osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
 # osrs <- c(0.25)
 betas <- OSRs_to_betas(osrs)
 
 # generate automatically
 paths <- as.vector(outer(stochasticity, models, paste, sep = "/"))
-populations <- rep(pops, each = length(stochasticity))
-models_short <- rep(models, each = length(stochasticity))
-model_types <- rep(model_names, each = length(stochasticity), times = length(pops))
+populations <- rep(pops, 
+                   each = length(stochasticity))
+models_short <- rep(models, 
+                    each = length(stochasticity))
+model_types <- rep(model_names, 
+                   each = length(stochasticity), 
+                   times = length(pops))
 
 # dimensions
 P <- length(paths)
@@ -93,7 +98,6 @@ max_age <- 85
 age_maturity_mu <- 25
 age_maturity_sd <- 2.5
 M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
-
 
 # initialize super data frame
 SDF <- data.frame(Stochasticity = rep(NA, P*S*B),
@@ -210,7 +214,7 @@ for (y in 1:Y) {
         }
         
         index <- (p - 1)*S*B + (s - 1)*B + b
-        print(index)
+        print(paste(index / (P*S*B) * 100, '% done', sep = ''))
         
         # initialize dataframe - temp vs. no temp stochasticity
         SDF$Stochasticity[index] <- stochasticity_names[p]
@@ -262,7 +266,7 @@ for (y in 1:Y) {
   base_persistence$Scenario <- factor(base_persistence$Scenario,
                                       levels = scenarios)
   save(base_persistence,
-       file = paste('~/Projects/iliketurtles3/output/base_persistence_red',
+       file = paste('~/Projects/iliketurtles3/output/base_persistence',
                     year_to_plot, '.Rdata', sep = ''))
   
   # save(base_persistence,
