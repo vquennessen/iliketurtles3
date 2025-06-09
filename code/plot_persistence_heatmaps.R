@@ -1,9 +1,5 @@
 # make figures representing output
 
-# TODO 
-# make this script just for extracting all the probabilities of population
-# persistence, then use separate scripts to make the figures
-
 # set working directory
 setwd('~/Projects/iliketurtles3')
 
@@ -20,7 +16,7 @@ library(tidyr)
 # EDIT dataframes to load up ###################################################
 
 # load in persistence object
-load("~/Projects/iliketurtles3/output/base_persistence_100.Rdata")
+load("~/Projects/iliketurtles3/output/base_persistence.Rdata")
 
 # load("~/Projects/iliketurtles3/output/base_persistence_25.Rdata")
 # bp25 <- base_persistence
@@ -61,20 +57,21 @@ all_combos$Stochasticity <- factor(all_combos$Stochasticity,
 
 # EDIT #########################################################################
 DF_to_use <- all_combos %>% 
-  filter(Stochasticity == 'temperature stochasticity') %>%
+  filter(Stochasticity == 'white noise') %>%
   select(Population, Scenario, OSR, Survive_to, 
-         Probability_mature, Probability_total_mean) %>%
-  pivot_longer(cols = c('Probability_mature', 'Probability_total_mean'), 
+         Probability_mature_mean, Probability_total_mean) %>%
+  pivot_longer(cols = c('Probability_mature_mean', 'Probability_total_mean'), 
                names_to = 'abundance', 
                values_to = 'Probability') %>%
-  mutate(Abundance = paste(ifelse(abundance == 'Probability_mature', 
+  mutate(Abundance = paste(ifelse(abundance == 'Probability_mature_mean', 
                                   'Mature', 'Total'), 
-         'Abundance', sep = ' '))
+         'Abundance', sep = ' ')) %>%
+  select(-abundance)
   # mutate(pretty_survive_to = paste('Year', Survive_to, sep = ' '))
   
 name_to_use <- paste('base_persistence')
 # short_stochasticities <- unique(DF_to_use$Stochasticity_short)
-var_rows <- 7 # abundance pretty
+var_rows <- 6 # abundance pretty
 var_columns <- 1 # populations
 
 ##### plotting abundance mature ################################################

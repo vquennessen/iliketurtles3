@@ -28,7 +28,7 @@ source('evolution.R')
 models <- c('P_base', 'GM_base')
 
 # years to run the model for
-years <- 200
+years <- 100
 
 # total temp increases
 # scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
@@ -50,7 +50,7 @@ frequency <- c(1)
 
 
 # number of simulations to run
-nsims <- c(2)
+nsims <- c(10)
 
 # make dataframe of all combinations of arguments
 DF <- expand.grid(models, scenarios, betas, years, nsims, 

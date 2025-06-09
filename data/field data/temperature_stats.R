@@ -132,6 +132,9 @@ save(incubation, file = 'incubation_temps.Rda')
 
 ##### stats ####################################################################
 
+# load data
+load("~/Projects/iliketurtles3/output/incubation_temps.Rda")
+
 data <- incubation %>%
   filter(season != 1)  %>%
   na.omit(hatch_success) 

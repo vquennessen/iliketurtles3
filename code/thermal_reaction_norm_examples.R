@@ -41,19 +41,24 @@ TRN <- data.frame(Temperature = x,
 # WA <- subset(TRN, Model == 'West Africa')
 # SN <- subset(TRN, Model == 'Suriname')
 
+TRT_lower_wide <- 23.8
+TRT_lower_narrow <- 27
+TRT_upper_narrow <- 31.4
+TRT_upper_wide <- 34.4
+
 # plot
 fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, 
                               col = Population, lty = Population)) +
   geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
   geom_vline(xintercept = 29.2, col = 'black', lwd = 1.5, lty = 1) +
   geom_vline(xintercept = 30.5, col = 'gray60', lwd = 1, lty = 1) +
-  geom_vline(xintercept = 27, col = '#6600FF', lty = 1, 
+  geom_vline(xintercept = TRT_lower_narrow, col = '#6600FF', lty = 1, 
              lwd = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = 31.4, col = '#6600FF', lty = 1, 
+  geom_vline(xintercept = TRT_upper_narrow, col = '#6600FF', lty = 1, 
              lwd = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = 34.4, col = '#FF3300', lty = 4, 
+  geom_vline(xintercept = TRT_upper_wide, col = '#FF3300', lty = 4, 
              lwd = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = 23.8, col = '#FF3300', lty = 4, 
+  geom_vline(xintercept = TRT_lower_wide, col = '#FF3300', lty = 4, 
              lwd = 0.75, alpha = 0.5) +
   geom_line(lwd = 2) +
   scale_color_manual(values = c('#FF3300', '#6600FF')) +

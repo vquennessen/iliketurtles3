@@ -17,7 +17,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 # source('/home/quennessenv/iliketurtles3/code/mating function/OSRs_to_betas.R')
 
 # which computer am I using?
-desktop <- TRUE
+desktop <- FALSE
 
 # plotting model parameters
 nsims <- 10000
@@ -108,12 +108,12 @@ SDF <- data.frame(Stochasticity = rep(NA, P*S*B),
                   Scenario = rep(NA, P*S*B), 
                   OSR = rep(NA, P*S*B), 
                   Survive_to = rep(NA, P*S*B), 
-                  Probability_total = rep(NA, P*S*B),
-                  Probability_total_F = rep(NA, P*S*B), 
-                  Probability_total_M = rep(NA, P*S*B), 
-                  Probability_mature = rep(NA, P*S*B),
-                  Probability_mature_F = rep(NA, P*S*B),
-                  Probability_mature_M = rep(NA, P*S*B))
+                  Probability_total_mean = rep(NA, P*S*B),
+                  Probability_total_F_mean = rep(NA, P*S*B), 
+                  Probability_total_M_mean = rep(NA, P*S*B), 
+                  Probability_mature_mean = rep(NA, P*S*B),
+                  Probability_mature_F_mean = rep(NA, P*S*B),
+                  Probability_mature_M_mean = rep(NA, P*S*B))
 
 # for each year to plot
 for (y in 1:Y) {
@@ -213,9 +213,6 @@ for (y in 1:Y) {
           
         }
         
-        index <- (p - 1)*S*B + (s - 1)*B + b
-        print(paste(index / (P*S*B) * 100, '% done', sep = ''))
-        
         # initialize dataframe - temp vs. no temp stochasticity
         SDF$Stochasticity[index] <- stochasticity_names[p]
         SDF$Stochasticity_short[index] <- stochasticity_names_short[p]
@@ -226,17 +223,17 @@ for (y in 1:Y) {
         SDF$OSR[index] <- osrs[b]
         SDF$Survive_to[index] <- year_to_plot
         
-        SDF$Probability_total[index] <- mean(
+        SDF$Probability_total_mean[index] <- mean(
           sims_abundance_total[year_to_plot, ] > 0.1 * sims_abundance_total[1, ])
-        SDF$Probability_total_F[index] <- mean(
+        SDF$Probability_total_F_mean[index] <- mean(
           sims_abundance_F[year_to_plot, ] > 0.1 * sims_abundance_F[1, ])
-        SDF$Probability_total_M[index] <- mean(
+        SDF$Probability_total_M_mean[index] <- mean(
           sims_abundance_M[year_to_plot, ] > 0.1 * sims_abundance_M[1, ])
-        SDF$Probability_mature[index] <- mean(
+        SDF$Probability_mature_mean[index] <- mean(
           sims_abundance_mature[year_to_plot, ] > 0.1 * sims_abundance_mature[1, ])
-        SDF$Probability_mature_F[index] <- mean(
+        SDF$Probability_mature_F_mean[index] <- mean(
           sims_N[1, , year_to_plot, ] * M > 0.1 * sims_N[1, , 1, ] * M)
-        SDF$Probability_mature_M[index] <- mean(
+        SDF$Probability_mature_M_mean[index] <- mean(
           sims_N[2, , year_to_plot, ] * M > 0.1 * sims_N[2, , 1, ] * M)
         
         # # initialize dataframe - evolution
@@ -253,6 +250,9 @@ for (y in 1:Y) {
         # SDF$Probability_mature[index] <- mean(
         #   sims_abundance_mature[year_to_plot, ] > 0.1*sims_abundance_mature[1, ])
         
+        index <- (p - 1)*S*B + (s - 1)*B + b
+        print(paste(index / (P*S*B*Y) * 100, '% done', sep = ''))
+        
       }
       
     }
@@ -266,8 +266,8 @@ for (y in 1:Y) {
   base_persistence$Scenario <- factor(base_persistence$Scenario,
                                       levels = scenarios)
   save(base_persistence,
-       file = paste('~/Projects/iliketurtles3/output/base_persistence',
-                    year_to_plot, '.Rdata', sep = ''))
+       file = paste('~/Projects/iliketurtles3/output/base_persistence.Rdata', 
+                    sep = ''))
   
   # save(base_persistence,
   #      file = paste('/home/quennessenv/iliketurtles3/output/base_persistence_red',
