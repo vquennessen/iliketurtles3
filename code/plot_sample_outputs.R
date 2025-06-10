@@ -299,6 +299,8 @@ examples_to_plot <- example_outputs %>%
 osr0.1_title <- 'minimum OSR 0.1 (steep mating function)'
 osr0.45_title <- 'minimum OSR 0.45 (shallow mating function)'
 annotation_x <- 90
+annotation_size <- 4
+annotation_label <- 0
 
 ###### temperature plot - min OSR = 0.1
 temps_osr_0.1 <- ggplot(examples_to_plot, 
@@ -333,22 +335,22 @@ temps_osr_0.1 <- ggplot(examples_to_plot,
   geom_path(lwd = 1)  +
   
   annotate("label", x = annotation_x, y = 32.5, label = "TI: 0.5 \u00B0C", 
-           size = 4, label.size = 0) +
+           size = annotation_size, label.size = annotation_label) +
   
   annotate("label", x = annotation_x, y = 36.3, label = "TI: 4.5 \u00B0C", 
-           size = 4, label.size = 0) +
+           size = annotation_size, label.size = annotation_label) +
   
   annotate("label", x = annotation_x, y = 34.4, label = "UL: Wide TRT", 
-           size = 4, label.size = 0) +
+           size = annotation_size, label.size = annotation_label) +
   
   annotate("label", x = annotation_x, y = 31.2, label = "UL: Narrow TRT", 
-           size = 4, label.size = 0) +
+           size = annotation_size, label.size = annotation_label) +
   
   annotate("label", x = annotation_x, y = 34.84, label = "IIT: Wide TRT", 
-           size = 4, label.size = 0) +
+           size = annotation_size, label.size = annotation_label) +
   
   annotate("label", x = annotation_x, y = 31.76, label = "IIT: Narrow TRT", 
-           size = 4, label.size = 0)
+           size = annotation_size, label.size = annotation_label)
 
 temps_osr_0.1
 
