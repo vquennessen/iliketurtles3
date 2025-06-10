@@ -17,7 +17,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 # source('/home/quennessenv/iliketurtles3/code/mating function/OSRs_to_betas.R')
 
 # which computer am I using?
-desktop <- FALSE
+desktop <- TRUE
 
 # plotting model parameters
 nsims <- 10000
@@ -27,7 +27,7 @@ nsims <- 10000
 #                    'temp_stochasticity/red noise 0.1',
 #                    'temp_stochasticity/red noise 0.3',
 #                    'temp_stochasticity/red noise 0.5')
-stochasticity <- c('2025_05_24_temp_stochasticity')
+stochasticity <- c('2025_06_06_temperature_stochasticity_init_temp_31.8')
 
 models <- c('P_base', 'GM_base')
 # models <- c('P_base')
@@ -213,6 +213,9 @@ for (y in 1:Y) {
           
         }
         
+        # index number
+        index <- (p - 1)*S*B + (s - 1)*B + b
+        
         # initialize dataframe - temp vs. no temp stochasticity
         SDF$Stochasticity[index] <- stochasticity_names[p]
         SDF$Stochasticity_short[index] <- stochasticity_names_short[p]
@@ -250,8 +253,9 @@ for (y in 1:Y) {
         # SDF$Probability_mature[index] <- mean(
         #   sims_abundance_mature[year_to_plot, ] > 0.1*sims_abundance_mature[1, ])
         
-        index <- (p - 1)*S*B + (s - 1)*B + b
-        print(paste(index / (P*S*B*Y) * 100, '% done', sep = ''))
+        # print update
+        print_index <- index*(y - 1) + index
+        print(paste(print_index / (P*S*B*Y) * 100, '% done', sep = ''))
         
       }
       
