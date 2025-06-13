@@ -4,11 +4,13 @@
 setwd('~/Projects/iliketurtles3/code')
 
 # load libraries
-library(dplyr)
 library(parallel)
+library(dplyr)
 library(tidyr)
+library(magrittr)
 library(readr)
 library(lubridate)
+library(lgcp)
 
 # source functions
 source('run_base_model.R')
@@ -19,6 +21,8 @@ source('reproduction.R')
 source('pop_dynamics.R')
 source('mating function/OSRs_to_betas.R')
 source('evolution.R')
+source('emergence_success.R')
+source('proportion_male.R')
 
 # models
 # models <- c('P_base', 'P_evol_piv', 'P_evol_piv_high_H',

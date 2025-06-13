@@ -1,30 +1,51 @@
 # population dynamics with demographic stochasticity
 
-pop_dynamics <- function(N, max_age, y, F_survival, M_survival) {
+pop_dynamics <- function(N, max_age, y, M,
+                         F_survival_immature, F_survival_mature, 
+                         M_survival_immature, M_survival_mature) {
   
   #survival based on binomial distribution with survival rates as probabilities
+  # immature females that survived
+  all_immature_F <- rbinom(n = max_age - 1, 
+                           size = round(N[1, 1:(max_age - 1), y - 1]), 
+                           prob = F_survival_immature[1:(max_age - 1)])
   
-  # for each age 
-  for (a in 2:max_age) {
-    
-    # make sure there are more than 0 individuals in the previous age class
-    if (N[1, a - 1, y - 1] > 0.5) {
-      
-      # annual survival - females
-      N[1, a, y] <- round(sum(rbinom(n = round(N[1, a - 1, y - 1]),
-                                     size = 1, 
-                                     prob = F_survival[a - 1]), 
-                              na.rm = TRUE))
-      
-      # annual survival - males
-      N[2, a, y] <- round(sum(rbinom(n = round(N[2, a - 1, y - 1]),    
-                                     size = 1, 
-                                     prob = M_survival[a - 1]), 
-                              na.rm = TRUE))
-      
-    }
-    
-  }
+  # immature females that matured
+  new_mature_F <- rbinom(n = max_age - 1, 
+                         size = all_immature_F, 
+                         prob = M)
+  
+  # updated immature female population
+  N[1, 2:max_age, y] <- as.numeric(all_immature_F) - as.numeric(new_mature_F)
+  
+  # mature females that survived
+  mature_survived_F <- rbinom(n = max_age - 1, 
+                              size = round(N[3, 1:(max_age - 1), y - 1]), 
+                              prob = F_survival_mature)
+  
+  # updated mature female population
+  N[3, 2:max_age, y] <- as.numeric(mature_survived_F) + as.numeric(new_mature_F)
+  
+  # immature males that survived
+  all_immature_M <- rbinom(n = max_age - 1, 
+                           size = round(N[2, 1:(max_age - 1), y - 1]), 
+                           prob = M_survival_immature[1:(max_age - 1)])
+  
+  # immature males that matured
+  new_mature_M <- rbinom(n = max_age - 1, 
+                         size = all_immature_M, 
+                         prob = M)
+  
+  # updated immature male population
+  N[2, 2:max_age, y] <- as.numeric(all_immature_M) - as.numeric(new_mature_M)
+  
+  # mature males that survived
+  mature_survived_M <- rbinom(n = max_age - 1, 
+                              size = round(N[4, 1:(max_age - 1), y - 1]), 
+                              prob = M_survival_mature)
+  
+  # updated mature male population
+  N[4, 2:max_age, y] <- as.numeric(mature_survived_M) + as.numeric(new_mature_M)
   
   # output
   return(N)

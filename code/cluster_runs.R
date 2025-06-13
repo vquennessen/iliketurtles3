@@ -7,6 +7,7 @@ library(tidyr)
 library(magrittr)
 library(readr)
 library(lubridate)
+library(lgcp)
 
 # set working directory
 # setwd('~/Projects/iliketurtles3/code')
@@ -19,6 +20,8 @@ source('reproduction.R')
 source('pop_dynamics.R')
 source('mating function/OSRs_to_betas.R')
 source('evolution.R')
+source('emergence_success.R')
+source('proportion_male.R')
 
 # # models
 # models <- c('P_evol_piv', 'P_evol_piv_high_H',
@@ -48,7 +51,7 @@ intensity <- c(0.1)
 frequency <- c(1)
 
 # number of simulations to run
-num_sims <- c(10000)
+num_sims <- c(10)
 
 # make dataframe of all combinations of arguments
 # DF <- expand.grid(models, scenarios, betas, intensity, frequency, years, num_sims)

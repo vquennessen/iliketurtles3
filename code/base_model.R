@@ -1,11 +1,15 @@
 # base model
 
 base_model <- function(scenario, beta, years, max_age,
-                       F_survival, M_survival, F_init, M_init, 
+                       F_survival_immature, F_survival_mature, 
+                       M_survival_immature, M_survival_mature,
+                       F_Immature_init, M_Immature_init, 
+                       F_Mature_init, M_Mature_init,
                        M, F_remigration_int, M_remigration_int,
                        clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
-                       hatch_success_A, hatch_success_k, hatch_success_t0, 
-                       T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv, 
+                       emergence_success_A, emergence_success_k, 
+                       emergenceS_success_t0, 
+                       T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
                        T_threshold, h2_threshold, ag_var_threshold, 
                        evolution_threshold,
                        temp_mu, climate_stochasticity, 
@@ -13,8 +17,10 @@ base_model <- function(scenario, beta, years, max_age,
   
   ##### source initialized arrays ##############################################
   
-  init_output <- initialize_arrays(scenario, years, max_age, F_init, M_init, M, 
-                                   F_remigration_int, M_remigration_int, 
+  init_output <- initialize_arrays(scenario, years, max_age, 
+                                   F_Immature_init, M_Immature_init, 
+                                   F_Mature_init, M_Mature_init,
+                                   M, F_remigration_int, M_remigration_int, 
                                    T_piv, k_piv, h2_piv, ag_var_piv, 
                                    evolution_piv,
                                    T_threshold, h2_threshold, ag_var_threshold, 
@@ -43,7 +49,9 @@ base_model <- function(scenario, beta, years, max_age,
     
     # population dynamics
     # survival for each age 
-    N <- pop_dynamics(N, max_age, y, F_survival, M_survival)
+    N <- pop_dynamics(N, max_age, y, 
+                      F_survival_immature, F_survival_mature, 
+                      M_survival_immature, M_survival_mature)
     
     # evolution (if applicable)
     if (evolution_piv == TRUE || evolution_threshold == TRUE) {
@@ -64,54 +72,56 @@ base_model <- function(scenario, beta, years, max_age,
       
     }
     
-    # # if temp is over threshold temperature, then hatching success is zero,
-    # # so there's no age 1, skip reproduction step
-    # if (temperatures[y] > Threshold_temps[y]) {
-    #   N[1, 1, y] <- 0
-    #   N[2, 1, y] <- 0 } else {
+    # if temp is over threshold temperature, then hatching success is zero,
+    # so there's no age 1, skip reproduction step
+    if (temperatures[y] > Threshold_temps[y]) {
+      N[1, 1, y] <- 0
+      N[2, 1, y] <- 0 } else {
+        
+        # reproduction
+        rep_output <- reproduction(N, M, y, beta, max_age,
+                                   F_remigration_int, M_remigration_int,
+                                   clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
+                                   emergence_success_A, emergence_success_k, 
+                                   emergence_success_t0, 
+                                   season_temp_mus, clutch_temp_sd,
+                                   k_piv, Pivotal_temps, Threshold_temps)
+        
+        # add recruits to population size array
+        N[1, 1, y]       <- rep_output[[1]]
+        N[2, 1, y]       <- rep_output[[2]]
+        OSR[y]           <- rep_output[[3]]
+        
+        # break out of loop if there are zero males or females at any age
+        if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], na.rm = TRUE) < 0.5) {
+          break }
+      }
     
-    # reproduction
-    rep_output <- reproduction(N, M, y, beta, max_age,
-                               F_remigration_int, M_remigration_int,
-                               clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
-                               hatch_success_A, hatch_success_k, 
-                               hatch_success_t0, 
-                               season_temp_mus, clutch_temp_sd,
-                               k_piv, Pivotal_temps, Threshold_temps)
-    
-    # add recruits to population size array
-    N[1, 1, y]       <- rep_output[[1]]
-    N[2, 1, y]       <- rep_output[[2]]
-    OSR[y]           <- rep_output[[3]]
+  }
   
-  # break out of loop if there are zero males or females at any age
-  if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], na.rm = TRUE) < 0.5) {
-    break }
-}
-
-##### output #################################################################
-
-# create abundance array
-abundance_F <- colSums(N[1, , ], dims = 1)
-abundance_M <- colSums(N[2, , ], dims = 1)
-abundance_total <- colSums(N, dims = 2)
-abundance_mature <- colSums(round(N[, , ]*M, 2), dims = 2)
-
-# output N and abundance arrays
-
-if (evolution_piv == FALSE) { Pivotal_temps <- NA }
-
-if (evolution_threshold == FALSE) { Threshold_temps <- NA }
-
-output <- list(N, 
-               abundance_F, 
-               abundance_M, 
-               abundance_total, 
-               abundance_mature, 
-               OSR,
-               Pivotal_temps, 
-               Threshold_temps)
-
-return(output)
-
+  ##### output #################################################################
+  
+  # create abundance array
+  abundance_F <- colSums(N[1, , ], dims = 1)
+  abundance_M <- colSums(N[2, , ], dims = 1)
+  abundance_total <- colSums(N, dims = 2)
+  abundance_mature <- colSums(round(N[, , ]*M, 2), dims = 2)
+  
+  # output N and abundance arrays
+  
+  if (evolution_piv == FALSE) { Pivotal_temps <- NA }
+  
+  if (evolution_threshold == FALSE) { Threshold_temps <- NA }
+  
+  output <- list(N, 
+                 abundance_F, 
+                 abundance_M, 
+                 abundance_total, 
+                 abundance_mature, 
+                 OSR,
+                 Pivotal_temps, 
+                 Threshold_temps)
+  
+  return(output)
+  
 }

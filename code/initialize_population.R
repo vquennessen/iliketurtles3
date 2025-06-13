@@ -1,53 +1,91 @@
 initialize_population <- function(beta, burn_in, max_age, 
-                                  F_survival, M_survival, M, 
-                                  F_remigration_int, M_remigration_int,
-                                  clutches_mu, eggs_mu, hatch_success_A,
-                                  hatch_success_k, hatch_success_t0,
+                                  F_survival_immature, F_survival_mature, 
+                                  M_survival_immature, M_survival_mature, 
+                                  M, F_remigration_int, M_remigration_int,
+                                  clutches_mu, eggs_mu, hatch_success_A, 
+                                  hatch_success_k, hatch_success_t0, 
                                   k_piv, T_piv, temp_mu, 
                                   F_initial, M_initial) {
   
   # initialize N dataframe
-  N <- array(rep(0, times = 2 * max_age * burn_in), 
-             dim = c(2, max_age, burn_in))
+  N <- array(rep(0, times = 4 * max_age * burn_in), 
+             dim = c(4, max_age, burn_in))
+  
+  # immature ogive
+  Mi <- 1 - M
   
   # initial pop size
-# hatchlings
-  N[ , 1, 1] <- 10000
-# not hatchlings
-  N[ , 2:max_age, 1] <- 100
+  # hatchlings - immature populations
+  N[1:2, 1, 1] <- 10000
+  
+  # everyone else - immature populations
+  N[1, 2:max_age, 1] <- round(100 * Mi[2:max_age])
+  N[2, 2:max_age, 1] <- round(100 * Mi[2:max_age])
+  
+  # everyone else - mature populations
+  N[3, 2:max_age, 1] <- round(100 * M[2:max_age])
+  N[4, 2:max_age, 1] <- round(100 * M[2:max_age])
   
   # move population forward in time burn_in years
   for (y in 2:burn_in) {
     
-    # females
-    N[1, 2:max_age, y] <- rbinom(n = max_age - 1, 
-                                 size = round(N[1, 1:(max_age - 1), y - 1]), 
-                                 prob = F_survival[1:(max_age - 1)])
+    # immature females that survived
+    all_immature_F <- rbinom(n = max_age - 1, 
+                             size = round(N[1, 1:(max_age - 1), y - 1]), 
+                             prob = F_survival_immature[1:(max_age - 1)])
     
-    # males
-    N[2, 2:max_age, y] <- rbinom(n = max_age - 1, 
-                                 size = round(N[2, 1:(max_age - 1), y - 1]), 
-                                 prob = M_survival[1:(max_age - 1)])
+    # immature females that matured
+    new_mature_F <- rbinom(n = max_age - 1, 
+                           size = all_immature_F, 
+                           prob = M)
+    
+    # updated immature female population
+    N[1, 2:max_age, y] <- as.numeric(all_immature_F) - as.numeric(new_mature_F)
+    
+    # mature females that survived
+    mature_survived_F <- rbinom(n = max_age - 1, 
+                                size = round(N[3, 1:(max_age - 1), y - 1]), 
+                                prob = F_survival_mature)
+    
+    # updated mature female population
+    N[3, 2:max_age, y] <- as.numeric(mature_survived_F) + as.numeric(new_mature_F)
+    
+    # immature males that survived
+    all_immature_M <- rbinom(n = max_age - 1, 
+                             size = round(N[2, 1:(max_age - 1), y - 1]), 
+                             prob = M_survival_immature[1:(max_age - 1)])
+    
+    # immature males that matured
+    new_mature_M <- rbinom(n = max_age - 1, 
+                           size = all_immature_M, 
+                           prob = M)
+    
+    # updated immature male population
+    N[2, 2:max_age, y] <- as.numeric(all_immature_M) - as.numeric(new_mature_M)
+    
+    # mature males that survived
+    mature_survived_M <- rbinom(n = max_age - 1, 
+                                size = round(N[4, 1:(max_age - 1), y - 1]), 
+                                prob = M_survival_mature)
+    
+    # updated mature male population
+    N[4, 2:max_age, y] <- as.numeric(mature_survived_M) + as.numeric(new_mature_M)
     
     ##### reproduction
     
-    # # females only breed every F_remigration_int years
-    # all_mature_F <- rbinom(n = max_age, 
-    #                        size = round(N[1, , y - 1]), 
-    #                        prob = M)
-    # 
-    # n_breeding_F <- round(all_mature_F / F_remigration_int)
-    # 
-    # all_mature_M <- rbinom(n = max_age, 
-    #                        size = round(N[2, , y-1]), 
-    #                        prob = M)
-    # 
-    # n_breeding_M <- round(all_mature_M / M_remigration_int)
+    # breeding females this year
+    breeding_F <- rbinom(n = max_age, 
+                         size = N[3, , y], 
+                         prob = 1 / F_remigration_int)
     
-    n_breeding_F <- round(sum(round(N[1, , y] * M), na.rm = TRUE) / F_remigration_int)
-
-    # males only breed every M_remigration_int years
-    n_breeding_M <- round(sum(round(N[2, , y] * M), na.rm = TRUE) / M_remigration_int)
+    n_breeding_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
+    
+    # breeding males this year
+    breeding_M <- rbinom(n = max_age, 
+                         size = N[4, , y], 
+                         prob = 1 / M_remigration_int)
+    
+    n_breeding_M <- sum(as.numeric(breeding_M, na.rm = TRUE))
     
     # as long as there is at least one mature female and one mature male:
     if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
@@ -60,7 +98,7 @@ initialize_population <- function(beta, burn_in, max_age,
       if (OSR <= 0.5) {
         breeding_success <- pbeta(2 * OSR, shape1 = 1, shape2 = beta) 
         
-      # else, if there are more than 50% males, all the females get to mate
+        # else, if there are more than 50% males, all the females get to mate
       } else { breeding_success <- 1 }
       
       # number of potential eggs, assuming full reproductive success
@@ -91,70 +129,123 @@ initialize_population <- function(beta, burn_in, max_age,
   }
   
   # raw male and female counts
-  females_raw <- as.data.frame(N[1, , ])
-  males_raw <- as.data.frame(N[2, , ])
+  females_immature_raw <- as.data.frame(N[1, , ])
+  males_immature_raw <- as.data.frame(N[2, , ])
+  females_mature_raw <- as.data.frame(N[3, , ])
+  males_mature_raw <- as.data.frame(N[4, , ])
   
-  females <- females_raw %>%
+  females_immature <- females_immature_raw %>%
     mutate(Age = 1:max_age) %>%
     pivot_longer(cols = 1:burn_in,
                  names_to = "Year", 
                  values_to = "Abundance") %>%
     mutate(Year = parse_number(Year)) %>%
-    rename(Female = Abundance) %>%
+    rename(Female_Immature = Abundance) %>%
     group_by(Year)
   
-  males <- males_raw %>%
+  males_immature <- males_immature_raw %>%
     mutate(Age = 1:max_age) %>%
     pivot_longer(cols = 1:burn_in,
                  names_to = "Year", 
                  values_to = "Abundance") %>%
     mutate(Year = parse_number(Year)) %>%
-    rename(Male = Abundance)
+    rename(Male_Immature = Abundance) %>%
+    group_by(Year)
+  
+  females_mature <- females_mature_raw %>%
+    mutate(Age = 1:max_age) %>%
+    pivot_longer(cols = 1:burn_in,
+                 names_to = "Year", 
+                 values_to = "Abundance") %>%
+    mutate(Year = parse_number(Year)) %>%
+    rename(Female_Mature = Abundance) %>%
+    group_by(Year)
+  
+  males_mature <- males_mature_raw %>%
+    mutate(Age = 1:max_age) %>%
+    pivot_longer(cols = 1:burn_in,
+                 names_to = "Year", 
+                 values_to = "Abundance") %>%
+    mutate(Year = parse_number(Year)) %>%
+    rename(Male_Mature = Abundance) %>%
+    group_by(Year)
+  
+  females <- left_join(females_immature, females_mature)
+  males <- left_join(males_immature, males_mature)
   
   abundances <- left_join(females, males) %>%
-    mutate(Total = Female + Male) %>%
+    # mutate(Total_Immature = Female_Immature + Male_Immature) %>%
+    # mutate(Total_Mature = Female_Mature + Male_Mature) %>%
+    # mutate(Total_Female = Female_Immature + Female_Mature) %>%
+    # mutate(Total_Male = Male_Immature + Male_Mature) %>%
+    mutate(Total = Female_Immature + Male_Immature + Female_Mature + Male_Mature) %>% 
     mutate(Age = factor(Age)) %>%
     group_by(Year) %>%
-    mutate(PropTotal = Total/sum(Total)) %>%
-    mutate(PropFemale = Female/sum(Female)) %>%
-    mutate(PropMale = Male/sum(Male)) %>%
-    mutate(TotalPropFemale = Female/Total) %>%
-    mutate(TotalPropMale = Male/Total)
-  
+    mutate(Prop_Total = Total / sum(Total)) %>%
+    mutate(Total_Female_Immature = sum(Female_Immature)) %>%
+    mutate(Total_Male_Immature = sum(Male_Immature)) %>%
+    mutate(Total_Female_Mature = sum(Female_Mature)) %>%
+    mutate(Total_Male_Mature = sum(Male_Mature)) %>%
+    mutate(Prop_Female_Immature = Female_Immature / Total_Female_Immature) %>%
+    mutate(Prop_Male_Immature = Male_Immature / Total_Male_Immature) %>%
+    mutate(Prop_Female_Mature = Female_Mature / Total_Female_Mature) %>%
+    mutate(Prop_Male_Mature = Male_Mature / Total_Male_Mature) %>%
+    mutate(Total_Prop_Female_Immature = Total_Female_Immature / Total) %>%
+    mutate(Total_Prop_Male_Immature = Total_Male_Immature / Total) %>%
+    mutate(Total_Prop_Female_Mature = Total_Female_Mature / Total) %>%
+    mutate(Total_Prop_Male_Mature = Total_Male_Mature / Total)
+
   # save(abundances, file = '../output/initial_population.Rda')
   
   # final SAD for total population (both sexes)
   final_total_SAD <- abundances %>%
     filter(Year == burn_in) %>%
-    .$PropTotal
+    .$Prop_Total
   
   # sex proportions of total SAD
-  FemaleProp <- abundances %>%
+  Female_Prop_Immature <- abundances %>%
     filter(Year == burn_in) %>%
-    .$TotalPropFemale %>%
+    .$Total_Prop_Female_Immature %>%
     tail(1)
   
-  MaleProp <- abundances %>%
+  Male_Prop_Immature <- abundances %>%
     filter(Year == burn_in) %>%
-    .$TotalPropMale %>%
+    .$Total_Prop_Male_Immature %>%
+    tail(1)
+  
+  Female_Prop_Mature <- abundances %>%
+    filter(Year == burn_in) %>%
+    .$Total_Prop_Female_Mature %>%
+    tail(1)
+  
+  Male_Prop_Mature <- abundances %>%
+    filter(Year == burn_in) %>%
+    .$Total_Prop_Male_Mature %>%
     tail(1)
   
   # sex SADs
-  FemaleSAD <- final_total_SAD * FemaleProp
-  MaleSAD <- final_total_SAD * MaleProp
+  Female_Immature_SAD <- final_total_SAD * Female_Prop_Immature
+  Male_Immature_SAD <- final_total_SAD * Male_Prop_Immature
+  Female_Mature_SAD <- final_total_SAD * Female_Prop_Mature
+  Male_Mature_SAD <- final_total_SAD * Male_Prop_Mature
   
   # multipliers to get minimum adults to match data
-  F_multiplier <- F_initial / sum(FemaleSAD * M)
-  M_multiplier <- M_initial / sum(MaleSAD * M)
+  F_Immature_multiplier <- F_initial / sum(Female_Immature_SAD * M)
+  M_Immature_multiplier <- M_initial / sum(Male_Immature_SAD * M)
+  F_Mature_multiplier <- F_initial / sum(Female_Mature_SAD * M)
+  M_Mature_multiplier <- M_initial / sum(Male_Mature_SAD * M)
   
   # which multiplier to use
-  multiplier <- min(F_multiplier, M_multiplier)
+  multiplier <- min(F_Immature_multiplier, M_Immature_multiplier, 
+                    F_Mature_multiplier, M_Mature_multiplier)
   
   # initial population size
-  F_init <- ceiling(FemaleSAD * multiplier)
-  M_init <- ceiling(MaleSAD * multiplier)
+  F_Immature_init <- round(Female_Immature_SAD * multiplier)
+  M_Immature_init <- round(Male_Immature_SAD * multiplier)
+  F_Mature_init <- round(Female_Mature_SAD * multiplier)
+  M_Mature_init <- round(Male_Mature_SAD * multiplier)
   
-  output <- list(F_init, M_init)
+  output <- list(F_Immature_init, M_Immature_init, F_Mature_init, M_Mature_init)
   
   return(output)
   

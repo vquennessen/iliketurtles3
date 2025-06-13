@@ -42,28 +42,54 @@ reproduction <- function(N, M, y, beta, max_age,
     # replace any number < 1 with +1
     clutches[which(clutches < 1)] <- 1
     
-    # potential eggs vector, one number for each clutch
-    potential_eggs <- round(rnorm(n = sum(clutches), 
-                                  mean = eggs_mu, 
-                                  sd = eggs_sd))
+    # potential eggs list, one number for each clutch
+    potential_eggs_raw <- lapply(clutches, 
+                                 rnorm, 
+                                 mean = eggs_mu, 
+                                 sd = eggs_sd)
     
-    # clutch temperature vector, one number for each clutch 
-    clutch_temps <-rnorm(n = sum(clutches), 
-                         mean = season_temp_mus[y], 
-                         sd = clutch_temp_sd)
+    potential_eggs <- lapply(potential_eggs_raw, 
+                             round)
+    
+    # actual eggs list, one number for each clutch
+    eggs_raw <- lapply(potential_eggs, "*", breeding_success)
+    
+    eggs <- lapply(eggs_raw, 
+                   round)
+    
+    # clutch temperature list, one number for each clutch 
+    clutch_temps <- lapply(clutches, rnorm, 
+                           mean = season_temp_mus[y], 
+                           sd = clutch_temp_sd)
     
     # hatching successes vector, one number for each clutch 
-    hatch_successes <- hatch_success_A / (1 + exp(-hatch_success_k * (clutch_temps - hatch_success_t0)))   
+    prop_emerged <- lapply(clutch_temps, 
+                           emergence_success, 
+                           A = emergence_success_A, 
+                           k = emergence_success_k, 
+                           t0 = emergence_success_t0)
     
-    # proportions male vector, one number for each clutch 
-    props_male <- 1/(1 + exp(-k_piv * (clutch_temps - (Pivotal_temps[y]))))
+    # hatchlings list, one for each clutch
+    hatchlings_raw <- lapply(multiply.list(eggs, prop_emerged), 
+                             round)
     
-    # numbers of hatchlings vector, one number for each clutch 
-    hatchlings <- round(breeding_success * potential_eggs * hatch_successes)
+    hatchlings <- lapply(hatchlings_raw, 
+                         round)
+    
+    # proportions male list, one number for each clutch 
+    props_male <- lapply(hatchlings, 
+                         proportion_male, 
+                         k = k_piv, 
+                         pivotal_temp = Pivotal_temps[y])
+    
+    # proportions female list, one number for each clutch
+    props_female <- mapply('-', 1, props_male, SIMPLIFY = FALSE)
     
     # male and female hatchlings summed across all clutches
-    female_hatchlings <- sum(round(hatchlings * (1 - props_male)))
-    male_hatchlings <- sum(round(hatchlings * props_male))    
+    female_hatchlings_raw <- multiply.list(hatchlings, props_female)
+    female_hatchlings <- sum(unlist(lapply(female_hatchlings_raw, round)))
+    male_hatchlings_raw <- multiply.list(hatchlings, props_male)
+    male_hatchlings <- sum(unlist(lapply(male_hatchlings_raw, round)))
     
   } else {     
     

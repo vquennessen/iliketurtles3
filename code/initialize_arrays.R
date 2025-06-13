@@ -1,8 +1,11 @@
 # initialize arrays
 
-initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M, 
-                              F_remigration_int, M_remigration_int, 
-                              T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
+initialize_arrays <- function(scenario, years, max_age, 
+                              F_Immature_init, M_Immature_init, 
+                              F_Mature_init, M_Mature_init,
+                              M, F_remigration_int, M_remigration_int, 
+                              T_piv, k_piv, h2_piv, ag_var_piv, 
+                              evolution_piv,
                               T_threshold, h2_threshold, ag_var_threshold, 
                               evolution_threshold,
                               temp_mu, climate_stochasticity, 
@@ -12,12 +15,14 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
   
   # initialize population size array
   # dimensions = sexes * ages  * years
-  N <- array(rep(0, times = 2 * max_age * years), 
-             dim = c(2, max_age, years))  
+  N <- array(rep(0, times = 4 * max_age * years), 
+             dim = c(4, max_age, years))  
   
   # initial population size
-  N[1, , 1] <- round(F_init)
-  N[2, , 1] <- round(M_init)
+  N[1, , 1] <- round(F_Immature_init)
+  N[2, , 1] <- round(M_Immature_init)
+  N[3, , 1] <- round(F_Mature_init)
+  N[4, , 1] <- round(M_Mature_init)
   
   ##### incubation temperatures ################################################
   
@@ -26,38 +31,38 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
   
   # if we're including climate stochasticity in the model
   if (climate_stochasticity == TRUE) {
-
+    
     # white noise for average season temperature
     white_noise <- rnorm(n = years, mean = 0, sd = season_temp_sd)
-
+    
     if (noise == 'White') {
-
+      
       # generate stochastic temperatures from means given temp_sd
       season_temp_mus <- temp_mus + white_noise
-
+      
     }
-
+    
     if (noise == 'Red') {
-
+      
       # initialize deviations
       deviations <- rep(NA, times = years)
-
+      
       # first deviation term
       deviations[1] <- rnorm(n = 1, 
                              mean = white_noise[1], 
                              sd = season_temp_sd)
-
+      
       # autocorrelated deviation series
       for (i in 2:years) {
-
+        
         deviations[i] <- AC * deviations[i - 1] + white_noise[i]
-
+        
       }
-
+      
       season_temp_mus <- temp_mus + deviations
-
+      
     }
-
+    
     # if no climate stochasticity, the temperatures are just the means
   } else { season_temp_mus <- temp_mus }
   
@@ -67,8 +72,10 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
   if (evolution_piv == TRUE) {  
     
     # distribution of G - starting genotypes plus genotypic variation - one for 
-    # each age
-    G_piv <- rnorm(n = max_age, mean = T_piv, sd = sqrt(ag_var_piv))
+    # each cohort
+    G_piv <- rnorm(n = max_age, 
+                   mean = T_piv, 
+                   sd = sqrt(ag_var_piv))
     
     # distribution of P - starting expected phenotypes - one for each age
     # starting genotypes plus environmental variation
@@ -170,17 +177,31 @@ initialize_arrays <- function(scenario, years, max_age, F_init, M_init, M,
   
   ##### OSR ####################################################################
   
-  # OSR vector - dimensions 1 for each year
+  # OSR vector - 1 for each year
   OSR <- rep(NA, times = years)
   
-  # first OSR value
-  # females only breed every F_remigration_int years
-  n_breeding_F <- sum((F_init * M), na.rm = TRUE) / F_remigration_int
+  # breeding females this year
+  # breeding males this year
+  breeding_F <- rbinom(n = max_age, 
+                       size = F_Mature_init, 
+                       prob = 1 / F_remigration_int)  
   
-  # males only breed every M_remigration_int years
-  n_breeding_M <- sum((M_init * M), na.rm = TRUE) / M_remigration_int
+  n_breeding_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
   
-  OSR[1] <- n_breeding_M / (n_breeding_M + n_breeding_F)
+  # breeding males this year
+  breeding_M <- rbinom(n = max_age, 
+                       size = M_Mature_init, 
+                       prob = 1 / M_remigration_int)
+  
+  n_breeding_M <- sum(as.numeric(breeding_M, na.rm = TRUE))
+  
+  # as long as there is at least one mature female and one mature male:
+  if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
+    
+    # operational sex ratio - proportion of males
+    OSR <- n_breeding_M / (n_breeding_M + n_breeding_F)
+    
+  }
   
   ##### output #################################################################
   
