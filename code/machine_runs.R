@@ -51,8 +51,6 @@ intensity <- c(1)
 # frequency of conservation actions (years)
 frequency <- c(1)
 
-
-
 # number of simulations to run
 nsims <- c(10)
 

@@ -178,7 +178,7 @@ initialize_arrays <- function(scenario, years, max_age,
   ##### OSR ####################################################################
   
   # OSR vector - 1 for each year
-  OSR <- rep(NA, times = years)
+  OSRs <- rep(NA, times = years)
   
   # breeding females this year
   # breeding males this year
@@ -199,7 +199,7 @@ initialize_arrays <- function(scenario, years, max_age,
   if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
     
     # operational sex ratio - proportion of males
-    OSR <- n_breeding_M / (n_breeding_M + n_breeding_F)
+    OSRs[1] <- n_breeding_M / (n_breeding_M + n_breeding_F)
     
   }
   
@@ -210,7 +210,7 @@ initialize_arrays <- function(scenario, years, max_age,
                  G_piv, P_piv, Gamma_piv, Epsilon_piv, Delta_piv, Pivotal_temps, 
                  G_threshold, P_threshold, Gamma_threshold, Epsilon_threshold, 
                  Delta_threshold, Threshold_temps, 
-                 OSR)
+                 OSRs)
   
   return(output)
   

@@ -1,6 +1,6 @@
 # evolution script
 
-evolution <- function(N, M, max_age, y, 
+evolution <- function(N, max_age, y, breeding_F, breeding_M,
                       G_piv, P_piv, Delta_piv, Pivotal_temps,
                       Gamma_piv, Epsilon_piv, evolution_piv, 
                       G_threshold, P_threshold, Delta_threshold, 
@@ -15,10 +15,10 @@ evolution <- function(N, M, max_age, y,
   if (evolution_piv == TRUE) {
     
     # weighted average of genotypes for mature females from last year
-    GF_piv <- weighted.mean(x = G_piv, w = N[1, , y - 1] * M)    
+    GF_piv <- weighted.mean(x = G_piv, w = breeding_F)    
     
     # weighted average of genotypes for mature males from last year
-    GM_piv <- weighted.mean(x = G_piv, w = N[2, , y - 1] * M)
+    GM_piv <- weighted.mean(x = G_piv, w = breeding_M)
     
     # parent genotypes to hatchling genotype, with genotypic variance
     GH_piv <- (GF_piv + GM_piv) / 2 + Gamma_piv[y]
@@ -48,10 +48,10 @@ evolution <- function(N, M, max_age, y,
   if (evolution_threshold == TRUE) {
     
     # weighted average of genotypes for mature females from last year
-    GF_threshold <- weighted.mean(x = G_threshold, w = N[1, , y - 1] * M)    
+    GF_threshold <- weighted.mean(x = G_threshold, w = breeding_F)    
     
     # weighted average of genotypes for mature males from last year
-    GM_threshold <- weighted.mean(x = G_threshold, w = N[2, , y - 1] * M)
+    GM_threshold <- weighted.mean(x = G_threshold, w = breeding_M)
     
     # parent genotypes to hatchling genotype, with genotypic variance
     GH_threshold <- (GF_threshold + GM_threshold) / 2 + Gamma_threshold[y]

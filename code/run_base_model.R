@@ -212,18 +212,6 @@ run_base_model <- function(arguments) {
   sims_N <- array(rep(NA, times = 4 * max_age * years * nsims), 
                   dim = c(4, max_age, years, nsims))
   
-  sims_abundance_F <- array(rep(NA, times = years * nsims), 
-                            dim = c(years, nsims))  
-  
-  sims_abundance_M <- array(rep(NA, times = years * nsims), 
-                            dim = c(years, nsims)) 
-  
-  sims_abundance_total <- array(rep(NA, times = years * nsims), 
-                                dim = c(years, nsims)) 
-  
-  sims_abundance_mature <- array(rep(NA, times = years * nsims), 
-                                 dim = c(years, nsims))  
-  
   sims_OSR <- array(rep(NA, times = years * nsims), 
                     dim = c(years, nsims)) 
   
@@ -270,38 +258,26 @@ run_base_model <- function(arguments) {
     filepath1 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                       '/', nsims, '_N.Rda', sep = '')
     filepath2 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_abundance_F.Rda', sep = '')
-    filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_abundance_M.Rda', sep = '')
-    filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_abundance_total.Rda', sep = '')
-    filepath5 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_abundance_mature.Rda', sep = '')
-    filepath6 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                       '/', nsims, '_OSR.Rda', sep = '')
     
     # save objects
     save(sims_N, file = filepath1)
-    save(sims_abundance_F, file = filepath2)
-    save(sims_abundance_M, file = filepath3)
-    save(sims_abundance_total, file = filepath4)
-    save(sims_abundance_mature, file = filepath5)
-    save(sims_OSR, file = filepath6)
+    save(sims_OSR, file = filepath2)
     
     if (evolution_piv == TRUE) {
       
-      filepath7 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
+      filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                         '/',  nsims, '_piv.Rda', sep = '')
       
-      save(sims_piv, file = filepath7)
+      save(sims_piv, file = filepath3)
       
     }
     
     if (evolution_threshold == TRUE) {
       
-      filepath8 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
+      filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                         '/',  nsims, '_threshold.Rda', sep = '')
-      save(sims_threshold, file = filepath8)
+      save(sims_threshold, file = filepath4)
       
     }
     
@@ -325,7 +301,8 @@ run_base_model <- function(arguments) {
                            F_Mature_init, M_Mature_init,
                            M, F_remigration_int, M_remigration_int,
                            clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
-                           hatch_success_A, hatch_success_k, hatch_success_t0, 
+                           emergence_success_A, emergence_success_k, 
+                           emergence_success_t0, 
                            T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
                            T_threshold, h2_threshold, ag_var_threshold, 
                            evolution_threshold,
@@ -334,13 +311,9 @@ run_base_model <- function(arguments) {
       
       # save the N and abundance arrays 
       sims_N[, , , i]             <- output[[1]]
-      sims_abundance_F[, i]       <- output[[2]]
-      sims_abundance_M[, i]       <- output[[3]]
-      sims_abundance_total[, i]   <- output[[4]]
-      sims_abundance_mature[, i]  <- output[[5]]
-      sims_OSR[, i]               <- output[[6]]
-      sims_piv[, i]               <- output[[7]]
-      sims_threshold[, i]         <- output[[8]]
+      sims_OSR[, i]               <- output[[2]]
+      sims_piv[, i]               <- output[[3]]
+      sims_threshold[, i]         <- output[[4]]
       
       # write to progress text file
       if ((i/nsims*100) %% 10 == 0) {
@@ -357,38 +330,26 @@ run_base_model <- function(arguments) {
     filepath1 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                       '/', nsims, '_N.Rda', sep = '')
     filepath2 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_abundance_F.Rda', sep = '')
-    filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_abundance_M.Rda', sep = '')
-    filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_abundance_total.Rda', sep = '')
-    filepath5 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_abundance_mature.Rda', sep = '')
-    filepath6 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                       '/', nsims, '_OSR.Rda', sep = '')
     
     # save objects
     save(sims_N, file = filepath1)
-    save(sims_abundance_F, file = filepath2)
-    save(sims_abundance_M, file = filepath3)
-    save(sims_abundance_total, file = filepath4)
-    save(sims_abundance_mature, file = filepath5)
-    save(sims_OSR, file = filepath6)
+    save(sims_OSR, file = filepath2)
     
     if (evolution_piv == TRUE) {
       
-      filepath7 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
+      filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                         '/',  nsims, '_piv.Rda', sep = '')
       
-      save(sims_piv, file = filepath7)
+      save(sims_piv, file = filepath3)
       
     }
     
     if (evolution_threshold == TRUE) {
       
-      filepath8 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
+      filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                         '/',  nsims, '_threshold.Rda', sep = '')
-      save(sims_threshold, file = filepath8)
+      save(sims_threshold, file = filepath4)
       
     }
     

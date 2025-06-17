@@ -1,19 +1,17 @@
 # reproduction
 
-reproduction <- function(N, M, y, beta, max_age,
-                         F_remigration_int, M_remigration_int,
+reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                          clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
-                         hatch_success_A, hatch_success_k, 
-                         hatch_success_t0, 
+                         emergence_success_A, emergence_success_k, 
+                         emergence_success_t0, 
                          season_temp_mus, clutch_temp_sd,
-                         k_piv, Pivotal_temps, Threshold_temps) {
+                         k_piv, Pivotal_temps, Threshold_temps, T_threshold) {
   
-  # calculate number of breeding adults
-  # females only breed every F_remigration_int years
-  n_breeding_F <- round(sum(round(N[1, , y - 1] * M), na.rm = TRUE) / F_remigration_int)
+  # breeding females this year
+  n_breeding_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
   
-  # males only breed every M_remigration_int years
-  n_breeding_M <- round(sum(round(N[2, , y - 1] * M), na.rm = TRUE) / M_remigration_int)  
+  # breeding males this year
+  n_breeding_M <- sum(as.numeric(breeding_M, na.rm = TRUE))
   
   if (n_breeding_F > 0 & n_breeding_M > 0) {
     
@@ -58,7 +56,8 @@ reproduction <- function(N, M, y, beta, max_age,
                    round)
     
     # clutch temperature list, one number for each clutch 
-    clutch_temps <- lapply(clutches, rnorm, 
+    clutch_temps <- lapply(clutches, 
+                           rnorm, 
                            mean = season_temp_mus[y], 
                            sd = clutch_temp_sd)
     
@@ -67,12 +66,14 @@ reproduction <- function(N, M, y, beta, max_age,
                            emergence_success, 
                            A = emergence_success_A, 
                            k = emergence_success_k, 
-                           t0 = emergence_success_t0)
+                           t0 = emergence_success_t0, 
+                           thermal_limit = T_threshold)
     
-    # hatchlings list, one for each clutch
+    # hatchlings that emerged list, one for each clutch
     hatchlings_raw <- lapply(multiply.list(eggs, prop_emerged), 
                              round)
     
+    # rounding
     hatchlings <- lapply(hatchlings_raw, 
                          round)
     
@@ -82,7 +83,7 @@ reproduction <- function(N, M, y, beta, max_age,
                          k = k_piv, 
                          pivotal_temp = Pivotal_temps[y])
     
-    # proportions female list, one number for each clutch
+    # proportions female list, one number for each clutch: 1 - props_male
     props_female <- mapply('-', 1, props_male, SIMPLIFY = FALSE)
     
     # male and female hatchlings summed across all clutches

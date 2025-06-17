@@ -2,8 +2,8 @@ initialize_population <- function(beta, burn_in, max_age,
                                   F_survival_immature, F_survival_mature, 
                                   M_survival_immature, M_survival_mature, 
                                   M, F_remigration_int, M_remigration_int,
-                                  clutches_mu, eggs_mu, hatch_success_A, 
-                                  hatch_success_k, hatch_success_t0, 
+                                  clutches_mu, eggs_mu, emergence_success_A, 
+                                  emergence_success_k, emergence_success_t0, 
                                   k_piv, T_piv, temp_mu, 
                                   F_initial, M_initial) {
   
@@ -104,11 +104,12 @@ initialize_population <- function(beta, burn_in, max_age,
       # number of potential eggs, assuming full reproductive success
       eggs <- sum(n_breeding_F * round(clutches_mu) * round(eggs_mu))
       
-      # hatching success
-      hatch_success <- hatch_success_A / (1 + exp(-hatch_success_k * (temp_mu - hatch_success_t0)))
+      # emergence success
+      emergence_success <- emergence_success_A / 
+        (1 + exp(-emergence_success_k * (temp_mu - emergence_success_t0)))
       
-      # total hatchlings = breeding_success * total potential eggs * hatching success
-      hatchlings <- round(breeding_success * eggs * hatch_success)
+      # total hatchlings = breeding_success * potential eggs * emergence success
+      hatchlings <- round(breeding_success * eggs * emergence_success)
       
       # determine proportion of male hatchlings based on temperature
       prop_male <- 1 / (1 + exp(-k_piv * (temp_mu - T_piv)))
@@ -174,78 +175,53 @@ initialize_population <- function(beta, burn_in, max_age,
   males <- left_join(males_immature, males_mature)
   
   abundances <- left_join(females, males) %>%
-    # mutate(Total_Immature = Female_Immature + Male_Immature) %>%
-    # mutate(Total_Mature = Female_Mature + Male_Mature) %>%
-    # mutate(Total_Female = Female_Immature + Female_Mature) %>%
-    # mutate(Total_Male = Male_Immature + Male_Mature) %>%
     mutate(Total = Female_Immature + Male_Immature + Female_Mature + Male_Mature) %>% 
     mutate(Age = factor(Age)) %>%
     group_by(Year) %>%
-    mutate(Prop_Total = Total / sum(Total)) %>%
-    mutate(Total_Female_Immature = sum(Female_Immature)) %>%
-    mutate(Total_Male_Immature = sum(Male_Immature)) %>%
-    mutate(Total_Female_Mature = sum(Female_Mature)) %>%
-    mutate(Total_Male_Mature = sum(Male_Mature)) %>%
-    mutate(Prop_Female_Immature = Female_Immature / Total_Female_Immature) %>%
-    mutate(Prop_Male_Immature = Male_Immature / Total_Male_Immature) %>%
-    mutate(Prop_Female_Mature = Female_Mature / Total_Female_Mature) %>%
-    mutate(Prop_Male_Mature = Male_Mature / Total_Male_Mature) %>%
-    mutate(Total_Prop_Female_Immature = Total_Female_Immature / Total) %>%
-    mutate(Total_Prop_Male_Immature = Total_Male_Immature / Total) %>%
-    mutate(Total_Prop_Female_Mature = Total_Female_Mature / Total) %>%
-    mutate(Total_Prop_Male_Mature = Total_Male_Mature / Total)
+    mutate(Prop_Female_Immature = Female_Immature / sum(Total)) %>%
+    mutate(Prop_Male_Immature = Male_Immature / sum(Total)) %>%
+    mutate(Prop_Female_Mature = Female_Mature / sum(Total)) %>%
+    mutate(Prop_Male_Mature = Male_Mature / sum(Total))
 
   # save(abundances, file = '../output/initial_population.Rda')
   
   # final SAD for total population (both sexes)
   final_total_SAD <- abundances %>%
     filter(Year == burn_in) %>%
-    .$Prop_Total
+    .$Total
   
   # sex proportions of total SAD
-  Female_Prop_Immature <- abundances %>%
+  Final_Prop_Female_Immature <- abundances %>%
     filter(Year == burn_in) %>%
-    .$Total_Prop_Female_Immature %>%
-    tail(1)
+    .$Prop_Female_Immature
   
-  Male_Prop_Immature <- abundances %>%
+  Final_Prop_Male_Immature <- abundances %>%
     filter(Year == burn_in) %>%
-    .$Total_Prop_Male_Immature %>%
-    tail(1)
+    .$Prop_Male_Immature 
   
-  Female_Prop_Mature <- abundances %>%
+  Final_Prop_Female_Mature <- abundances %>%
     filter(Year == burn_in) %>%
-    .$Total_Prop_Female_Mature %>%
-    tail(1)
+    .$Prop_Female_Mature 
   
-  Male_Prop_Mature <- abundances %>%
+  Final_Prop_Male_Mature <- abundances %>%
     filter(Year == burn_in) %>%
-    .$Total_Prop_Male_Mature %>%
-    tail(1)
-  
-  # sex SADs
-  Female_Immature_SAD <- final_total_SAD * Female_Prop_Immature
-  Male_Immature_SAD <- final_total_SAD * Male_Prop_Immature
-  Female_Mature_SAD <- final_total_SAD * Female_Prop_Mature
-  Male_Mature_SAD <- final_total_SAD * Male_Prop_Mature
+    .$Prop_Male_Mature
   
   # multipliers to get minimum adults to match data
-  F_Immature_multiplier <- F_initial / sum(Female_Immature_SAD * M)
-  M_Immature_multiplier <- M_initial / sum(Male_Immature_SAD * M)
-  F_Mature_multiplier <- F_initial / sum(Female_Mature_SAD * M)
-  M_Mature_multiplier <- M_initial / sum(Male_Mature_SAD * M)
+  F_Mature_multiplier <- F_initial / sum(Final_Prop_Female_Mature * M)
+  M_Mature_multiplier <- M_initial / sum(Final_Prop_Male_Mature * M)
   
   # which multiplier to use
-  multiplier <- min(F_Immature_multiplier, M_Immature_multiplier, 
-                    F_Mature_multiplier, M_Mature_multiplier)
+  multiplier <- max(F_Mature_multiplier, M_Mature_multiplier)
   
   # initial population size
-  F_Immature_init <- round(Female_Immature_SAD * multiplier)
-  M_Immature_init <- round(Male_Immature_SAD * multiplier)
-  F_Mature_init <- round(Female_Mature_SAD * multiplier)
-  M_Mature_init <- round(Male_Mature_SAD * multiplier)
+  F_Immature_init <- round(Final_Prop_Female_Immature * multiplier)
+  M_Immature_init <- round(Final_Prop_Male_Immature * multiplier)
+  F_Mature_init <- round(Final_Prop_Female_Mature * multiplier)
+  M_Mature_init <- round(Final_Prop_Male_Mature * multiplier)
   
-  output <- list(F_Immature_init, M_Immature_init, F_Mature_init, M_Mature_init)
+  output <- list(F_Immature_init, M_Immature_init, 
+                 F_Mature_init, M_Mature_init)
   
   return(output)
   
