@@ -2,7 +2,8 @@
 
 pop_dynamics <- function(N, max_age, y, M,
                          F_survival_immature, F_survival_mature, 
-                         M_survival_immature, M_survival_mature) {
+                         M_survival_immature, M_survival_mature, 
+                         F_remigration_int, M_remigration_int) {
   
   #survival based on binomial distribution with survival rates as probabilities
   # immature females that survived
@@ -58,6 +59,8 @@ pop_dynamics <- function(N, max_age, y, M,
                        prob = 1 / M_remigration_int)
   
   # output
-  return(N, breeding_F, breeding_M)
+  output <- list(N, breeding_F, breeding_M)
+  
+  return(output)
   
 }

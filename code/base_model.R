@@ -50,8 +50,9 @@ base_model <- function(scenario, beta, years, max_age,
     # population dynamics
     # survival for each age 
     output_pd <- pop_dynamics(N, max_age, y, M,
-                      F_survival_immature, F_survival_mature, 
-                      M_survival_immature, M_survival_mature)
+                              F_survival_immature, F_survival_mature, 
+                              M_survival_immature, M_survival_mature, 
+                              F_remigration_int, M_remigration_int)
     
     N                    <- output_pd[[1]]
     breeding_F           <- output_pd[[2]]
@@ -60,19 +61,19 @@ base_model <- function(scenario, beta, years, max_age,
     # evolution (if applicable)
     if (evolution_piv == TRUE || evolution_threshold == TRUE) {
       
-      output <- evolution(N, max_age, y, breeding_F, breeding_M,
-                          G_piv, P_piv, Delta_piv, Pivotal_temps,
-                          Gamma_piv, Epsilon_piv, evolution_piv, 
-                          G_threshold, P_threshold, Delta_threshold, 
-                          Threshold_temps, Gamma_threshold, Epsilon_threshold, 
-                          evolution_threshold)
+      evol_output <- evolution(N, max_age, y, breeding_F, breeding_M,
+                               G_piv, P_piv, Delta_piv, Pivotal_temps,
+                               Gamma_piv, Epsilon_piv, evolution_piv, 
+                               G_threshold, P_threshold, Delta_threshold, 
+                               Threshold_temps, Gamma_threshold, Epsilon_threshold, 
+                               evolution_threshold)
       
-      Pivotal_temps[y]   <- output[[1]]
-      G_piv              <- output[[2]]
-      P_piv              <- output[[3]]
-      Threshold_temps[y] <- output[[4]]
-      G_threshold        <- output[[5]]
-      P_threshold        <- output[[6]]
+      Pivotal_temps[y]   <- evol_output[[1]]
+      G_piv              <- evol_output[[2]]
+      P_piv              <- evol_output[[3]]
+      Threshold_temps[y] <- evol_output[[4]]
+      G_threshold        <- evol_output[[5]]
+      P_threshold        <- evol_output[[6]]
       
     }
     
@@ -86,9 +87,9 @@ base_model <- function(scenario, beta, years, max_age,
                                T_threshold)
     
     # add recruits to population size array
-    N[1, 1, y]       <- rep_output[[1]]
-    N[2, 1, y]       <- rep_output[[2]]
-    OSRs[y]          <- rep_output[[3]]
+    N[1, 1, y]          <- rep_output[[1]]
+    N[2, 1, y]          <- rep_output[[2]]
+    OSRs[y]             <- rep_output[[3]]
     
     # break out of loop if there are zero males or females at any age
     if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], 

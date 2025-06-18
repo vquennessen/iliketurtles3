@@ -20,13 +20,13 @@ evolution <- function(N, max_age, y, breeding_F, breeding_M,
     # weighted average of genotypes for mature males from last year
     GM_piv <- weighted.mean(x = G_piv, w = breeding_M)
     
-    # parent genotypes to hatchling genotype, with genotypic variance
+    # hatchling genotype = average of parental genotypes + genotypic variation 
     GH_piv <- (GF_piv + GM_piv) / 2 + Gamma_piv[y]
     
-    # hatchling expected phenotype
+    # hatchling expected phenotype = hatchling genotype + epsilon
     PH_piv <- GH_piv + Epsilon_piv[y]
     
-    # hatchling actual phenotype with phenotypic variation
+    # hatchling actual phenotype = expected phenotype + phenotypic variation
     Pivotal_temps[y] <- PH_piv + Delta_piv[y]    
     
     # update genotypes vector

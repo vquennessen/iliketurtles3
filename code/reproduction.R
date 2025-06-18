@@ -61,7 +61,7 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                            mean = season_temp_mus[y], 
                            sd = clutch_temp_sd)
     
-    # hatching successes vector, one number for each clutch 
+    # emergence successes vector, one number for each clutch 
     prop_emerged <- lapply(clutch_temps, 
                            emergence_success, 
                            A = emergence_success_A, 

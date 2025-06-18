@@ -25,7 +25,7 @@ source('proportion_male.R')
 ###### model inputs ##########################################################
   
   # troubleshooting
-  model <- 'P_base'
+  model <- 'P_evol_piv'
   scenario <- 5
   beta <- 43.7
   nsims <- 10
