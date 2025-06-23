@@ -11,8 +11,8 @@ run_base_model <- function(arguments) {
   beta      <- arguments$Var3
   years     <- arguments$Var4
   nsims     <- arguments$Var5
-  # intensity <- arguments$Var6
-  # frequency <- arguments$Var7
+  intensity <- arguments$Var6
+  frequency <- arguments$Var7
   
   # write to progress text file
   update <- paste(lubridate::now(), ' - ', model, ' - ', scenario, 'C - beta ', 
@@ -60,149 +60,225 @@ run_base_model <- function(arguments) {
   T_piv <- 29.2                             # thermal reaction norm midpoint
   T_threshold <- 35                         # lethal temperature threshold
   
-  ##### parameters that are model and scenario dependent #######################
-  if (model == 'P_base') {
-    
-    k_piv <- -1.34
-    evolution_piv <- FALSE 
-    h2_piv <- NULL
-    ag_var_piv <- NULL                       
-    evolution_threshold <- FALSE
-    h2_threshold <- NULL
-    ag_var_threshold <- NULL                 
-    conservation <- FALSE
-    
-  }
+  # pivotal temperature and evolution stats
+  k_piv <- ifelse(model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
+                               'P_evol_threshold', 'P_evol_threshold_high_H', 
+                               'P_conservation'), 
+                  -1.34, 
+                  -0.561)
   
-  if (model == 'P_evol_piv') {
-    
-    k_piv <- -1.34
-    evolution_piv <- TRUE 
-    h2_piv <- 0.135
-    ag_var_piv <- 0.017
-    evolution_threshold <- FALSE
-    h2_threshold <- NULL
-    ag_var_threshold <- NULL                 
-    conservation <- FALSE
-    
-  }
+  evolution_piv <- ifelse(model %in% c('P_evol_piv', 'P_evol_piv_high_H', 
+                                       'GM_evol_piv', 'GM_evol_piv_high_H'), 
+                          TRUE, 
+                          FALSE)
   
-  if (model == 'P_evol_piv_high_H') {
-    
-    k_piv <- -1.34
-    evolution_piv <- TRUE 
-    h2_piv <- 0.351
-    ag_var_piv <- 0.017
-    evolution_threshold <- FALSE
-    h2_threshold <- NULL
-    ag_var_threshold <- NULL                 
-    conservation <- FALSE
-    
-  }
+  h2_piv <- ifelse(model %in% c('P_evol_piv', 'GM_evol_piv'), 
+                   0.135, 
+                   ifelse(model %in% c('P_evol_piv_high_H', 
+                                       'GM_evol_piv_high_H'), 
+                          0.351, 
+                          NA))
   
-  if (model == 'P_evol_threshold') {
-    
-    k_piv <- -1.34
-    evolution_piv <- FALSE 
-    h2_piv <- NULL
-    ag_var_piv <- NULL                       
-    evolution_threshold <- TRUE
-    h2_threshold <- 0.20
-    ag_var_threshold <- 0.017    
-    conservation <- FALSE
-    
-  }
+  ag_var_piv <- ifelse(evolution_piv == TRUE, 
+                       0.017, 
+                       NA)
   
-  if (model == 'P_evol_threshold_high_H') {
-    
-    k_piv <- -1.34
-    evolution_piv <- FALSE 
-    h2_piv <- NULL
-    ag_var_piv <- NULL                       
-    evolution_threshold <- TRUE
-    h2_threshold <- 0.38
-    ag_var_threshold <- 0.017    
-    conservation <- FALSE
-    
-  }
+  # threshold evolution stats
+  evolution_threshold <- ifelse(model %in% c('P_evol_threshold', 
+                                             'P_evol_threshold_high_H', 
+                                             'GM_evol_threshold', 
+                                             'GM_evol_threshold_high_H'), 
+                                TRUE, 
+                                FALSE)
   
-  if (model == 'GM_base') {
-    
-    k_piv <- -0.561
-    evolution_piv <- FALSE 
-    h2_piv <- NULL
-    ag_var_piv <- NULL                       
-    evolution_threshold <- FALSE
-    h2_threshold <- NULL
-    ag_var_threshold <- NULL                 
-    conservation <- FALSE
-    
-  }
+  h2_threshold <- ifelse(model %in% c('P_evol_threshold', 'GM_evol_threshold'), 
+                         0.2, ifelse(model %in% c('P_evol_threshold_high_H', 
+                                                  'GM_evol_threshold_high_H'), 
+                                     0.38, 
+                                     NA))
   
-  if (model == 'GM_evol_piv') {
-    
-    k_piv <- -0.561
-    evolution_piv <- TRUE 
-    h2_piv <- 0.135
-    ag_var_piv <- 0.017
-    evolution_threshold <- FALSE
-    h2_threshold <- NULL
-    ag_var_threshold <- NULL                 
-    conservation <- FALSE
-    
-  }
+  ag_var_threshold <- ifelse(evolution_threshold == TRUE, 
+                             0.017, 
+                             NA)
   
-  if (model == 'GM_evol_piv_high_H') {
-    
-    k_piv <- -0.561
-    evolution_piv <- TRUE 
-    h2_piv <- 0.351
-    ag_var_piv <- 0.017
-    evolution_threshold <- FALSE
-    h2_threshold <- NULL
-    ag_var_threshold <- NULL                 
-    conservation <- FALSE
-    
-  }
+  # conservation values
+  conservation <- ifelse(model %in% c('P_conservation', 'GM_conservation'), 
+                         TRUE, 
+                         FALSE)
   
-  if (model == 'GM_evol_threshold') {
-    
-    k_piv <- -0.561
-    evolution_piv <- FALSE 
-    h2_piv <- NULL
-    ag_var_piv <- NULL                       
-    evolution_threshold <- TRUE
-    h2_threshold <- 0.20
-    ag_var_threshold <- 0.017    
-    conservation <- FALSE
-    
-  }
+  effect_size <- ifelse(conservation == TRUE, 
+                        1.3, 
+                        NA)
   
-  if (model == 'GM_evol_threshold_high_H') {
-    
-    k_piv <- -0.561
-    evolution_piv <- FALSE 
-    h2_piv <- NULL
-    ag_var_piv <- NULL                       
-    evolution_threshold <- TRUE
-    h2_threshold <- 0.38
-    ag_var_threshold <- 0.017    
-    conservation <- FALSE
-    
-  }
   
-  if (model == 'GM_conservation') {
-    
-    k_piv <- -0.561
-    evolution_piv <- FALSE 
-    h2_piv <- NULL
-    ag_var_piv <- NULL                       
-    evolution_threshold <- FALSE
-    h2_threshold <- NULL
-    ag_var_threshold <- NULL                 
-    conservation <- TRUE
-    
-  }
+  # ##### parameters that are model and scenario dependent #######################
+  # if (model == 'P_base') {
+  #   
+  #   k_piv <- -1.34
+  #   evolution_piv <- FALSE 
+  #   h2_piv <- NULL
+  #   ag_var_piv <- NULL                       
+  #   evolution_threshold <- FALSE
+  #   h2_threshold <- NULL
+  #   ag_var_threshold <- NULL                 
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'P_evol_piv') {
+  #   
+  #   k_piv <- -1.34
+  #   evolution_piv <- TRUE 
+  #   h2_piv <- 0.135
+  #   ag_var_piv <- 0.017
+  #   evolution_threshold <- FALSE
+  #   h2_threshold <- NULL
+  #   ag_var_threshold <- NULL                 
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'P_evol_piv_high_H') {
+  #   
+  #   k_piv <- -1.34
+  #   evolution_piv <- TRUE 
+  #   h2_piv <- 0.351
+  #   ag_var_piv <- 0.017
+  #   evolution_threshold <- FALSE
+  #   h2_threshold <- NULL
+  #   ag_var_threshold <- NULL                 
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'P_evol_threshold') {
+  #   
+  #   k_piv <- -1.34
+  #   evolution_piv <- FALSE 
+  #   h2_piv <- NULL
+  #   ag_var_piv <- NULL                       
+  #   evolution_threshold <- TRUE
+  #   h2_threshold <- 0.20
+  #   ag_var_threshold <- 0.017    
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'P_evol_threshold_high_H') {
+  #   
+  #   k_piv <- -1.34
+  #   evolution_piv <- FALSE 
+  #   h2_piv <- NULL
+  #   ag_var_piv <- NULL                       
+  #   evolution_threshold <- TRUE
+  #   h2_threshold <- 0.38
+  #   ag_var_threshold <- 0.017    
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'P_cosnervation') {
+  #   
+  #   k_piv <- -1.34
+  #   evolution_piv <- FALSE 
+  #   h2_piv <- NULL
+  #   ag_var_piv <- NULL                       
+  #   evolution_threshold <- FALSE
+  #   h2_threshold <- NULL
+  #   ag_var_threshold <- NULL                 
+  #   conservation <- TRUE
+  #   effect_size <- 1.3
+  #   
+  # }
+  # 
+  # if (model == 'GM_base') {
+  #   
+  #   k_piv <- -0.561
+  #   evolution_piv <- FALSE 
+  #   h2_piv <- NULL
+  #   ag_var_piv <- NULL                       
+  #   evolution_threshold <- FALSE
+  #   h2_threshold <- NULL
+  #   ag_var_threshold <- NULL                 
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'GM_evol_piv') {
+  #   
+  #   k_piv <- -0.561
+  #   evolution_piv <- TRUE 
+  #   h2_piv <- 0.135
+  #   ag_var_piv <- 0.017
+  #   evolution_threshold <- FALSE
+  #   h2_threshold <- NULL
+  #   ag_var_threshold <- NULL                 
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'GM_evol_piv_high_H') {
+  #   
+  #   k_piv <- -0.561
+  #   evolution_piv <- TRUE 
+  #   h2_piv <- 0.351
+  #   ag_var_piv <- 0.017
+  #   evolution_threshold <- FALSE
+  #   h2_threshold <- NULL
+  #   ag_var_threshold <- NULL                 
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'GM_evol_threshold') {
+  #   
+  #   k_piv <- -0.561
+  #   evolution_piv <- FALSE 
+  #   h2_piv <- NULL
+  #   ag_var_piv <- NULL                       
+  #   evolution_threshold <- TRUE
+  #   h2_threshold <- 0.20
+  #   ag_var_threshold <- 0.017    
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'GM_evol_threshold_high_H') {
+  #   
+  #   k_piv <- -0.561
+  #   evolution_piv <- FALSE 
+  #   h2_piv <- NULL
+  #   ag_var_piv <- NULL                       
+  #   evolution_threshold <- TRUE
+  #   h2_threshold <- 0.38
+  #   ag_var_threshold <- 0.017    
+  #   conservation <- FALSE
+  #   effect_size <- NULL
+  #   
+  # }
+  # 
+  # if (model == 'GM_conservation') {
+  #   
+  #   k_piv <- -0.561
+  #   evolution_piv <- FALSE 
+  #   h2_piv <- NULL
+  #   ag_var_piv <- NULL                       
+  #   evolution_threshold <- FALSE
+  #   h2_threshold <- NULL
+  #   ag_var_threshold <- NULL                 
+  #   conservation <- TRUE
+  #   effect_size <- 1.3
+  #   
+  # }
   
   ##### initialize output ######################################################
   
@@ -307,7 +383,8 @@ run_base_model <- function(arguments) {
                            T_threshold, h2_threshold, ag_var_threshold, 
                            evolution_threshold,
                            temp_mu, climate_stochasticity, 
-                           season_temp_sd, clutch_temp_sd, noise, AC)
+                           season_temp_sd, clutch_temp_sd, noise, AC, 
+                           conservation, frequency, intensity, effect_size)
       
       # save the N and abundance arrays 
       sims_N[, , , i]             <- output[[1]]
@@ -356,4 +433,3 @@ run_base_model <- function(arguments) {
   } 
   
 }
-  

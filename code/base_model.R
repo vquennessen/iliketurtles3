@@ -13,7 +13,8 @@ base_model <- function(scenario, beta, years, max_age,
                        T_threshold, h2_threshold, ag_var_threshold, 
                        evolution_threshold,
                        temp_mu, climate_stochasticity, 
-                       season_temp_sd, clutch_temp_sd, noise, AC) {
+                       season_temp_sd, clutch_temp_sd, noise, AC, 
+                       conservation, frequency, intensity, effect_size) {
   
   ##### source initialized arrays ##############################################
   
@@ -26,7 +27,8 @@ base_model <- function(scenario, beta, years, max_age,
                                    T_threshold, h2_threshold, ag_var_threshold, 
                                    evolution_threshold,
                                    temp_mu, climate_stochasticity, 
-                                   season_temp_sd, clutch_temp_sd, noise, AC)
+                                   season_temp_sd, clutch_temp_sd, noise, AC, 
+                                   conservation, frequency)
   
   N                  <- init_output[[1]]    # population size array
   season_temp_mus    <- init_output[[2]]    # mean temps at the season level
@@ -43,6 +45,7 @@ base_model <- function(scenario, beta, years, max_age,
   Delta_threshold    <- init_output[[13]]   # phenotypic variance
   Threshold_temps    <- init_output[[14]]   # threshold temperature
   OSRs               <- init_output[[15]]   # operational sex ratio
+  conservation_years <- init_output[[16]]   # years for conservation action
   
   ##### model ##################################################################
   for (y in 2:years) {
@@ -84,7 +87,9 @@ base_model <- function(scenario, beta, years, max_age,
                                emergence_success_t0, 
                                season_temp_mus, clutch_temp_sd,
                                k_piv, Pivotal_temps, Threshold_temps, 
-                               T_threshold)
+                               T_threshold, 
+                               conservation, conservation_years, intensity, 
+                               effect_size)
     
     # add recruits to population size array
     N[1, 1, y]          <- rep_output[[1]]

@@ -1,168 +1,336 @@
-2025-06-17 11:41:19.921339 - P_evol_piv - 5C - beta 1.17 - 10 sims - 100 years
-2025-06-17 11:41:20.535916 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years
-2025-06-17 11:41:23.681711 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 10% done!
-2025-06-17 11:41:24.153475 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 20% done!
-2025-06-17 11:41:24.263196 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 30% done!
-2025-06-17 11:41:24.407168 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 40% done!
-2025-06-17 11:41:24.52958 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 50% done!
-2025-06-17 11:41:24.674513 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 60% done!
-2025-06-17 11:41:25.120032 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 70% done!
-2025-06-17 11:41:25.398464 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 80% done!
-2025-06-17 11:41:25.540261 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 90% done!
-2025-06-17 11:41:25.654036 - GM_evol_threshold - 5C - beta 1.17 - 10 sims - 100 years - 100% done!
-2025-06-17 11:41:25.69792 - P_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years
-2025-06-17 11:41:27.362496 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years
-2025-06-17 11:41:30.768741 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 10% done!
-2025-06-17 11:41:30.924903 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 20% done!
-2025-06-17 11:41:31.252179 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 30% done!
-2025-06-17 11:41:31.411496 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 40% done!
-2025-06-17 11:41:31.615091 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 50% done!
-2025-06-17 11:41:31.780469 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 60% done!
-2025-06-17 11:41:32.018443 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 70% done!
-2025-06-17 11:41:32.325152 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 80% done!
-2025-06-17 11:41:32.547458 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 90% done!
-2025-06-17 11:41:32.753049 - GM_evol_threshold - 2.5C - beta 1.17 - 10 sims - 100 years - 100% done!
-2025-06-17 11:41:32.806802 - P_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years
-2025-06-17 11:41:33.728818 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years
-2025-06-17 11:41:37.425071 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 10% done!
-2025-06-17 11:41:37.76582 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 20% done!
-2025-06-17 11:41:38.072254 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 30% done!
-2025-06-17 11:41:38.373222 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 40% done!
-2025-06-17 11:41:38.646103 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 50% done!
-2025-06-17 11:41:38.971528 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 60% done!
-2025-06-17 11:41:39.255063 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 70% done!
-2025-06-17 11:41:39.539294 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 80% done!
-2025-06-17 11:41:39.838351 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 90% done!
-2025-06-17 11:41:40.188466 - GM_evol_threshold - 0.5C - beta 1.17 - 10 sims - 100 years - 100% done!
-2025-06-17 11:41:40.2436 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years
-2025-06-17 11:41:42.954283 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 10% done!
-2025-06-17 11:41:43.607527 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 20% done!
-2025-06-17 11:41:44.135696 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 30% done!
-2025-06-17 11:41:44.757057 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 40% done!
-2025-06-17 11:41:45.278895 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 50% done!
-2025-06-17 11:41:45.936197 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 60% done!
-2025-06-17 11:41:46.564244 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 70% done!
-2025-06-17 11:41:47.181934 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 80% done!
-2025-06-17 11:41:47.769007 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 90% done!
-2025-06-17 11:41:48.421507 - P_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 100% done!
-2025-06-17 11:41:48.479436 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years
-2025-06-17 11:41:52.769227 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 10% done!
-2025-06-17 11:41:53.327943 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 20% done!
-2025-06-17 11:41:53.525144 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 30% done!
-2025-06-17 11:41:53.691641 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 40% done!
-2025-06-17 11:41:53.912892 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 50% done!
-2025-06-17 11:41:54.128163 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 60% done!
-2025-06-17 11:41:54.369714 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 70% done!
-2025-06-17 11:41:54.655503 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 80% done!
-2025-06-17 11:41:54.812045 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 90% done!
-2025-06-17 11:41:55.026029 - GM_evol_threshold - 5C - beta 6.64 - 10 sims - 100 years - 100% done!
-2025-06-17 11:41:55.074743 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years
-2025-06-17 11:41:58.43 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 10% done!
-2025-06-17 11:41:59.669296 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 20% done!
-2025-06-17 11:42:00.882978 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 30% done!
-2025-06-17 11:42:02.145562 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 40% done!
-2025-06-17 11:42:03.510671 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 50% done!
-2025-06-17 11:42:04.885476 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 60% done!
-2025-06-17 11:42:06.203971 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 70% done!
-2025-06-17 11:42:07.493752 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 80% done!
-2025-06-17 11:42:08.821509 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 90% done!
-2025-06-17 11:42:09.929743 - P_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 100% done!
-2025-06-17 11:42:09.995624 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years
-2025-06-17 11:42:13.778353 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 10% done!
-2025-06-17 11:42:14.286439 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 20% done!
-2025-06-17 11:42:14.643443 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 30% done!
-2025-06-17 11:42:15.327404 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 40% done!
-2025-06-17 11:42:15.792926 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 50% done!
-2025-06-17 11:42:16.146094 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 60% done!
-2025-06-17 11:42:16.52177 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 70% done!
-2025-06-17 11:42:17.024266 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 80% done!
-2025-06-17 11:42:17.381033 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 90% done!
-2025-06-17 11:42:17.761653 - GM_evol_threshold - 2.5C - beta 6.64 - 10 sims - 100 years - 100% done!
-2025-06-17 11:42:17.81858 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years
-2025-06-17 11:42:23.192665 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 10% done!
-2025-06-17 11:42:25.691688 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 20% done!
-2025-06-17 11:42:28.39817 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 30% done!
-2025-06-17 11:42:30.848358 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 40% done!
-2025-06-17 11:42:33.181629 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 50% done!
-2025-06-17 11:42:35.910716 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 60% done!
-2025-06-17 11:42:38.484986 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 70% done!
-2025-06-17 11:42:41.238472 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 80% done!
-2025-06-17 11:42:43.881619 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 90% done!
-2025-06-17 11:42:46.625395 - P_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 100% done!
-2025-06-17 11:42:46.6916 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years
-2025-06-17 11:42:50.719219 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 10% done!
-2025-06-17 11:42:51.473371 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 20% done!
-2025-06-17 11:42:52.212572 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 30% done!
-2025-06-17 11:42:52.988394 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 40% done!
-2025-06-17 11:42:53.732857 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 50% done!
-2025-06-17 11:42:54.575015 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 60% done!
-2025-06-17 11:42:55.417004 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 70% done!
-2025-06-17 11:42:56.072045 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 80% done!
-2025-06-17 11:42:56.868752 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 90% done!
-2025-06-17 11:42:57.602352 - GM_evol_threshold - 0.5C - beta 6.64 - 10 sims - 100 years - 100% done!
-2025-06-17 11:42:57.662391 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years
-2025-06-17 11:43:03.113068 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 10% done!
-2025-06-17 11:43:04.115533 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 20% done!
-2025-06-17 11:43:05.227896 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 30% done!
-2025-06-17 11:43:06.518624 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 40% done!
-2025-06-17 11:43:07.544156 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 50% done!
-2025-06-17 11:43:08.459588 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 60% done!
-2025-06-17 11:43:09.488791 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 70% done!
-2025-06-17 11:43:10.396378 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 80% done!
-2025-06-17 11:43:11.396314 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 90% done!
-2025-06-17 11:43:12.442735 - P_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 100% done!
-2025-06-17 11:43:12.503935 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years
-2025-06-17 11:43:16.312692 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 10% done!
-2025-06-17 11:43:16.466556 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 20% done!
-2025-06-17 11:43:16.758322 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 30% done!
-2025-06-17 11:43:16.962945 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 40% done!
-2025-06-17 11:43:17.167676 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 50% done!
-2025-06-17 11:43:17.379072 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 60% done!
-2025-06-17 11:43:17.549879 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 70% done!
-2025-06-17 11:43:17.872165 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 80% done!
-2025-06-17 11:43:18.062489 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 90% done!
-2025-06-17 11:43:18.252271 - GM_evol_threshold - 5C - beta 43.7 - 10 sims - 100 years - 100% done!
-2025-06-17 11:43:18.300475 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years
-2025-06-17 11:43:24.107202 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 10% done!
-2025-06-17 11:43:26.37801 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 20% done!
-2025-06-17 11:43:28.723067 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 30% done!
-2025-06-17 11:43:30.903916 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 40% done!
-2025-06-17 11:43:33.344695 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 50% done!
-2025-06-17 11:43:35.938671 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 60% done!
-2025-06-17 11:43:38.461162 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 70% done!
-2025-06-17 11:43:40.920792 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 80% done!
-2025-06-17 11:43:43.396001 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 90% done!
-2025-06-17 11:43:45.817213 - P_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 100% done!
-2025-06-17 11:43:45.887581 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years
-2025-06-17 11:43:50.377646 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 10% done!
-2025-06-17 11:43:50.877395 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 20% done!
-2025-06-17 11:43:51.299869 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 30% done!
-2025-06-17 11:43:51.6912 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 40% done!
-2025-06-17 11:43:52.223615 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 50% done!
-2025-06-17 11:43:52.632763 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 60% done!
-2025-06-17 11:43:53.102325 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 70% done!
-2025-06-17 11:43:53.539798 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 80% done!
-2025-06-17 11:43:53.946949 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 90% done!
-2025-06-17 11:43:54.504645 - GM_evol_threshold - 2.5C - beta 43.7 - 10 sims - 100 years - 100% done!
-2025-06-17 11:43:54.563931 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years
-2025-06-17 11:44:04.432077 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 10% done!
-2025-06-17 11:44:10.563429 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 20% done!
-2025-06-17 11:44:16.50913 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 30% done!
-2025-06-17 11:44:22.888079 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 40% done!
-2025-06-17 11:44:29.095859 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 50% done!
-2025-06-17 11:44:35.421455 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 60% done!
-2025-06-17 11:44:41.645758 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 70% done!
-2025-06-17 11:44:47.708289 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 80% done!
-2025-06-17 11:44:53.858429 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 90% done!
-2025-06-17 11:45:00.490222 - P_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 100% done!
-2025-06-17 11:45:00.561217 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years
-2025-06-17 11:45:05.707387 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 10% done!
-2025-06-17 11:45:06.84509 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 20% done!
-2025-06-17 11:45:08.04282 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 30% done!
-2025-06-17 11:45:09.116177 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 40% done!
-2025-06-17 11:45:10.156332 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 50% done!
-2025-06-17 11:45:11.338874 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 60% done!
-2025-06-17 11:45:12.666756 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 70% done!
-2025-06-17 11:45:13.653612 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 80% done!
-2025-06-17 11:45:14.757747 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 90% done!
-2025-06-17 11:45:15.912177 - GM_evol_threshold - 0.5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:32:59 - P_base - 5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:01 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:06 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 10% done!
+2025-06-20 15:33:06 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 20% done!
+2025-06-20 15:33:07 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 30% done!
+2025-06-20 15:33:08 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 40% done!
+2025-06-20 15:33:08 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 50% done!
+2025-06-20 15:33:09 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 60% done!
+2025-06-20 15:33:09 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 70% done!
+2025-06-20 15:33:09 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 80% done!
+2025-06-20 15:33:10 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 90% done!
+2025-06-20 15:33:10 - GM_evol_piv - 5C - beta 1.17 - 10 sims - 100 years - 100% done!
+2025-06-20 15:33:11 - P_evol_threshold_high_H - 5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:13 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:19 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 10% done!
+2025-06-20 15:33:20 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 20% done!
+2025-06-20 15:33:21 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 30% done!
+2025-06-20 15:33:21 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 40% done!
+2025-06-20 15:33:21 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 50% done!
+2025-06-20 15:33:22 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 60% done!
+2025-06-20 15:33:22 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 70% done!
+2025-06-20 15:33:22 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 80% done!
+2025-06-20 15:33:23 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 90% done!
+2025-06-20 15:33:23 - GM_conservation - 5C - beta 1.17 - 10 sims - 100 years - 100% done!
+2025-06-20 15:33:23 - P_base - 2.5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:25 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:31 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 10% done!
+2025-06-20 15:33:32 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 20% done!
+2025-06-20 15:33:32 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 30% done!
+2025-06-20 15:33:33 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 40% done!
+2025-06-20 15:33:33 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 50% done!
+2025-06-20 15:33:34 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 60% done!
+2025-06-20 15:33:34 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 70% done!
+2025-06-20 15:33:35 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 80% done!
+2025-06-20 15:33:35 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 90% done!
+2025-06-20 15:33:36 - GM_evol_piv - 2.5C - beta 1.17 - 10 sims - 100 years - 100% done!
+2025-06-20 15:33:36 - P_evol_threshold_high_H - 2.5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:39 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:46 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 10% done!
+2025-06-20 15:33:46 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 20% done!
+2025-06-20 15:33:47 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 30% done!
+2025-06-20 15:33:48 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 40% done!
+2025-06-20 15:33:49 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 50% done!
+2025-06-20 15:33:50 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 60% done!
+2025-06-20 15:33:50 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 70% done!
+2025-06-20 15:33:51 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 80% done!
+2025-06-20 15:33:51 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 90% done!
+2025-06-20 15:33:52 - GM_conservation - 2.5C - beta 1.17 - 10 sims - 100 years - 100% done!
+2025-06-20 15:33:52 - P_base - 0.5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:33:54 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:34:02 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 10% done!
+2025-06-20 15:34:03 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 20% done!
+2025-06-20 15:34:03 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 30% done!
+2025-06-20 15:34:04 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 40% done!
+2025-06-20 15:34:05 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 50% done!
+2025-06-20 15:34:06 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 60% done!
+2025-06-20 15:34:06 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 70% done!
+2025-06-20 15:34:07 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 80% done!
+2025-06-20 15:34:08 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 90% done!
+2025-06-20 15:34:09 - GM_evol_piv - 0.5C - beta 1.17 - 10 sims - 100 years - 100% done!
+2025-06-20 15:34:09 - P_evol_threshold_high_H - 0.5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:34:11 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years
+2025-06-20 15:34:20 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 10% done!
+2025-06-20 15:34:21 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 20% done!
+2025-06-20 15:34:21 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 30% done!
+2025-06-20 15:34:22 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 40% done!
+2025-06-20 15:34:23 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 50% done!
+2025-06-20 15:34:24 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 60% done!
+2025-06-20 15:34:25 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 70% done!
+2025-06-20 15:34:25 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 80% done!
+2025-06-20 15:34:26 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 90% done!
+2025-06-20 15:34:27 - GM_conservation - 0.5C - beta 1.17 - 10 sims - 100 years - 100% done!
+2025-06-20 15:34:27 - P_base - 5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:34:37 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:34:39 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:34:41 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:34:42 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:34:44 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:34:45 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:34:46 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:34:48 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:34:49 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:34:50 - P_base - 5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:34:50 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:34:59 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:34:59 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:35:00 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:35:01 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:35:01 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:35:01 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:35:02 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:35:02 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:35:03 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:35:03 - GM_evol_piv - 5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:35:03 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:35:10 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:35:12 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:35:13 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:35:14 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:35:16 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:35:18 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:35:20 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:35:21 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:35:22 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:35:23 - P_evol_threshold_high_H - 5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:35:23 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:35:33 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:35:34 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:35:34 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:35:35 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:35:36 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:35:36 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:35:37 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:35:38 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:35:38 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:35:39 - GM_conservation - 5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:35:39 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:35:47 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:35:49 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:35:51 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:35:53 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:35:56 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:35:59 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:36:01 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:36:04 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:36:07 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:36:10 - P_base - 2.5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:36:10 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:36:20 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:36:21 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:36:21 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:36:22 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:36:23 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:36:24 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:36:25 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:36:25 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:36:26 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:36:27 - GM_evol_piv - 2.5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:36:27 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:36:35 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:36:38 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:36:42 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:36:44 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:36:46 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:36:49 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:36:51 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:36:53 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:36:56 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:36:58 - P_evol_threshold_high_H - 2.5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:36:58 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:37:10 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:37:11 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:37:12 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:37:13 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:37:14 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:37:15 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:37:15 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:37:16 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:37:17 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:37:18 - GM_conservation - 2.5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:37:18 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:37:32 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:37:37 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:37:42 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:37:47 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:37:52 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:37:57 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:38:01 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:38:06 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:38:11 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:38:16 - P_base - 0.5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:38:16 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:38:25 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:38:26 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:38:28 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:38:29 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:38:31 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:38:32 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:38:33 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:38:35 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:38:37 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:38:39 - GM_evol_piv - 0.5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:38:39 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:38:49 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:38:54 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:38:59 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:39:04 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:39:09 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:39:13 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:39:18 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:39:23 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:39:28 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:39:35 - P_evol_threshold_high_H - 0.5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:39:35 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years
+2025-06-20 15:39:43 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 10% done!
+2025-06-20 15:39:45 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 20% done!
+2025-06-20 15:39:47 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 30% done!
+2025-06-20 15:39:48 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 40% done!
+2025-06-20 15:39:50 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 50% done!
+2025-06-20 15:39:52 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 60% done!
+2025-06-20 15:39:53 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 70% done!
+2025-06-20 15:39:55 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 80% done!
+2025-06-20 15:39:57 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 90% done!
+2025-06-20 15:39:59 - GM_conservation - 0.5C - beta 6.64 - 10 sims - 100 years - 100% done!
+2025-06-20 15:39:59 - P_base - 5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:40:10 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:40:12 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:40:14 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:40:16 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:40:19 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:40:20 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:40:23 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:40:25 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:40:26 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:40:29 - P_base - 5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:40:29 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:40:36 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:40:37 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:40:38 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:40:38 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:40:39 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:40:39 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:40:40 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:40:40 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:40:40 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:40:41 - GM_evol_piv - 5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:40:41 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:40:51 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:40:53 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:40:55 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:40:57 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:40:59 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:41:00 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:41:02 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:41:04 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:41:06 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:41:08 - P_evol_threshold_high_H - 5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:41:08 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:41:16 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:41:17 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:41:17 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:41:18 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:41:18 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:41:19 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:41:19 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:41:20 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:41:20 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:41:21 - GM_conservation - 5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:41:21 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:41:34 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:41:39 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:41:43 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:41:47 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:41:51 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:41:56 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:42:00 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:42:04 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:42:09 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:42:13 - P_base - 2.5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:42:13 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:42:22 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:42:23 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:42:24 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:42:25 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:42:27 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:42:28 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:42:29 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:42:30 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:42:31 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:42:31 - GM_evol_piv - 2.5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:42:32 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:42:45 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:42:51 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:42:55 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:43:00 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:43:04 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:43:08 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:43:12 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:43:16 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:43:20 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:43:28 - P_evol_threshold_high_H - 2.5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:43:28 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:43:39 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:43:40 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:43:41 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:43:42 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:43:43 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:43:45 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:43:46 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:43:47 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:43:48 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:43:49 - GM_conservation - 2.5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:43:49 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:44:09 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:44:20 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:44:32 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:44:44 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:44:55 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:45:28 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:45:48 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:46:03 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:46:14 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:46:27 - P_base - 0.5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:46:27 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:46:38 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:46:41 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:46:43 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:46:46 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:46:49 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:46:52 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:46:53 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:46:56 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:46:58 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:47:00 - GM_evol_piv - 0.5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:47:00 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:47:20 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:47:29 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:47:41 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:47:52 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:48:03 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:48:13 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:48:25 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:48:36 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:48:47 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:49:02 - P_evol_threshold_high_H - 0.5C - beta 43.7 - 10 sims - 100 years - 100% done!
+2025-06-20 15:49:02 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years
+2025-06-20 15:49:15 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 10% done!
+2025-06-20 15:49:18 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 20% done!
+2025-06-20 15:49:25 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 30% done!
+2025-06-20 15:49:28 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 40% done!
+2025-06-20 15:49:31 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 50% done!
+2025-06-20 15:49:34 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 60% done!
+2025-06-20 15:49:36 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 70% done!
+2025-06-20 15:49:39 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 80% done!
+2025-06-20 15:49:46 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 90% done!
+2025-06-20 15:49:48 - GM_conservation - 0.5C - beta 43.7 - 10 sims - 100 years - 100% done!

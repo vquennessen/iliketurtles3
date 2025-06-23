@@ -9,7 +9,8 @@ initialize_arrays <- function(scenario, years, max_age,
                               T_threshold, h2_threshold, ag_var_threshold, 
                               evolution_threshold,
                               temp_mu, climate_stochasticity, 
-                              season_temp_sd, clutch_temp_sd, noise, AC) {
+                              season_temp_sd, clutch_temp_sd, noise, AC, 
+                              conservation, frequency) {
   
   ##### population size ########################################################
   
@@ -203,6 +204,12 @@ initialize_arrays <- function(scenario, years, max_age,
     
   }
   
+  if (conservation == TRUE) {
+    
+    conservation_years <- seq(from = 1, by = frequency, length = years)
+    
+  } else { conservation_years <- NULL }
+  
   ##### output #################################################################
   
   # output
@@ -210,7 +217,8 @@ initialize_arrays <- function(scenario, years, max_age,
                  G_piv, P_piv, Gamma_piv, Epsilon_piv, Delta_piv, Pivotal_temps, 
                  G_threshold, P_threshold, Gamma_threshold, Epsilon_threshold, 
                  Delta_threshold, Threshold_temps, 
-                 OSRs)
+                 OSRs, 
+                 conservation_years)
   
   return(output)
   

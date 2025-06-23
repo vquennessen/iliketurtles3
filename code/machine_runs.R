@@ -23,13 +23,14 @@ source('mating function/OSRs_to_betas.R')
 source('evolution.R')
 source('emergence_success.R')
 source('proportion_male.R')
+source('conservation.R')
 
 # models
 # models <- c('P_base', 'P_evol_piv', 'P_evol_piv_high_H',
 #             'P_evol_threshold', 'P_evol_threshold_high_H',
 #             'GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H',
 #             'GM_evol_threshold', 'GM_evol_threshold_high_H')
-models <- c('P_evol_piv', 'GM_evol_threshold')
+models <- c('P_base', 'GM_evol_piv', 'P_evol_threshold_high_H', 'GM_conservation')
 
 # years to run the model for
 years <- 100
@@ -46,13 +47,13 @@ OSRs <- c(0.49, 0.25, 0.05)
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
 # intensity of conservation actions
-intensity <- c(1)
+intensity <- c(0.10)
 
 # frequency of conservation actions (years)
-frequency <- c(1)
+frequency <- c(5)
 
 # number of simulations to run
-nsims <- c(10)
+nsims <- c(5)
 
 # make dataframe of all combinations of arguments
 DF <- expand.grid(models, scenarios, betas, years, nsims, 

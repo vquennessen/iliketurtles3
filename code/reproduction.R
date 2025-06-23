@@ -5,7 +5,9 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                          emergence_success_A, emergence_success_k, 
                          emergence_success_t0, 
                          season_temp_mus, clutch_temp_sd,
-                         k_piv, Pivotal_temps, Threshold_temps, T_threshold) {
+                         k_piv, Pivotal_temps, Threshold_temps, T_threshold, 
+                         conservation, conservation_years, intensity, 
+                         effect_size) {
   
   # breeding females this year
   n_breeding_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
@@ -60,6 +62,14 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                            rnorm, 
                            mean = season_temp_mus[y], 
                            sd = clutch_temp_sd)
+    
+    if (conservation == TRUE & y %in% conservation_years) {
+      
+      clutch_temps <- conservation(initial_temps = clutch_temps, 
+                                   intensity = intensity, 
+                                   effect_size = effect_size)
+      
+    }
     
     # emergence successes vector, one number for each clutch 
     prop_emerged <- lapply(clutch_temps, 
