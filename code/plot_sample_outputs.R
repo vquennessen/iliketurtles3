@@ -18,7 +18,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 # category titles
 TRTs <- c('Narrow', 'Wide')
 ages <- c('Hatchling', 'Mature')
-folder <- '2025_06_06_temperature_stochasticity_init_temp_31.8'
+folder <- '2025_06_26_new_N_runs'
 years <- 100
 nsims <- 10000
 temp_mu <- 31.8
@@ -62,11 +62,11 @@ betas <- as.numeric(OSRs_to_betas(osrs))
 
 beta_names <- paste('beta', betas, sep = '')
 
-# maturity ogive
-max_age <- 85
-age_maturity_mu <- 25
-age_maturity_sd <- 2.5
-M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
+# # maturity ogive
+# max_age <- 85
+# age_maturity_mu <- 25
+# age_maturity_sd <- 2.5
+# M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
 
 ##### create objects ###########################################################
 
@@ -135,7 +135,7 @@ for (t in 1:length(TRTs)) {
         # extract hatchling M
         hatchlings_M <- sims_N[2, 1, , ]
         
-        # hathclings total
+        # hatchlings total
         hatchlings_total <- hatchlings_F + hatchlings_M
         
         # extract hatchling sex ratios, remove NaNs
@@ -143,10 +143,10 @@ for (t in 1:length(TRTs)) {
         hatchling_sex_ratio[!is.finite(hatchling_sex_ratio)] <- NA
         
         # extract mature F
-        mature_F <- colSums(sims_N[1, , , ] * M, dims = 1)
+        mature_F <- colSums(sims_N[3, , , ], dims = 1)
         
         # extract mature M
-        mature_M <- colSums(sims_N[2, , , ] * M, dims = 1)
+        mature_M <- colSums(sims_N[4, , , ], dims = 1)
         
         # mature total
         mature_total <- mature_F + mature_M

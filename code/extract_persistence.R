@@ -55,7 +55,7 @@ model_types <- rep(model_names, each = length(folders), times = length(pops))
 
 # dimensions
 P <- length(paths)
-Fo <- length(folders)
+S <- length(scenarios)
 B <- length(osrs)
 Y <- length(years_to_plot)
 
@@ -103,7 +103,7 @@ for (y in 1:Y) {
         # if the file exists - desktop / laptop
         if (
           
-          file.exists(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          file.exists(paste('E:/PhD Thesis/',
                             # file.exists(paste('~/Projects/iliketurtles3/output/',
                             # file.exists(paste('E:/',
                             # file.exists(paste('/home/quennessenv/iliketurtles3/output/',
@@ -119,11 +119,19 @@ for (y in 1:Y) {
                      # load(paste('/home/quennessenv/iliketurtles3/output/',
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_N.Rda', sep = ''))
-          
-        }
         
         # index number
         index <- (p - 1)*S*B + (s - 1)*B + b
+        
+        
+        
+        # print update
+        print_index <- index*(y - 1) + index
+        print(paste(print_index / (P*S*B*Y) * 100, '% done', sep = ''))
+        
+      } else { 
+        
+        print('this particular combination of values does not have a SAD')
         
         SDF$Folder[index] <- folders[p]
         SDF$Population[index] <- populations[p]
@@ -133,24 +141,12 @@ for (y in 1:Y) {
         SDF$OSR[index] <- osrs[b]
         SDF$Survive_to[index] <- year_to_plot
         
-        SDF$Probability_total_mean[index] <- mean(
-          sims_abundance_total[year_to_plot, ] > 0.1 * sims_abundance_total[1, ])
-        SDF$Probability_total_F_mean[index] <- mean(
-          sims_abundance_F[year_to_plot, ] > 0.1 * sims_abundance_F[1, ])
-        SDF$Probability_total_M_mean[index] <- mean(
-          sims_abundance_M[year_to_plot, ] > 0.1 * sims_abundance_M[1, ])
-        SDF$Probability_mature_mean[index] <- mean(
-          sims_abundance_mature[year_to_plot, ] > 0.1 * sims_abundance_mature[1, ])
-        SDF$Probability_mature_F_mean[index] <- mean(
-          sims_N[1, , year_to_plot, ] * M > 0.1 * sims_N[1, , 1, ] * M)
-        SDF$Probability_mature_M_mean[index] <- mean(
-          sims_N[2, , year_to_plot, ] * M > 0.1 * sims_N[2, , 1, ] * M)
-        
-        # print update
-        print_index <- index*(y - 1) + index
-        print(paste(print_index / (P*S*B*Y) * 100, '% done', sep = ''))
-        
-      }
+        SDF$Probability_total_mean[index] <- NA
+        SDF$Probability_total_F_mean[index] <- NA
+        SDF$Probability_total_M_mean[index] <- NA
+        SDF$Probability_mature_mean[index] <- NA
+        SDF$Probability_mature_F_mean[index] <- NA
+        SDF$Probability_mature_M_mean[index] <- NA
       
     }
     
