@@ -233,11 +233,17 @@ run_base_model <- function(arguments) {
       
     }
     
+    if (conservation == TRUE) {
+      
+      folder <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
+      
+    } else { folder <- ''}
+    
     # get filepaths to save objects to
     filepath1 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_N.Rda', sep = '')
+                      folder, '/', nsims, '_N.Rda', sep = '')
     filepath2 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                      '/', nsims, '_OSR.Rda', sep = '')
+                      folder, '/', nsims, '_OSR.Rda', sep = '')
     
     # save objects
     save(sims_N, file = filepath1)
