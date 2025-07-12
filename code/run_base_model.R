@@ -167,7 +167,10 @@ run_base_model <- function(arguments) {
                       '/', nsims, '_OSR.Rda', sep = '')
     
     # save objects
+    sims_N <- NULL
     save(sims_N, file = filepath1)
+    
+    sims_OSR <- NULL
     save(sims_OSR, file = filepath2)
     
     if (evolution_piv == TRUE) {
@@ -175,6 +178,7 @@ run_base_model <- function(arguments) {
       filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                         '/',  nsims, '_piv.Rda', sep = '')
       
+      sims_piv <- NULL
       save(sims_piv, file = filepath3)
       
     }
@@ -183,6 +187,8 @@ run_base_model <- function(arguments) {
       
       filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                         '/',  nsims, '_threshold.Rda', sep = '')
+      
+      sims_threshold <- NULL
       save(sims_threshold, file = filepath4)
       
     }
