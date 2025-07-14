@@ -65,9 +65,8 @@ DF <- expand.grid(models,
                   years, 
                   num_sims, 
                   intensity, 
-                  frequency) 
-# %>%
-#   arrange(Var2)
+                  frequency) %>% 
+  arrange(Var2)
 
 # initialize empty arguments list
 arguments <- list()

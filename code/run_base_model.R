@@ -143,7 +143,7 @@ run_base_model <- function(arguments) {
   ##### initial population size
   
   # stable age distribution
-  SAD_output <- initialize_population(beta, burn_in = 1000, max_age, 
+  SAD_output <- initialize_population(beta, burn_in = 2500, max_age, 
                                       F_survival_immature, F_survival_mature, 
                                       M_survival_immature, M_survival_mature, 
                                       M, F_remigration_int, M_remigration_int,
@@ -151,6 +151,8 @@ run_base_model <- function(arguments) {
                                       emergence_success_k, emergence_success_t0, 
                                       k_piv, T_piv, temp_mu, 
                                       F_initial, M_initial)
+  
+  # SAD_output[[1]]
   
   # check to see if SAD exists or returns NaN - save everything as NA
   # and move on to the next combo
