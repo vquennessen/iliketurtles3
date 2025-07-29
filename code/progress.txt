@@ -37,3 +37,13 @@
 2025-07-12 18:46:00 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 60% done!
 2025-07-12 18:46:18 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 80% done!
 2025-07-12 18:46:37 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 100% done!
+2025-07-16 12:11:43 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 10% done!
+2025-07-16 12:11:45 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 20% done!
+2025-07-16 12:11:47 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 30% done!
+2025-07-16 12:11:49 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 40% done!
+2025-07-16 12:11:51 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 50% done!
+2025-07-16 12:11:53 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 60% done!
+2025-07-16 12:11:55 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 70% done!
+2025-07-16 12:11:57 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 80% done!
+2025-07-16 12:11:59 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 90% done!
+2025-07-16 12:12:01 - P_base - 1C - beta 3.82 - 10 sims - 100 years - 100% done!

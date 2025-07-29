@@ -28,8 +28,8 @@ source('conservation.R')
 
 # troubleshooting
 model <- 'P_base'
-scenario <- 5
-beta <- 43.7
+scenario <- 1
+beta <- 3.82
 nsims <- 10
 years <- 100
 frequency <- NULL
@@ -85,7 +85,7 @@ evolution_piv <- ifelse(model %in% c('P_evol_piv', 'P_evol_piv_high_H',
 h2_piv <- ifelse(model %in% c('P_evol_piv', 'GM_evol_piv'), 
                  0.135, 
                  ifelse(model %in% c('P_evol_piv_high_H', 
-                                            'GM_evol_piv_high_H'), 
+                                     'GM_evol_piv_high_H'), 
                         0.351, 
                         NA))
 
@@ -153,7 +153,7 @@ M <- round(pnorm(q = 1:max_age,
 ##### initial population size
 
 # stable age distribution
-SAD_output <- initialize_population(beta, burn_in = 1000, max_age, 
+SAD_output <- initialize_population(beta, burn_in = 2500, max_age, 
                                     F_survival_immature, F_survival_mature, 
                                     M_survival_immature, M_survival_mature, 
                                     M, F_remigration_int, M_remigration_int,
@@ -161,6 +161,8 @@ SAD_output <- initialize_population(beta, burn_in = 1000, max_age,
                                     emergence_success_k, emergence_success_t0, 
                                     k_piv, T_piv, temp_mu, 
                                     F_initial, M_initial)
+
+SAD_output[[1]]
 
 # check to see if SAD exists or returns NaN - save everything as NA
 # and move on to the next combo
@@ -177,7 +179,10 @@ if (is.na(sum(SAD_output[[1]] > 0)) |
                     '/', nsims, '_OSR.Rda', sep = '')
   
   # save objects
+  sims_N <- NULL
   save(sims_N, file = filepath1)
+  
+  sims_OSR <- NULL
   save(sims_OSR, file = filepath2)
   
   if (evolution_piv == TRUE) {
@@ -185,6 +190,7 @@ if (is.na(sum(SAD_output[[1]] > 0)) |
     filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                       '/',  nsims, '_piv.Rda', sep = '')
     
+    sims_piv <- NULL
     save(sims_piv, file = filepath3)
     
   }
@@ -193,6 +199,8 @@ if (is.na(sum(SAD_output[[1]] > 0)) |
     
     filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
                       '/',  nsims, '_threshold.Rda', sep = '')
+    
+    sims_threshold <- NULL
     save(sims_threshold, file = filepath4)
     
   }
@@ -243,11 +251,17 @@ if (is.na(sum(SAD_output[[1]] > 0)) |
     
   }
   
+  if (conservation == TRUE) {
+    
+    folder <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
+    
+  } else { folder <- ''}
+  
   # get filepaths to save objects to
   filepath1 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                    '/', nsims, '_N.Rda', sep = '')
+                    folder, '/', nsims, '_N.Rda', sep = '')
   filepath2 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
-                    '/', nsims, '_OSR.Rda', sep = '')
+                    folder, '/', nsims, '_OSR.Rda', sep = '')
   
   # save objects
   save(sims_N, file = filepath1)
