@@ -102,11 +102,12 @@ run_base_model <- function(arguments) {
                              NA)
   
   # conservation values
-  conservation <- ifelse(model %in% c('P_conservation', 'GM_conservation'), 
-                         TRUE, 
-                         FALSE)
+  conservation_action <- ifelse(model %in% c('P_conservation', 
+                                             'GM_conservation'), 
+                                TRUE, 
+                                FALSE)
   
-  effect_size <- ifelse(conservation == TRUE, 
+  effect_size <- ifelse(conservation_action == TRUE, 
                         1.3, 
                         NA)
   
@@ -195,6 +196,11 @@ run_base_model <- function(arguments) {
       
     }
     
+    update <- paste(lubridate::now(), ' - ', model, ' - ', scenario, 
+                    'C - beta ', beta, ' - ', nsims, ' sims - ', years, 
+                    ' years - no SAD, all done!', sep = '')
+    write(update, file = 'progress.txt', append = TRUE)
+    
   } else {
     
     # separate by sex
@@ -222,7 +228,8 @@ run_base_model <- function(arguments) {
                            evolution_threshold,
                            temp_mu, climate_stochasticity, 
                            season_temp_sd, clutch_temp_sd, noise, AC, 
-                           conservation, frequency, intensity, effect_size)
+                           conservation_action, frequency, intensity, 
+                           effect_size)
       
       # save the N and abundance arrays 
       sims_N[, , , i]             <- output[[1]]
@@ -241,7 +248,7 @@ run_base_model <- function(arguments) {
       
     }
     
-    if (conservation == TRUE) {
+    if (conservation_action == TRUE) {
       
       folder <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
       

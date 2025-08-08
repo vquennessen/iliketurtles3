@@ -14,7 +14,7 @@ base_model <- function(scenario, beta, years, max_age,
                        evolution_threshold,
                        temp_mu, climate_stochasticity, 
                        season_temp_sd, clutch_temp_sd, noise, AC, 
-                       conservation, frequency, intensity, effect_size) {
+                       conservation_action, frequency, intensity, effect_size) {
   
   ##### source initialized arrays ##############################################
   
@@ -28,7 +28,7 @@ base_model <- function(scenario, beta, years, max_age,
                                    evolution_threshold,
                                    temp_mu, climate_stochasticity, 
                                    season_temp_sd, clutch_temp_sd, noise, AC, 
-                                   conservation, frequency)
+                                   conservation_action, frequency)
   
   N                  <- init_output[[1]]    # population size array
   season_temp_mus    <- init_output[[2]]    # mean temps at the season level
@@ -88,8 +88,8 @@ base_model <- function(scenario, beta, years, max_age,
                                season_temp_mus, clutch_temp_sd,
                                k_piv, Pivotal_temps, Threshold_temps, 
                                T_threshold, 
-                               conservation, conservation_years, intensity, 
-                               effect_size)
+                               conservation_action, conservation_years, 
+                               intensity, effect_size)
     
     # add recruits to population size array
     N[1, 1, y]          <- rep_output[[1]]

@@ -6,7 +6,7 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                          emergence_success_t0, 
                          season_temp_mus, clutch_temp_sd,
                          k_piv, Pivotal_temps, Threshold_temps, T_threshold, 
-                         conservation, conservation_years, intensity, 
+                         conservation_action, conservation_years, intensity, 
                          effect_size) {
   
   # breeding females this year
@@ -63,7 +63,7 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                            mean = season_temp_mus[y], 
                            sd = clutch_temp_sd)
     
-    if (conservation == TRUE & y %in% conservation_years) {
+    if (conservation_action == TRUE & y %in% conservation_years) {
       
       clutch_temps <- conservation(initial_temps = clutch_temps, 
                                    intensity = intensity, 
@@ -88,8 +88,8 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                          round)
     
     # proportions male list, one number for each clutch 
-    props_male <- lapply(hatchlings, 
-                         proportion_male, 
+    props_male <- lapply(clutch_temps, 
+                         proportion_male,
                          k = k_piv, 
                          pivotal_temp = Pivotal_temps[y])
     
