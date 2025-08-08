@@ -1,7 +1,7 @@
 # test run base model
 
 # set working directory
-setwd('~/Projects/iliketurtles3/code')
+# setwd('~/Projects/iliketurtles3/code')
 
 # load libraries
 library(parallel)
@@ -112,11 +112,12 @@ ag_var_threshold <- ifelse(evolution_threshold == TRUE,
                            NA)
 
 # conservation values
-conservation <- ifelse(model %in% c('P_conservation', 'GM_conservation'), 
-                       TRUE, 
-                       FALSE)
+conservation_action <- ifelse(model %in% c('P_conservation', 
+                                           'GM_conservation'), 
+                              TRUE, 
+                              FALSE)
 
-effect_size <- ifelse(conservation == TRUE, 
+effect_size <- ifelse(conservation_action == TRUE, 
                       1.3, 
                       NA)
 
@@ -162,7 +163,7 @@ SAD_output <- initialize_population(beta, burn_in = 2500, max_age,
                                     k_piv, T_piv, temp_mu, 
                                     F_initial, M_initial)
 
-SAD_output[[1]]
+# SAD_output[[1]]
 
 # check to see if SAD exists or returns NaN - save everything as NA
 # and move on to the next combo
@@ -232,7 +233,8 @@ if (is.na(sum(SAD_output[[1]] > 0)) |
                          evolution_threshold,
                          temp_mu, climate_stochasticity, 
                          season_temp_sd, clutch_temp_sd, noise, AC, 
-                         conservation, frequency, intensity, effect_size)
+                         conservation_action, frequency, intensity, 
+                         effect_size)
     
     # save the N and abundance arrays 
     sims_N[, , , i]             <- output[[1]]
@@ -251,7 +253,7 @@ if (is.na(sum(SAD_output[[1]] > 0)) |
     
   }
   
-  if (conservation == TRUE) {
+  if (conservation_action == TRUE) {
     
     folder <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
     
