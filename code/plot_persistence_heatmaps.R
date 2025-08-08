@@ -34,17 +34,19 @@ all_combos <- base_persistence
 # all_combos <- rbind(base_persistence, evolution_persistence)
 # all_combos <- rbind(bp25, bp50, bp75)
 
+# what year to plot
+year_to_plot <- 100
+
 ################################################################################
 
 # make scenario and osr a factor variable
 all_combos$Scenario <- factor(all_combos$Scenario, 
-                           levels = unique(all_combos$Scenario))
-all_combos$Stochasticity <- factor(all_combos$Stochasticity, 
-                              levels = unique(all_combos$Stochasticity))
+                              levels = unique(all_combos$Scenario))
+all_combos$OSR <- factor(all_combos$OSR, levels = unique(all_combos$OSR))
 
 # # shorter time scales
 # short <- all_combos
-  
+
 # pivotal <- all_combos %>%
 #   filter(Stochasticity == 'temperature stochasticity') %>%
 #   filter(Model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
@@ -57,24 +59,53 @@ all_combos$Stochasticity <- factor(all_combos$Stochasticity,
 
 # EDIT #########################################################################
 DF_to_use <- all_combos %>% 
-  filter(Stochasticity == 'white noise') %>%
+  filter(Survive_to == year_to_plot) %>%
+  # filter(Stochasticity == 'white noise') %>%
   select(Population, Scenario, OSR, Survive_to, 
-         Probability_mature_mean, Probability_total_mean) %>%
-  pivot_longer(cols = c('Probability_mature_mean', 'Probability_total_mean'), 
+         Probability_IF_mean,
+         Probability_IM_mean, 
+         Probability_MF_mean,
+         Probability_MM_mean,
+         Probability_total_mean, 
+         Probability_mature_mean
+  ) %>%
+  pivot_longer(cols = c('Probability_IF_mean', 'Probability_IM_mean', 
+                        'Probability_MF_mean', 'Probability_MM_mean', 
+                        'Probability_total_mean', 'Probability_mature_mean'), 
                names_to = 'abundance', 
                values_to = 'Probability') %>%
-  mutate(Abundance = paste(ifelse(abundance == 'Probability_mature_mean', 
-                                  'Mature', 'Total'), 
-         'Abundance', sep = ' ')) %>%
+  mutate(Demographic = ifelse(abundance == 'Probability_IF_mean', 
+                              'Immature Females', 
+                              ifelse(abundance == 'Probability_IM_mean', 
+                                     'Immature Males', 
+                                     ifelse(abundance == 'Probability_MF_mean', 
+                                            'Mature Females', 
+                                            ifelse(abundance == 'Probability_MM_mean', 
+                                                   'Mature Males', 
+                                                   ifelse(abundance == 'Probability_total_mean', 
+                                                          'Total', 'Mature')))))) %>%
   select(-abundance)
-  # mutate(pretty_survive_to = paste('Year', Survive_to, sep = ' '))
-  
+# mutate(pretty_survive_to = paste('Year', Survive_to, sep = ' '))
+
+# set order of demographics for pretty plot
+DF_to_use$Demographic <- factor(DF_to_use$Demographic, 
+                                levels = c('Immature Females',
+                                           'Mature Females',
+                                           'Immature Males', 
+                                           'Mature Males',
+                                           'Total', 
+                                           'Mature'), 
+                                labels = c('Immature Females',
+                                           'Mature Females',
+                                           'Immature Males', 
+                                           'Mature Males',
+                                           'Total', 
+                                           'Mature'))
+
 name_to_use <- paste('base_persistence')
 # short_stochasticities <- unique(DF_to_use$Stochasticity_short)
-var_rows <- 6 # abundance pretty
-var_columns <- 1 # populations
 
-##### plotting abundance mature ################################################
+##### plotting all abundances  #################################################
 fig3 <- ggplot(data = DF_to_use, 
                aes(x = OSR, 
                    y = Scenario, 
@@ -91,14 +122,11 @@ fig3 <- ggplot(data = DF_to_use,
                        na.value = 'gray') +
   guides(fill = guide_colourbar(title = "Probability")) +
   xlab('Minimum operational sex ratio required for 100% female reproductive success') +
-  ylab(paste('Increase in temperature (\u00B0C) by year ', 
-             DF_to_use$Survive_to, sep = '')) +
+  ylab('Increase in temperature (\u00B0C) by year 100') +
   ggtitle(paste(name_to_use, ': Probability of population persistence \n
-          (> 10% of starting abundance) by year 100', 
+          (> 10% of starting abundance) by year', year_to_plot, 
                 sep = '')) +
-  facet_grid(
-    rows = vars(Abundance),
-    cols = vars(Population)) +
+  facet_wrap(facets = vars(Demographic), nrow = 3, ncol = 2) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank()) +
@@ -111,48 +139,48 @@ fig3 <- ggplot(data = DF_to_use,
 
 # save combined figure to file
 ggsave(plot = fig3,
-       filename = paste(name_to_use, '.png', sep = ''),
+       filename = paste(name_to_use, '_Y', year_to_plot, '.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 7)
 
-##### plotting abundance total #################################################
-
-fig4 <- ggplot(data = DF_to_use, 
-               aes(x = OSR, 
-                   y = Scenario, 
-                   fill = Probability_total_mean)) +
-  geom_tile(color = "white",
-            lwd = 1.5,
-            linetype = 1) +
-  scale_fill_gradient2(low = hcl.colors(5, "viridis")[1],
-                       mid = hcl.colors(5, "viridis")[3],
-                       high = hcl.colors(5, "viridis")[5], #colors in the scale
-                       midpoint = 0.5,    #same midpoint for plots (mean of the range)
-                       breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
-                       limits = c(0, 1),
-                       na.value = 'gray') +
-  guides(fill = guide_colourbar(title = "Probability")) +
-  xlab('Operational sex ratio required to fertilize all females') +
-  ylab(paste('Increase in sand temperature (\u00B0C) by year ', 
-             DF_to_use$Survive_to, sep = '')) +
-  ggtitle(paste(name_to_use, ': Probability of population persistence \n
-          (> 10% of starting total abundance) on shorter timescales', 
-                sep = '')) +
-  facet_grid(
-    # rows = vars(DF_to_use[, var_rows]),
-    cols = vars(DF_to_use[, var_columns])) +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank()) +
-  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
-  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
-  theme(axis.text = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 10)) +
-  theme(title = element_text(size = 13))
-
-# save combined figure to file
-ggsave(plot = fig4,
-       filename = paste(name_to_use, '_total.png', sep = ''),
-       path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 5)
+# ##### plotting abundance total #################################################
+# 
+# fig4 <- ggplot(data = DF_to_use, 
+#                aes(x = OSR, 
+#                    y = Scenario, 
+#                    fill = Probability_total_mean)) +
+#   geom_tile(color = "white",
+#             lwd = 1.5,
+#             linetype = 1) +
+#   scale_fill_gradient2(low = hcl.colors(5, "viridis")[1],
+#                        mid = hcl.colors(5, "viridis")[3],
+#                        high = hcl.colors(5, "viridis")[5], #colors in the scale
+#                        midpoint = 0.5,    #same midpoint for plots (mean of the range)
+#                        breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
+#                        limits = c(0, 1),
+#                        na.value = 'gray') +
+#   guides(fill = guide_colourbar(title = "Probability")) +
+#   xlab('Operational sex ratio required to fertilize all females') +
+#   ylab(paste('Increase in sand temperature (\u00B0C) by year ', 
+#              DF_to_use$Survive_to, sep = '')) +
+#   ggtitle(paste(name_to_use, ': Probability of population persistence \n
+#           (> 10% of starting total abundance) on shorter timescales', 
+#                 sep = '')) +
+#   facet_grid(
+#     # rows = vars(DF_to_use[, var_rows]),
+#     cols = vars(DF_to_use[, var_columns])) +
+#   theme_bw() +
+#   theme(panel.grid.major = element_blank(), 
+#         panel.grid.minor = element_blank()) +
+#   theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
+#   theme(axis.title.x = element_text(size = 13, vjust = -3)) +
+#   theme(axis.title.y = element_text(size = 13, vjust = 4)) +
+#   theme(axis.text = element_text(size = 10)) +
+#   theme(strip.text = element_text(size = 10)) +
+#   theme(title = element_text(size = 13))
+# 
+# # save combined figure to file
+# ggsave(plot = fig4,
+#        filename = paste(name_to_use, '_total.png', sep = ''),
+#        path = '~/Projects/iliketurtles3/figures/',
+#        width = 8, height = 5)

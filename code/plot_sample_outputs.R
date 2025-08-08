@@ -18,7 +18,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 # category titles
 TRTs <- c('Narrow', 'Wide')
 ages <- c('Hatchling', 'Mature')
-folder <- '2025_06_26_new_N_runs'
+folder <- '2025_07_26_test'
 years <- 100
 nsims <- 10000
 temp_mu <- 31.8
@@ -117,13 +117,13 @@ for (t in 1:length(TRTs)) {
       
       # load in sims N
       load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/', 
-                 'model output/', folder, '/', model, '/', 
+                 'model output/i like turtles/', folder, '/', model, '/', 
                  scenarios[s], '/', beta_names[b], '/', nsims, '_N.Rda', 
                  sep = ''))
       
       # load in sims OSR
       load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/', 
-                 'model output/', folder, '/', model, '/', 
+                 'model output/i like turtles/', folder, '/', model, '/', 
                  scenarios[s], '/', beta_names[b], '/', nsims, '_OSR.Rda', 
                  sep = ''))
       
