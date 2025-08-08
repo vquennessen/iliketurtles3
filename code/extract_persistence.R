@@ -21,22 +21,22 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 desktop <- TRUE
 
 # folder names for building paths
-folders <- c('2025_06_26_new_N_runs')
+folder <- c('2025_07_30_test')
 
 # model names for building paths
 models <- c('P_base', 'GM_base')
 model_names <- c('base model', 'base model')
 
+# populations simulated
+pops <- c('West Africa', 'Suriname')
+
 # which year(s) to track
 years_to_plot <- c(25, 50, 75, 100)
-
-################################################################################
 
 # plotting model parameters
 nsims <- 10000
 
-# populations simulated
-pops <- c('West Africa', 'Suriname')
+################################################################################
 
 # temperature increase scenarios
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
@@ -48,7 +48,8 @@ osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
 betas <- OSRs_to_betas(osrs)
 
 # generate automatically
-paths <- as.vector(outer(folders, models, paste, sep = "/"))
+folders <- rep(folder, times = length(models))
+paths <- as.vector(outer(folder, models, paste, sep = "/"))
 populations <- rep(pops, each = length(folders))
 models_short <- rep(models, each = length(folders))
 model_types <- rep(model_names, each = length(folders), times = length(pops))
@@ -58,6 +59,7 @@ P <- length(paths)
 S <- length(scenarios)
 B <- length(osrs)
 Y <- length(years_to_plot)
+nrows <- Y*P*S*B
 
 # maturity ogive
 max_age <- 85
@@ -67,19 +69,19 @@ M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
 
 # initialize super data frame
 SDF <- data.frame(
-  Folder = rep(NA, P*S*B),
-  Population = rep(NA, P*S*B), 
-  Model = rep(NA, P*S*B),
-  model = rep(NA, P*S*B),
-  Scenario = rep(NA, P*S*B), 
-  OSR = rep(NA, P*S*B), 
-  Survive_to = rep(NA, P*S*B), 
-  Probability_total_mean = rep(NA, P*S*B),
-  Probability_total_F_mean = rep(NA, P*S*B), 
-  Probability_total_M_mean = rep(NA, P*S*B), 
-  Probability_mature_mean = rep(NA, P*S*B),
-  Probability_mature_F_mean = rep(NA, P*S*B),
-  Probability_mature_M_mean = rep(NA, P*S*B)
+  Folder = rep(NA, nrows),
+  Population = rep(NA, nrows), 
+  Model = rep(NA, nrows),
+  model = rep(NA, nrows),
+  Scenario = rep(NA, nrows), 
+  OSR = rep(NA, nrows), 
+  Survive_to = rep(NA, nrows), 
+  Probability_IF_mean = rep(NA, nrows),
+  Probability_IM_mean = rep(NA, nrows), 
+  Probability_MF_mean = rep(NA, nrows),
+  Probability_MM_mean = rep(NA, nrows),
+  Probability_total_mean = rep(NA, nrows), 
+  Probability_mature_mean = rep(NA, nrows)
 )
 
 # for each year to plot
@@ -103,7 +105,9 @@ for (y in 1:Y) {
         # if the file exists - desktop / laptop
         if (
           
-          file.exists(paste('E:/PhD Thesis/',
+          file.exists(paste('C:/Users/', user, 
+                            '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/i like turtles/',
+                            # file.exists(paste('E:/PhD Thesis/',
                             # file.exists(paste('~/Projects/iliketurtles3/output/',
                             # file.exists(paste('E:/',
                             # file.exists(paste('/home/quennessenv/iliketurtles3/output/',
@@ -113,62 +117,102 @@ for (y in 1:Y) {
         ) {
           
           # load in N object
-          load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
+          load(paste('C:/Users/', user, 
+                     '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/i like turtles/',
                      # load(paste('~/Projects/iliketurtles3/output/',
                      # load(paste('E:/',
                      # load(paste('/home/quennessenv/iliketurtles3/output/',
                      paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                      nsims, '_N.Rda', sep = ''))
+          
+          # index number
+          index <- (y - 1)*P*S*B + (p - 1)*S*B + (s - 1)*B + b
+          SDF$Folder[index] <- folders[p]
+          SDF$Population[index] <- populations[p]
+          SDF$Model[index] <- models_short[p]
+          SDF$model[index] <- model_types[p]
+          SDF$Scenario[index] <- scenarios[s]
+          SDF$OSR[index] <- osrs[b]
+          SDF$Survive_to[index] <- year_to_plot          
+          
+          if (is.null(sims_N)) {
+            
+            SDF$Probability_IF_mean[index] <- NA
+            SDF$Probability_IM_mean[index] <- NA
+            SDF$Probability_MF_mean[index] <- NA
+            SDF$Probability_MM_mean[index] <- NA  
+            SDF$Probability_total_mean[index] <- NA 
+            SDF$Probability_mature_mean[index] <- NA
+            
+          } else {
+            
+            # immature females
+            IF_init <- colSums(sims_N[1, , 1, ])
+            IF_final <- colSums(sims_N[1, , year_to_plot, ])
+            
+            # immature males
+            IM_init <- colSums(sims_N[2, , 1, ])
+            IM_final <- colSums(sims_N[2, , year_to_plot, ])            
+            
+            # mature females
+            MF_init <- colSums(sims_N[3, , 1, ])
+            MF_final <- colSums(sims_N[3, , year_to_plot, ])
+            
+            # mature males
+            MM_init <- colSums(sims_N[4, , 1, ])
+            MM_final <- colSums(sims_N[4, , year_to_plot, ])
+            
+            # total population size
+            total_init <- IF_init + IM_init + MF_init + MM_init
+            total_final <- IF_final + IM_final + MF_final + MM_final
+            
+            # mature population size
+            mature_init <- MF_init + MM_init
+            mature_final <- MF_final + MM_final
+            
+            # probability of population persistence past 10% of initial
+            
+            SDF$Probability_IF_mean[index] <- mean(IF_final > (0.10 * IF_init), 
+                                                   na.rm = TRUE)
+            SDF$Probability_IM_mean[index] <- mean(IM_final > (0.10 * IM_init), 
+                                                   na.rm = TRUE)
+            SDF$Probability_MF_mean[index] <- mean(MF_final > (0.10 * MF_init), 
+                                                   na.rm = TRUE)
+            SDF$Probability_MM_mean[index] <- mean(MM_final > (0.10 * MM_init), 
+                                                   na.rm = TRUE)  
+            SDF$Probability_total_mean[index] <- mean(total_final > (0.10 * total_init), 
+                                                   na.rm = TRUE)  
+            SDF$Probability_mature_mean[index] <- mean(mature_final > (0.10 * mature_init), 
+                                                   na.rm = TRUE)  
+          }
+          
+          # print update
+          print(paste(index / (Y*P*S*B) * 100, '% done', sep = ''))
+          
+        }
         
-        # index number
-        index <- (p - 1)*S*B + (s - 1)*B + b
-        
-        
-        
-        # print update
-        print_index <- index*(y - 1) + index
-        print(paste(print_index / (P*S*B*Y) * 100, '% done', sep = ''))
-        
-      } else { 
-        
-        print('this particular combination of values does not have a SAD')
-        
-        SDF$Folder[index] <- folders[p]
-        SDF$Population[index] <- populations[p]
-        SDF$Model[index] <- models_short[p]
-        SDF$model[index] <- model_types[p]
-        SDF$Scenario[index] <- scenarios[s]
-        SDF$OSR[index] <- osrs[b]
-        SDF$Survive_to[index] <- year_to_plot
-        
-        SDF$Probability_total_mean[index] <- NA
-        SDF$Probability_total_F_mean[index] <- NA
-        SDF$Probability_total_M_mean[index] <- NA
-        SDF$Probability_mature_mean[index] <- NA
-        SDF$Probability_mature_F_mean[index] <- NA
-        SDF$Probability_mature_M_mean[index] <- NA
+      }
       
     }
     
   }
   
-  # make scenario and osr a factor variable
-  SDF$Scenario <- factor(SDF$Scenario, levels = scenarios)  
-  
-  # save dataframe as R object - base model
-  base_persistence <- SDF
-  save(base_persistence,
-       file = '~/Projects/iliketurtles3/output/base_persistence.Rdata')
-  
-  # # save dataframe as R object - evolution
-  # evolution_persistence <- SDF
-  # save(evolution_persistence,
-  #      file = '~/Projects/iliketurtles3/output/evolution_persistence.Rdata')
-  # 
-  # # save dataframe as R object - conservation
-  # conservation_persistence <- SDF
-  # save(conservation_persistence,
-  #      file = '~/Projects/iliketurtles3/output/conservation_persistence.Rdata')
-
-  
 }
+
+# make scenario and osr a factor variable
+SDF$Scenario <- factor(SDF$Scenario, levels = scenarios)  
+
+# save dataframe as R object - base model
+base_persistence <- SDF
+save(base_persistence,
+     file = '~/Projects/iliketurtles3/output/base_persistence.Rdata')
+
+# # save dataframe as R object - evolution
+# evolution_persistence <- SDF
+# save(evolution_persistence,
+#      file = '~/Projects/iliketurtles3/output/evolution_persistence.Rdata')
+# 
+# # save dataframe as R object - conservation
+# conservation_persistence <- SDF
+# save(conservation_persistence,
+#      file = '~/Projects/iliketurtles3/output/conservation_persistence.Rdata')
