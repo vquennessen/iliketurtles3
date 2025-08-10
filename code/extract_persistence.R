@@ -53,13 +53,15 @@ paths <- as.vector(outer(folder, models, paste, sep = "/"))
 populations <- rep(pops, each = length(folders))
 models_short <- rep(models, each = length(folders))
 model_types <- rep(model_names, each = length(folders), times = length(pops))
+abundances <- c('IF', 'IM', 'MF', 'MM', 'total', 'mature')
 
 # dimensions
 P <- length(paths)
 S <- length(scenarios)
 B <- length(osrs)
 Y <- length(years_to_plot)
-nrows <- Y*P*S*B
+A <- length(abundances)
+nrows <- Y*P*S*B*A
 
 # maturity ogive
 max_age <- 85
@@ -76,12 +78,8 @@ SDF <- data.frame(
   Scenario = rep(NA, nrows), 
   OSR = rep(NA, nrows), 
   Survive_to = rep(NA, nrows), 
-  Probability_IF_mean = rep(NA, nrows),
-  Probability_IM_mean = rep(NA, nrows), 
-  Probability_MF_mean = rep(NA, nrows),
-  Probability_MM_mean = rep(NA, nrows),
-  Probability_total_mean = rep(NA, nrows), 
-  Probability_mature_mean = rep(NA, nrows)
+  Abundance = rep(NA, nrows),
+  Mean_probability = rep(NA, nrows)
 )
 
 # for each year to plot
@@ -126,24 +124,21 @@ for (y in 1:Y) {
                      nsims, '_N.Rda', sep = ''))
           
           # index number
-          index <- (y - 1)*P*S*B + (p - 1)*S*B + (s - 1)*B + b
-          SDF$Folder[index] <- folders[p]
-          SDF$Population[index] <- populations[p]
-          SDF$Model[index] <- models_short[p]
-          SDF$model[index] <- model_types[p]
-          SDF$Scenario[index] <- scenarios[s]
-          SDF$OSR[index] <- osrs[b]
-          SDF$Survive_to[index] <- year_to_plot          
+          index <- (y - 1)*P*S*B*A + (p - 1)*S*B*A + (s - 1)*B*A + b*A
+          
+          SDF$Folder[index:(index + A)] <- folders[p]
+          SDF$Population[index:(index + A)] <- populations[p]
+          SDF$Model[index:(index + A)] <- models_short[p]
+          SDF$model[index:(index + A)] <- model_types[p]
+          SDF$Scenario[index:(index + A)] <- scenarios[s]
+          SDF$OSR[index:(index + A)] <- osrs[b]
+          SDF$Survive_to[index:(index + A)] <- year_to_plot  
+          SDF$Abundance[index:(index + A)] <- abundances
           
           if (is.null(sims_N)) {
             
-            SDF$Probability_IF_mean[index] <- NA
-            SDF$Probability_IM_mean[index] <- NA
-            SDF$Probability_MF_mean[index] <- NA
-            SDF$Probability_MM_mean[index] <- NA  
-            SDF$Probability_total_mean[index] <- NA 
-            SDF$Probability_mature_mean[index] <- NA
-            
+            SDF$Probability_mean[index:(index + A)] <- NA
+
           } else {
             
             # immature females
@@ -172,22 +167,17 @@ for (y in 1:Y) {
             
             # probability of population persistence past 10% of initial
             
-            SDF$Probability_IF_mean[index] <- mean(IF_final > (0.10 * IF_init), 
-                                                   na.rm = TRUE)
-            SDF$Probability_IM_mean[index] <- mean(IM_final > (0.10 * IM_init), 
-                                                   na.rm = TRUE)
-            SDF$Probability_MF_mean[index] <- mean(MF_final > (0.10 * MF_init), 
-                                                   na.rm = TRUE)
-            SDF$Probability_MM_mean[index] <- mean(MM_final > (0.10 * MM_init), 
-                                                   na.rm = TRUE)  
-            SDF$Probability_total_mean[index] <- mean(total_final > (0.10 * total_init), 
-                                                   na.rm = TRUE)  
-            SDF$Probability_mature_mean[index] <- mean(mature_final > (0.10 * mature_init), 
-                                                   na.rm = TRUE)  
+            SDF$Probability_mean[index:(index + A)] <- c(
+              mean(IF_final > (0.10 * IF_init), na.rm = TRUE), 
+              mean(IM_final > (0.10 * IM_init), na.rm = TRUE), 
+              mean(MF_final > (0.10 * MF_init), na.rm = TRUE), 
+              mean(MM_final > (0.10 * MM_init), na.rm = TRUE), 
+              mean(total_final > (0.10 * total_init), na.rm = TRUE), 
+              mean(mature_final > (0.10 * mature_init), na.rm = TRUE))  
           }
           
           # print update
-          print(paste(index / (Y*P*S*B) * 100, '% done', sep = ''))
+          print(paste(index / (nrows) * 100, '% done', sep = ''))
           
         }
         

@@ -18,7 +18,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 # category titles
 TRTs <- c('Narrow', 'Wide')
 ages <- c('Hatchling', 'Mature')
-folder <- '2025_07_26_test'
+folder <- '2025_07_30_test'
 years <- 100
 nsims <- 10000
 temp_mu <- 31.8

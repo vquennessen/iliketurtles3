@@ -18,7 +18,9 @@ load("~/Projects/iliketurtles3/output/lambdas.Rdata")
 pops <- c('West Africa', 'Suriname')
 
 # abundances
-abundances <- c('total abundance', 'mature abundance')
+# abundances to plot
+abundances <- c('Immature Females', 'Mature Females', 'Immature Males', 
+                'Mature Males', 'Total', 'Mature')
 filenames <- c('10000_abundance_total.Rda', '10000_abundance_mature.Rda')
 
 # scenarios
@@ -56,16 +58,13 @@ for (p in 1:length(pops)) {
     # for each osr
     for (b in 1:length(betas)) {
       
-      # for each abundance
-      for (a in 1:length(abundances)) {
-        
         # load in appropriate object
         load(paste('C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis', 
-                   'model output/temp_stochasticity', models[p], scenarios[s], 
-                   beta_names[b], filenames[a], sep = '/'))
+                   'model output/temp_stochasticity/', models[p], '/', 
+                   scenarios[s], '/', beta_names[b], '_10000_N.Rda', sep = '/'))
         
         # for each year for each sim, is the total abundance > 10% starting?
-        alive <- sims_abundance_total > 0.1*sims_abundance_total[1, ]
+        alive_IF <- sims_N[1, , , ] > 0.1*sims_N[1, , , ]
         
         # for each year, what proportion of sims has total abundance > 10%
         # starting abundance

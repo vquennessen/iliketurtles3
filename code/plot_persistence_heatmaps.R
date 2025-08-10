@@ -84,23 +84,26 @@ DF_to_use <- all_combos %>%
                                                    'Mature Males', 
                                                    ifelse(abundance == 'Probability_total_mean', 
                                                           'Total', 'Mature')))))) %>%
-  select(-abundance)
+  select(Population, Scenario, OSR, Survive_to, 
+         Probability_total_mean, Probability_mature_mean)
 # mutate(pretty_survive_to = paste('Year', Survive_to, sep = ' '))
 
 # set order of demographics for pretty plot
 DF_to_use$Demographic <- factor(DF_to_use$Demographic, 
-                                levels = c('Immature Females',
-                                           'Mature Females',
-                                           'Immature Males', 
-                                           'Mature Males',
-                                           'Total', 
-                                           'Mature'), 
-                                labels = c('Immature Females',
-                                           'Mature Females',
-                                           'Immature Males', 
-                                           'Mature Males',
-                                           'Total', 
-                                           'Mature'))
+                                levels = c(
+                                  # 'Immature Females',
+                                  # 'Mature Females',
+                                  # 'Immature Males', 
+                                  # 'Mature Males',
+                                  'Total', 
+                                  'Mature'), 
+                                labels = c(
+                                  # 'Immature Females',
+                                  # 'Mature Females',
+                                  # 'Immature Males', 
+                                  # 'Mature Males',
+                                  'Total', 
+                                  'Mature'))
 
 name_to_use <- paste('base_persistence')
 # short_stochasticities <- unique(DF_to_use$Stochasticity_short)
