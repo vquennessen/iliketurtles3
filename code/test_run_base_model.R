@@ -27,9 +27,9 @@ source('conservation.R')
 ###### model inputs ##########################################################
 
 # troubleshooting
-model <- 'P_base'
+model <- 'P_evol_piv'
 scenario <- 1
-beta <- 3.82
+beta <- 1.17
 nsims <- 10
 years <- 100
 frequency <- NULL
@@ -168,10 +168,10 @@ SAD_output <- initialize_population(beta, burn_in = 2500, max_age,
 # check to see if SAD exists or returns NaN - save everything as NA
 # and move on to the next combo
 
-if (is.na(sum(SAD_output[[1]] > 0)) | 
-    is.na(sum(SAD_output[[2]] > 0)) |
-    is.na(sum(SAD_output[[3]] > 0)) |
-    is.na(sum(SAD_output[[4]]))) {
+if (sum(is.na(SAD_output[[1]] > 0)) | 
+    sum(is.na(SAD_output[[2]] > 0)) |
+    sum(is.na(SAD_output[[3]] > 0)) |
+    sum(is.na(SAD_output[[4]] > 0))) {
   
   # get filepaths to save objects to
   filepath1 = paste('../output/', model, '/', scenario, 'C/beta', beta, 
