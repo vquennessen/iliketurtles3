@@ -7,8 +7,6 @@
 source('mating function/OSRs_to_betas.R')
 
 # load libraries
-library(ggplot2)
-# library(ggpattern)
 library(matrixStats)
 library(dplyr)
 library(tidyr)
@@ -45,7 +43,7 @@ populations <- rep(c('West Africa', 'Suriname'),
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
 
 # operational sex ratios / betas
-osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
+osrs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
 betas <- OSRs_to_betas(osrs)
 
 # abundances to plot
@@ -59,6 +57,7 @@ S <- length(scenarios)
 OSR <- length(osrs)
 Y <- length(years)
 A <- length(abundances)
+nrows <- M*S*OSR*Y*A
 
 # clear DF and SDF objects
 # rm(DF)
@@ -94,8 +93,8 @@ for (p in 1:P) {
                        Model = models[p],
                        Scenario = scenarios[s], 
                        OSR = osrs[osr], 
-                       Year = years, 
-                       Abundance = rep(abundances, each = Y), 
+                       Year = rep(years, each = A), 
+                       Abundance = rep(abundances, times = Y), 
                        Lambda_mean = NA,
                        Lambda_median = NA,
                        Lambda_Q25 = NA, 
@@ -239,62 +238,63 @@ for (p in 1:P) {
                                             na.rm = TRUE))
         
         # calculate 10 year average, Q25, and Q75 lambdas for years 11 - 100
-        for (y in (average_over):(Y - 1)) {
+        # (indices 10 - 99, because NA isn't added directly to lambdas vectors)
+        for (y in average_over:(Y - 1)) {
           
           # mean lambdas per year across over_average years across all simulations
-          mean_lambdas_IF <- mean(lambdas_IF[(y - average_over):y, ], 
+          mean_lambdas_IF <- mean(lambdas_IF[(y - average_over + 1):y, ], 
                                   na.rm = TRUE)
-          mean_lambdas_IM <- mean(lambdas_IM[(y - average_over):y, ], 
+          mean_lambdas_IM <- mean(lambdas_IM[(y - average_over + 1):y, ], 
                                   na.rm = TRUE)
-          mean_lambdas_MF <- mean(lambdas_MF[(y - average_over):y, ], 
+          mean_lambdas_MF <- mean(lambdas_MF[(y - average_over + 1):y, ], 
                                   na.rm = TRUE)
-          mean_lambdas_MM <- mean(lambdas_MM[(y - average_over):y, ], 
+          mean_lambdas_MM <- mean(lambdas_MM[(y - average_over + 1):y, ], 
                                   na.rm = TRUE)
-          mean_lambdas_total <- mean(lambdas_total[(y - average_over):y, ], 
+          mean_lambdas_total <- mean(lambdas_total[(y - average_over + 1):y, ], 
                                      na.rm = TRUE)
-          mean_lambdas_mature <- mean(lambdas_mature[(y - average_over):y, ], 
+          mean_lambdas_mature <- mean(lambdas_mature[(y - average_over + 1):y, ], 
                                       na.rm = TRUE)
           
           # median lambdas per year across over_average years across all simulations
-          median_lambdas_IF <- median(lambdas_IF[(y - average_over):y, ], 
+          median_lambdas_IF <- median(lambdas_IF[(y - average_over + 1):y, ], 
                                       na.rm = TRUE)
-          median_lambdas_IM <- median(lambdas_IM[(y - average_over):y, ], 
+          median_lambdas_IM <- median(lambdas_IM[(y - average_over + 1):y, ], 
                                       na.rm = TRUE)
-          median_lambdas_MF <- median(lambdas_MF[(y - average_over):y, ], 
+          median_lambdas_MF <- median(lambdas_MF[(y - average_over + 1):y, ], 
                                       na.rm = TRUE)
-          median_lambdas_MM <- median(lambdas_MM[(y - average_over):y, ], 
+          median_lambdas_MM <- median(lambdas_MM[(y - average_over + 1):y, ], 
                                       na.rm = TRUE)
-          median_lambdas_total <- median(lambdas_total[(y - average_over):y, ], 
+          median_lambdas_total <- median(lambdas_total[(y - average_over + 1):y, ], 
                                          na.rm = TRUE)
-          median_lambdas_mature <- median(lambdas_mature[(y - average_over):y, ], 
+          median_lambdas_mature <- median(lambdas_mature[(y - average_over + 1):y, ], 
                                           na.rm = TRUE)
           
           # Q25 lambdas per year across over_average years across all simulations
-          Q25_lambdas_IF <- quantile(lambdas_IF[(y - average_over):y, ], 
+          Q25_lambdas_IF <- quantile(lambdas_IF[(y - average_over + 1):y, ], 
                                      na.rm = TRUE, probs = c(0.25))
-          Q25_lambdas_IM <- quantile(lambdas_IM[(y - average_over):y, ], 
+          Q25_lambdas_IM <- quantile(lambdas_IM[(y - average_over + 1):y, ], 
                                      na.rm = TRUE, probs = c(0.25))
-          Q25_lambdas_MF <- quantile(lambdas_MF[(y - average_over):y, ], 
+          Q25_lambdas_MF <- quantile(lambdas_MF[(y - average_over + 1):y, ], 
                                      na.rm = TRUE, probs = c(0.25))
-          Q25_lambdas_MM <- quantile(lambdas_MM[(y - average_over):y, ], 
+          Q25_lambdas_MM <- quantile(lambdas_MM[(y - average_over + 1):y, ], 
                                      na.rm = TRUE, probs = c(0.25))
-          Q25_lambdas_total <- quantile(lambdas_total[(y - average_over):y, ], 
+          Q25_lambdas_total <- quantile(lambdas_total[(y - average_over + 1):y, ], 
                                         na.rm = TRUE, probs = c(0.25))
-          Q25_lambdas_mature <- quantile(lambdas_mature[(y - average_over):y, ],
+          Q25_lambdas_mature <- quantile(lambdas_mature[(y - average_over + 1):y, ],
                                          na.rm = TRUE, probs = c(0.25))
           
           # Q75 lambdas per year across over_average years across all simulations
-          Q75_lambdas_IF <- quantile(lambdas_IF[(y - average_over):y, ], 
+          Q75_lambdas_IF <- quantile(lambdas_IF[(y - average_over + 1):y, ], 
                                      na.rm = TRUE, probs = c(0.75))
-          Q75_lambdas_IM <- quantile(lambdas_IM[(y - average_over):y, ], 
+          Q75_lambdas_IM <- quantile(lambdas_IM[(y - average_over + 1):y, ], 
                                      na.rm = TRUE, probs = c(0.75))
-          Q75_lambdas_MF <- quantile(lambdas_MF[(y - average_over):y, ], 
+          Q75_lambdas_MF <- quantile(lambdas_MF[(y - average_over + 1):y, ], 
                                      na.rm = TRUE, probs = c(0.75))
-          Q75_lambdas_MM <- quantile(lambdas_MM[(y - average_over):y, ], 
+          Q75_lambdas_MM <- quantile(lambdas_MM[(y - average_over + 1):y, ], 
                                      na.rm = TRUE, probs = c(0.75))
-          Q75_lambdas_total <- quantile(lambdas_total[(y - average_over):y, ], 
+          Q75_lambdas_total <- quantile(lambdas_total[(y - average_over + 1):y, ], 
                                         na.rm = TRUE, probs = c(0.75))
-          Q75_lambdas_mature <- quantile(lambdas_mature[(y - average_over):y, ],
+          Q75_lambdas_mature <- quantile(lambdas_mature[(y - average_over + 1):y, ],
                                          na.rm = TRUE, probs = c(0.75))
           
         }
@@ -324,6 +324,12 @@ for (p in 1:P) {
         # print progress update
         print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s], 
                     ' - beta ', betas[osr], ' - lambdas all done!', sep = ''))
+        
+        # print progress update
+        prop <- nrow(SDF) / nrows * 100
+        print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s], 
+                    ' - beta ', betas[osr], ' - lambdas done - ', prop, 
+                    '% of total done!', sep = ''))
       
     }
     
