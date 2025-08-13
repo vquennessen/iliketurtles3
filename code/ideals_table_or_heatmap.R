@@ -4,6 +4,7 @@
 library(ggplot2)
 library(tidyverse)
 library(readr)
+library(ggpattern)
 
 # source functions
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
@@ -35,7 +36,7 @@ ideals <- data.frame(
   Ideal_Hatchling_Sex_Ratio = round(as.numeric(IHSR), 3), 
   Narrow_TRT = round(as.numeric(ITemps_narrow), 3),
   Wide_TRT = round(as.numeric(ITemps_wide), 3)
-)
+) 
 
 # save as table
 write_csv(ideals, file = '../output/ideals.csv')
@@ -45,20 +46,34 @@ save(ideals, file = '../output/ideals.Rdata')
 # ideals <- read.csv('output/ideals.csv')
 load("~/Projects/iliketurtles3/output/ideals.Rdata")
 
-# make heatmap
-ideal_temps_heatmap <- ideals %>%
+# xaxis labels
+xlabs <- paste(unique(ideals$Min_OSR), '\n (', 
+               unique(ideals$Ideal_Hatchling_Sex_Ratio), ')', sep = '')
+
+# apply to factor
+ideals$xlabs <- as.factor(xlabs)
+
+# adjust dataframe to get other useful columns
+to_plot <- ideals %>%
   pivot_longer(cols = c(3, 4), 
                names_to = "Population", 
                values_to = "Temperature") %>%
-  ggplot(aes(x = as.factor(Min_OSR), 
+  mutate(Above_init_temp = as.character(Temperature > 31.8)) %>%
+  mutate(temps_above = replace(Temperature, Temperature <= 31.8, '')) %>%
+  mutate(temps_below = replace(Temperature, Temperature > 31.8, ''))
+
+# actually do the heatmap thing
+ideal_temps_heatmap <- ggplot(data = to_plot, 
+         aes(x = as.factor(Min_OSR), 
            y = Population, 
-           fill = Temperature)) +
+           fill = Temperature, 
+           pattern = Above_init_temp)) +
   geom_tile(color = 'white') +
+  scale_x_discrete(labels = xlabs) +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
                       midpoint = 29.2) +
-  # scale_fill_viridis_c() +
   labs(fill = "Incubation \n temperature \n (\u00B0C)") +
-  xlab("Minimum OSR required for 99% female reproductive success") +
+  xlab("Minimum OSR required for 99% female reproductive success \n (Associated proportion of hatchlings produced that are male)") +
   scale_y_discrete(labels = c("Narrow TRT \n population ", 
                               "Wide TRT \n population "
                               )) +
@@ -66,12 +81,36 @@ ideal_temps_heatmap <- ideals %>%
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank()) +
   theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 12, vjust = -3)) +
+  theme(axis.title.x = element_text(size = 11, vjust = -3)) +
   theme(axis.title.y = element_blank()) +
-  theme(axis.text = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 10))
+  theme(axis.text = element_text(size = 9)) +
+  theme(strip.text = element_text(size = 9)) +
+  theme(legend.title = element_text(size = 9)) +
+  # annotate("rect", 
+  #          xmin = c(1.5, 1.5, 1.5, 7.5), 
+  #          xmax = c(10.5, 7.5, 1.5, 7.5), 
+  #          ymin = c(0.5, 1.5, 0.5, 1.5), 
+  #          ymax = c(0.5, 1.5, 1.5, 2.5), 
+  #          colour = "black", linewidth = 1) +
+    # geom_tile_pattern(pattern_color = NA,
+    #                   pattern_fill = "black",
+    #                   pattern_alpha = 0.5,
+    #                   pattern_angle = 45,
+    #                   pattern_density = 0.125,
+    #                   pattern_spacing = 0.05, 
+    #                   pattern_key_scale_factor = 1) +
+    # scale_pattern_manual(values = c('FALSE' = "stripe", 'TRUE' = "none")) +
+  geom_text(aes(label = round(as.numeric(temps_above), 2)), 
+            size = 3) +
+  geom_text(aes(label = round(as.numeric(temps_below), 2)), 
+            size = 3, 
+            fontface = 'bold')
+
+  # guides(pattern = 'none')
 
 ideal_temps_heatmap
+
+
 
 ggsave(ideal_temps_heatmap, 
        file = '~/Projects/iliketurtles3/figures/ideal_temps_heatmap.png', 
