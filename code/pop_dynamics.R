@@ -1,15 +1,14 @@
 # population dynamics with demographic stochasticity
 
 pop_dynamics <- function(N, max_age, y, M,
-                         F_survival_immature, F_survival_mature, 
-                         M_survival_immature, M_survival_mature, 
+                         IF_survival, IM_survival, MF_survival, MM_survival,
                          F_remigration_int, M_remigration_int) {
   
   #survival based on binomial distribution with survival rates as probabilities
   # immature females that survived
   all_immature_F <- rbinom(n = max_age - 1, 
                            size = round(N[1, 1:(max_age - 1), y - 1]), 
-                           prob = F_survival_immature[1:(max_age - 1)])
+                           prob = IF_survival[1:(max_age - 1)])
   
   # immature females that matured
   new_mature_F <- rbinom(n = max_age - 1, 
@@ -22,7 +21,7 @@ pop_dynamics <- function(N, max_age, y, M,
   # mature females that survived
   mature_survived_F <- rbinom(n = max_age - 1, 
                               size = round(N[3, 1:(max_age - 1), y - 1]), 
-                              prob = F_survival_mature)
+                              prob = MF_survival)
   
   # updated mature female population
   N[3, 2:max_age, y] <- as.numeric(mature_survived_F) + as.numeric(new_mature_F)
@@ -30,7 +29,7 @@ pop_dynamics <- function(N, max_age, y, M,
   # immature males that survived
   all_immature_M <- rbinom(n = max_age - 1, 
                            size = round(N[2, 1:(max_age - 1), y - 1]), 
-                           prob = M_survival_immature[1:(max_age - 1)])
+                           prob = IM_survival[1:(max_age - 1)])
   
   # immature males that matured
   new_mature_M <- rbinom(n = max_age - 1, 
@@ -43,7 +42,7 @@ pop_dynamics <- function(N, max_age, y, M,
   # mature males that survived
   mature_survived_M <- rbinom(n = max_age - 1, 
                               size = round(N[4, 1:(max_age - 1), y - 1]), 
-                              prob = M_survival_mature)
+                              prob = MM_survival)
   
   # updated mature male population
   N[4, 2:max_age, y] <- as.numeric(mature_survived_M) + as.numeric(new_mature_M)

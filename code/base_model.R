@@ -1,10 +1,8 @@
 # base model
 
 base_model <- function(scenario, beta, years, max_age,
-                       F_survival_immature, F_survival_mature, 
-                       M_survival_immature, M_survival_mature,
-                       F_Immature_init, M_Immature_init, 
-                       F_Mature_init, M_Mature_init,
+                       IF_survival, IM_survival, MF_survival, MM_survival,
+                       IF_init, IM_init, MF_init, MM_init,
                        M, F_remigration_int, M_remigration_int,
                        clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                        emergence_success_A, emergence_success_k, 
@@ -19,8 +17,7 @@ base_model <- function(scenario, beta, years, max_age,
   ##### source initialized arrays ##############################################
   
   init_output <- initialize_arrays(scenario, years, max_age, 
-                                   F_Immature_init, M_Immature_init, 
-                                   F_Mature_init, M_Mature_init,
+                                   IF_init, IM_init, MF_init, MM_init,
                                    M, F_remigration_int, M_remigration_int, 
                                    T_piv, k_piv, h2_piv, ag_var_piv, 
                                    evolution_piv,
@@ -53,8 +50,8 @@ base_model <- function(scenario, beta, years, max_age,
     # population dynamics
     # survival for each age 
     output_pd <- pop_dynamics(N, max_age, y, M,
-                              F_survival_immature, F_survival_mature, 
-                              M_survival_immature, M_survival_mature, 
+                              IF_survival, IM_survival, 
+                              MF_survival, MM_survival,
                               F_remigration_int, M_remigration_int)
     
     N                    <- output_pd[[1]]
@@ -68,8 +65,8 @@ base_model <- function(scenario, beta, years, max_age,
                                G_piv, P_piv, Delta_piv, Pivotal_temps,
                                Gamma_piv, Epsilon_piv, evolution_piv, 
                                G_threshold, P_threshold, Delta_threshold, 
-                               Threshold_temps, Gamma_threshold, Epsilon_threshold, 
-                               evolution_threshold)
+                               Threshold_temps, Gamma_threshold, 
+                               Epsilon_threshold, evolution_threshold)
       
       Pivotal_temps[y]   <- evol_output[[1]]
       G_piv              <- evol_output[[2]]

@@ -30,7 +30,7 @@ source('conservation.R')
 #             'P_evol_threshold', 'P_evol_threshold_high_H',
 #             'GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H',
 #             'GM_evol_threshold', 'GM_evol_threshold_high_H')
-models <- c('P_base')
+models <- c('P_base', 'GM_base')
 
 # years to run the model for
 years <- 100

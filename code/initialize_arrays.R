@@ -1,8 +1,7 @@
 # initialize arrays
 
 initialize_arrays <- function(scenario, years, max_age, 
-                              F_Immature_init, M_Immature_init, 
-                              F_Mature_init, M_Mature_init,
+                              IF_init, IM_init, MF_init, MM_init,
                               M, F_remigration_int, M_remigration_int, 
                               T_piv, k_piv, h2_piv, ag_var_piv, 
                               evolution_piv,
@@ -20,10 +19,10 @@ initialize_arrays <- function(scenario, years, max_age,
              dim = c(4, max_age, years))  
   
   # initial population size
-  N[1, , 1] <- round(F_Immature_init)
-  N[2, , 1] <- round(M_Immature_init)
-  N[3, , 1] <- round(F_Mature_init)
-  N[4, , 1] <- round(M_Mature_init)
+  N[1, , 1] <- round(IF_init)
+  N[2, , 1] <- round(IM_init)
+  N[3, , 1] <- round(MF_init)
+  N[4, , 1] <- round(MM_init)
   
   ##### incubation temperatures ################################################
   
@@ -184,14 +183,14 @@ initialize_arrays <- function(scenario, years, max_age,
   # breeding females this year
   # breeding males this year
   breeding_F <- rbinom(n = max_age, 
-                       size = F_Mature_init, 
+                       size = MF_init, 
                        prob = 1 / F_remigration_int)  
   
   n_breeding_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
   
   # breeding males this year
   breeding_M <- rbinom(n = max_age, 
-                       size = M_Mature_init, 
+                       size = MM_init, 
                        prob = 1 / M_remigration_int)
   
   n_breeding_M <- sum(as.numeric(breeding_M, na.rm = TRUE))

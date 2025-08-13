@@ -34,18 +34,27 @@ run_base_model <- function(arguments) {
   AC <- 0.5                               # autocorrelation coefficient
   
   # turtle demographics
-  max_age <- 85                             # lifespan
+  max_age <- 85
+  F_survival_values <- c(0.35, 0.8, 0.8, 0.85, 0.799)
+  M_survival_values <- c(0.35, 0.8, 0.8, 0.85, 0.799)
+  
+  F_years_in_stage <- c(1, 2, 7, 12, 63)# lifespan
+  M_years_in_stage <- c(1, 2, 7, 12, 63)# lifespan
+  
   # max_age - (1 + 2 + 7 + 12)              # years for last ageclass
-  F_survival_initial <- c(0.35, 0.8, 0.8, 0.85)        # F survival - immature
-  f <- length(F_survival_initial)
-  F_survival_immature <- c(F_survival_initial, 
-                           rep(F_survival_initial[f], max_age - f))
-  M_survival_mature <- 0.799                           # F survival - mature
-  M_survival_initial <- c(0.35, 0.8, 0.8, 0.85)        # M survival - immature
-  m <- length(M_survival_initial)
-  M_survival_immature <- c(M_survival_initial, 
-                           rep(M_survival_initial[m], max_age - m))
-  F_survival_mature <- 0.799                           # M survival - mature
+  IF_survival <- c(rep(F_survival_values[1], F_years_in_stage[1]), 
+                   rep(F_survival_values[2], F_years_in_stage[2]), 
+                   rep(F_survival_values[3], F_years_in_stage[3]), 
+                   rep(F_survival_values[4], 
+                       (F_years_in_stage[4] + F_years_in_stage[5])))  
+  IM_survival <- c(rep(M_survival_values[1], M_years_in_stage[1]), 
+                   rep(M_survival_values[2], M_years_in_stage[2]), 
+                   rep(M_survival_values[3], M_years_in_stage[3]), 
+                   rep(M_survival_values[4], 
+                       (M_years_in_stage[4] + M_years_in_stage[5])))  
+  MF_survival <- 0.799
+  MM_survival <- 0.799
+  
   age_maturity_mu <- 25                     # age at first reproduction, mean
   age_maturity_sd <- 2.5                    # age at first reproduction, SD
   F_remigration_int <- 3.87                 # remigration interval - females
@@ -145,8 +154,8 @@ run_base_model <- function(arguments) {
   
   # stable age distribution
   SAD_output <- initialize_population(beta, burn_in = 2500, max_age, 
-                                      F_survival_immature, F_survival_mature, 
-                                      M_survival_immature, M_survival_mature, 
+                                      IF_survival, IM_survival, 
+                                      MF_survival, MM_survival, 
                                       M, F_remigration_int, M_remigration_int,
                                       clutches_mu, eggs_mu, emergence_success_A, 
                                       emergence_success_k, emergence_success_t0, 
@@ -204,10 +213,10 @@ run_base_model <- function(arguments) {
   } else {
     
     # separate by sex
-    F_Immature_init <- SAD_output[[1]]
-    M_Immature_init <- SAD_output[[2]]
-    F_Mature_init <- SAD_output[[3]]
-    M_Mature_init <- SAD_output[[4]]
+    IF_init <- SAD_output[[1]]
+    IM_init <- SAD_output[[2]]
+    MF_init <- SAD_output[[3]]
+    MM_init <- SAD_output[[4]]
     
     ##### run sims and save output #############################################
     
@@ -215,10 +224,8 @@ run_base_model <- function(arguments) {
     for (i in 1:nsims) {
       
       output <- base_model(scenario, beta, years, max_age,
-                           F_survival_immature, F_survival_mature, 
-                           M_survival_immature, M_survival_mature,
-                           F_Immature_init, M_Immature_init, 
-                           F_Mature_init, M_Mature_init,
+                           IF_survival, IM_survival, MF_survival, MM_survival,
+                           IF_init, IM_init, MF_init, MM_init,
                            M, F_remigration_int, M_remigration_int,
                            clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                            emergence_success_A, emergence_success_k, 

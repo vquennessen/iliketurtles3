@@ -1,6 +1,6 @@
 initialize_population <- function(beta, burn_in, max_age, 
-                                  F_survival_immature, F_survival_mature, 
-                                  M_survival_immature, M_survival_mature, 
+                                  IF_survival, IM_survival, 
+                                  MF_survival, MM_survival, 
                                   M, F_remigration_int, M_remigration_int,
                                   clutches_mu, eggs_mu, emergence_success_A, 
                                   emergence_success_k, emergence_success_t0, 
@@ -32,7 +32,7 @@ initialize_population <- function(beta, burn_in, max_age,
     # immature females that survived
     all_immature_F <- rbinom(n = max_age - 1, 
                              size = round(N[1, 1:(max_age - 1), y - 1]), 
-                             prob = F_survival_immature[1:(max_age - 1)])
+                             prob = IF_survival[1:(max_age - 1)])
     
     # immature females that matured
     new_mature_F <- rbinom(n = max_age - 1, 
@@ -45,7 +45,7 @@ initialize_population <- function(beta, burn_in, max_age,
     # mature females that survived
     mature_survived_F <- rbinom(n = max_age - 1, 
                                 size = round(N[3, 1:(max_age - 1), y - 1]), 
-                                prob = F_survival_mature)
+                                prob = MF_survival)
     
     # updated mature female population
     N[3, 2:max_age, y] <- as.numeric(mature_survived_F) + as.numeric(new_mature_F)
@@ -53,7 +53,7 @@ initialize_population <- function(beta, burn_in, max_age,
     # immature males that survived
     all_immature_M <- rbinom(n = max_age - 1, 
                              size = round(N[2, 1:(max_age - 1), y - 1]), 
-                             prob = M_survival_immature[1:(max_age - 1)])
+                             prob = IM_survival[1:(max_age - 1)])
     
     # immature males that matured
     new_mature_M <- rbinom(n = max_age - 1, 
@@ -66,7 +66,7 @@ initialize_population <- function(beta, burn_in, max_age,
     # mature males that survived
     mature_survived_M <- rbinom(n = max_age - 1, 
                                 size = round(N[4, 1:(max_age - 1), y - 1]), 
-                                prob = M_survival_mature)
+                                prob = MM_survival)
     
     # updated mature male population
     N[4, 2:max_age, y] <- as.numeric(mature_survived_M) + as.numeric(new_mature_M)
@@ -215,13 +215,12 @@ initialize_population <- function(beta, burn_in, max_age,
   multiplier <- max(F_Mature_multiplier, M_Mature_multiplier)
   
   # initial population size
-  F_Immature_init <- round(Final_Prop_Female_Immature * multiplier)
-  M_Immature_init <- round(Final_Prop_Male_Immature * multiplier)
-  F_Mature_init <- round(Final_Prop_Female_Mature * multiplier)
-  M_Mature_init <- round(Final_Prop_Male_Mature * multiplier)
+  IF_init <- round(Final_Prop_Female_Immature * multiplier)
+  IM_init <- round(Final_Prop_Male_Immature * multiplier)
+  MF_init <- round(Final_Prop_Female_Mature * multiplier)
+  MM_init <- round(Final_Prop_Male_Mature * multiplier)
   
-  output <- list(F_Immature_init, M_Immature_init, 
-                 F_Mature_init, M_Mature_init)
+  output <- list(IF_init, IM_init, MF_init, MM_init)
   
   return(output)
   
