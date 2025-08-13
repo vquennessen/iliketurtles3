@@ -60,43 +60,20 @@ all_combos$OSR <- factor(all_combos$OSR, levels = unique(all_combos$OSR))
 # EDIT #########################################################################
 DF_to_use <- all_combos %>% 
   filter(Survive_to == year_to_plot) %>%
+  filter(Abundance %in% c('total', 'mature'))
   # filter(Stochasticity == 'white noise') %>%
-  select(Population, Scenario, OSR, Survive_to, 
-         Probability_IF_mean,
-         Probability_IM_mean, 
-         Probability_MF_mean,
-         Probability_MM_mean,
-         Probability_total_mean, 
-         Probability_mature_mean
-  ) %>%
-  pivot_longer(cols = c('Probability_IF_mean', 'Probability_IM_mean', 
-                        'Probability_MF_mean', 'Probability_MM_mean', 
-                        'Probability_total_mean', 'Probability_mature_mean'), 
-               names_to = 'abundance', 
-               values_to = 'Probability') %>%
-  mutate(Demographic = ifelse(abundance == 'Probability_IF_mean', 
-                              'Immature Females', 
-                              ifelse(abundance == 'Probability_IM_mean', 
-                                     'Immature Males', 
-                                     ifelse(abundance == 'Probability_MF_mean', 
-                                            'Mature Females', 
-                                            ifelse(abundance == 'Probability_MM_mean', 
-                                                   'Mature Males', 
-                                                   ifelse(abundance == 'Probability_total_mean', 
-                                                          'Total', 'Mature')))))) %>%
-  select(Population, Scenario, OSR, Survive_to, 
-         Probability_total_mean, Probability_mature_mean)
-# mutate(pretty_survive_to = paste('Year', Survive_to, sep = ' '))
+  # select(Population, Scenario, OSR, Survive_to, Abundance, Probability_mean) %>%
+  
 
 # set order of demographics for pretty plot
-DF_to_use$Demographic <- factor(DF_to_use$Demographic, 
+DF_to_use$Abundance <- factor(DF_to_use$Abundance, 
                                 levels = c(
                                   # 'Immature Females',
                                   # 'Mature Females',
                                   # 'Immature Males', 
                                   # 'Mature Males',
-                                  'Total', 
-                                  'Mature'), 
+                                  'total', 
+                                  'mature'), 
                                 labels = c(
                                   # 'Immature Females',
                                   # 'Mature Females',
@@ -112,7 +89,7 @@ name_to_use <- paste('base_persistence')
 fig3 <- ggplot(data = DF_to_use, 
                aes(x = OSR, 
                    y = Scenario, 
-                   fill = Probability)) +
+                   fill = Probability_mean)) +
   geom_tile(color = "white",
             lwd = 1.5,
             linetype = 1) +
@@ -129,7 +106,7 @@ fig3 <- ggplot(data = DF_to_use,
   ggtitle(paste(name_to_use, ': Probability of population persistence \n
           (> 10% of starting abundance) by year', year_to_plot, 
                 sep = '')) +
-  facet_wrap(facets = vars(Demographic), nrow = 3, ncol = 2) +
+  facet_grid(rows = vars(Abundance), cols = vars(Population)) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank()) +
