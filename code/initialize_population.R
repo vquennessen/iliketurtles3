@@ -74,24 +74,24 @@ initialize_population <- function(beta, burn_in, max_age,
     ##### reproduction
     
     # breeding females this year
-    breeding_F <- rbinom(n = max_age, 
+    available_F <- rbinom(n = max_age, 
                          size = N[3, , y], 
                          prob = 1 / F_remigration_int)
     
-    n_breeding_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
+    n_available_F <- sum(as.numeric(available_F, na.rm = TRUE))
     
     # breeding males this year
-    breeding_M <- rbinom(n = max_age, 
+    available_M <- rbinom(n = max_age, 
                          size = N[4, , y], 
                          prob = 1 / M_remigration_int)
     
-    n_breeding_M <- sum(as.numeric(breeding_M, na.rm = TRUE))
+    n_available_M <- sum(as.numeric(available_M, na.rm = TRUE))
     
     # as long as there is at least one mature female and one mature male:
-    if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
+    if (n_available_F > 0.5 & n_available_M > 0.5) {
       
       # operational sex ratio - proportion of males
-      OSR <- n_breeding_M / (n_breeding_M + n_breeding_F)
+      OSR <- n_available_M / (n_available_M + n_available_F)
       
       # calculate reproductive success
       # if 50% males or fewer, use beta function to calculate breeding success
@@ -101,6 +101,9 @@ initialize_population <- function(beta, burn_in, max_age,
         # else, if there are more than 50% males, all the females get to mate
       } else { breeding_success <- 1 }
       
+      # how many females actually find a male to mate with and then nest
+      n_breeding_F <- round(n_available_F * breeding_success)
+      
       # number of potential eggs, assuming full reproductive success
       eggs <- sum(n_breeding_F * round(clutches_mu) * round(eggs_mu))
       
@@ -109,7 +112,7 @@ initialize_population <- function(beta, burn_in, max_age,
         (1 + exp(-emergence_success_k * (temp_mu - emergence_success_t0)))
       
       # total hatchlings = breeding_success * potential eggs * emergence success
-      hatchlings <- round(breeding_success * eggs * emergence_success)
+      hatchlings <- round(eggs * emergence_success)
       
       # determine proportion of male hatchlings based on temperature
       prop_male <- 1 / (1 + exp(-k_piv * (temp_mu - T_piv)))

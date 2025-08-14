@@ -1,96 +1,96 @@
-2025-08-12 12:36:11.266277 - P_base - 5C - beta 1.17 - 5 sims - 100 years
-2025-08-12 12:36:12.377838 - P_base - 5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
-2025-08-12 12:36:12.378342 - GM_base - 5C - beta 1.17 - 5 sims - 100 years
-2025-08-12 12:36:20.22982 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 20% done!
-2025-08-12 12:36:20.316644 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 40% done!
-2025-08-12 12:36:20.510585 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 60% done!
-2025-08-12 12:36:20.600483 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 80% done!
-2025-08-12 12:36:20.732143 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 100% done!
-2025-08-12 12:36:20.752309 - P_base - 2.5C - beta 1.17 - 5 sims - 100 years
-2025-08-12 12:36:22.033868 - P_base - 2.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
-2025-08-12 12:36:22.034226 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years
-2025-08-12 12:36:29.787553 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 20% done!
-2025-08-12 12:36:29.905796 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 40% done!
-2025-08-12 12:36:30.015574 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 60% done!
-2025-08-12 12:36:30.289352 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 80% done!
-2025-08-12 12:36:30.461885 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 100% done!
-2025-08-12 12:36:30.485724 - P_base - 0.5C - beta 1.17 - 5 sims - 100 years
-2025-08-12 12:36:31.740426 - P_base - 0.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
-2025-08-12 12:36:31.740952 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years
-2025-08-12 12:36:39.402579 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 20% done!
-2025-08-12 12:36:39.662251 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 40% done!
-2025-08-12 12:36:39.869394 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 60% done!
-2025-08-12 12:36:40.029739 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 80% done!
-2025-08-12 12:36:40.398282 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 100% done!
-2025-08-12 12:36:40.425586 - P_base - 5C - beta 6.64 - 5 sims - 100 years
-2025-08-12 12:36:47.455664 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 20% done!
-2025-08-12 12:36:47.921754 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 40% done!
-2025-08-12 12:36:48.286449 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 60% done!
-2025-08-12 12:36:48.677659 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 80% done!
-2025-08-12 12:36:49.0903 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 100% done!
-2025-08-12 12:36:49.111435 - GM_base - 5C - beta 6.64 - 5 sims - 100 years
-2025-08-12 12:36:59.793592 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 20% done!
-2025-08-12 12:36:59.887116 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 40% done!
-2025-08-12 12:37:00.053016 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 60% done!
-2025-08-12 12:37:00.2301 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 80% done!
-2025-08-12 12:37:00.376429 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 100% done!
-2025-08-12 12:37:00.398378 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years
-2025-08-12 12:37:07.822919 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 20% done!
-2025-08-12 12:37:08.475692 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 40% done!
-2025-08-12 12:37:09.042146 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 60% done!
-2025-08-12 12:37:09.639426 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 80% done!
-2025-08-12 12:37:10.15833 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 100% done!
-2025-08-12 12:37:10.18547 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years
-2025-08-12 12:37:21.778084 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 20% done!
-2025-08-12 12:37:21.976445 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 40% done!
-2025-08-12 12:37:22.234035 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 60% done!
-2025-08-12 12:37:22.393818 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 80% done!
-2025-08-12 12:37:22.595992 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 100% done!
-2025-08-12 12:37:22.621774 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years
-2025-08-12 12:37:29.942365 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 20% done!
-2025-08-12 12:37:30.835839 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 40% done!
-2025-08-12 12:37:31.828528 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 60% done!
-2025-08-12 12:37:32.771451 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 80% done!
-2025-08-12 12:37:33.776872 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 100% done!
-2025-08-12 12:37:33.807173 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years
-2025-08-12 12:37:44.641043 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 20% done!
-2025-08-12 12:37:44.983721 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 40% done!
-2025-08-12 12:37:45.202358 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 60% done!
-2025-08-12 12:37:45.491574 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 80% done!
-2025-08-12 12:37:45.751943 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 100% done!
-2025-08-12 12:37:45.778962 - P_base - 5C - beta 43.7 - 5 sims - 100 years
-2025-08-12 12:37:58.838376 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 20% done!
-2025-08-12 12:37:59.803087 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 40% done!
-2025-08-12 12:38:00.534961 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 60% done!
-2025-08-12 12:38:01.157191 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 80% done!
-2025-08-12 12:38:01.858357 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 100% done!
-2025-08-12 12:38:01.883096 - GM_base - 5C - beta 43.7 - 5 sims - 100 years
-2025-08-12 12:38:13.674844 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 20% done!
-2025-08-12 12:38:13.850132 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 40% done!
-2025-08-12 12:38:14.086172 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 60% done!
-2025-08-12 12:38:14.215103 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 80% done!
-2025-08-12 12:38:14.384276 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 100% done!
-2025-08-12 12:38:14.408868 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years
-2025-08-12 12:38:27.691089 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 20% done!
-2025-08-12 12:38:28.960525 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 40% done!
-2025-08-12 12:38:30.10836 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 60% done!
-2025-08-12 12:38:31.383395 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 80% done!
-2025-08-12 12:38:32.59192 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 100% done!
-2025-08-12 12:38:32.623661 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years
-2025-08-12 12:38:44.264838 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 20% done!
-2025-08-12 12:38:44.548911 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 40% done!
-2025-08-12 12:38:44.726342 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 60% done!
-2025-08-12 12:38:44.883083 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 80% done!
-2025-08-12 12:38:45.075636 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 100% done!
-2025-08-12 12:38:45.10143 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years
-2025-08-12 12:38:59.621388 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 20% done!
-2025-08-12 12:39:01.487023 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 40% done!
-2025-08-12 12:39:03.519339 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 60% done!
-2025-08-12 12:39:05.503438 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 80% done!
-2025-08-12 12:39:07.370091 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 100% done!
-2025-08-12 12:39:07.406196 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years
-2025-08-12 12:39:18.312304 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 20% done!
-2025-08-12 12:39:18.615908 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 40% done!
-2025-08-12 12:39:18.845754 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 60% done!
-2025-08-12 12:39:19.15147 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 80% done!
-2025-08-12 12:39:19.40511 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 100% done!
+2025-08-13 16:50:16.545362 - P_base - 5C - beta 1.17 - 5 sims - 100 years
+2025-08-13 16:50:17.619106 - P_base - 5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-08-13 16:50:17.619552 - GM_base - 5C - beta 1.17 - 5 sims - 100 years
+2025-08-13 16:51:48.24274 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 20% done!
+2025-08-13 16:51:48.403816 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 40% done!
+2025-08-13 16:51:48.501869 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 60% done!
+2025-08-13 16:51:49.285599 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 80% done!
+2025-08-13 16:51:49.361397 - GM_base - 5C - beta 1.17 - 5 sims - 100 years - 100% done!
+2025-08-13 16:51:49.382025 - P_base - 2.5C - beta 1.17 - 5 sims - 100 years
+2025-08-13 16:51:50.435494 - P_base - 2.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-08-13 16:51:50.435875 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years
+2025-08-13 16:51:58.563443 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 20% done!
+2025-08-13 16:51:58.691311 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 40% done!
+2025-08-13 16:51:58.845423 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 60% done!
+2025-08-13 16:51:58.969488 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 80% done!
+2025-08-13 16:51:59.371448 - GM_base - 2.5C - beta 1.17 - 5 sims - 100 years - 100% done!
+2025-08-13 16:51:59.39644 - P_base - 0.5C - beta 1.17 - 5 sims - 100 years
+2025-08-13 16:52:00.440172 - P_base - 0.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-08-13 16:52:00.440733 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years
+2025-08-13 16:52:08.348573 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 20% done!
+2025-08-13 16:52:08.593978 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 40% done!
+2025-08-13 16:52:08.764588 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 60% done!
+2025-08-13 16:52:09.197996 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 80% done!
+2025-08-13 16:52:09.316845 - GM_base - 0.5C - beta 1.17 - 5 sims - 100 years - 100% done!
+2025-08-13 16:52:09.343198 - P_base - 5C - beta 6.64 - 5 sims - 100 years
+2025-08-13 16:52:16.189636 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 20% done!
+2025-08-13 16:52:16.367677 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 40% done!
+2025-08-13 16:52:16.652506 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 60% done!
+2025-08-13 16:52:16.892752 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 80% done!
+2025-08-13 16:52:17.120209 - P_base - 5C - beta 6.64 - 5 sims - 100 years - 100% done!
+2025-08-13 16:52:17.14288 - GM_base - 5C - beta 6.64 - 5 sims - 100 years
+2025-08-13 16:52:28.269454 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 20% done!
+2025-08-13 16:52:28.368399 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 40% done!
+2025-08-13 16:52:28.466255 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 60% done!
+2025-08-13 16:52:28.87249 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 80% done!
+2025-08-13 16:52:29.044422 - GM_base - 5C - beta 6.64 - 5 sims - 100 years - 100% done!
+2025-08-13 16:52:29.066215 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years
+2025-08-13 16:52:36.012667 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 20% done!
+2025-08-13 16:52:36.400544 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 40% done!
+2025-08-13 16:52:36.77058 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 60% done!
+2025-08-13 16:52:37.085096 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 80% done!
+2025-08-13 16:52:37.558355 - P_base - 2.5C - beta 6.64 - 5 sims - 100 years - 100% done!
+2025-08-13 16:52:37.587122 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years
+2025-08-13 16:52:49.300662 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 20% done!
+2025-08-13 16:52:49.432554 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 40% done!
+2025-08-13 16:52:49.735851 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 60% done!
+2025-08-13 16:52:50.178299 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 80% done!
+2025-08-13 16:52:50.361723 - GM_base - 2.5C - beta 6.64 - 5 sims - 100 years - 100% done!
+2025-08-13 16:52:50.387773 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years
+2025-08-13 16:52:57.705491 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 20% done!
+2025-08-13 16:52:58.516945 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 40% done!
+2025-08-13 16:52:59.318719 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 60% done!
+2025-08-13 16:53:00.085184 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 80% done!
+2025-08-13 16:53:00.814487 - P_base - 0.5C - beta 6.64 - 5 sims - 100 years - 100% done!
+2025-08-13 16:53:00.846535 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years
+2025-08-13 16:53:12.319827 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 20% done!
+2025-08-13 16:53:12.63115 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 40% done!
+2025-08-13 16:53:12.859514 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 60% done!
+2025-08-13 16:53:13.130802 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 80% done!
+2025-08-13 16:53:13.388058 - GM_base - 0.5C - beta 6.64 - 5 sims - 100 years - 100% done!
+2025-08-13 16:53:13.416223 - P_base - 5C - beta 43.7 - 5 sims - 100 years
+2025-08-13 16:53:26.340175 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 20% done!
+2025-08-13 16:53:26.966136 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 40% done!
+2025-08-13 16:53:27.528596 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 60% done!
+2025-08-13 16:53:28.166759 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 80% done!
+2025-08-13 16:53:28.723669 - P_base - 5C - beta 43.7 - 5 sims - 100 years - 100% done!
+2025-08-13 16:53:28.748697 - GM_base - 5C - beta 43.7 - 5 sims - 100 years
+2025-08-13 16:53:40.193893 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 20% done!
+2025-08-13 16:53:40.298649 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 40% done!
+2025-08-13 16:53:40.69862 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 60% done!
+2025-08-13 16:53:40.866822 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 80% done!
+2025-08-13 16:53:40.963948 - GM_base - 5C - beta 43.7 - 5 sims - 100 years - 100% done!
+2025-08-13 16:53:41.093723 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years
+2025-08-13 16:53:54.335117 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 20% done!
+2025-08-13 16:53:55.364562 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 40% done!
+2025-08-13 16:53:56.412583 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 60% done!
+2025-08-13 16:53:57.466272 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 80% done!
+2025-08-13 16:53:58.843423 - P_base - 2.5C - beta 43.7 - 5 sims - 100 years - 100% done!
+2025-08-13 16:53:58.874977 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years
+2025-08-13 16:54:10.451831 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 20% done!
+2025-08-13 16:54:10.630332 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 40% done!
+2025-08-13 16:54:10.852793 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 60% done!
+2025-08-13 16:54:10.987814 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 80% done!
+2025-08-13 16:54:11.194531 - GM_base - 2.5C - beta 43.7 - 5 sims - 100 years - 100% done!
+2025-08-13 16:54:11.220687 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years
+2025-08-13 16:54:25.079324 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 20% done!
+2025-08-13 16:54:26.939137 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 40% done!
+2025-08-13 16:54:28.727125 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 60% done!
+2025-08-13 16:54:30.530771 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 80% done!
+2025-08-13 16:54:32.403641 - P_base - 0.5C - beta 43.7 - 5 sims - 100 years - 100% done!
+2025-08-13 16:54:32.437594 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years
+2025-08-13 16:54:43.942795 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 20% done!
+2025-08-13 16:54:44.124285 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 40% done!
+2025-08-13 16:54:44.43794 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 60% done!
+2025-08-13 16:54:44.685765 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 80% done!
+2025-08-13 16:54:44.911148 - GM_base - 0.5C - beta 43.7 - 5 sims - 100 years - 100% done!

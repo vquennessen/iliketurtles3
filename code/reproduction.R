@@ -10,17 +10,17 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                          effect_size) {
   
   # breeding females this year
-  n_breeding_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
+  n_available_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
   
   # breeding males this year
-  n_breeding_M <- sum(as.numeric(breeding_M, na.rm = TRUE))
+  n_available_M <- sum(as.numeric(breeding_M, na.rm = TRUE))
   
-  if (n_breeding_F > 0 & n_breeding_M > 0) {
+  if (n_available_F > 0 & n_available_M > 0) {
     
     # operational sex ratio - proportion of males
     # multiply by 2 to transform to beta function with x from 0 to 0.5 instead 
     # of 0 to 1
-    OSR <- n_breeding_M / (n_breeding_M + n_breeding_F)
+    OSR <- n_available_M / (n_available_M + n_available_F)
     
     # calculate reproductive success
     # if 50% males or fewer, use beta function to calculate breeding success
@@ -34,6 +34,11 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
       # if OSR > 0.5 all the females get to mate
     } else { breeding_success <- 1 }
     
+    # how many females actually find a male to mate with and then nest
+    n_breeding_F <- sum(rbinom(n = n_available_F, 
+                               size = 1, 
+                               prob = breeding_success))
+    
     # number of clutches per female (round to nearest integer)
     clutches <- round(rnorm(n = round(n_breeding_F), 
                             mean = clutches_mu, 
@@ -43,16 +48,10 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
     clutches[which(clutches < 1)] <- 1
     
     # potential eggs list, one number for each clutch
-    potential_eggs_raw <- lapply(clutches, 
-                                 rnorm, 
-                                 mean = eggs_mu, 
-                                 sd = eggs_sd)
-    
-    potential_eggs <- lapply(potential_eggs_raw, 
-                             round)
-    
-    # actual eggs list, one number for each clutch
-    eggs_raw <- lapply(potential_eggs, "*", breeding_success)
+    eggs_raw <- lapply(clutches, 
+                       rnorm, 
+                       mean = eggs_mu, 
+                       sd = eggs_sd)
     
     eggs <- lapply(eggs_raw, 
                    round)
