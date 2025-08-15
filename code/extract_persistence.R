@@ -7,15 +7,15 @@
 # setwd('~/Projects/iliketurtles3')
 
 # source functions
-source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
-# source('/home/quennessenv/iliketurtles3/code/mating function/OSRs_to_betas.R')
+# source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
+source('/home/quennessenv/iliketurtles3/code/mating function/OSRs_to_betas.R')
 
 ################################################################################
 # which computer am I using? - desktop / laptop / cluster
-computer <- 'desktop'
+computer <- 'cluster'
 
 # folder names for building paths
-folder <- c('2025_07_30_test')
+folder <- c('2025_08_14')
 
 # model names for building paths
 models <- c('P_base', 'GM_base')
@@ -25,7 +25,7 @@ model_names <- c('base model', 'base model')
 populations <- c('West Africa', 'Suriname')
 
 # which year(s) to track
-years_to_plot <- c(25, 50, 75, 100)
+years_to_plot <- c(1:100)
 
 # plotting model parameters
 nsims <- 10000
@@ -91,23 +91,22 @@ for (p in 1:P) {
       # if the file exists - desktop / laptop
       if (
         
-        file.exists(paste('C:/Users/', user,
-                          '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/i like turtles/',
-                          # file.exists(paste('E:/PhD Thesis/',
+        # file.exists(paste('C:/Users/', user,
+        #                   '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/i like turtles/',
+                          # file.exists(paste('E:/PhD Thesis/model_output',
                           # file.exists(paste('~/Projects/iliketurtles3/output/',
-                          # file.exists(paste('E:/',
-                          # file.exists(paste('/home/quennessenv/iliketurtles3/output/',
+                          file.exists(paste('/home/quennessenv/iliketurtles3/output/',
                           paths[p], '/', scenarios[s], '/beta', betas[b],
                           '/', nsims, '_N.Rda', sep = ''))
         
       ) {
         
         # load in N object
-        load(paste('C:/Users/', user,
-                   '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/i like turtles/',
+        # load(paste('C:/Users/', user,
+        #            '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/i like turtles/',
                    # load(paste('~/Projects/iliketurtles3/output/',
                    # load(paste('E:/',
-                   # load(paste('/home/quennessenv/iliketurtles3/output/',
+                   load(paste('/home/quennessenv/iliketurtles3/output/',
                    paths[p], '/', scenarios[s], '/beta', betas[b], '/',
                    nsims, '_N.Rda', sep = ''))
         
@@ -192,8 +191,8 @@ SDF$Scenario <- factor(SDF$Scenario, levels = scenarios)
 # save dataframe as R object - base model
 base_persistence <- SDF
 save(base_persistence,
-     file = '~/Projects/iliketurtles3/output/base_persistence.Rdata')
-# file = '/home/quennessenv/iliketurtles3/output/base_persistence.Rdata')
+     # file = '~/Projects/iliketurtles3/output/base_persistence.Rdata')
+file = '/home/quennessenv/iliketurtles3/output/base_persistence.Rdata')
 
 # # save dataframe as R object - evolution
 # evolution_persistence <- SDF
