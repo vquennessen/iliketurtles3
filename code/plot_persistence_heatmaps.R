@@ -35,7 +35,7 @@ all_combos <- base_persistence
 # all_combos <- rbind(bp25, bp50, bp75)
 
 # what year to plot
-year_to_plot <- 100
+year_to_plot <- 50
 
 ################################################################################
 
@@ -101,7 +101,7 @@ fig3 <- ggplot(data = DF_to_use,
                        limits = c(0, 1),
                        na.value = 'gray') +
   guides(fill = guide_colourbar(title = "Probability")) +
-  xlab('Minimum operational sex ratio required for 100% female reproductive success') +
+  xlab('Minimum OSR required for 100% female reproductive success') +
   ylab('Increase in temperature (\u00B0C) by year 100') +
   ggtitle(paste(name_to_use, ': Probability of population persistence \n
           (> 10% of starting abundance) by year', year_to_plot, 
@@ -111,17 +111,19 @@ fig3 <- ggplot(data = DF_to_use,
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank()) +
   theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
-  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
-  theme(axis.text = element_text(size = 10)) +
+  theme(axis.title.x = element_text(size = 14, vjust = -3)) +
+  theme(axis.title.y = element_text(size = 14, vjust = 4)) +
+  theme(axis.text.y = element_text(size = 10)) +
+  theme(axis.text.x = element_text(size = 8)) +
   theme(strip.text = element_text(size = 10)) +
-  theme(title = element_text(size = 13))
+  theme(title = element_text(size = 13)) +
+  theme(legend.title = element_text(size = 13))
 
 # save combined figure to file
 ggsave(plot = fig3,
        filename = paste(name_to_use, '_Y', year_to_plot, '.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 7)
+       width = 8, height = 6)
 
 # ##### plotting abundance total #################################################
 # 
