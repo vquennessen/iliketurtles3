@@ -20,26 +20,18 @@ load("~/Projects/iliketurtles3/output/lambdas.Rdata")
 load("~/Projects/iliketurtles3/output/base_persistence.Rdata")
 
 lambdas_and_persistence <- base_persistence %>%
-  filter(Stochasticity == 'temperature stochasticity') %>%
-  pivot_longer(cols = c(Probability_total, Probability_mature), 
-               names_to = c('Abundance')) %>%
-  rename('Probability' = 'value') %>%
-  mutate(Abundance = replace(Abundance, 
-                             Abundance == 'Probability_total', 
-                             'total abundance')) %>%
-  mutate(Abundance = replace(Abundance, 
-                             Abundance == 'Probability_mature', 
-                             'mature abundance')) %>%
-  select(Population, Scenario, OSR, Abundance, Probability) %>%
+  rename("Year" = "Survive_to", 
+         "Persistence" = "Probability_mean") %>%
+  select(Population, Model, Scenario, OSR, Year, Abundance, Persistence) %>%
   right_join(lambdas) %>%
-  mutate(Lambda_mean = replace(Lambda_mean, Probability < 0.01, NA)) %>%
-  mutate(Lambda_median = replace(Lambda_median, Probability < 0.01, NA)) %>%
-  mutate(Lambda_10yr_mean = replace(Lambda_10yr_mean, Probability < 0.01, NA)) %>%
-  mutate(Lambda_10yr_median = replace(Lambda_10yr_median, Probability < 0.01, NA)) %>%
-  mutate(Lambda_Q25 = replace(Lambda_Q25, Probability < 0.01, NA)) %>%
-  mutate(Lambda_Q75 = replace(Lambda_Q75, Probability < 0.01, NA)) %>%
-  mutate(Lambda_10yr_Q25 = replace(Lambda_10yr_Q25, Probability < 0.01, NA)) %>%
-  mutate(Lambda_10yr_Q75 = replace(Lambda_10yr_Q75, Probability < 0.01, NA))
+  mutate(Lambda_mean = replace(Lambda_mean, Persistence < 0.01, NA)) %>%
+  mutate(Lambda_median = replace(Lambda_median, Persistence < 0.01, NA)) %>%
+  mutate(Lambda_10yr_mean = replace(Lambda_10yr_mean, Persistence < 0.01, NA)) %>%
+  mutate(Lambda_10yr_median = replace(Lambda_10yr_median, Persistence < 0.01, NA)) %>%
+  mutate(Lambda_Q25 = replace(Lambda_Q25, Persistence < 0.01, NA)) %>%
+  mutate(Lambda_Q75 = replace(Lambda_Q75, Persistence < 0.01, NA)) %>%
+  mutate(Lambda_10yr_Q25 = replace(Lambda_10yr_Q25, Persistence < 0.01, NA)) %>%
+  mutate(Lambda_10yr_Q75 = replace(Lambda_10yr_Q75, Persistence < 0.01, NA))
 
 
 
