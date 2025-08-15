@@ -31,7 +31,8 @@ source('conservation.R')
 #             'GM_evol_threshold', 'GM_evol_threshold_high_H')
 # models <- c('P_conservation', 'GM_conservation')
 # models <- c('P_base', 'GM_base')
-models <- c('P_base', 'GM_base')
+models <- c('P_evol_piv', 'GM_evol_piv', 
+            'P_evol_piv_high_H', 'GM_evol_piv_high_H')
 
 # years to run the model for
 years <- 100
@@ -81,4 +82,4 @@ for (i in 1:nrow(DF)) {
 ########### do the runs ########################################################
 mclapply(X = arguments, 
          FUN = run_base_model, 
-         mc.cores = 30)
+         mc.cores = 50)
