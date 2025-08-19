@@ -44,7 +44,8 @@ betas <- OSRs_to_betas(osrs)
 # generate automatically
 folders <- rep(folder, length(models))
 paths <- paste(folders, models, sep = "/")
-abundances <- c('IF', 'IM', 'MF', 'MM', 'total', 'mature')
+abundances <- c('Immature Females', 'Immature Males', 'Mature Females', 
+                'Mature Males', 'Total', 'Mature')
 
 # dimensions
 P <- length(paths)
@@ -159,7 +160,6 @@ for (p in 1:P) {
             mature_final <- MF_final + MM_final
             
             # probability of population persistence past 10% of initial
-            
             SDF$Probability_mean[index:(index + A - 1)] <- c(
               mean((IF_final >= (0.10 * IF_init)), na.rm = TRUE),
               mean((IM_final >= (0.10 * IM_init)), na.rm = TRUE),
