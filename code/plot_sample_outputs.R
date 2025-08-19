@@ -18,7 +18,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 # category titles
 TRTs <- c('Narrow', 'Wide')
 ages <- c('Hatchling', 'Mature')
-folder <- '2025_07_30_test'
+folder <- '2025_08_14'
 years <- 100
 nsims <- 10000
 temp_mu <- 31.8
@@ -27,53 +27,15 @@ user <- ifelse(desktop == TRUE, 'Vic', 'vique')
 
 # scenarios
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
-final_temps <- paste(c(temp_mu + parse_number(scenarios)), ' \u00B0C', sep = '')
 
 # osrs
 osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
-betas <- as.numeric(OSRs_to_betas(osrs))
-# betas <- c(43.71, 20.64, 12.92, 9.02, 6.65, 5.03, 3.83, 2.87, 2.01, 1)
-
-# # ideal hatchling sex ratios based on mating system
-# IHSR <- (1.47 * osrs) / (1.47 * osrs + 3.87 * (1 - osrs))
-# # [1] 0.01960000 [2] 0.04049587 [3] 0.06282051 [4] 0.08672566 [5] 0.11238532 
-# # [6] 0.14000000 [7] 0.16980198 [8] 0.20206186 [9] 0.23709677 [10] 0.26737194
-# 
-# # temperatures that give those IHSRs based on thermal reaction norm
-# # narrow TRT population; k = -1.34, pivotal temp = 29.2
-# ITemps_narrow <- (log( 1 / IHSR - 1) + 1.34 * 29.2) / 1.34
-# # [1] 32.11972 [2] 31.56210 [3] 31.21686 [4] 30.95693 [5] 30.74224 
-# # [6] 30.55469 [7] 30.38435 [8] 30.22497 [9] 30.07214 [10] 29.95224
-# 
-# # wide TRT population, k = -0.561, pivotal temp = 29.2
-# ITemps_wide <- (log( 1 / IHSR - 1) + 0.561 * 29.2) / 0.561
-# # [1] 36.17403 [2] 34.84210 [3] 34.01746 [4] 33.39659 [5] 32.88379 
-# # [6] 32.43581 [7] 32.02893 [8] 31.64823 [9] 31.28318 [10] 30.99679
-# 
-# # ideal values
-# ideals <- data.frame(
-#   Min_OSR = osrs, 
-#   Ideal_Hatchling_Sex_Ratio = IHSR, 
-#   Ideal_temps_narrow = ITemps_narrow, 
-#   Ideal_temps_wide = ITemps_wide
-# )
-# 
-# write_csv(ideals, file = '../output/ideals.csv')
-
-beta_names <- paste('beta', betas, sep = '')
-
-# # maturity ogive
-# max_age <- 85
-# age_maturity_mu <- 25
-# age_maturity_sd <- 2.5
-# M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
 
 ##### create objects ###########################################################
 
 # initialize super data frame (SDF)
 SDF <- data.frame(TRT = NULL,
                   Scenario = NULL, 
-                  # Final_Temp = NULL,
                   OSR = NULL,
                   Year = NULL,
                   Temperature = NULL,
@@ -292,12 +254,12 @@ example_outputs$TRT <- factor(example_outputs$TRT,
 
 # filter scenarios and OSRs to plot
 examples_to_plot <- example_outputs %>%
-  filter(OSR %in% c('0.1', '0.45')) %>%
+  filter(OSR %in% c('0.1', '0.35')) %>%
   filter(Scenario %in% c('0.5C', '4.5C'))
 
 ##### helpful for plots
 osr0.1_title <- 'minimum OSR 0.1 (steep mating function)'
-osr0.45_title <- 'minimum OSR 0.45 (shallow mating function)'
+osr0.35_title <- 'minimum OSR 0.35 (shallow mating function)'
 annotation_x <- 90
 annotation_size <- 4
 annotation_label <- 0
@@ -355,11 +317,11 @@ temps_osr_0.1 <- ggplot(examples_to_plot,
 temps_osr_0.1
 
 # temperature plot - min OSR = 0.45
-temps_osr_0.45 <- ggplot(examples_to_plot, 
+temps_osr_0.35 <- ggplot(examples_to_plot, 
                          aes(x = Year, y = Temperature, 
                              col = Scenario, lty = TRT)) +
   ylab('Temperature (\u00B0C)') +
-  ggtitle(osr0.45_title) +
+  ggtitle(osr0.35_title) +
   scale_linetype_discrete(name = 'Population', 
                           c(1, 2), 
                           labels = c('Wide TRT', 'Narrow TRT')) +
@@ -388,7 +350,7 @@ temps_osr_0.45 <- ggplot(examples_to_plot,
   # actual temperatures
   geom_path(lwd = 1)
 
-temps_osr_0.45
+temps_osr_0.35
 
 ##### emergence success (same between mating functions, only affected by temp)
 emergence <- ggplot(examples_to_plot, 
@@ -429,8 +391,8 @@ hatchling_sex_ratio_osr_0.1
 
 # hatchling sex ratios, min OSR = 0.45 
 # only horizontal line affected by mating function
-hatchling_sex_ratio_osr_0.45 <- examples_to_plot %>%
-  filter(OSR == '0.45') %>%
+hatchling_sex_ratio_osr_0.35 <- examples_to_plot %>%
+  filter(OSR == '0.35') %>%
   ggplot(aes(x = Year, 
              y = Hatchling_Sex_Ratio_Median, 
              col = Scenario, 
@@ -443,7 +405,7 @@ hatchling_sex_ratio_osr_0.45 <- examples_to_plot %>%
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
-  ggtitle(osr0.45_title) +
+  ggtitle(osr0.35_title) +
   ylab('Median Hatchling \n Sex Ratio') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
@@ -452,20 +414,20 @@ hatchling_sex_ratio_osr_0.45 <- examples_to_plot %>%
                           labels = c('Wide TRT', 'Narrow TRT')) +
   guides(color = guide_legend(title = "Final \n Incubation \n Temperature"))
 
-hatchling_sex_ratio_osr_0.45
+hatchling_sex_ratio_osr_0.35
 
 ##### operational sex ratio, does depend on mating function, min = 0.1
 OSR_min_osr_0.1 <- examples_to_plot %>%
   filter(OSR == '0.1') %>%
   ggplot(aes(x = Year, 
              y = Mature_Sex_Ratio_Median, 
-             col = Final_Temp, 
+             col = Scenario, 
              lty = TRT)) +
   geom_hline(yintercept = 0.1, lwd = 1, lty = 4) +
   geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
                   ymax = Mature_Sex_Ratio_Q75,
                   col = NULL,
-                  fill = Final_Temp),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
@@ -480,21 +442,21 @@ OSR_min_osr_0.1 <- examples_to_plot %>%
 OSR_min_osr_0.1
 
 ##### operational sex ratio, does depend on mating function, min = 0.45
-OSR_min_osr_0.45 <- examples_to_plot %>%
-  filter(OSR == '0.45') %>%
+OSR_min_osr_0.35 <- examples_to_plot %>%
+  filter(OSR == '0.35') %>%
   ggplot(aes(x = Year, 
              y = Mature_Sex_Ratio_Median, 
-             col = Final_Temp, 
+             col = Scenario, 
              lty = TRT)) +
-  geom_hline(yintercept = 0.45, lwd = 1, lty = 4) +
+  geom_hline(yintercept = 0.35, lwd = 1, lty = 4) +
   geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
                   ymax = Mature_Sex_Ratio_Q75,
                   col = NULL,
-                  fill = Final_Temp),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
-  ggtitle(osr0.45_title) +
+  ggtitle(osr0.35_title) +
   ylab('Median Operational \n Sex Ratio') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
@@ -502,14 +464,14 @@ OSR_min_osr_0.45 <- examples_to_plot %>%
                           c(1, 2), 
                           labels = c('Wide TRT', 'Narrow TRT'))
 
-OSR_min_osr_0.45
+OSR_min_osr_0.35
 
 ##### breeding success, does depend on mating function, min = 0.1
 breeding_success_osr_0.1 <- examples_to_plot %>%
   filter(OSR == '0.1') %>%
   ggplot(aes(x = Year, 
              y = Breeding_Success_Median, 
-             col = Final_Temp, 
+             col = Scenario, 
              lty = TRT)) +
   geom_line(aes(x = Year, 
                 y = Emergence_Success), 
@@ -519,7 +481,7 @@ breeding_success_osr_0.1 <- examples_to_plot %>%
   geom_ribbon(aes(ymin = Breeding_Success_Q25,
                   ymax = Breeding_Success_Q75,
                   col = NULL,
-                  fill = Final_Temp),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
@@ -534,11 +496,11 @@ breeding_success_osr_0.1 <- examples_to_plot %>%
 breeding_success_osr_0.1
 
 ##### breeding success, does depend on mating function, min = 0.45
-breeding_success_osr_0.45 <- examples_to_plot %>%
-  filter(OSR == '0.45') %>%
+breeding_success_osr_0.35 <- examples_to_plot %>%
+  filter(OSR == '0.35') %>%
   ggplot(aes(x = Year, 
              y = Breeding_Success_Median, 
-             col = Final_Temp, 
+             col = Scenario, 
              lty = TRT)) +
   geom_line(aes(x = Year, 
                 y = Emergence_Success), 
@@ -548,11 +510,11 @@ breeding_success_osr_0.45 <- examples_to_plot %>%
   geom_ribbon(aes(ymin = Breeding_Success_Q25,
                   ymax = Breeding_Success_Q75,
                   col = NULL,
-                  fill = Final_Temp),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
-  ggtitle(osr0.45_title) +
+  ggtitle(osr0.35_title) +
   ylab('Median \n Breeding Success') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
@@ -560,19 +522,19 @@ breeding_success_osr_0.45 <- examples_to_plot %>%
                           c(1, 2), 
                           labels = c('Wide TRT', 'Narrow TRT'))
 
-breeding_success_osr_0.45
+breeding_success_osr_0.35
 
 ##### mature abundance, min OSR = 0.1
 mature_abundance_osr_0.1 <- examples_to_plot %>%
   filter(OSR == '0.1') %>%
   ggplot(aes(x = Year, 
              y = Mature_Abundance_Median, 
-             col = Final_Temp, 
+             col = Scenario, 
              lty = TRT)) +
   geom_ribbon(aes(ymin = Mature_Abundance_Q25,
                   ymax = Mature_Abundance_Q75,
                   col = NULL,
-                  fill = Final_Temp),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
@@ -587,20 +549,20 @@ mature_abundance_osr_0.1 <- examples_to_plot %>%
 mature_abundance_osr_0.1
 
 ##### mature abundance, min OSR = 0.45
-mature_abundance_osr_0.45 <- examples_to_plot %>%
-  filter(OSR == '0.45') %>%
+mature_abundance_osr_0.35 <- examples_to_plot %>%
+  filter(OSR == '0.35') %>%
   ggplot(aes(x = Year, 
              y = Mature_Abundance_Median, 
-             col = Final_Temp, 
+             col = Scenario, 
              lty = TRT)) +
   geom_ribbon(aes(ymin = Mature_Abundance_Q25,
                   ymax = Mature_Abundance_Q75,
                   col = NULL,
-                  fill = Final_Temp),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 1) +
-  ggtitle(osr0.45_title) +
+  ggtitle(osr0.35_title) +
   ylab('Median \n Mature Abundance') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
@@ -608,7 +570,7 @@ mature_abundance_osr_0.45 <- examples_to_plot %>%
                           c(1, 2), 
                           labels = c('Wide TRT', 'Narrow TRT'))
 
-mature_abundance_osr_0.45
+mature_abundance_osr_0.35
 
 ##### proportion of eggs that successfully hatch, min OSR = 0.1
 # emergence success * breeding success, does depend on mating function
@@ -616,7 +578,7 @@ eggs_to_hatch_osr_0.1 <- examples_to_plot %>%
   filter(OSR == '0.1') %>%
   ggplot(aes(x = Year, 
              y = Eggs_to_hatch_Median, 
-             col = Final_Temp, 
+             col = Scenario, 
              lty = TRT)) +
   geom_line(aes(x = Year, 
                 y = Emergence_Success), 
@@ -629,7 +591,7 @@ eggs_to_hatch_osr_0.1 <- examples_to_plot %>%
   geom_ribbon(aes(ymin = Eggs_to_hatch_Q25,
                   ymax = Eggs_to_hatch_Q75,
                   col = NULL,
-                  fill = Final_Temp),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +
   geom_line(lwd = 3, alpha = 0.25) +
@@ -645,17 +607,17 @@ eggs_to_hatch_osr_0.1
 
 ##### proportion of eggs that successfully hatch, min OSR = 0.45
 # emergence success * breeding success, does depend on mating function
-eggs_to_hatch_osr_0.45 <- examples_to_plot %>%
-  filter(OSR == '0.45') %>%
+eggs_to_hatch_osr_0.35 <- examples_to_plot %>%
+  filter(OSR == '0.35') %>%
   ggplot(aes(x = Year, 
              y = Eggs_to_hatch_Median, 
-             col = Final_Temp, 
+             col = Scenario, 
              lty = TRT)) +
   geom_line(lwd = 1.5) +
   geom_ribbon(aes(ymin = Eggs_to_hatch_Q25,
                   ymax = Eggs_to_hatch_Q75,
                   col = NULL,
-                  fill = Final_Temp),
+                  fill = Scenario),
               alpha = 0.25,
               show.legend = FALSE) +  
   geom_line(aes(x = Year,
@@ -667,7 +629,7 @@ eggs_to_hatch_osr_0.45 <- examples_to_plot %>%
                 y = Breeding_Success_Median), 
             lwd = 0.75,
             alpha = 0.5) +
-  ggtitle(osr0.1_title) +
+  ggtitle(osr0.35_title) +
   ylab('Median \n Eggs to Hatch') +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
@@ -675,14 +637,14 @@ eggs_to_hatch_osr_0.45 <- examples_to_plot %>%
                           c(1, 2), 
                           labels = c('Wide TRT', 'Narrow TRT'))
 
-eggs_to_hatch_osr_0.45
+eggs_to_hatch_osr_0.35
 
 ##### put it all together in one figure ########################################
 A1 <- temps_osr_0.1 + 
   xlab('') +
   guides(color = 'none', lty = 'none')
 
-A2 <- temps_osr_0.45 + 
+A2 <- temps_osr_0.35 + 
   xlab('') +
   ylab('') +
   guides(color = 'none', lty = 'none')
@@ -703,28 +665,29 @@ C1 <- hatchling_sex_ratio_osr_0.1 +
   ggtitle('') +
   guides(color = 'none', lty = 'none')
 
-C2 <- hatchling_sex_ratio_osr_0.45 +
+C2 <- hatchling_sex_ratio_osr_0.35 +
   xlab('') +
   ylab('') +
-  ggtitle('')
+  ggtitle('') + 
+  guides(lty = 'none')
 
 D1 <- OSR_min_osr_0.1 +
   xlab('') +
   ggtitle('') +
   guides(color = 'none', lty = 'none')
 
-D2 <- OSR_min_osr_0.45 +
+D2 <- OSR_min_osr_0.35 +
   xlab('') +
   ylab('') +
   ggtitle('') +
-  guides(color = 'none', lty = 'none')
+  guides(color = 'none')
 
 E1 <- breeding_success_osr_0.1 +
   xlab('') +
   ggtitle('') +
   guides(color = 'none', lty = 'none')
 
-E2 <- breeding_success_osr_0.45 +
+E2 <- breeding_success_osr_0.35 +
   xlab('') +
   ylab('') +
   ggtitle('') +
@@ -733,15 +696,15 @@ E2 <- breeding_success_osr_0.45 +
 F1 <- mature_abundance_osr_0.1 +
   xlab('') +
   ggtitle('') +
-  guides(color = 'none', lty = 'none') +
+  guides(color = 'none', lty = 'none')
   ylim(0, 10000)
 
-F2 <- mature_abundance_osr_0.45 +
+F2 <- mature_abundance_osr_0.35 +
   xlab('') +
   ylab('') +
   ggtitle('') +
-  guides(color = 'none', lty = 'none')  +
-  ylim(0, 10000)
+  guides(color = 'none', lty = 'none') +
+  ylim(0, 15000)
 
 # final_fig <- (A1 + A2) / (B1 + B2) / (C1 + C2) / (D1 + D2) / (E1 + E2) / (F1 + F2)
 final_fig <- (A1 + A2) / (C1 + C2) / (D1 + D2) / (E1 + E2) / (F1 + F2) +
