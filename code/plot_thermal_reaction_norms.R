@@ -51,15 +51,15 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
                               col = Population, lty = Population)) +
   geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
   geom_vline(xintercept = 29.2, col = 'black', lwd = 1.5, lty = 1) +
-  geom_vline(xintercept = 30.5, col = 'gray60', lwd = 1, lty = 1) +
-  geom_vline(xintercept = TRT_lower_narrow, col = '#6600FF', lty = 1, 
-             lwd = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = TRT_upper_narrow, col = '#6600FF', lty = 1, 
-             lwd = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = TRT_upper_wide, col = '#FF3300', lty = 4, 
-             lwd = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = TRT_lower_wide, col = '#FF3300', lty = 4, 
-             lwd = 0.75, alpha = 0.5) +
+  geom_vline(xintercept = 31.8, col = 'gray60', lwd = 1, lty = 1) +
+  # geom_vline(xintercept = TRT_lower_narrow, col = '#6600FF', lty = 1, 
+  #            lwd = 0.75, alpha = 0.5) +
+  # geom_vline(xintercept = TRT_upper_narrow, col = '#6600FF', lty = 1, 
+  #            lwd = 0.75, alpha = 0.5) +
+  # geom_vline(xintercept = TRT_upper_wide, col = '#FF3300', lty = 4, 
+  #            lwd = 0.75, alpha = 0.5) +
+  # geom_vline(xintercept = TRT_lower_wide, col = '#FF3300', lty = 4, 
+  #            lwd = 0.75, alpha = 0.5) +
   geom_line(lwd = 2) +
   scale_color_manual(values = c('#FF3300', '#6600FF')) +
   scale_linetype_manual(values = c(4, 1)) +
@@ -81,11 +81,19 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
            label.size = 0) +
   annotate("label", x = 39.4, y = 1.00, label = "0.95", size = 5, 
            label.size = 0) +
-  annotate("label", x = 28.4, y = 0, label = "29.2\u00B0C", size = 5,
+  annotate("label", x = 30.4, y = 0.7, label = "29.2\u00B0C", size = 5,
            label.size = 0) +
-  annotate("label", x = 33, y = 1, label = "31.8\u00B0C", size = 5,
-           label.size = 0)
-
+  annotate("label", x = 33, y = 0.7, label = "31.8\u00B0C", size = 5,
+           label.size = 0) +
+  geom_point(aes(x = 23.8, y = 0.05), colour="#FF3300", size = 5) +
+  geom_point(aes(x = 34.4, y = 0.05), colour="#FF3300", size = 5) +
+  geom_point(aes(x = 27, y = 0.05), colour="#6600FF", size = 5) +
+  geom_point(aes(x = 31.4, y = 0.05), colour="#6600FF", size = 5) +
+  geom_point(aes(x = 23.8, y = 0.95), colour="#FF3300", size = 5) +
+  geom_point(aes(x = 34.4, y = 0.95), colour="#FF3300", size = 5) +
+  geom_point(aes(x = 27, y = 0.95), colour="#6600FF", size = 5) +
+  geom_point(aes(x = 31.4, y = 0.95), colour="#6600FF", size = 5)
+  
 
 fig
 
