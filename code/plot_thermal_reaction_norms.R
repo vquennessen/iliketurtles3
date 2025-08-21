@@ -83,7 +83,7 @@ fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male,
            label.size = 0) +
   annotate("label", x = 28.4, y = 0, label = "29.2\u00B0C", size = 5,
            label.size = 0) +
-  annotate("label", x = 32.65, y = 1, label = "30.5\u00B0C", size = 5,
+  annotate("label", x = 33, y = 1, label = "31.8\u00B0C", size = 5,
            label.size = 0)
 
 
