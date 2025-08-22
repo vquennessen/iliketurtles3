@@ -37,7 +37,12 @@ examples_to_plot <- example_outputs %>%
          TRT = str_replace(TRT, "Wide", "Wide TRT")) %>%
   mutate(Scenario = str_replace(Scenario, "0.5C", "0.5\u00B0C"), 
          Scenario = str_replace(Scenario, "4.5C", "4.5\u00B0C")) 
-
+  
+  Alabs <- data.frame(TRT = c('Narrow TRT', 'Wide TRT'), 
+                      Year = c(25, 25),
+                      Hatchling_Sex_Ratio_Median = c(0.22, 0.22),
+                      Labs = c('A', 'B'))
+  
 # ideal incubation temperatures
 ideal_0.1 <- 0.40
 ideal_0.35 <- 0.170
@@ -58,19 +63,49 @@ A <- ggplot(data = examples_to_plot,
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   facet_grid(cols = vars(TRT)) +
+  geom_hline(yintercept = ideal_0.1, lty = 1) +
+  geom_hline(yintercept = ideal_0.35, lty = 2) +
+  geom_path(linewidth = 0.75) +
+  guides(col = 'none', fill = 'none', lty = 'none') +
+  ylab("(A) Median \n hatchling sex ratio") +
+  xlab("") +
+  theme_bw()
+# 
+#   geom_text(data = Alabs, 
+#             aes(x = Year, y = Hatchling_Sex_Ratio_Median, label = Labs))
+
+A
+
+##### plot 2: hatchling abundance ##############################################
+
+B <- ggplot(data = examples_to_plot, 
+            aes(x = Year, 
+                y = Hatchling_Abundance_Median, 
+                col = Scenario, 
+                lty = Mating_Function)) +
+  geom_ribbon(aes(ymin = Hatchling_Abundance_Q25,
+                  ymax = Hatchling_Abundance_Q75,
+                  col = NULL,
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  facet_grid(cols = vars(TRT)) +
   # geom_hline(yintercept = ideal_0.1, lty = 2) +
   # geom_hline(yintercept = ideal_0.35, lty = 1) +
   geom_path(linewidth = 0.75) +
   guides(col = 'none', fill = 'none', lty = 'none') +
-  ylab("Median hatchling sex ratio") +
+  ylab("(B) Median \n hatchling abundance") +
   xlab("") +
-  theme_bw()
+  theme_bw() +
+  theme(strip.text = element_blank())
 
-A
+B
 
 ##### plot 2: operational sex ratios ###########################################
 
-B <- ggplot(data = examples_to_plot, 
+C <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
                 y = Mature_Sex_Ratio_Median, 
                 col = Scenario, 
@@ -84,20 +119,45 @@ B <- ggplot(data = examples_to_plot,
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   facet_grid(cols = vars(TRT)) +
-  geom_hline(yintercept = ideal_0.1, lty = 1) +
-  geom_hline(yintercept = ideal_0.35, lty = 2) +
   geom_path(linewidth = 0.75) +
   labs(lty = 'Mating \n Function') +
-  ylab("Median operational sex ratio") +
+  ylab("(C) Median \n operational sex ratio") +
   xlab("") +
   theme_bw() +
   theme(strip.text = element_blank())
 
-B
+C
 
-##### plot 3: mature abundance #################################################
+##### plot 4: breeding success #################################################
 
-C <- ggplot(data = examples_to_plot, 
+D <- ggplot(data = examples_to_plot, 
+            aes(x = Year, 
+                y = Breeding_Success_Median, 
+                col = Scenario, 
+                lty = Mating_Function)) +
+  geom_ribbon(aes(ymin = Breeding_Success_Q25,
+                  ymax = Breeding_Success_Q75,
+                  col = NULL,
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  facet_grid(cols = vars(TRT)) +
+  # geom_hline(yintercept = ideal_0.1, lty = 2) +
+  # geom_hline(yintercept = ideal_0.35, lty = 1) +
+  geom_path(linewidth = 0.75) +
+  guides(col = 'none', fill = 'none', lty = 'none') +
+  ylab("(D) Median \n breeding success") +
+  xlab("") +
+  theme_bw() +
+  theme(strip.text = element_blank())
+
+D
+
+##### plot 5: mature abundance #################################################
+
+E <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
                 y = Mature_Abundance_Median, 
                 col = Scenario, 
@@ -112,18 +172,18 @@ C <- ggplot(data = examples_to_plot,
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   facet_grid(cols = vars(TRT)) +
   geom_path(linewidth = 0.75) +
-  ylab("Median mature abundance") +
+  ylab("(E) Median \n mature abundance") +
   guides(col = 'none', fill = 'none', lty = 'none') +
   theme_bw() +
   theme(strip.text = element_blank())
 
-C
+E
 
-final_fig <- A / B / C
+final_fig <- A / B / C / D / E
 final_fig
 
 # save to file
 ggsave(plot = final_fig,
        filename = paste('sample_outputs.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 7, height = 8)
+       width = 7, height = 9)
