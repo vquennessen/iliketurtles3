@@ -9,6 +9,7 @@ library(matrixStats)
 library(readr)
 library(patchwork)
 library(tidyverse)
+library(ggh4x)
 
 # source functions and load data
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
@@ -44,7 +45,7 @@ examples_to_plot <- example_outputs %>%
                       Labs = c('A', 'B'))
   
 # ideal incubation temperatures
-ideal_0.1 <- 0.40
+ideal_0.1 <- 0.04
 ideal_0.35 <- 0.170
 
 ##### plot 1: hatchling sex ratios #############################################
@@ -63,8 +64,8 @@ A <- ggplot(data = examples_to_plot,
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   facet_grid(cols = vars(TRT)) +
-  geom_hline(yintercept = ideal_0.1, lty = 1) +
-  geom_hline(yintercept = ideal_0.35, lty = 2) +
+  geom_hline(yintercept = ideal_0.1, lty = 2) +
+  geom_hline(yintercept = ideal_0.35, lty = 1) +
   geom_path(linewidth = 0.75) +
   guides(col = 'none', fill = 'none', lty = 'none') +
   ylab("(A) Median \n hatchling sex ratio") +
@@ -96,6 +97,8 @@ B <- ggplot(data = examples_to_plot,
   # geom_hline(yintercept = ideal_0.35, lty = 1) +
   geom_path(linewidth = 0.75) +
   guides(col = 'none', fill = 'none', lty = 'none') +
+  # guides(y = guide_axis_truncated(trunc_lower = c(-Inf, 750000),
+  #                                  trunc_upper = c(250000, Inf))) +
   ylab("(B) Median \n hatchling abundance") +
   xlab("") +
   theme_bw() +
