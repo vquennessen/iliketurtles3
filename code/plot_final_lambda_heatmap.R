@@ -27,7 +27,13 @@ lambdas_and_persistence <- base_persistence %>%
   rename("Year" = "Survive_to", 
          "Persistence" = "Probability_mean") %>%
   select(Population, Model, Scenario, OSR, Year, Abundance, Persistence) %>%
-  right_join(lambdas) 
+  right_join(lambdas) %>%
+  mutate(TRT = ifelse(Population == 'West Africa', 
+                      'Narrow TRT', 
+                      'Wide TRT')) %>%
+  mutate(facet_labels = ifelse(Abundance == 'Mature', 
+                               'Mature abundance', 
+                               'Total abundance'))
 
 # %>%
 #   mutate(Lambda_mean = replace(Lambda_mean, Persistence < cutoff, NA)) %>%
@@ -78,13 +84,13 @@ fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR,
             lwd = 1.25,
             linetype = 1) +
   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
-  guides(fill = guide_legend(title = "Median \n Lambda \n (10 year)", 
+  guides(fill = guide_legend(title = "Growth \n rate", 
                              reverse = TRUE)) +
-  xlab('Minimum operational sex ratio required for 100% female reproductive success') +
+  xlab('Minimum operational sex ratio required for 99% female reproductive success') +
   ylab('Increase in temperature (\u00B0C) by year 100') +
-  ggtitle('final 10 yr median lambda (year 100)') +
-  facet_grid(rows = vars(Abundance), 
-             cols = vars(Population)) +
+  ggtitle('final 10 yr median growth rate (year 100)') +
+  facet_grid(rows = vars(facet_labels), 
+             cols = vars(TRT)) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank()) +
