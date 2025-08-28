@@ -49,9 +49,9 @@ fig <- ggplot(data = DF, aes(x = Operational_Sex_Ratio,
                      labels = rev(OSRs)) +
   # for replacement legend - delete for legend with beta values
   labs(color = 'Minimum \n OSR needed \n for 99% \n reproductive \n success') +
-  ylab('Reproductive Success') +
-  xlab('Operational Sex Ratio (Proportion Male)') +
-  ggtitle('Hypothetical mating functions') +
+  ylab('Reproductive success') +
+  xlab('Operational sex ratio') +
+  # ggtitle('Hypothetical mating functions') +
   theme_bw() +
   theme(axis.title.y = element_text(margin = margin(r = 15, l = 10)), 
         axis.title.x = element_text(margin = margin(t = 15, b = 10)), 

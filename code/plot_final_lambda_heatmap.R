@@ -70,7 +70,7 @@ years_to_plot <- 100
 SDF_subset_median <- lambdas_and_persistence %>%
   filter(Model %in% c('GM_base', 'P_base')) %>%
   filter(Year == years_to_plot) %>%
-  filter(Abundance %in% c('Total', 'Mature')) %>%
+  filter(Abundance %in% c('Mature')) %>%
   # filter(Stochasticity == 'temperature stochasticity') %>%
   mutate(bins = cut(Lambda_10yr_median, 
                     breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
@@ -84,13 +84,14 @@ fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR,
             lwd = 1.25,
             linetype = 1) +
   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
-  guides(fill = guide_legend(title = "Growth \n rate", 
+  guides(fill = guide_legend(title = "Final \n growth \n rate", 
                              reverse = TRUE)) +
   xlab('Minimum operational sex ratio required for 99% female reproductive success') +
-  ylab('Increase in temperature (\u00B0C) by year 100') +
-  ggtitle('final 10 yr median growth rate (year 100)') +
-  facet_grid(rows = vars(facet_labels), 
-             cols = vars(TRT)) +
+  ylab('Increase in temperature (\u00B0C) \n by year 100') +
+  # ggtitle('final 10 yr median growth rate (year 100)') +
+  facet_grid(
+    # rows = vars(Abundance),
+    cols = vars(TRT)) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank()) +
@@ -101,6 +102,11 @@ fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR,
   theme(strip.text = element_text(size = 10)) +
   theme(title = element_text(size = 13))
 
+# save to file
+ggsave(plot = fig5_median, 
+       filename = paste('final_lambda_median.png', sep = ''),
+       path = '~/Projects/iliketurtles3/figures/',
+       width = 8, height = 4)
 # # some mature males and females in [1, 1.01) at high temps
 # lambdas_and_persistence %>%
 #   filter(Scenario == '4C') %>%
@@ -157,11 +163,6 @@ mature_lambdas <- mature_abundances[2:100, ]/mature_abundances[1:99, ]
 #   guides(color = 'none') +
 #   geom_hline(yintercept = 1)
 
-# save to file
-ggsave(plot = fig5_median, 
-       filename = paste('TS_final_lambda_median.png', sep = ''),
-       path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 17/3)
 
 ##### mean figure ##############################################################
 
