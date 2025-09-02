@@ -3,9 +3,6 @@
 # set working directory
 setwd('~/Projects/iliketurtles3')
 
-# source functions
-source('code/mating function/OSRs_to_betas.R')
-
 # load libraries
 library(ggplot2)
 library(viridis)
@@ -35,7 +32,8 @@ all_combos <- base_persistence
 # all_combos <- rbind(bp25, bp50, bp75)
 
 # what year to plot
-year_to_plot <- 50
+year_to_plot <- 100
+name_to_use <- paste('mature_base_persistence')
 
 ################################################################################
 
@@ -61,7 +59,7 @@ all_combos$OSR <- factor(all_combos$OSR, levels = unique(all_combos$OSR))
 DF_to_use <- all_combos %>% 
   filter(Survive_to == year_to_plot) %>%
   # filter(Abundance %in% c('Total', 'Mature'))
-  # filter(Abundance == 'Mature') %>%
+  filter(Abundance == 'Mature') %>%
   mutate(TRT = ifelse(Population == 'West Africa', 'Narrow TRT', 'Wide TRT'))
 
   # filter(Stochasticity == 'white noise') %>%
@@ -85,7 +83,6 @@ DF_to_use <- all_combos %>%
 #                                   'Total', 
 #                                   'Mature'))
 
-name_to_use <- paste('all_abundances_base_persistence')
 # short_stochasticities <- unique(DF_to_use$Stochasticity_short)
 
 ##### plotting all abundances  #################################################
@@ -104,7 +101,7 @@ fig3 <- ggplot(data = DF_to_use,
                        limits = c(0, 1),
                        na.value = 'gray') +
   guides(fill = guide_colourbar(title = "Probability")) +
-  xlab('Minimum OSR required for 99% female reproductive success') +
+  xlab('Minimum OPM required for 99% female reproductive success') +
   ylab('Increase in temperature (\u00B0C) by year 100') +
   # ggtitle(paste(name_to_use, ': Probability of population persistence \n
   #         (> 10% of starting abundance) by year', year_to_plot, 
@@ -128,7 +125,7 @@ fig3 <- ggplot(data = DF_to_use,
 ggsave(plot = fig3,
        filename = paste(name_to_use, '_Y', year_to_plot, '.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 12)
+       width = 8, height = 4)
 
 # ##### plotting abundance total #################################################
 # 
