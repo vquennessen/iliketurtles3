@@ -12,7 +12,7 @@ library(tidyverse)
 library(ggh4x)
 
 # source functions and load data
-source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
+source('~/Projects/iliketurtles3/code/mating function/OPMs_to_betas.R')
 load("~/Projects/iliketurtles3/output/example_outputs.Rdata")
 load("~/Projects/iliketurtles3/output/ideals.Rdata")
 
@@ -44,9 +44,9 @@ examples_to_plot <- example_outputs %>%
                       Hatchling_Sex_Ratio_Median = c(0.22, 0.22),
                       Labs = c('A', 'B'))
   
-# ideal incubation temperatures
-ideal_0.1 <- 0.04
-ideal_0.35 <- 0.170
+# ideal hatchling proportions male
+ideal_0.1 <- 0.09997
+ideal_0.35 <- 0.24497
 
 ##### plot 1: hatchling sex ratios #############################################
 
@@ -68,7 +68,7 @@ A <- ggplot(data = examples_to_plot,
   geom_hline(yintercept = ideal_0.35, lty = 1) +
   geom_path(linewidth = 0.75) +
   guides(col = 'none', fill = 'none', lty = 'none') +
-  ylab("(A) Median \n hatchling sex ratio") +
+  ylab("(A) Median hatchling \n proportion male") +
   xlab("") +
   theme_bw()
 # 
@@ -123,8 +123,8 @@ C <- ggplot(data = examples_to_plot,
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   facet_grid(cols = vars(TRT)) +
   geom_path(linewidth = 0.75) +
-  labs(lty = 'Mating \n Function') +
-  ylab("(C) Median \n operational sex ratio") +
+  labs(lty = 'Mating \n function', col = 'Temperature \n increase') +
+  ylab("(C) Median operational \n proportion male") +
   xlab("") +
   theme_bw() +
   theme(strip.text = element_blank())
