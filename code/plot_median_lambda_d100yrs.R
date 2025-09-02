@@ -79,7 +79,7 @@ fig5b <- ggplot(data = median_lambdas_to_plot_over_time,
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   xlab('Year') +
   ylab('Median growth rate \n (averaged over 10 years)') +
-  ggtitle('(10yr) median growth rates over time + IQR') +
+  # ggtitle('(10yr) median growth rates over time + IQR') +
   theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
   theme(axis.title.x = element_text(size = 13, vjust = -3)) +
   theme(axis.title.y = element_text(size = 13, vjust = 4)) +
@@ -93,6 +93,6 @@ fig5b <- ggplot(data = median_lambdas_to_plot_over_time,
 ggsave(plot = fig5b, 
        filename = paste('10yr_median_lambdas.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 9, height = 5)
+       width = 9, height = 4.5)
 
 
