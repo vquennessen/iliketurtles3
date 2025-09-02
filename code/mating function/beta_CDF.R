@@ -8,22 +8,22 @@ library(ggplot2)
 library(viridis)
 
 # source code
-source('mating function/OSRs_to_betas.R')
+source('mating function/OPMs_to_betas.R')
 
 # values of x to plot
 x <- seq(from = 0, to = 0.5, by = 0.001)
 
 # OSR values
-OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
+OPMs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
 
 # beta values to cycle through
-betas <- as.numeric(OSRs_to_betas(OSRs))
+betas <- as.numeric(OPMs_to_betas(OPMs))
 
 # colors
 colors <- viridis(length(betas) + 1)
 
 # initialise DF
-DF <- data.frame(Operational_Sex_Ratio = rep(x, times = length(betas)), 
+DF <- data.frame(Operational_Proportion_Male = rep(x, times = length(betas)), 
                  Beta = rep(betas, each = length(x)), 
                  Reproductive_Success = NA)
 
@@ -32,7 +32,9 @@ for (b in 1:length(betas)) {
   
   start <- (b - 1)*length(x) + 1
   stop <- start + length(x) - 1
-  DF$Reproductive_Success[start:stop] <- pbeta(2 * x, shape1 = 1, shape2 = betas[b])
+  DF$Reproductive_Success[start:stop] <- pbeta(2 * x, 
+                                               shape1 = 1, 
+                                               shape2 = betas[b])
   
 }
 
@@ -40,17 +42,17 @@ for (b in 1:length(betas)) {
 DF$Beta <- as.factor(DF$Beta)
 
 # plot
-fig <- ggplot(data = DF, aes(x = Operational_Sex_Ratio, 
+fig <- ggplot(data = DF, aes(x = Operational_Proportion_Male, 
                              y = Reproductive_Success, 
                              color = Beta)) +
   geom_hline(yintercept = 0.5, linetype = 2, alpha = 0.5, lwd = 2) +
   geom_line(lwd = 2) +
   scale_color_manual(values = rev(colors)[-1], 
-                     labels = rev(OSRs)) +
+                     labels = rev(OPMs)) +
   # for replacement legend - delete for legend with beta values
-  labs(color = 'Minimum \n OSR needed \n for 99% \n reproductive \n success') +
+  labs(color = 'Minimum \n OPM needed \n for 99% \n reproductive \n success') +
   ylab('Reproductive success') +
-  xlab('Operational sex ratio') +
+  xlab('Operational proportion male') +
   # ggtitle('Hypothetical mating functions') +
   theme_bw() +
   theme(axis.title.y = element_text(margin = margin(r = 15, l = 10)), 
