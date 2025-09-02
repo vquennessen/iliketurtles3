@@ -124,7 +124,7 @@ ideal_temps_heatmap <- ggplot(data = to_plot,
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
                        midpoint = 29.2) +
   labs(fill = "Incubation \n temperature \n (\u00B0C)") +
-  xlab("Minimum OPM required for 99% female reproductive success \n (Associated ideal PSR)") +
+  xlab("Minimum OPM required for 99% female reproductive success \n (Associated ideal hatchling proportion male)") +
   scale_y_discrete(labels = c("Narrow TRT ", 
                               "Wide TRT  "
   )) +
