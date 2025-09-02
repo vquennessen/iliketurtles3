@@ -81,6 +81,12 @@ for (t in 1:length(TRTs)) {
   
 }
 
+# make values factors
+ideals_adjusted$OPM <- factor(ideals_adjusted$OPM, 
+                              levels = OPMs)
+ideals_adjusted$TRT <- factor(ideals_adjusted$TRT, 
+                              levels = TRTs)
+
 # save as table
 save(ideals_adjusted, file = '~/Projects/iliketurtles3/output/ideals_adjusted.Rdata')
 
@@ -141,13 +147,9 @@ ideal_temps_heatmap <- ggplot(data = to_plot,
 
 ideal_temps_heatmap
 
-
-
 ggsave(ideal_temps_heatmap, 
        file = '~/Projects/iliketurtles3/figures/ideal_temps_heatmap.png', 
        width = 8, height = 3)
-
-
 
 ##### ideal temps (not adjusted by emergence success) ##########################
 
