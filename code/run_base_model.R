@@ -6,13 +6,13 @@ run_base_model <- function(arguments) {
   ###### model inputs ##########################################################
   
   # function arguments
-  model     <- arguments$Var1
-  scenario  <- arguments$Var2
-  beta      <- arguments$Var3
-  years     <- arguments$Var4
-  nsims     <- arguments$Var5
-  intensity <- arguments$Var6
-  frequency <- arguments$Var7
+  # model     <- arguments$Var1
+  # scenario  <- arguments$Var2
+  # beta      <- arguments$Var3
+  # years     <- arguments$Var4
+  # nsims     <- arguments$Var5
+  # intensity <- arguments$Var6
+  # frequency <- arguments$Var7
   
   # write to progress text file
   update <- paste(lubridate::now(), ' - ', model, ' - ', scenario, 'C - beta ', 
@@ -20,10 +20,13 @@ run_base_model <- function(arguments) {
   write(update, file = 'progress.txt', append = TRUE)
   
   # # troubleshooting
-  # model <- 'P_base'
-  # scenario <- 0.5
-  # beta <- 43.7
-  # nsims <- 10
+  model     <- 'P_evol_piv'
+  scenario  <- 2.5
+  beta      <- 3.82
+  years     <- 100
+  nsims     <- 5
+  intensity <- 1
+  frequency <- 1
   # 
   # model parameters to modulate
   temp_mu <- 31.8                         # base incubation temp mean
@@ -153,7 +156,7 @@ run_base_model <- function(arguments) {
   ##### initial population size
   
   # stable age distribution
-  SAD_output <- initialize_population(beta, burn_in = 2500, max_age, 
+  SAD_output <- initialize_population(beta, burn_in = 25000, max_age, 
                                       IF_survival, IM_survival, 
                                       MF_survival, MM_survival, 
                                       M, F_remigration_int, M_remigration_int,
@@ -162,7 +165,7 @@ run_base_model <- function(arguments) {
                                       k_piv, T_piv, temp_mu, 
                                       F_initial, M_initial)
   
-  # SAD_output[[1]]
+  SAD_output[[1]]
   
   # check to see if SAD exists or returns NaN - save everything as NA
   # and move on to the next combo
