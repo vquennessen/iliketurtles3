@@ -12,8 +12,8 @@ library(ggpattern)
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 
 # operational proportion male
-OPMs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
-betas <- as.numeric(OSRs_to_betas(OPMs))
+OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
+betas <- as.numeric(OSRs_to_betas(OSRs))
 
 # hatchling sex ratios * emergence success
 temps <- seq(from = 25, to = 35, by = 0.01)
@@ -39,13 +39,14 @@ hatchlings <- data.frame(TRT = rep(TRTs,
                          PSR = c(narrow_TRT_pM, wide_TRT_pM)) %>%
   mutate(nM = 100 * Emergence * PSR) %>%
   mutate(nF = 100 * Emergence * (1 - PSR)) %>%
-  mutate(nEggs = nF * 4.95 * 100.58)
+  mutate(nEggs = nF * 4.95 * 100.58) 
 
 # initialize new DF
 ideals_adjusted <- data.frame(TRT = rep(TRTs, each = length(betas)), 
-                              OPM = rep(OPMs, times = length(TRTs)), 
+                              OSR = rep(OSRs, times = length(TRTs)), 
                               iTemp = NA, 
-                              iPSR = NA)
+                              iPSR = NA) %>%
+  mutate(xF = round(1/OSR - 1, 2))
 
 
 for (t in 1:length(TRTs)) {
@@ -82,8 +83,8 @@ for (t in 1:length(TRTs)) {
 }
 
 # make values factors
-ideals_adjusted$OPM <- factor(ideals_adjusted$OPM, 
-                              levels = OPMs)
+ideals_adjusted$OSR <- factor(ideals_adjusted$OSR, 
+                              levels = OSRs)
 ideals_adjusted$TRT <- factor(ideals_adjusted$TRT, 
                               levels = TRTs)
 
@@ -98,7 +99,7 @@ save(ideals_adjusted, file = '~/Projects/iliketurtles3/output/ideals_adjusted.Rd
 load("~/Projects/iliketurtles3/output/ideals_adjusted.Rdata")
 
 # xaxis labels
-xlabs <- paste(rep(unique(ideals_adjusted$OPM), times = 2), 
+xlabs <- paste(rep(unique(ideals_adjusted$xF), times = 2), 
                '\n (', 
                unique(ideals_adjusted$iPSR), 
                ')', 
@@ -115,7 +116,7 @@ to_plot <- ideals_adjusted %>%
 
 # actually do the heatmap thing
 ideal_temps_heatmap <- ggplot(data = to_plot, 
-                              aes(x = as.factor(OPM), 
+                              aes(x = as.factor(xF), 
                                   y = TRT, 
                                   fill = iTemp, 
                                   pattern = Above_init_temp)) +
@@ -124,7 +125,7 @@ ideal_temps_heatmap <- ggplot(data = to_plot,
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
                        midpoint = 29.2) +
   labs(fill = "Incubation \n temperature \n (\u00B0C)") +
-  xlab("Minimum OPM required for 99% female reproductive success \n (Associated ideal hatchling proportion male)") +
+  xlab("Minimum OSR required for 99% female reproductive success (xF:1M) \n (Associated ideal hatchling proportion male)") +
   scale_y_discrete(labels = c("Narrow TRT ", 
                               "Wide TRT  "
   )) +

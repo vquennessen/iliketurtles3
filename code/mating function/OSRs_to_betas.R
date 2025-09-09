@@ -1,6 +1,6 @@
 # function to get beta axis labels
 
-OPMs_to_betas <- function(OPMs) {
+OSRs_to_betas <- function(OSRs) {
   
   # load libraries
   library(ggplot2)
@@ -10,16 +10,16 @@ OPMs_to_betas <- function(OPMs) {
   betas <- seq(from = 1, to = 100, by = 0.01)
 
   # initialise DF
-  DF <- data.frame(Operational_Proportion_Male = rep(OPMs, each = length(betas)), 
-                   Beta = rep(betas, times = length(OPMs)), 
+  DF <- data.frame(Operational_Sex_Ratio = rep(OSRs, each = length(betas)), 
+                   Beta = rep(betas, times = length(OSRs)), 
                    Reproductive_Success = NA)
   
   # CDF function
-  for (a in 1:length(OPMs)) {
+  for (a in 1:length(OSRs)) {
     
     start <- (a - 1)*length(betas) + 1
     stop <- start + length(betas) - 1
-    DF$Reproductive_Success[start:stop] <- pbeta(2 * OPMs[a], 
+    DF$Reproductive_Success[start:stop] <- pbeta(2 * OSRs[a], 
                                                  shape1 = 1, 
                                                  shape2 = betas)
     
@@ -29,7 +29,7 @@ OPMs_to_betas <- function(OPMs) {
   #DF$Beta <- as.factor(DF$Beta)
   
   acceptable_loss_of_males <- DF %>% 
-    group_by(Operational_Proportion_Male) %>%
+    group_by(Operational_Sex_Ratio) %>%
     filter(Reproductive_Success <= 0.99) %>%
     filter(Beta == max(as.numeric(Beta)))
   
