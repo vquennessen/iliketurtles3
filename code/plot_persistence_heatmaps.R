@@ -40,7 +40,10 @@ name_to_use <- paste('mature_base_persistence')
 # make scenario and osr a factor variable
 all_combos$Scenario <- factor(all_combos$Scenario, 
                               levels = unique(all_combos$Scenario))
+OSRs <- unique(all_combos$OSR)
 all_combos$OSR <- factor(all_combos$OSR, levels = unique(all_combos$OSR))
+all_combos$xF <- factor(round(1/OSRs - 1, 2), 
+                        levels = round(1/OSRs - 1, 2))
 
 # # shorter time scales
 # short <- all_combos
@@ -58,9 +61,14 @@ all_combos$OSR <- factor(all_combos$OSR, levels = unique(all_combos$OSR))
 # EDIT #########################################################################
 DF_to_use <- all_combos %>% 
   filter(Survive_to == year_to_plot) %>%
-  # filter(Abundance %in% c('Total', 'Mature'))
   filter(Abundance == 'Mature') %>%
-  mutate(TRT = ifelse(Population == 'West Africa', 'Narrow TRT', 'Wide TRT'))
+  mutate(TRT = ifelse(Population == 'West Africa', 
+                      'Narrow TRT', 
+                      'Wide TRT')) %>%
+  mutate(xF = round(1/as.numeric(as.character(OSR)) - 1, 2))
+
+DF_to_use$xF <- factor(DF_to_use$xF, 
+                       levels = as.factor(round(1/as.numeric(as.character(OSRs)) - 1, 2)))
 
   # filter(Stochasticity == 'white noise') %>%
   # select(Population, Scenario, OSR, Survive_to, Abundance, Probability_mean) %>%
@@ -87,7 +95,7 @@ DF_to_use <- all_combos %>%
 
 ##### plotting all abundances  #################################################
 fig3 <- ggplot(data = DF_to_use, 
-               aes(x = OSR, 
+               aes(x = xF, 
                    y = Scenario, 
                    fill = Probability_mean)) +
   geom_tile(color = "white",
@@ -101,7 +109,7 @@ fig3 <- ggplot(data = DF_to_use,
                        limits = c(0, 1),
                        na.value = 'gray') +
   guides(fill = guide_colourbar(title = "Probability")) +
-  xlab('Minimum OPM required for 99% female reproductive success') +
+  xlab('Minimum OSR required for 99% female reproductive success (xF:1M)') +
   ylab('Increase in temperature (\u00B0C) by year 100') +
   # ggtitle(paste(name_to_use, ': Probability of population persistence \n
   #         (> 10% of starting abundance) by year', year_to_plot, 
@@ -125,7 +133,9 @@ fig3 <- ggplot(data = DF_to_use,
 ggsave(plot = fig3,
        filename = paste(name_to_use, '_Y', year_to_plot, '.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
+       # width = 8, height = 12)
        width = 8, height = 4)
+
 
 # ##### plotting abundance total #################################################
 # 
