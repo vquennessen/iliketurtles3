@@ -71,39 +71,37 @@ initialize_arrays <- function(scenario, years, max_age,
   # if evolution_piv is turned on, create gamma, epsilon, and delta vectors
   if (evolution_piv == TRUE) {  
     
-    # distribution of G - starting genotypes plus genotypic variation - one for 
-    # each cohort
+    # gamma, error term for the expected genotype, one for each year
+    Gamma_piv <- rnorm(n = years, 
+                       mean = 0, 
+                       sd = sqrt(ag_var_piv / 2))     
+    
+    # delta, error term for the expected pivotal temperature, one for each year
+    Delta_piv <- rnorm(n = years, 
+                         mean = 0, 
+                         sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))  
+    
+    # epsilon, error term for the observed pivotal temperature (phenotypic 
+    # variation), one for each year
+    Epsilon_piv <- rnorm(n = years, 
+                       mean = 0, 
+                       sd = sqrt(ag_var_piv / h2_piv)) 
+    
+    # initial genetic vector, one for each age, updated each year
     G_piv <- rnorm(n = max_age, 
                    mean = T_piv, 
-                   sd = sqrt(ag_var_piv))
+                   sd = sqrt(ag_var_piv / 2))
     
-    # distribution of P - starting expected phenotypes - one for each age
-    # starting genotypes plus environmental variation
+    # initial expected phenotypes vector, one for each age, updated each year
     P_piv <- G_piv + rnorm(n = max_age, 
                            mean = 0, 
                            sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))
     
-    # intialize actual pivotal temperatures - one for each year
-    # expected phenotypes plus phenotypic variation
+    # initialize observed hatchling pivotal temperatures vector, one for each 
+    # year
     Pivotal_temps <- rep(NA, years)
-    Pivotal_temps[1] <- P_piv[1] + rnorm(n = 1, 
-                                         mean = 0, 
-                                         sd = sqrt(ag_var_piv / h2_piv))
-    
-    # gamma, error term for the expected genotype
-    Gamma_piv <- rnorm(n = years, 
-                       mean = 0, 
-                       sd = sqrt(ag_var_piv / 2))       
-    
-    # epsilon, error term for the expected pivotal temperature
-    Epsilon_piv <- rnorm(n = years, 
-                         mean = 0, 
-                         sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))
-    
-    # phenotypic variation - pivotal temperatures
-    Delta_piv <- rnorm(n = years, 
-                       mean = 0, 
-                       sd = sqrt(ag_var_piv / h2_piv))
+    Pivotal_temps[1] <- P_piv[1] + Epsilon_piv[1]
+
     
   } else {
     
