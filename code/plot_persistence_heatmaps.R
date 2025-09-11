@@ -38,12 +38,13 @@ name_to_use <- paste('mature_base_persistence')
 ################################################################################
 
 # make scenario and osr a factor variable
+all_combos$yaxislabs <- factor(parse_number(as.character(all_combos$Scenario)))
 all_combos$Scenario <- factor(all_combos$Scenario, 
                               levels = unique(all_combos$Scenario))
 OSRs <- unique(all_combos$OSR)
 all_combos$OSR <- factor(all_combos$OSR, levels = unique(all_combos$OSR))
 all_combos$xF <- factor(round(1/OSRs - 1, 2), 
-                        levels = round(1/OSRs - 1, 2))
+                        levels = rev(round(1/OSRs - 1, 2)))
 
 # # shorter time scales
 # short <- all_combos
@@ -63,12 +64,12 @@ DF_to_use <- all_combos %>%
   filter(Survive_to == year_to_plot) %>%
   filter(Abundance == 'Mature') %>%
   mutate(TRT = ifelse(Population == 'West Africa', 
-                      'Narrow TRT', 
-                      'Wide TRT')) %>%
+                      'Narrow transitional range', 
+                      'Wide transitional range')) %>%
   mutate(xF = round(1/as.numeric(as.character(OSR)) - 1, 2))
 
 DF_to_use$xF <- factor(DF_to_use$xF, 
-                       levels = as.factor(round(1/as.numeric(as.character(OSRs)) - 1, 2)))
+                       levels = rev(as.factor(round(1/as.numeric(as.character(OSRs)) - 1, 2))))
 
   # filter(Stochasticity == 'white noise') %>%
   # select(Population, Scenario, OSR, Survive_to, Abundance, Probability_mean) %>%
@@ -96,7 +97,7 @@ DF_to_use$xF <- factor(DF_to_use$xF,
 ##### plotting all abundances  #################################################
 fig3 <- ggplot(data = DF_to_use, 
                aes(x = xF, 
-                   y = Scenario, 
+                   y = yaxislabs, 
                    fill = Probability_mean)) +
   geom_tile(color = "white",
             lwd = 1.5,
@@ -110,12 +111,12 @@ fig3 <- ggplot(data = DF_to_use,
                        na.value = 'gray') +
   guides(fill = guide_colourbar(title = "Probability")) +
   xlab('Minimum OSR required for 99% female reproductive success (xF:1M)') +
-  ylab('Increase in temperature (\u00B0C) by year 100') +
+  ylab('Temperature increase \n by year 100 (\u00B0C)') +
   # ggtitle(paste(name_to_use, ': Probability of population persistence \n
   #         (> 10% of starting abundance) by year', year_to_plot, 
   #               sep = '')) +
   facet_grid(
-    rows = vars(Abundance), 
+    # rows = vars(facet_labels), 
     cols = vars(TRT)) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
@@ -134,7 +135,7 @@ ggsave(plot = fig3,
        filename = paste(name_to_use, '_Y', year_to_plot, '.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        # width = 8, height = 12)
-       width = 8, height = 4)
+       width = 8.5, height = 4)
 
 
 # ##### plotting abundance total #################################################
