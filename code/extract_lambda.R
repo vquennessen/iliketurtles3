@@ -158,7 +158,7 @@ for (p in 1:P) {
         SDF <- rbind(SDF, DF)
         
         # print progress update
-        prop <- nrow(SDF) / nrows * 100
+        prop <- round(nrow(SDF) / nrows * 100, 2)
         print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s], 
                     ' - beta ', betas[osr], ' - no SAD, no lambdas - ', prop, 
                     '% of total done!', sep = ''))

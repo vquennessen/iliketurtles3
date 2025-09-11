@@ -29,11 +29,14 @@ lambdas_and_persistence <- base_persistence %>%
   select(Population, Model, Scenario, OSR, Year, Abundance, Persistence) %>%
   right_join(lambdas) %>%
   mutate(TRT = ifelse(Population == 'West Africa', 
-                      'Narrow TRT', 
-                      'Wide TRT')) %>%
+                      'Narrow transitional range', 
+                      'Wide transitional range')) %>%
   mutate(facet_labels = ifelse(Abundance == 'Mature', 
                                'Mature abundance', 
-                               'Total abundance'))
+                               'Total abundance')) %>%
+  mutate(xF = factor(round(1/OSR - 1, 2))) %>%
+  mutate(yaxislabs = factor(parse_number(Scenario)))
+
 
 # %>%
 #   mutate(Lambda_mean = replace(Lambda_mean, Persistence < cutoff, NA)) %>%
@@ -48,12 +51,14 @@ lambdas_and_persistence <- base_persistence %>%
 
 
 # make scenarios factor variable
-lambdas_and_persistence$Scenario <- factor(lambdas_and_persistence$Scenario, 
-                                           levels = unique(lambdas$Scenario))
-lambdas_and_persistence$Abundance <- factor(lambdas_and_persistence$Abundance, 
-                                            levels = unique(lambdas$Abundance))
+# lambdas_and_persistence$Scenario <- factor(lambdas_and_persistence$Scenario, 
+#                                            levels = unique(lambdas$Scenario))
+# lambdas_and_persistence$Abundance <- factor(lambdas_and_persistence$Abundance, 
+#                                             levels = unique(lambdas$Abundance))
 lambdas_and_persistence$OSR <- factor(lambdas_and_persistence$OSR, 
                                       levels = rev(unique(lambdas$OSR)))
+lambdas_and_persistence$xF <- factor(lambdas_and_persistence$xF,
+                                     levels = rev(unique(lambdas_and_persistence$xF)))
 # save as object
 save(lambdas_and_persistence, 
      file = '~/Projects/iliketurtles3/output/lambdas_and_persistence.Rdata')
@@ -77,8 +82,8 @@ SDF_subset_median <- lambdas_and_persistence %>%
                     include.lowest = TRUE,
                     right = FALSE)) 
 
-fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR, 
-                                                    y = Scenario, 
+fig5_median <- ggplot(data = SDF_subset_median, aes(x = xF, 
+                                                    y = yaxislabs, 
                                                     fill = bins)) +
   geom_tile(color = "white",
             lwd = 1.25,
@@ -86,7 +91,7 @@ fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR,
   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
   guides(fill = guide_legend(title = "Final \n growth \n rate", 
                              reverse = TRUE)) +
-  xlab('Minimum operational sex ratio required for 99% female reproductive success') +
+  xlab('Minimum OSR required for 99% female reproductive success (xF:1M)') +
   ylab('Increase in temperature (\u00B0C) \n by year 100') +
   # ggtitle('final 10 yr median growth rate (year 100)') +
   facet_grid(
@@ -106,7 +111,7 @@ fig5_median <- ggplot(data = SDF_subset_median, aes(x = OSR,
 ggsave(plot = fig5_median, 
        filename = paste('final_lambda_median.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 4)
+       width = 8.5, height = 4)
 # # some mature males and females in [1, 1.01) at high temps
 # lambdas_and_persistence %>%
 #   filter(Scenario == '4C') %>%
@@ -128,10 +133,10 @@ ggsave(plot = fig5_median,
 # 
 
 ##### troubleshooting lambda = 1 at end for mature females and males
-load("C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/i like turtles/2025_08_14/P_base/4C/beta20.63/10000_N.Rda")
-
-mature_abundances <- colSums(sims_N[3:4, , , ], dim = 2)
-mature_lambdas <- mature_abundances[2:100, ]/mature_abundances[1:99, ]
+# load("C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/i like turtles/2025_08_14/P_base/4C/beta20.63/10000_N.Rda")
+# 
+# mature_abundances <- colSums(sims_N[3:4, , , ], dim = 2)
+# mature_lambdas <- mature_abundances[2:100, ]/mature_abundances[1:99, ]
 # 
 # to_plot <- reshape2::melt(MF_abundances) 
 # to_plot2 <- reshape2::melt(MF_lambdas) 
@@ -166,42 +171,42 @@ mature_lambdas <- mature_abundances[2:100, ]/mature_abundances[1:99, ]
 
 ##### mean figure ##############################################################
 
-years_to_plot <- 100
-
-SDF_subset_mean <- lambdas_and_persistence %>%
-  filter(Year == years_to_plot) %>%
-  # filter(Stochasticity == 'temperature stochasticity') %>%
-  mutate(bins = cut(Lambda_mean, 
-                    breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
-                    include.lowest = TRUE,
-                    right = FALSE))
-
-fig5a_mean <- ggplot(data = SDF_subset_mean, aes(x = OSR, 
-                                                 y = Scenario, 
-                                                 fill = bins)) +
-  geom_tile(color = "white",
-            lwd = 1.25,
-            linetype = 1) +
-  scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
-  guides(fill = guide_legend(title = "Mean \n Lambda", 
-                             reverse = TRUE)) + 
-  xlab('Operational sex ratio required to fertilize all females') +
-  ylab('Increase in sand temperature (\u00B0C) by year 100') +
-  ggtitle('final mean lambda (year 100)') +
-  facet_grid(rows = vars(Abundance), 
-             cols = vars(Population)) +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank()) +
-  theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
-  theme(axis.title.x = element_text(size = 13, vjust = -3)) +
-  theme(axis.title.y = element_text(size = 13, vjust = 4)) +
-  theme(axis.text = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 10)) +
-  theme(title = element_text(size = 13))
-
-# save to file
-ggsave(plot = fig5a_mean, 
-       filename = paste('final_lambda_mean.png', sep = ''),
-       path = '~/Projects/iliketurtles3/figures/',
-       width = 8, height = 17/3)
+# years_to_plot <- 100
+# 
+# SDF_subset_mean <- lambdas_and_persistence %>%
+#   filter(Year == years_to_plot) %>%
+#   # filter(Stochasticity == 'temperature stochasticity') %>%
+#   mutate(bins = cut(Lambda_mean, 
+#                     breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
+#                     include.lowest = TRUE,
+#                     right = FALSE))
+# 
+# fig5a_mean <- ggplot(data = SDF_subset_mean, aes(x = OSR, 
+#                                                  y = Scenario, 
+#                                                  fill = bins)) +
+#   geom_tile(color = "white",
+#             lwd = 1.25,
+#             linetype = 1) +
+#   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
+#   guides(fill = guide_legend(title = "Mean \n Lambda", 
+#                              reverse = TRUE)) + 
+#   xlab('Operational sex ratio required to fertilize all females') +
+#   ylab('Increase in sand temperature (\u00B0C) by year 100') +
+#   ggtitle('final mean lambda (year 100)') +
+#   facet_grid(rows = vars(Abundance), 
+#              cols = vars(Population)) +
+#   theme_bw() +
+#   theme(panel.grid.major = element_blank(), 
+#         panel.grid.minor = element_blank()) +
+#   theme(plot.margin = unit(c(0.5, 0.25, 1, 1), units = 'cm')) +
+#   theme(axis.title.x = element_text(size = 13, vjust = -3)) +
+#   theme(axis.title.y = element_text(size = 13, vjust = 4)) +
+#   theme(axis.text = element_text(size = 10)) +
+#   theme(strip.text = element_text(size = 10)) +
+#   theme(title = element_text(size = 13))
+# 
+# # save to file
+# ggsave(plot = fig5a_mean, 
+#        filename = paste('final_lambda_mean.png', sep = ''),
+#        path = '~/Projects/iliketurtles3/figures/',
+#        width = 8, height = 17/3)

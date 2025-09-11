@@ -7,7 +7,7 @@ rm(list = ls())
 library(ggplot2)
 
 # source functions
-source('~/Projects/iliketurtles3/code/mating function/OPMs_to_betas.R')
+source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 
 # load in lambdas and persistence object
 load("~/Projects/iliketurtles3/output/lambdas_and_persistence.Rdata")
@@ -30,7 +30,7 @@ scenarios <- c('0.5C', '4.5C')
 
 # osrs
 osrs <- c(0.1, 0.35)
-betas <- OPMs_to_betas(osrs)
+betas <- OSRs_to_betas(osrs)
 
 # filter out stuff we don't want to plot
 median_lambdas_to_plot_over_time <- lambdas_and_persistence %>%
@@ -44,7 +44,9 @@ median_lambdas_to_plot_over_time <- lambdas_and_persistence %>%
   mutate(Lambda_10yr_Q75 = replace(Lambda_10yr_Q75, Persistence < 0.1, NA)) %>%
   mutate(Mating_Function = if_else(as.numeric(as.character(OSR)) < 0.26, 
                                    'Steep', 'Shallow')) %>%
-  mutate(TRT = ifelse(Population == 'West Africa', 'Narrow TRT', 'Wide TRT')) %>%
+  mutate(TRT = ifelse(Population == 'West Africa', 
+                      'Narrow transitional range', 
+                      'Wide transitional range')) %>%
   mutate(facet_labels = ifelse(Abundance == 'Mature', 
                                'Mature abundance', 
                                'Total abundance'))%>%
@@ -89,7 +91,7 @@ fig5b <- ggplot(data = median_lambdas_to_plot_over_time,
   theme(strip.text = element_text(size = 12)) +
   theme(title = element_text(size = 13)) +
   theme(legend.key.width = unit(2.65, "line")) +
-  labs(lty = 'Mating \n Function')
+  labs(lty = 'Mating \n Function', col = 'Temperature \n increase')
 
 # save to file
 ggsave(plot = fig5b, 
