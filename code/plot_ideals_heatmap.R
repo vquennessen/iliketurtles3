@@ -32,95 +32,47 @@ wide_TRT_pM <- round(1/(1 + exp(-k2*(temps - t_piv2))), 5)
 
 # TRTs
 TRTs <- c('Narrow transitional range', 'Wide transitional range')
+M_remigration <- 1.47
+F_remigration <- 3.87
 
-hatchlings <- data.frame(TRT = rep(TRTs, 
-                                   each = length(betas) * length(temps)), 
+hatchlings <- data.frame(TRT = rep(TRTs, each = length(betas) * length(temps)), 
+                         OSR = rep(OSRs, 
+                                   each = length(temps), times = length(TRTs)),
                          Beta = rep(rep(betas, each = length(temps)), 
                                     times = length(TRTs)), 
-                         Temp = rep(temps, 
-                                    times = length(TRTs) * length(betas)), 
+                         Temp = rep(temps, times = length(TRTs) * length(betas)), 
                          Emergence = rep(emergence, 
                                          times = length(TRTs) * length(betas)), 
                          PSR = c(rep(narrow_TRT_pM, times = length(betas)), 
                                  rep(wide_TRT_pM, times = length(betas)))) %>%
-  mutate(nM = 100 * Emergence * PSR) %>%
-  mutate(nF = 100 * Emergence * (1 - PSR)) %>%
-  mutate(breeding_success = pbeta(q = 2*PSR, 
+  mutate(xF = round(1/OSR - 1, 2)) %>%
+  mutate(nM = 100 * PSR / M_remigration) %>%
+  mutate(nF = 100 * (1 - PSR) / F_remigration) %>%
+  mutate(breeding_success = pbeta(q = 2*(nM / (nM + nF)), 
                                     shape1 = 1, 
-                                    shape2 = parse_number(OSRs_to_betas(PSR)))) %>%
+                                    shape2 = Beta)) %>%
   mutate(nEggs = nF * breeding_success * 4.95 * 100.58) %>%
   mutate(nHatchlings = nEggs * emergence)
 
 ideals <- hatchlings %>%
-  group_by(TRT)
-
-DF <- sub_hatchlings %>%
-  mutate() %>%
-  mutate(nHatchlings = nEggs * breeding_success * emergence)
-
-# initialize new DF
-ideals_adjusted <- data.frame(TRT = rep(TRTs, each = length(betas)), 
-                              OSR = rep(OSRs, times = length(TRTs)), 
-                              iTemp = NA, 
-                              iPSR = NA) %>%
-  mutate(xF = round(1/OSR - 1, 2))
-
-
-for (t in 1:length(TRTs)) {
-  
-  sub_hatchlings <- subset(hatchlings, TRT == TRTs[t])
-  
-  for (b in 1:length(betas)) {
-    
-    # fixed number of hatchlings in the clutch
-    H <- 100
-    
-    # # ideal adult sex ratio, taking remigration intervals into account
-    # breeding_success <- pbeta(q = 2*OPMs[b], shape1 = 1, shape2 = betas[b])
-    
-    DF <- sub_hatchlings %>%
-      mutate(breeding_success = pbeta(q = 2*PSR, 
-                                      shape1 = 1, 
-                                      shape2 = betas[b])) %>%
-      mutate(nHatchlings = nEggs * breeding_success * emergence)
-    
-    # which temp gives the highest number of hatchlings
-    iTemp <- DF$Temp[DF$nHatchlings == max(DF$nHatchlings)]
-    
-    iTemp <- DF %>%
-      filter(nHatchlings == max(nHatchlings))
-    
-    # ideal primary sex ratio
-    iPSR <- sub_hatchlings$PSR[sub_hatchlings$Temp == iTemp]
-    
-    # add to dataframe
-    index <- (t - 1)*length(betas) + b
-    ideals_adjusted$iTemp[index] <- iTemp
-    ideals_adjusted$iPSR[index] <- round(iPSR, 3)
-      
-  }
-  
-}
+  group_by(TRT, Beta) %>%
+  filter(nHatchlings == max(nHatchlings)) %>%
+  mutate(xF = round(1/OSR - 1, 2)) 
 
 # make values factors
-ideals_adjusted$OSR <- factor(ideals_adjusted$OSR, 
-                              levels = OSRs)
-ideals_adjusted$TRT <- factor(ideals_adjusted$TRT, 
-                              levels = TRTs)
-ideals_adjusted$xF <- factor(ideals_adjusted$xF, 
-                              levels = rev(unique(ideals_adjusted$xF)))
-ideals_adjusted$xlabs <- paste(ideals_adjusted$xF, '\n (', 
-                               ideals_adjusted$iPSR, ')', sep = '')
+ideals$OSR <- factor(ideals$OSR, levels = OSRs)
+ideals$TRT <- factor(ideals$TRT, levels = TRTs)
+ideals$xF <- factor(ideals$xF, levels = unique(ideals$xF))
 
 # save as table
-save(ideals_adjusted, file = '~/Projects/iliketurtles3/output/ideals_adjusted.Rdata')
+save(ideals, file = '~/Projects/iliketurtles3/output/ideals.Rdata')
 
 
 ##### make the figure ##########################################################
 
 # load ideals object
 # ideals <- read.csv('output/ideals.csv')
-load("~/Projects/iliketurtles3/output/ideals_adjusted.Rdata")
+load("~/Projects/iliketurtles3/output/ideals.Rdata")
 
 # # xaxis labels
 # xlabs <- paste(rep(unique(ideals_adjusted$xF), times = 2), 
@@ -133,25 +85,25 @@ load("~/Projects/iliketurtles3/output/ideals_adjusted.Rdata")
 # ideals_adjusted$xlabs <- xlabs
 
 # adjust dataframe to get other useful columns
-to_plot <- ideals_adjusted %>%
-  mutate(Above_init_temp = as.character(iTemp > 31.8)) %>%
-  mutate(temps_below = replace(iTemp, iTemp <= 31.8, '')) %>%
-  mutate(temps_above = replace(iTemp, iTemp > 31.8, ''))
+to_plot <- ideals %>%
+  mutate(Above_init_temp = as.character(Temp > 31.8)) %>%
+  mutate(temps_below = replace(Temp, Temp <= 31.8, '')) %>%
+  mutate(temps_above = replace(Temp, Temp > 31.8, ''))
 
 # actually do the heatmap thing
 ideal_temps_heatmap <- ggplot(data = to_plot, 
-                              aes(x = xlabs, 
+                              aes(x = xF, 
                                   y = TRT, 
-                                  fill = iTemp, 
+                                  fill = Temp, 
                                   pattern = Above_init_temp)) +
   geom_tile(color = 'white') +
   # scale_x_discrete(labels = xlabs) +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
                        midpoint = 29.2) +
   labs(fill = "Incubation \n temperature \n (\u00B0C)") +
-  xlab("Minimum OSR required for 99% female reproductive success (xF:1M) \n (Associated ideal hatchling proportion male)") +
-  scale_y_discrete(labels = c("Narrow \n transitional range", 
-                              "Wide \n transitional range"
+  xlab("Minimum OSR required for 99% female reproductive success (xF:1M)") +
+  scale_y_discrete(labels = c("Narrow \n transitional \n range", 
+                              "Wide \n transitional \n range"
   )) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
