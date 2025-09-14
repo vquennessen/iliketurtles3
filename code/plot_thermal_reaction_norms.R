@@ -3,6 +3,15 @@ setwd("~/Projects/iliketurtles3")
 
 # load libraries
 library(ggplot2)
+library(viridis)
+library(magrittr) 
+library(dplyr)
+library(patchwork)
+
+# source code
+source('code/mating function/OSRs_to_betas.R')
+
+##### thermal reaction norms ###################################################
 
 # emergence success variables
 hatch_success_A <- 0.86                   # logistic by temp - A
@@ -28,15 +37,15 @@ y2 <- round(1/(1 + exp(-k2*(x - t_piv2))), 5)
 
 
 # make dataframe
-TRN <- data.frame(Temperature = x,
-                  Population = rep(c('West Africa', 
-                                     'Suriname'
+TRN <- data.frame(Temperature = rep(x, times = 2),
+                  Population = rep(c('P2017', 
+                                     'GM2006'
                                      # 'Emergence Success'
-                                     ), each = length(x)),
+                  ), each = length(x)),
                   Proportion_Male = c(y1, 
                                       y2 
                                       # ES
-                                      ))
+                  ))
 
 # WA <- subset(TRN, Model == 'West Africa')
 # SN <- subset(TRN, Model == 'Suriname')
@@ -46,59 +55,141 @@ TRT_lower_narrow <- 27
 TRT_upper_narrow <- 31.4
 TRT_upper_wide <- 34.4
 
+# points
+points <- data.frame(Temperature = c(23.8, 34.4, 27, 31.4, 23.8, 34.4, 27, 31.4), 
+                     Proportion_Male = c(0.05, 0.05, 0.05, 0.05, 0.95, 0.95, 
+                                         0.95, 0.95), 
+                     Population = c('GM2006', 'GM2006', 'P2017', 'P2017', 
+                                    'GM2006', 'GM2006', 'P2017', 'P2017'))
+
+
+colors = c('#FF3300', '#FF3300', '#6600FF', '#6600FF', 
+           '#FF3300', '#FF3300', '#6600FF', '#6600FF')
+
+
 # plot
-fig <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, 
-                              col = Population, lty = Population)) +
+A <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, 
+                            col = Population, lty = Population)) +
   geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
   geom_vline(xintercept = 29.2, col = 'black', lwd = 1.5, lty = 1) +
   geom_vline(xintercept = 31.8, col = 'gray60', lwd = 1, lty = 1) +
-  # geom_vline(xintercept = TRT_lower_narrow, col = '#6600FF', lty = 1, 
-  #            lwd = 0.75, alpha = 0.5) +
-  # geom_vline(xintercept = TRT_upper_narrow, col = '#6600FF', lty = 1, 
-  #            lwd = 0.75, alpha = 0.5) +
-  # geom_vline(xintercept = TRT_upper_wide, col = '#FF3300', lty = 4, 
-  #            lwd = 0.75, alpha = 0.5) +
-  # geom_vline(xintercept = TRT_lower_wide, col = '#FF3300', lty = 4, 
-  #            lwd = 0.75, alpha = 0.5) +
   geom_line(lwd = 2) +
   scale_color_manual(values = c('#FF3300', '#6600FF')) +
   scale_linetype_manual(values = c(4, 1)) +
-  ylab('Proportion hatchlings male') +
+  ylab('Hatchling sex ratio \n (proportion male)') +
   xlab('Incubation temperature (\u00B0C)') +
   theme_bw() +
-  theme(axis.text = element_text(size = 12), 
-        axis.title = element_text(size = 15),
-        # legend.text = element_text(size = 12),
-        # legend.title = element_text(size = 15),
-        # legend.position = 'top',
-        # # legend.position = 'inside', 
-        # # legend.position.inside = c(0.8, 0.75),
-        # legend.key.width = unit(9.63, "line"), 
+  theme(axis.text = element_text(size = 10), 
+        axis.title = element_text(size = 12),
         legend.position = 'none') +
-  annotate("label", x = 39.4, y = 0.1, label = "0.05", size = 5, 
+  annotate("label", 
+           x = c(39.4, 39.4, 39.4, 27.5, 33.5),
+           y = c(0.1, 0.55, 1, 0.2, 0.7), 
+           label = c("0.05", '0.50', '0.95', '29.2 \u00B0C', '31.8 \u00B0C'), 
+           size = 3.5, 
            label.size = 0) +
-  annotate("label", x = 39.4, y = 0.55, label = "0.50", size = 5, 
-           label.size = 0) +
-  annotate("label", x = 39.4, y = 1.00, label = "0.95", size = 5, 
-           label.size = 0) +
-  annotate("label", x = 30.4, y = 0.7, label = "29.2\u00B0C", size = 5,
-           label.size = 0) +
-  annotate("label", x = 33, y = 0.7, label = "31.8\u00B0C", size = 5,
-           label.size = 0) +
-  geom_point(aes(x = 23.8, y = 0.05), colour="#FF3300", size = 5) +
-  geom_point(aes(x = 34.4, y = 0.05), colour="#FF3300", size = 5) +
-  geom_point(aes(x = 27, y = 0.05), colour="#6600FF", size = 5) +
-  geom_point(aes(x = 31.4, y = 0.05), colour="#6600FF", size = 5) +
-  geom_point(aes(x = 23.8, y = 0.95), colour="#FF3300", size = 5) +
-  geom_point(aes(x = 34.4, y = 0.95), colour="#FF3300", size = 5) +
-  geom_point(aes(x = 27, y = 0.95), colour="#6600FF", size = 5) +
-  geom_point(aes(x = 31.4, y = 0.95), colour="#6600FF", size = 5)
+  geom_point(data = points, col = colors, size = 5)
+
+
+A
+
+# # save individual figure
+# ggsave("figures/thermal_reaction_norms.png",
+#        plot = A,
+#        height = 5,
+#        width = 8)
+
+##### hypothetical mating functions ############################################
+
+# values of x to plot
+x <- seq(from = 0, to = 0.5, by = 0.001)
+
+# OSR values
+OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
+xFs <- round(1/OSRs - 1, 2)
+
+# beta values to cycle through
+betas <- as.numeric(OSRs_to_betas(OSRs))
+
+# colors
+colors <- viridis(length(betas) + 1)
+
+# initialise DF
+DF <- data.frame(Operational_Sex_Ratio = rep(x, times = length(betas)), 
+                 Beta = rep(betas, each = length(x)), 
+                 OSR = rep(OSRs, each = length(x)),
+                 xF = rep(xFs, each = length(x)),
+                 Reproductive_Success = NA) 
+
+# CDF function
+for (b in 1:length(betas)) {
   
+  start <- (b - 1)*length(x) + 1
+  stop <- start + length(x) - 1
+  DF$Reproductive_Success[start:stop] <- pbeta(2 * x, 
+                                               shape1 = 1, 
+                                               shape2 = betas[b])
+  
+}
 
-fig
+# make Beta factor
+DF$Beta <- as.factor(DF$Beta)
+DF$xF <- as.factor(DF$xF)
+
+# points dataframe
+points <- data.frame(Operational_Sex_Ratio = OSRs, 
+                     Reproductive_Success = 1, 
+                     Beta = betas)
 
 
-ggsave("figures/thermal_reaction_norms.png",
-       plot = last_plot(),
-       height = 5,
-       width = 8)
+# plot
+B <- ggplot(data = DF, aes(x = Operational_Sex_Ratio, 
+                           y = Reproductive_Success, 
+                           color = Beta)) +
+  geom_hline(yintercept = 0.5, linetype = 2, alpha = 0.5, lwd = 2) +
+  geom_line(lwd = 2) +
+  scale_color_manual(values = rev(colors)[-1], 
+                     labels = OSRs) +
+  # for replacement legend - delete for legend with beta values
+  labs(color = 'Minimum \n OSR needed \n for 99% \n reproductive \n success') +
+  ylab('Reproductive success \n (probability a female mates)') +
+  xlab('Operational sex ratio (OSR)') +
+  geom_point(data = points, 
+             col = rev(colors)[-1], 
+             size = 5) +
+  # ggtitle('Hypothetical mating functions') +
+  theme_bw() +
+  theme(axis.text = element_text(size = 10), 
+        axis.title = element_text(size = 12))
+# theme(axis.title.y = element_text(margin = margin(r = 15, l = 10)), 
+#       axis.title.x = element_text(margin = margin(t = 15, b = 10)), 
+#       plot.title = element_text(margin = margin(b = 10, t = 10), 
+#                                 size = 30), 
+#       axis.text = element_text(size = 20), 
+#       axis.title = element_text(size = 25), 
+#       legend.title = element_text(size = 20), 
+#       legend.text = element_text(size = 20))
+
+B
+
+# # save individual figure to chapter 2 stuff
+# ggsave(filename = '~/Projects/iliketurtles3/figures/betaCDF.png', 
+#        plot = B, 
+#        width = 10, 
+#        height = 6
+# )
+
+##### final figure, thermal reaction norms and mating functions combined #######
+
+# put figures together
+final_fig <- A + B +
+  plot_annotation(tag_levels = 'A', 
+                  tag_prefix = '(', 
+                  tag_suffix = ')')
+
+final_fig
+
+# save
+ggsave(filename = 'figures/population_parameters.png', 
+       plot = final_fig, 
+       width = 12, height = 4)

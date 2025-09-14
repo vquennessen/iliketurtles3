@@ -92,7 +92,7 @@ to_plot <- ideals %>%
 
 # actually do the heatmap thing
 ideal_temps_heatmap <- ggplot(data = to_plot, 
-                              aes(x = xF, 
+                              aes(x = OSR, 
                                   y = TRT, 
                                   fill = Temp, 
                                   pattern = Above_init_temp)) +
@@ -101,7 +101,7 @@ ideal_temps_heatmap <- ggplot(data = to_plot,
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
                        midpoint = 29.2) +
   labs(fill = "Incubation \n temperature \n (\u00B0C)") +
-  xlab("Minimum OSR required for 99% female reproductive success (xF:1M)") +
+  xlab("Minimum OSR required for 99% female reproductive success") +
   scale_y_discrete(labels = c("Narrow \n transitional \n range", 
                               "Wide \n transitional \n range"
   )) +

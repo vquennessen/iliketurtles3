@@ -24,8 +24,8 @@ examples_to_plot <- example_outputs %>%
   filter(Scenario %in% c('0.5C', '4.5C')) %>%
   mutate(Mating_Function = if_else(OSR < 0.26, 
                                    'Steep', 'Shallow')) %>%
-  mutate(TRT = str_replace(TRT, "Narrow", "Narrow TRT"), 
-         TRT = str_replace(TRT, "Wide", "Wide TRT")) %>%
+  mutate(TRT = str_replace(TRT, "Narrow", "Narrow transitional range"), 
+         TRT = str_replace(TRT, "Wide", "Wide transitional range")) %>%
   mutate(Scenario = str_replace(Scenario, "0.5C", "0.5\u00B0C"), 
          Scenario = str_replace(Scenario, "4.5C", "4.5\u00B0C")) %>%
   mutate(Hatchling_xF_Median = round(1/Hatchling_Sex_Ratio_Median - 1, 2)) %>%
@@ -57,9 +57,9 @@ examples_to_plot <- example_outputs %>%
                                     NA)) %>%
   mutate(Mature_xF_Q75 = replace(Mature_xF_Q75, 
                                     Mature_Sex_Ratio_Median < 0.01, 
-                                    NA))
-  
-  
+                                    NA)) %>%
+  mutate(Emergence = 0.86 / (1 + exp(1.7 * (Temperature - 32.7))))
+
   # Alabs <- data.frame(TRT = c('Narrow TRT', 'Wide TRT'), 
   #                     Year = c(25, 25),
   #                     Hatchling_Sex_Ratio_Median = c(0.22, 0.22),
@@ -87,14 +87,14 @@ ideal_0.35_xM <- round(ideal_0.35/(1 - ideal_0.35), 2)
 
 A <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
-                # y = Hatchling_Sex_Ratio_Median, 
-                y = Hatchling_xF_Median, 
+                y = Hatchling_Sex_Ratio_Median,
+                # y = Hatchling_xF_Median, 
                 col = Scenario, 
                 lty = Mating_Function)) +
-  # geom_ribbon(aes(ymin = Hatchling_Sex_Ratio_Q25,
-  #                 ymax = Hatchling_Sex_Ratio_Q75,
-  geom_ribbon(aes(ymin = Hatchling_xF_Q25,
-                  ymax = Hatchling_xF_Q75,
+  geom_ribbon(aes(ymin = Hatchling_Sex_Ratio_Q25,
+                  ymax = Hatchling_Sex_Ratio_Q75,
+  # geom_ribbon(aes(ymin = Hatchling_xF_Q25,
+  #                 ymax = Hatchling_xF_Q75,
                   col = Scenario,
                   fill = Scenario, 
                   lty = Mating_Function),
@@ -103,15 +103,17 @@ A <- ggplot(data = examples_to_plot,
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   facet_grid(cols = vars(TRT)) +
-  # geom_hline(yintercept = ideal_0.1, lty = 2) +
-  # geom_hline(yintercept = ideal_0.35, lty = 1) +
-  geom_hline(yintercept = ideal_0.1_xF, lty = 2) +
-  geom_hline(yintercept = ideal_0.35_xF, lty = 1) +
+  geom_hline(yintercept = ideal_0.1, lty = 2) +
+  geom_hline(yintercept = ideal_0.35, lty = 1) +
+  # geom_hline(yintercept = ideal_0.1_xF, lty = 2) +
+  # geom_hline(yintercept = ideal_0.35_xF, lty = 1) +
   geom_path(linewidth = 0.75) +
+  geom_line(aes(x = Year, y = Emergence, col = Scenario), 
+            lty = 3, linewidth = 1) +
   # ylim(0, 100) +
   guides(col = 'none', fill = 'none', lty = 'none') +
-  # ylab("(A) Median hatchling \n proportion male") +
-  ylab("(A) Median hatchling \n sex ratio (xF:1M)") +
+  ylab("(A) Median hatchling \n proportion male") +
+  # ylab("(A) Median hatchling \n sex ratio (xF:1M)") +
   xlab("") +
   theme_bw()
 # 
@@ -153,14 +155,14 @@ B
 
 C <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
-                # y = Mature_Sex_Ratio_Median, 
-                y = Mature_xF_Median, 
+                y = Mature_Sex_Ratio_Median,
+                # y = Mature_xF_Median, 
                 col = Scenario, 
                 lty = Mating_Function)) +
-  # geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
-  #                 ymax = Mature_Sex_Ratio_Q75,
-  geom_ribbon(aes(ymin = Mature_xF_Q25,
-                  ymax = Mature_xF_Q75,
+  geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
+                  ymax = Mature_Sex_Ratio_Q75,
+  # geom_ribbon(aes(ymin = Mature_xF_Q25,
+  #                 ymax = Mature_xF_Q75,
                   col = NULL,
                   fill = Scenario),
               alpha = 0.25,
@@ -173,8 +175,8 @@ C <- ggplot(data = examples_to_plot,
   # ylim(0, 10) +
   geom_hline(yintercept = 0.1, lty = 2) +
   geom_hline(yintercept = 0.35, lty = 1) +
-  # ylab("(C) Median operational \n proportion male") +
-  ylab("(C) Median operational \n sex ratio (xF:1M)") +
+  ylab("(C) Median operational \n proportion male") +
+  # ylab("(C) Median operational \n sex ratio (xF:1M)") +
   xlab("") +
   theme_bw() +
   theme(strip.text = element_blank())
