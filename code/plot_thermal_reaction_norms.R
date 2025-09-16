@@ -182,7 +182,7 @@ B
 ##### final figure, thermal reaction norms and mating functions combined #######
 
 # put figures together
-final_fig <- A + B +
+final_fig <- B + A +
   plot_annotation(tag_levels = 'A', 
                   tag_prefix = '(', 
                   tag_suffix = ')')
