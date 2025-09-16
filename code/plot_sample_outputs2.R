@@ -13,65 +13,28 @@ library(ggh4x)
 
 # source functions and load data
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
-load("~/Projects/iliketurtles3/output/example_outputs.Rdata")
-load("~/Projects/iliketurtles3/output/ideals.Rdata")
+load("~/Projects/iliketurtles3/output/joined_outputs.Rdata")
 
 ##### clean up data ############################################################
 
-# filter scenarios and OSRs to plot
-examples_to_plot <- example_outputs %>%
-  filter(OSR %in% c(0.1, 0.35)) %>%
-  filter(Scenario %in% c('0.5C', '4.5C')) %>%
-  mutate(Mating_Function = if_else(OSR < 0.26, 
-                                   'Steep', 'Shallow')) %>%
-  mutate(TRT = str_replace(TRT, "Narrow", "Narrow transitional range"), 
-         TRT = str_replace(TRT, "Wide", "Wide transitional range")) %>%
-  mutate(Scenario = str_replace(Scenario, "0.5C", "0.5\u00B0C"), 
-         Scenario = str_replace(Scenario, "4.5C", "4.5\u00B0C")) %>%
-  mutate(Hatchling_xF_Median = round(1/Hatchling_Sex_Ratio_Median - 1, 2)) %>%
-  mutate(Hatchling_xF_Q25 = round(1/Hatchling_Sex_Ratio_Q25 - 1, 2)) %>%
-  mutate(Hatchling_xF_Q75 = round(1/Hatchling_Sex_Ratio_Q75 - 1, 2)) %>%
-  mutate(Mature_xF_Median = round(1/Mature_Sex_Ratio_Median - 1, 2)) %>%
-  mutate(Mature_xF_Q25 = round(1/Mature_Sex_Ratio_Q25 - 1, 2)) %>%
-  mutate(Mature_xF_Q75 = round(1/Mature_Sex_Ratio_Q75 - 1, 2)) %>%
-  mutate(Hatchling_xM_Median = Hatchling_Sex_Ratio_Median/(1 - Hatchling_Sex_Ratio_Median)) %>%
-  mutate(Hatchling_xM_Q25 = Hatchling_Sex_Ratio_Q25/(1 - Hatchling_Sex_Ratio_Q25)) %>%
-  mutate(Hatchling_xM_Q75 = Hatchling_Sex_Ratio_Q75/(1 - Hatchling_Sex_Ratio_Q75)) %>%
-  mutate(Mature_xM_Median = Mature_Sex_Ratio_Median/(1 - Mature_Sex_Ratio_Median)) %>%
-  mutate(Mature_xM_Q25 = Mature_Sex_Ratio_Q25/(1 - Mature_Sex_Ratio_Q25)) %>%
-  mutate(Mature_xM_Q75 = Mature_Sex_Ratio_Q75/(1 - Mature_Sex_Ratio_Q75)) %>%
-  mutate(Hatchling_xF_Median = replace(Hatchling_xF_Median, 
-                                       Hatchling_Sex_Ratio_Median < 0.01, 
-                                       NA)) %>%
-  mutate(Hatchling_xF_Q25 = replace(Hatchling_xF_Q25, 
-                                       Hatchling_Sex_Ratio_Median < 0.01, 
-                                       NA)) %>%
-  mutate(Hatchling_xF_Q75 = replace(Hatchling_xF_Q75, 
-                                    Hatchling_Sex_Ratio_Median < 0.01, 
-                                    NA)) %>%
-  mutate(Mature_xF_Median = replace(Mature_xF_Median, 
-                                    Mature_Sex_Ratio_Median < 0.01, 
-                                       NA)) %>%
-  mutate(Mature_xF_Q25 = replace(Mature_xF_Q25, 
-                                    Mature_Sex_Ratio_Median < 0.01, 
-                                    NA)) %>%
-  mutate(Mature_xF_Q75 = replace(Mature_xF_Q75, 
-                                    Mature_Sex_Ratio_Median < 0.01, 
-                                    NA)) %>%
-  mutate(Emergence = 0.86 / (1 + exp(1.7 * (Temperature - 32.7))))
+# scenarios
+scenarios <- c('0.5\u00B0C', '4.5\u00B0C')
 
-  # Alabs <- data.frame(TRT = c('Narrow TRT', 'Wide TRT'), 
-  #                     Year = c(25, 25),
-  #                     Hatchling_Sex_Ratio_Median = c(0.22, 0.22),
-  #                     Labs = c('A', 'B'))
+# osrs
+osrs <- c(0.1, 0.35)
+betas <- OSRs_to_betas(osrs)
+
+examples_to_plot <- joined_outputs %>%
+  filter(Scenario %in% scenarios) %>%
+  filter(OSR %in% factor(osrs))
 
   # make scenario and OSR a factor
-example_outputs$Scenario <- factor(example_outputs$Scenario, 
-                                   levels = as.factor(unique(example_outputs$Scenario)))
-example_outputs$OSR <- factor(example_outputs$OSR, 
-                              levels = as.factor(unique(example_outputs$OSR)))
-example_outputs$TRT <- factor(example_outputs$TRT, 
-                              levels = as.factor(unique(example_outputs$TRT)))  
+examples_to_plot$Scenario <- factor(examples_to_plot$Scenario, 
+                                   levels = as.factor(unique(examples_to_plot$Scenario)))
+examples_to_plot$OSR <- factor(examples_to_plot$OSR, 
+                              levels = as.factor(unique(examples_to_plot$OSR)))
+examples_to_plot$TRT <- factor(examples_to_plot$TRT, 
+                              levels = as.factor(unique(examples_to_plot$TRT)))  
 
 # ideal hatchling proportions male
 ideal_0.1 <- 0.09997
@@ -102,20 +65,24 @@ A <- ggplot(data = examples_to_plot,
               show.legend = FALSE) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  
   facet_grid(cols = vars(TRT)) +
   geom_hline(yintercept = ideal_0.1, lty = 2) +
   geom_hline(yintercept = ideal_0.35, lty = 1) +
   # geom_hline(yintercept = ideal_0.1_xF, lty = 2) +
   # geom_hline(yintercept = ideal_0.35_xF, lty = 1) +
   geom_path(linewidth = 0.75) +
-  geom_line(aes(x = Year, y = Emergence, col = Scenario), 
+  geom_line(aes(x = Year, y = Emergence_Success, col = Scenario), 
             lty = 3, linewidth = 1) +
   # ylim(0, 100) +
   guides(col = 'none', fill = 'none', lty = 'none') +
   ylab("(A) Median hatchling \n proportion male") +
   # ylab("(A) Median hatchling \n sex ratio (xF:1M)") +
-  xlab("") +
-  theme_bw()
+  labs(x = NULL) +
+  theme_bw() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank())
 # 
 #   geom_text(data = Alabs, 
 #             aes(x = Year, y = Hatchling_Sex_Ratio_Median, label = Labs))
@@ -145,8 +112,11 @@ B <- ggplot(data = examples_to_plot,
   # guides(y = guide_axis_truncated(trunc_lower = c(-Inf, 750000),
   #                                  trunc_upper = c(250000, Inf))) +
   ylab("(B) Median \n hatchling abundance") +
-  xlab("") +
+  labs(x = NULL) +
   theme_bw() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank()) +
   theme(strip.text = element_blank())
 
 B
@@ -177,8 +147,11 @@ C <- ggplot(data = examples_to_plot,
   geom_hline(yintercept = 0.35, lty = 1) +
   ylab("(C) Median operational \n proportion male") +
   # ylab("(C) Median operational \n sex ratio (xF:1M)") +
-  xlab("") +
+  labs(x = NULL) +
   theme_bw() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank()) +
   theme(strip.text = element_blank())
 
 C
@@ -204,8 +177,11 @@ D <- ggplot(data = examples_to_plot,
   geom_path(linewidth = 0.75) +
   guides(col = 'none', fill = 'none', lty = 'none') +
   ylab("(D) Median \n breeding success") +
-  xlab("") +
+  labs(x = NULL) +
   theme_bw() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank()) +
   theme(strip.text = element_blank())
 
 D
@@ -229,16 +205,49 @@ E <- ggplot(data = examples_to_plot,
   geom_path(linewidth = 0.75) +
   ylab("(E) Median \n mature abundance") +
   guides(col = 'none', fill = 'none', lty = 'none') +
+  labs(x = NULL) +
   theme_bw() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank()) +
   theme(strip.text = element_blank())
 
 E
 
-final_fig <- A / B / C / D / E
+##### plot 6: median lambda ####################################################
+
+f <- ggplot(data = examples_to_plot, 
+                aes(x = Year, 
+                    y = Lambda_10yr_median, 
+                    color = Scenario, 
+                    linetype = Mating_Function)) + 
+  # facet_grid(cols = vars(TRT), rows = vars(facet_labels)) +
+  facet_grid(cols = vars(TRT)) +
+  geom_hline(yintercept = 1) +
+  geom_ribbon(aes(ymin = Lambda_10yr_Q25,
+                  ymax = Lambda_10yr_Q75, 
+                  col = NULL, 
+                  fill = Scenario),
+              alpha = 0.25,
+              show.legend = FALSE) +
+  geom_path(lwd = 1) +
+  scale_color_manual(values = c('#00BFC4', '#F8766D')) +
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
+  xlab('Year') +
+  ylab('(F) Median \n mature growth rate') +
+  guides(col = 'none', fill = 'none', lty = 'none') +
+  theme_bw() +
+  theme(strip.text = element_blank())
+  
+f
+
+##### final figure #############################################################
+
+final_fig <- A / B / C / D / E / f
 final_fig
 
 # save to file
 ggsave(plot = final_fig,
        filename = paste('sample_outputs.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 7, height = 9)
+       width = 7, height = 10)
