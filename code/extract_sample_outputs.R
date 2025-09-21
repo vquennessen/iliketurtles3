@@ -214,7 +214,7 @@ median_lambdas_adjusted <- lambdas_and_persistence %>%
   mutate(Lambda_10yr_Q75 = replace(Lambda_10yr_Q75, Persistence < 0.1, NA)) %>%
   mutate(Mating_Function = if_else(as.numeric(as.character(OSR)) < 0.26, 
                                    'Steep', 'Shallow')) %>%
-  select(Scenario, OSR, Year, TRT, Mating_Function,
+  select(Scenario, OSR, Year, TRT, Mating_Function, Persistence,
          Lambda_mean, Lambda_median, Lambda_Q25, Lambda_Q75, 
          Lambda_10yr_mean, Lambda_10yr_median, Lambda_10yr_Q25, Lambda_10yr_Q75) %>%
 mutate(OSR = factor(OSR))
