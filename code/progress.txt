@@ -22,3 +22,63 @@
 2025-09-04 20:05:58 - P_evol_piv - 2.5C - beta 3.82 - 5 sims - 100 years - 60% done!
 2025-09-04 20:05:58 - P_evol_piv - 2.5C - beta 3.82 - 5 sims - 100 years - 80% done!
 2025-09-04 20:05:59 - P_evol_piv - 2.5C - beta 3.82 - 5 sims - 100 years - 100% done!
+2025-09-18 13:28:45.761037 - P_base - 0.5C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:46.685358 - P_base - 0.5C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:46.68578 - P_base - 1C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:47.896255 - P_base - 1C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:47.896764 - P_base - 1.5C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:49.146652 - P_base - 1.5C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:49.147056 - P_base - 2C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:50.419263 - P_base - 2C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:50.419691 - P_base - 2.5C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:51.668943 - P_base - 2.5C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:51.669393 - P_base - 3C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:52.903617 - P_base - 3C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:52.903998 - P_base - 3.5C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:54.489048 - P_base - 3.5C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:54.48948 - P_base - 4C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:55.71664 - P_base - 4C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:55.717019 - P_base - 4.5C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:56.91689 - P_base - 4.5C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:56.917261 - P_base - 5C - beta 2.86 - 5 sims - 100 years
+2025-09-18 13:28:58.177623 - P_base - 5C - beta 2.86 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:58.178005 - P_base - 0.5C - beta 2 - 5 sims - 100 years
+2025-09-18 13:28:59.434624 - P_base - 0.5C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:28:59.434993 - P_base - 1C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:00.132907 - P_base - 1C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:00.133352 - P_base - 1.5C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:01.36012 - P_base - 1.5C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:01.360508 - P_base - 2C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:02.581439 - P_base - 2C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:02.581851 - P_base - 2.5C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:03.831302 - P_base - 2.5C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:03.831688 - P_base - 3C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:05.051603 - P_base - 3C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:05.051991 - P_base - 3.5C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:06.276136 - P_base - 3.5C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:06.276508 - P_base - 4C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:07.515243 - P_base - 4C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:07.515626 - P_base - 4.5C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:08.727242 - P_base - 4.5C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:08.727621 - P_base - 5C - beta 2 - 5 sims - 100 years
+2025-09-18 13:29:09.957007 - P_base - 5C - beta 2 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:09.957442 - P_base - 0.5C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:11.221684 - P_base - 0.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:11.222059 - P_base - 1C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:11.87832 - P_base - 1C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:11.87869 - P_base - 1.5C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:12.756634 - P_base - 1.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:12.757021 - P_base - 2C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:13.992751 - P_base - 2C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:13.993142 - P_base - 2.5C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:15.178372 - P_base - 2.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:15.178958 - P_base - 3C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:15.878662 - P_base - 3C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:15.879046 - P_base - 3.5C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:16.770912 - P_base - 3.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:16.771301 - P_base - 4C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:17.982212 - P_base - 4C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:17.982588 - P_base - 4.5C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:19.190442 - P_base - 4.5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
+2025-09-18 13:29:19.190836 - P_base - 5C - beta 1.17 - 5 sims - 100 years
+2025-09-18 13:29:20.401109 - P_base - 5C - beta 1.17 - 5 sims - 100 years - no SAD, all done!
