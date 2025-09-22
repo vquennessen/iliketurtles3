@@ -17,7 +17,7 @@ library(tidyr)
 # which computer am I using?
 desktop <- TRUE
 
-folder <- '2025_08_14'
+folder <- '2025_09_19_red_noise'
 
 # model(s)
 # models <- c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
@@ -237,7 +237,7 @@ for (p in 1:P) {
           SDF <- rbind(SDF, DF)        
           
           # print progress update
-          prop <- nrow(SDF) / nrows * 100
+          prop <- round(nrow(SDF) / nrows * 100, 2)
           print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s], 
                       ' - beta ', betas[osr], ' - ', abundances[a], 
                       ' - lambdas done - ', prop, '% of total done!', sep = ''))
@@ -263,4 +263,4 @@ lambdas <- SDF
 #                            sep = ''))
 
 # save dataframe as R object - cluster
-save(lambdas, file = '/home/quennessenv/iliketurtles3/output/lambdas.Rdata')
+save(lambdas, file = '/home/quennessenv/iliketurtles3/output/red_noise_lambdas.Rdata')

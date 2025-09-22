@@ -15,7 +15,7 @@ source('/home/quennessenv/iliketurtles3/code/mating function/OSRs_to_betas.R')
 computer <- 'cluster'
 
 # folder names for building paths
-folder <- c('2025_08_14')
+folder <- c('2025_09_19_red_noise')
 
 # model names for building paths
 models <- c('P_base', 'GM_base')
@@ -37,7 +37,7 @@ scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
 # scenarios <- paste(c(1), 'C', sep = '')
 
 # operational sex ratios to get 100% reproductive success
-osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
+osrs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
 # osrs <- c(0.25)
 betas <- OSRs_to_betas(osrs)
 
@@ -172,7 +172,7 @@ for (p in 1:P) {
         }
                   
         # print progress update
-          prop <- (index + A - 1) / (nrows) * 100
+          prop <- round((index + A - 1) / (nrows) * 100, 2)
           print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s], 
                       ' - beta ', betas[b], ' - persistence done - ', prop, 
                       '% of total done!', sep = ''))
@@ -192,7 +192,7 @@ SDF$Scenario <- factor(SDF$Scenario, levels = scenarios)
 base_persistence <- SDF
 save(base_persistence,
      # file = '~/Projects/iliketurtles3/output/base_persistence.Rdata')
-file = '/home/quennessenv/iliketurtles3/output/base_persistence.Rdata')
+file = '/home/quennessenv/iliketurtles3/output/red_noise_base_persistence.Rdata')
 
 # # save dataframe as R object - evolution
 # evolution_persistence <- SDF

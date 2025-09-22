@@ -13,7 +13,7 @@ library(tidyr)
 # EDIT dataframes to load up ###################################################
 
 # load in persistence and lambda object
-load("~/Projects/iliketurtles3/output/joined_outputs.Rdata")
+load("~/Projects/iliketurtles3/output/red_noise_joined_outputs.Rdata")
 
 # what year to plot
 year_to_plot <- 100
@@ -104,7 +104,7 @@ final_fig
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('final_persistence_and_lambda.png', sep = ''),
+       filename = paste('red_noise_final_persistence_and_lambda.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 6)
 

@@ -11,7 +11,7 @@ library(patchwork)
 library(tidyverse)
 
 # source functions and objects
-load("~/Projects/iliketurtles3/output/lambdas_and_persistence.Rdata")
+load("~/Projects/iliketurtles3/output/red_noise_lambdas_and_persistence.Rdata")
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 
 ##### abundances and sex ratios ################################################
@@ -19,7 +19,7 @@ source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
 # category titles
 TRTs <- c('Narrow transitional range', 'Wide transitional range')
 ages <- c('Hatchling', 'Mature')
-folder <- '2025_08_14'
+folder <- '2025_09_19_red_noise'
 years <- 100
 nsims <- 10000
 temp_mu <- 31.8
@@ -152,6 +152,11 @@ for (t in 1:length(TRTs)) {
         subset$Mature_Sex_Ratio_Q25 <- rowQuantiles(OSR, prob = 0.25, na.rm = TRUE)
         subset$Mature_Sex_Ratio_Q75 <- rowQuantiles(OSR, prob = 0.75, na.rm = TRUE)
         
+        # update tracker
+        print(paste(model, ' - ', scenarios[s], ' - beta ', betas[b], 
+                    ' - done!', sep = ''))
+        print(paste('length SDF = ', nrow(SDF), sep = ''))
+        
       } else {
         
         # add values to data frame
@@ -168,15 +173,15 @@ for (t in 1:length(TRTs)) {
         subset$Mature_Sex_Ratio_Q25 <- NA
         subset$Mature_Sex_Ratio_Q75 <- NA
         
-      }
-
-        # tack subset onto SDF
-        SDF <- rbind(SDF, subset)
-        
         # update tracker
         print(paste(model, ' - ', scenarios[s], ' - beta ', betas[b], 
                     ' - was all NA (and done)', sep = ''))
         print(paste('length SDF = ', nrow(SDF), sep = ''))
+        
+      }
+
+        # tack subset onto SDF
+        SDF <- rbind(SDF, subset)
         
       }
       
@@ -201,7 +206,7 @@ abundance_sex_ratio_outputs <- SDF %>%
 
 # save abundance and sex ratios object as its own thing
 save(abundance_sex_ratio_outputs, 
-     file = '~/Projects/iliketurtles3/output/abundance_sex_ratio_outputs.Rdata')
+     file = '~/Projects/iliketurtles3/output/red_noise_abundance_sex_ratio_outputs.Rdata')
 
 ##### plotting parameters ######################################################
 
@@ -224,4 +229,4 @@ joined_outputs <- abundance_sex_ratio_outputs %>%
   mutate(Scenario = paste(parse_number(Scenario), '\u00B0C', sep = '')) 
 
 save(joined_outputs, 
-     file = '~/Projects/iliketurtles3/output/joined_outputs.Rdata')
+     file = '~/Projects/iliketurtles3/output/red_noise_joined_outputs.Rdata')
