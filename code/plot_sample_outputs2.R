@@ -48,7 +48,7 @@ ideal_0.35_xM <- round(ideal_0.35/(1 - ideal_0.35), 2)
 
 ##### plot 1: hatchling sex ratios #############################################
 
-A <- ggplot(data = examples_to_plot, 
+HSR <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
                 y = Hatchling_Sex_Ratio_Median,
                 # y = Hatchling_xF_Median, 
@@ -76,7 +76,7 @@ A <- ggplot(data = examples_to_plot,
             lty = 3, linewidth = 1) +
   # ylim(0, 100) +
   guides(col = 'none', fill = 'none', lty = 'none') +
-  ylab("(A) Median hatchling \n proportion male") +
+  ylab("(A) Median \n hatchling sex ratio") +
   # ylab("(A) Median hatchling \n sex ratio (xF:1M)") +
   labs(x = NULL) +
   theme_bw() +
@@ -87,11 +87,11 @@ A <- ggplot(data = examples_to_plot,
 #   geom_text(data = Alabs, 
 #             aes(x = Year, y = Hatchling_Sex_Ratio_Median, label = Labs))
 
-A
+HSR
 
 ##### plot 2: hatchling abundance ##############################################
 
-B <- ggplot(data = examples_to_plot, 
+HA <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
                 y = Hatchling_Abundance_Median, 
                 col = Scenario, 
@@ -111,7 +111,7 @@ B <- ggplot(data = examples_to_plot,
   guides(col = 'none', fill = 'none', lty = 'none') +
   # guides(y = guide_axis_truncated(trunc_lower = c(-Inf, 750000),
   #                                  trunc_upper = c(250000, Inf))) +
-  ylab("(B) Median \n hatchling abundance") +
+  ylab("(D) Median \n hatchling abundance") +
   labs(x = NULL) +
   theme_bw() +
   theme(axis.title.x = element_blank(),
@@ -119,11 +119,11 @@ B <- ggplot(data = examples_to_plot,
         axis.ticks.x = element_blank()) +
   theme(strip.text = element_blank())
 
-B
+HA
 
 ##### plot 2: operational sex ratios ###########################################
 
-C <- ggplot(data = examples_to_plot, 
+OSR <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
                 y = Mature_Sex_Ratio_Median,
                 # y = Mature_xF_Median, 
@@ -145,7 +145,7 @@ C <- ggplot(data = examples_to_plot,
   # ylim(0, 10) +
   geom_hline(yintercept = 0.1, lty = 2) +
   geom_hline(yintercept = 0.35, lty = 1) +
-  ylab("(C) Median operational \n proportion male") +
+  ylab("(B) Median \n operational sex ratio") +
   # ylab("(C) Median operational \n sex ratio (xF:1M)") +
   labs(x = NULL) +
   theme_bw() +
@@ -154,11 +154,11 @@ C <- ggplot(data = examples_to_plot,
         axis.ticks.x = element_blank()) +
   theme(strip.text = element_blank())
 
-C
+OSR
 
 ##### plot 4: breeding success #################################################
 
-D <- ggplot(data = examples_to_plot, 
+BS <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
                 y = Breeding_Success_Median, 
                 col = Scenario, 
@@ -176,7 +176,7 @@ D <- ggplot(data = examples_to_plot,
   # geom_hline(yintercept = ideal_0.35, lty = 1) +
   geom_path(linewidth = 0.75) +
   guides(col = 'none', fill = 'none', lty = 'none') +
-  ylab("(D) Median \n breeding success") +
+  ylab("(C) Median \n breeding success") +
   labs(x = NULL) +
   theme_bw() +
   theme(axis.title.x = element_blank(),
@@ -184,11 +184,11 @@ D <- ggplot(data = examples_to_plot,
         axis.ticks.x = element_blank()) +
   theme(strip.text = element_blank())
 
-D
+BS
 
 ##### plot 5: mature abundance #################################################
 
-E <- ggplot(data = examples_to_plot, 
+MA <- ggplot(data = examples_to_plot, 
             aes(x = Year, 
                 y = Mature_Abundance_Median, 
                 col = Scenario, 
@@ -212,11 +212,11 @@ E <- ggplot(data = examples_to_plot,
         axis.ticks.x = element_blank()) +
   theme(strip.text = element_blank())
 
-E
+MA
 
 ##### plot 6: median lambda ####################################################
 
-f <- ggplot(data = examples_to_plot, 
+lambda <- ggplot(data = examples_to_plot, 
                 aes(x = Year, 
                     y = Lambda_10yr_median, 
                     color = Scenario, 
@@ -239,11 +239,11 @@ f <- ggplot(data = examples_to_plot,
   theme_bw() +
   theme(strip.text = element_blank())
   
-f
+lambda
 
 ##### final figure #############################################################
 
-final_fig <- A / B / C / D / E / f
+final_fig <- HSR / OSR / BS / HA / MA / lambda 
 final_fig
 
 # save to file
