@@ -14,6 +14,7 @@ library(lgcp)
 
 # source functions
 source('run_base_model.R')
+# source('run_base_model2.R')
 source('base_model.R')
 source('initialize_arrays.R')
 source('initialize_population.R')
@@ -22,26 +23,29 @@ source('pop_dynamics.R')
 source('mating function/OSRs_to_betas.R')
 source('evolution.R')
 source('emergence_success.R')
-source('proportion_male.R')
+source('probability_male.R')
 source('conservation.R')
+
+# seed <- 3516856
+# set.seed(seed)
 
 # models
 # models <- c('P_base', 'P_evol_piv', 'P_evol_piv_high_H',
 #             'P_evol_threshold', 'P_evol_threshold_high_H',
 #             'GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H',
 #             'GM_evol_threshold', 'GM_evol_threshold_high_H')
-models <- c('P_base')
+models <- c('P_base', 'GM_base')
 
 # years to run the model for
 years <- 100
 
 # total temp increases
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-# scenarios <- c(2.5)
+# scenarios <- c(5)
 
 # OSR values to get full fertilization of females
-# OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
-OSRs <- c(0.4, 0.45, 0.49)
+OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
+# OSRs <- c(0.45)
 
 # mating function beta values
 betas <- as.numeric(OSRs_to_betas(OSRs))
@@ -53,7 +57,7 @@ intensity <- c(1)
 frequency <- c(1)
 
 # number of simulations to run
-nsims <- c(5)
+nsims <- c(10)
 
 # make dataframe of all combinations of arguments
 DF <- expand.grid(models, 
@@ -75,4 +79,6 @@ for (i in 1:nrow(DF)) {
 }
 
 ########### do the runs ########################################################
+tic()
 lapply(X = arguments, FUN = run_base_model)
+toc()

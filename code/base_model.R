@@ -15,7 +15,8 @@ base_model <- function(scenario, beta, years, max_age,
                        conservation_action, frequency, intensity, effect_size) {
   
   ##### source initialized arrays ##############################################
-  
+  # seed <- 1325633
+  # set.seed(seed)
   init_output <- initialize_arrays(scenario, years, max_age, 
                                    IF_init, IM_init, MF_init, MM_init,
                                    M, F_remigration_int, M_remigration_int, 
@@ -45,10 +46,12 @@ base_model <- function(scenario, beta, years, max_age,
   conservation_years <- init_output[[16]]   # years for conservation action
   
   ##### model ##################################################################
+  # set.seed(seed)
   for (y in 2:years) {
     
     # population dynamics
     # survival for each age 
+    # set.seed(seed)
     output_pd <- pop_dynamics(N, max_age, y, M,
                               IF_survival, IM_survival, 
                               MF_survival, MM_survival,
@@ -78,13 +81,13 @@ base_model <- function(scenario, beta, years, max_age,
     }
     
     # reproduction
+    # set.seed(seed)
     rep_output <- reproduction(N, M, y, beta, max_age, breeding_F, breeding_M,
                                clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                                emergence_success_A, emergence_success_k, 
                                emergence_success_t0, 
                                season_temp_mus, clutch_temp_sd,
                                k_piv, Pivotal_temps, Threshold_temps, 
-                               T_threshold, 
                                conservation_action, conservation_years, 
                                intensity, effect_size)
     
