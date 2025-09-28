@@ -11,6 +11,7 @@ library(magrittr)
 library(readr)
 library(lubridate)
 library(lgcp)
+library(tictoc)
 
 # source functions
 source('run_base_model.R')

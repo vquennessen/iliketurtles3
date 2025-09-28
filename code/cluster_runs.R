@@ -21,7 +21,7 @@ source('pop_dynamics.R')
 source('mating function/OSRs_to_betas.R')
 source('evolution.R')
 source('emergence_success.R')
-source('proportion_male.R')
+source('probability_male.R')
 source('conservation.R')
 
 # models
