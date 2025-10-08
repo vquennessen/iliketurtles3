@@ -76,8 +76,10 @@ run_base_model <- function(arguments) {
   k_piv <- ifelse(model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
                                'P_evol_threshold', 'P_evol_threshold_high_H', 
                                'P_conservation'), 
-                  -1.34, 
-                  -0.561)
+                  # -1.34, 
+                  -1.543, 
+                  # -0.561
+                  -1.005)
   
   evolution_piv <- ifelse(model %in% c('P_evol_piv', 'P_evol_piv_high_H', 
                                        'GM_evol_piv', 'GM_evol_piv_high_H'), 

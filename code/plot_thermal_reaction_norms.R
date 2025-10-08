@@ -193,3 +193,106 @@ final_fig
 ggsave(filename = 'figures/population_parameters.png', 
        plot = final_fig, 
        width = 12, height = 4)
+
+##### new k values 10/6/2025 ###################################################
+# temperatures
+x <- seq(from = 25, to = 35, by = 0.01)
+
+# patricio et al.
+t_piv1 <- 29.2
+# k1 <- -1.4 # Patricio et al 2017, TRT 
+k1.2 <- -1.543
+y1.2 <- round(1/(1 + exp(-k1.2*(x - t_piv1))), 5)
+
+# embryogrowth (just Godfrey and Mrosovsky 2006)
+t_piv2 <- 29.2
+k2.2 <- -1.005
+y2.2 <- round(1/(1 + exp(-k2.2*(x - t_piv2))), 5)
+
+# emergence success
+# ES <- hatch_success_A / (1 + exp(-hatch_success_k * (x - hatch_success_t0)))
+
+
+# make dataframe
+TRN2 <- data.frame(Temperature = rep(x, times = 2),
+                  Population = rep(c('P2017', 
+                                     'GM2006'
+                                     # 'Emergence Success'
+                  ), each = length(x)),
+                  Proportion_Male = c(y1.2, 
+                                      y2.2 
+                                      # ES
+                  ))
+
+# WA <- subset(TRN, Model == 'West Africa')
+# SN <- subset(TRN, Model == 'Suriname')
+
+TRT_lower_wide <- TRN2 %>% filter(Population == 'GM2006') %>% 
+  filter(Proportion_Male <= 0.95) %>% arrange(Temperature) %>% head(1) %>% 
+  select(Temperature) %>% as.numeric
+# 26.28
+TRT_upper_wide <- TRN2 %>% filter(Population == 'GM2006') %>% 
+  filter(Proportion_Male >= 0.05) %>% arrange(desc(Temperature)) %>% head(1) %>% 
+  select(Temperature) %>% as.numeric
+# 32.12
+TRT_lower_narrow <- TRN2 %>% filter(Population == 'P2017') %>% 
+  filter(Proportion_Male <= 0.95) %>% arrange(Temperature) %>% head(1) %>% 
+  select(Temperature) %>% as.numeric
+# 27.3
+TRT_upper_narrow <- TRN2 %>% filter(Population == 'P2017') %>% 
+  filter(Proportion_Male >= 0.05) %>% arrange(desc(Temperature)) %>% head(1) %>% 
+  select(Temperature) %>% as.numeric
+# 31.1
+
+TRT_wide <- TRT_upper_wide - TRT_lower_wide
+# 5.84
+TRT_narrow <- TRT_upper_narrow - TRT_lower_narrow
+# 3.8
+
+# points
+points <- data.frame(Temperature = c(TRT_lower_wide, TRT_upper_wide, 
+                                     TRT_lower_narrow, TRT_upper_narrow, 
+                                     TRT_lower_wide, TRT_upper_wide, 
+                                     TRT_lower_narrow, TRT_upper_narrow), 
+                     Proportion_Male = c(0.05, 0.05, 
+                                         0.05, 0.05, 
+                                         0.95, 0.95, 
+                                         0.95, 0.95), 
+                     Population = c('GM2006', 'GM2006', 
+                                    'P2017', 'P2017', 
+                                    'GM2006', 'GM2006', 
+                                    'P2017', 'P2017'))
+
+
+colors = c('#FF3300', '#FF3300', 
+           '#6600FF', '#6600FF', 
+           '#FF3300', '#FF3300', 
+           '#6600FF', '#6600FF')
+
+
+# plot
+A <- ggplot(data = TRN2, aes(x = Temperature, y = Proportion_Male, 
+                            col = Population, lty = Population)) +
+  geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
+  geom_vline(xintercept = 29.2, col = 'black', lwd = 1.5, lty = 1) +
+  geom_vline(xintercept = 31.8, col = 'gray60', lwd = 1, lty = 1) +
+  geom_line(lwd = 2) +
+  scale_color_manual(values = c('#FF3300', '#6600FF')) +
+  scale_linetype_manual(values = c(4, 1)) +
+  ylab('Hatchling sex ratio \n (proportion male)') +
+  xlab('Incubation temperature (\u00B0C)') +
+  xlim(c(25, 35)) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 10), 
+        axis.title = element_text(size = 12),
+        legend.position = 'none') +
+  annotate("label", 
+           x = c(39.4, 39.4, 39.4, 27.5, 33.5),
+           y = c(0.1, 0.55, 1, 0.2, 0.7), 
+           label = c("0.05", '0.50', '0.95', '29.2 \u00B0C', '31.8 \u00B0C'), 
+           size = 3.5, 
+           label.size = 0) +
+  geom_point(data = points, col = colors, size = 5)
+
+
+A

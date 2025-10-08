@@ -94,4 +94,4 @@ for (i in 1:nrow(DF)) {
 ########### do the runs ########################################################
 mclapply(X = arguments, 
          FUN = run_base_model, 
-         mc.cores = 25)
+         mc.cores = 20)

@@ -87,15 +87,32 @@ initialize_arrays <- function(scenario, years, max_age,
                        mean = 0, 
                        sd = sqrt(ag_var_piv / h2_piv)) 
     
-    # initial genetic vector, one for each age, updated each year
-    G_piv <- rnorm(n = max_age, 
-                   mean = T_piv, 
-                   sd = sqrt(ag_var_piv / 2))
+    # initial genes arrays, mu and sd, dimensions sex * age * years
+    genes_piv_mu <- array(rep(NA, times = 4 * max_age * years), 
+                       dim = c(4, max_age, years))
+    genes_piv_sd <- array(rep(NA, times = 4 * max_age * years), 
+                          dim = c(4, max_age, years))
+    # year 1
+    genes_piv_mu[, , 1] <- rnorm(n = 4*max_age, 
+                                    mean = T_piv, 
+                                    sd = sqrt(ag_var_piv / 2))
     
-    # initial expected phenotypes vector, one for each age, updated each year
-    P_piv <- G_piv + rnorm(n = max_age, 
-                           mean = 0, 
-                           sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))
+    # G_piv <- rnorm(n = max_age, 
+    #                mean = T_piv, 
+    #                sd = sqrt(ag_var_piv / 2))
+    
+    # initial phenotype array, dimensions = sex * max_age * years
+    # phenotype = expected pivotal temperature
+    phen_piv <- array(rep(NA, times = 4 * max_age * years), 
+                      dim = c(4, max_age, years))
+    
+    # year 1
+    
+    
+    # # initial expected phenotypes vector, one for each age, updated each year
+    # P_piv <- G_piv + rnorm(n = max_age, 
+    #                        mean = 0, 
+    #                        sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))
     
     # initialize observed hatchling pivotal temperatures vector, one for each 
     # year
