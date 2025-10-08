@@ -45,7 +45,7 @@ DF <- expand.grid(models,
                   betas,
                   num_sims,
                   burn_ins) %>%
-  arrange(Var4)
+  arrange(desc(Var4), desc(betas))
 
 # initialize empty arguments list
 arguments <- list()

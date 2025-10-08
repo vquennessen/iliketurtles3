@@ -54,7 +54,7 @@ initialize_population_test <- function(arguments) {
   emergence_success_A <- 0.86               # logistic by temp - A
   emergence_success_k <- -1.7               # logistic by temp - beta
   emergence_success_t0 <- 32.7              # logistic by temp - t0
-  T_piv <- 29.2                             # thermal reaction norm midpoint
+  T_piv <- 29.4                             # thermal reaction norm midpoint
   Pivotal_temps <- rep(T_piv, burn_in)
   T_threshold <- 35                         # lethal temperature threshold
   Threshold_temps <- rep(T_threshold, burn_in)
@@ -118,9 +118,9 @@ initialize_population_test <- function(arguments) {
                                'P_evol_threshold', 'P_evol_threshold_high_H', 
                                'P_conservation'), 
                   # -1.34, 
-                  -1.543, 
+                  -1.54, 
                   # -0.561
-                  -1.005)
+                  -0.77)
   
   # write to progress text file
   update <- paste(lubridate::now(), ' - ', model, ' - beta ', 
