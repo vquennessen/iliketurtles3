@@ -66,10 +66,10 @@ run_base_model <- function(arguments) {
   clutches_sd <- 2.09                       # sd of # of clutches/F/season
   eggs_mu <- 100.58                         # mean number of eggs/clutch - 100.58
   eggs_sd <- 22.61                          # sd of number of eggs/clutch - 22.61
-  emergence_success_A <- 0.86                   # logistic by temp - A
-  emergence_success_k <- -1.7                   # logistic by temp - beta
-  emergence_success_t0 <- 32.7                  # logistic by temp - t0
-  T_piv <- 29.2                             # thermal reaction norm midpoint
+  emergence_success_A <- 0.86               # logistic by temp - A
+  emergence_success_k <- -1.7               # logistic by temp - beta
+  emergence_success_t0 <- 32.7              # logistic by temp - t0
+  T_piv <- 29.4                             # thermal reaction norm midpoint
   T_threshold <- 35                         # lethal temperature threshold
   
   # pivotal temperature and evolution stats
@@ -77,9 +77,9 @@ run_base_model <- function(arguments) {
                                'P_evol_threshold', 'P_evol_threshold_high_H', 
                                'P_conservation'), 
                   # -1.34, 
-                  -1.543, 
+                  -1.54, 
                   # -0.561
-                  -1.005)
+                  -0.77)
   
   evolution_piv <- ifelse(model %in% c('P_evol_piv', 'P_evol_piv_high_H', 
                                        'GM_evol_piv', 'GM_evol_piv_high_H'), 

@@ -19,7 +19,7 @@ CM_all <- DatabaseTSD %>%
 # CM_all$Correction.factor = 0.50
 
 # load in Patricio data
-patricio <- read.csv("C://Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/Dr Ana Caldas Patricio/logit_points.csv")
+patricio <- read.csv("C://Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/Dr Ana Caldas Patricio/logit_points.csv")
 P_DF <- patricio %>%
   filter(!is.na(males)) %>%
   mutate(Species = "Chelonia mydas", 
@@ -124,43 +124,6 @@ tsdL2 <- with (CM_all, tsd(males=Males, females=Females,
 # [1] "The lower limit of transitional range of temperatures is 27.716 CI95% 27.716;27.716"
 # [1] "The upper limit of transitional range of temperatures is 31.020 CI95% 31.020;31.020"
 # [1] "The S parameter value is -0.561"
-
-# load libraries
-library(ggplot2)
-
-# temperatures
-x <- seq(from = 20, to = 40, length = 1000)
-
-# patricio et al.
-t_piv1 <- 29.2
-k1 <- -1.4
-y1 <- 1/(1 + exp(-k1*(x - t_piv1)))
-
-# embryogrowth (all greens)
-t_piv2 <- 29.4
-k2 <- -0.56
-y2 <- 1/(1 + exp(-k2*(x - t_piv2)))
-
-# both together
-t_piv3 <- 29.388
-# t_piv3 <- 29.290
-k3 <- -0.615
-# k3 <- -0.652
-y3 <- 1/(1 + exp(-k3*(x - t_piv3)))
-
-# make dataframe
-TRN <- data.frame(Temperature = x,
-                  Model = rep(c('Patricio', 'embryogrowth', 'Combined'), each = 1000),
-                  Proportion_Male = c(y1, y2, y3))
-
-# plot
-ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, col = Model)) +
-  geom_line(lwd = 2) +
-  geom_hline(yintercept = c(0.05, 0.50, 0.95), lty = 2) +
-  geom_point(data = P_DF2, aes(x = Incubation.temperature, y = Males/Sexed), 
-             col = 'cornflowerblue') +
-  geom_point(data = CM_all, aes(x = Incubation.temperature, y = Males/Sexed), 
-             col = 'green3')
 
 
 
