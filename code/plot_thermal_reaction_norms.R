@@ -167,7 +167,7 @@ B <- ggplot(data = DF, aes(x = Operational_Sex_Ratio,
                      labels = OSRs) +
   # for replacement legend - delete for legend with beta values
   labs(color = 'Minimum \n OSR needed \n for 99% \n reproductive \n success') +
-  ylab('Reproductive success \n (probability a female mates)') +
+  ylab('Reproductive success \n (probability females find a mate)') +
   xlab('Operational sex ratio (OSR)') +
   geom_point(data = points, 
              col = rev(colors)[-1], 
@@ -277,21 +277,23 @@ points <- data.frame(Temperature = c(TRT_lower_wide, TRT_upper_wide,
                                     'Wide TRT', 'Wide TRT', 
                                     'Narrow TRT', 'Narrow TRT'))
 
+wide_color <- 'red3'
+narrow_color <- 'orange1'
 
-colors = c('#6600FF', '#6600FF', '#FF3300', '#FF3300', 
-           '#6600FF', '#6600FF', '#FF3300', '#FF3300')
+cols = c(wide_color, wide_color, narrow_color, narrow_color, 
+           wide_color, wide_color, narrow_color, narrow_color)
 
 
 # plot
 A <- ggplot(data = TRN2, aes(x = Temperature, y = Proportion_Male, 
                             col = Population, lty = Population)) +
-  geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
-  geom_vline(xintercept = 29.2, col = 'black', lwd = 1.5, lty = 1) +
-  geom_vline(xintercept = 31.8, col = 'gray60', lwd = 1, lty = 1) +
+  geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1, col = 'gray60') +
+  geom_vline(xintercept = 29.4, col = 'black', lwd = 1, lty = 1) +
+  geom_vline(xintercept = 31.8, col = 'gray50', lwd = 1, lty = 3) +
   geom_line(lwd = 1.25) +
-  scale_color_manual(values = c('#FF3300', '#6600FF')) +
+  scale_color_manual(values = c(narrow_color, wide_color)) +
   scale_linetype_manual(values = c(2, 1)) +
-  ylab('Hatchling sex ratio \n (proportion male)') +
+  ylab('Probability hatchlings develop as male)') +
   xlab('Incubation temperature (\u00B0C)') +
   xlim(c(22.5, 37.5)) +
   theme_bw() +
@@ -299,12 +301,12 @@ A <- ggplot(data = TRN2, aes(x = Temperature, y = Proportion_Male,
         axis.title = element_text(size = 12),
         legend.position = 'none') +
   annotate("label", 
-           x = c(37, 37, 37, 28, 33),
-           y = c(0.1, 0.55, 1, 0.32, 0.68), 
+           x = c(37.5, 37.5, 37.5, 28.1, 33.1),
+           y = c(0.1, 0.55, 1, 0.43, 0.75), 
            label = c('0.05', '0.50', '0.95', '29.4 \u00B0C', '31.8 \u00B0C'), 
            size = 3.5, 
            label.size = 0) +
-  geom_point(data = points, col = colors, size = 3) +
+  geom_point(data = points, col = cols, size = 3) +
   theme(margin(t = 0, r = 10, b = 0, l = 0, unit = 'pt'))
 
 
@@ -324,3 +326,4 @@ final_fig
 ggsave(filename = 'figures/population_parameters.png', 
        plot = final_fig, 
        width = 12, height = 4)
+
