@@ -11,109 +11,6 @@ library(patchwork)
 # source code
 source('code/mating function/OSRs_to_betas.R')
 
-##### thermal reaction norms (old) ###################################################
-
-# # emergence success variables
-# hatch_success_A <- 0.86                   # logistic by temp - A
-# hatch_success_k <- -1.7                   # logistic by temp - beta
-# hatch_success_t0 <- 32.7                  # logistic by temp - t0
-# 
-# # temperatures
-# x <- seq(from = 20, to = 40, by = 0.01)
-# 
-# # patricio et al.
-# t_piv1 <- 29.4
-# # k1 <- -1.4 # Patricio et al 2017, TRT 
-# k1 <- -1.27
-# y1 <- round(1/(1 + exp(-k1*(x - t_piv1))), 5)
-# 
-# # double the TRT
-# t_piv2 <- 29.4
-# k2 <- -0.77
-# y2 <- round(1/(1 + exp(-k2*(x - t_piv2))), 5)
-# 
-# # emergence success
-# # ES <- hatch_success_A / (1 + exp(-hatch_success_k * (x - hatch_success_t0)))
-# 
-# 
-# # make dataframe
-# TRN <- data.frame(Temperature = rep(x, times = 2),
-#                   Population = rep(c('Narrow TRT', 
-#                                      'Wide TRT'
-#                                      # 'Emergence Success'
-#                   ), each = length(x)),
-#                   Proportion_Male = c(y1, 
-#                                       y2 
-#                                       # ES
-#                   ))
-# 
-# # WA <- subset(TRN, Model == 'West Africa')
-# # SN <- subset(TRN, Model == 'Suriname')
-# 
-# # TRT_lower_wide <- 23.8
-# # TRT_lower_narrow <- 27
-# # TRT_upper_narrow <- 31.4
-# # TRT_upper_wide <- 34.4
-# 
-# TRT_lower_wide <- 25.584
-# TRT_lower_narrow <- 27.492
-# TRT_upper_narrow <- 31.304
-# TRT_upper_wide <- 33.216
-# 
-# # points
-# points <- data.frame(Temperature = c(TRT_lower_wide, TRT_upper_wide, 
-#                                      TRT_lower_narrow, TRT_upper_narrow, 
-#                                      TRT_lower_wide, TRT_upper_wide, 
-#                                      TRT_lower_narrow, TRT_upper_narrow), 
-#                      Proportion_Male = c(0.95, 0.05, 
-#                                          0.95, 0.05, 
-#                                          0.95, 0.05, 
-#                                          0.95, 0.05), 
-#                      Population = c('Wide TRT', 'Wide TRT', 
-#                                     'Narrow TRT', 'Narrow TRT', 
-#                                     'Wide TRT', 'Wide TRT', 
-#                                     'Narrow TRT', 'Narrow TRT'))
-# 
-# 
-# colors = c('#FF3300', '#FF3300', 
-#            '#6600FF', '#6600FF', 
-#            '#FF3300', '#FF3300', 
-#            '#6600FF', '#6600FF')
-# 
-# 
-# # plot
-# A <- ggplot(data = TRN, aes(x = Temperature, y = Proportion_Male, 
-#                             col = Population, lty = Population)) +
-#   geom_hline(yintercept = c(0.05, 0.50, 0.95), lwd = 1, lty = 1) +
-#   geom_vline(xintercept = 29.4, col = 'black', lwd = 1.5, lty = 1) +
-#   geom_vline(xintercept = 31.8, col = 'gray60', lwd = 1, lty = 1) +
-#   geom_line(lwd = 2) +
-#   scale_color_manual(values = c('#FF3300', '#6600FF')) +
-#   scale_linetype_manual(values = c(4, 1)) +
-#   ylab('Hatchling sex ratio \n (proportion male)') +
-#   xlab('Incubation temperature (\u00B0C)') +
-#   xlim(c(22.5, 37.5)) +
-#   theme_bw() +
-#   theme(axis.text = element_text(size = 10), 
-#         axis.title = element_text(size = 12),
-#         legend.position = 'none') +
-#   annotate("label", 
-#            x = c(34.4, 34.4, 34.4, 28, 32.5),
-#            y = c(0.1, 0.55, 1, 0.2, 0.7), 
-#            label = c('0.05', '0.50', '0.95', '29.4 \u00B0C', '31.8 \u00B0C'), 
-#            size = 3.5, 
-#            label.size = 0) +
-#   geom_point(data = points, col = colors, size = 5)
-# 
-# 
-# A
-
-# # save individual figure
-# ggsave("figures/thermal_reaction_norms.png",
-#        plot = A,
-#        height = 5,
-#        width = 8)
-
 ##### hypothetical mating functions ############################################
 
 # values of x to plot
@@ -194,20 +91,6 @@ B
 #        height = 6
 # )
 
-##### final figure, thermal reaction norms and mating functions combined #######
-
-# # put figures together
-# final_fig <- B + A +
-#   plot_annotation(tag_levels = 'A', 
-#                   tag_prefix = '(', 
-#                   tag_suffix = ')')
-# 
-# final_fig
-# 
-# # save
-# ggsave(filename = 'figures/population_parameters.png', 
-#        plot = final_fig, 
-#        width = 12, height = 4)
 
 ##### new k values 10/6/2025 ###################################################
 # temperatures
@@ -218,28 +101,24 @@ t_piv1 <- 29.4
 k1.2 <- -1.54
 y1.2 <- round(1/(1 + exp(-k1.2*(x - t_piv1))), 5)
 
-# embryogrowth (just Godfrey and Mrosovsky 2006)
+# embryogrowth (suriname), 
+# from Godfrey and Mrosovsky 2006 and 
+# Mrosovsky, N., Dutton, P.H. & Whitmore, C.P. (1984) Sex ratios of two species 
+# of sea turtle nesting in Suriname. Can. J. Zool., 62, 2227-2239.
+
 t_piv2 <- 29.4
 k2.2 <- -0.77
 y2.2 <- round(1/(1 + exp(-k2.2*(x - t_piv2))), 5)
-
-# emergence success
-# ES <- hatch_success_A / (1 + exp(-hatch_success_k * (x - hatch_success_t0)))
-
 
 # make dataframe
 TRN2 <- data.frame(Temperature = rep(x, times = 2),
                   Population = rep(c('Narrow TRT', 
                                      'Wide TRT'
-                                     # 'Emergence Success'
                   ), each = length(x)),
                   Proportion_Male = c(y1.2, 
                                       y2.2 
                                       # ES
                   ))
-
-# WA <- subset(TRN, Model == 'West Africa')
-# SN <- subset(TRN, Model == 'Suriname')
 
 TRT_lower_wide <- TRN2 %>% filter(Population == 'Wide TRT') %>% 
   filter(Proportion_Male <= 0.95) %>% arrange(Temperature) %>% head(1) %>% 
@@ -252,11 +131,11 @@ TRT_upper_wide <- TRN2 %>% filter(Population == 'Wide TRT') %>%
 TRT_lower_narrow <- TRN2 %>% filter(Population == 'Narrow TRT') %>% 
   filter(Proportion_Male <= 0.95) %>% arrange(Temperature) %>% head(1) %>% 
   select(Temperature) %>% as.numeric
-# 27.3
+# 27.49
 TRT_upper_narrow <- TRN2 %>% filter(Population == 'Narrow TRT') %>% 
   filter(Proportion_Male >= 0.05) %>% arrange(desc(Temperature)) %>% head(1) %>% 
   select(Temperature) %>% as.numeric
-# 31.1
+# 31.31
 
 TRT_wide <- TRT_upper_wide - TRT_lower_wide
 # 7.64
