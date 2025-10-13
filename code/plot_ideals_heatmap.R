@@ -22,13 +22,13 @@ temps <- seq(from = 25, to = 35, by = 0.01)
 emergence <- 0.86 / (1 + exp(1.7 * (temps - 32.7)))
 
 # narrow TRT proportions male (patricio et al. 2017)
-t_piv1 <- 29.2
-k1 <- -1.34
+t_piv1 <- 29.4
+k1 <- -1.54
 narrow_TRT_pM <- round(1/(1 + exp(-k1*(temps - t_piv1))), 5)
 
 # wide TRT proportions male (godfrey & mrosovsky 2006)
-t_piv2 <- 29.2
-k2 <- -0.561
+t_piv2 <- 29.4
+k2 <- -0.77
 wide_TRT_pM <- round(1/(1 + exp(-k2*(temps - t_piv2))), 5)
 
 # TRTs
@@ -145,9 +145,6 @@ load("~/Projects/iliketurtles3/output/ideals_without_emergence.Rdata")
 
 # adjust dataframe to get other useful columns
 to_plot2 <- ideals_without_emergence %>%
-  # mutate(Above_init_temp = as.character(Temp > 31.8)) %>%
-  # mutate(temps_below = replace(Temp, Temp <= 31.8, '')) %>%
-  # mutate(temps_above = replace(Temp, Temp > 31.8, '')) %>%
   mutate(labs = paste(Temp, '\n (', round(PSR, 2), ')', sep = ''))
 
 # actually do the heatmap thing
@@ -156,9 +153,8 @@ ideal_temps_without_emergence_heatmap <- ggplot(data = to_plot2,
                                   y = TRT, 
                                   fill = Temp)) +
   geom_tile(color = 'white') +
-  # scale_x_discrete(labels = xlabs) +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
-                       midpoint = 29.2) +
+                       midpoint = 29.4) +
   labs(fill = "Incubation \n temperature \n (\u00B0C)") +
   xlab("Minimum OSR required for 99% female reproductive success \n (associated hatchling sex ratio as proportion male)") +
   scale_y_discrete(labels = c("Narrow \n transitional \n range", 
@@ -189,7 +185,7 @@ ideal_temps_without_emergence_heatmap
 
 B <- ideal_temps_heatmap +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
-                       midpoint = 29.2, limits = c(29, 35)) + 
+                       midpoint = 29.4, limits = c(29, 35)) + 
   guides(fill = 'none')  + 
   labs(tag = '(B)') +
   theme(plot.tag.position = c(0, 1), 
@@ -200,7 +196,7 @@ B
 A <- ideal_temps_without_emergence_heatmap +
   theme() +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
-                       midpoint = 29.2, limits = c(29, 35)) +
+                       midpoint = 29.4, limits = c(29, 35)) +
   labs(tag = '(A)') +
   theme(axis.title.x = element_blank(), 
         axis.ticks.x = element_blank(),
