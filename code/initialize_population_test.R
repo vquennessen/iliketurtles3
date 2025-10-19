@@ -74,6 +74,8 @@ initialize_population_test <- function(arguments) {
   F_initial <- 170                          # initial adult F
   M_initial <- 30                           # initial adult M
   H_initial <- 17000                        # initial number of hatchlings
+  T_initial <- 15000                        # initial total population size
+  Mature_initial <- 300                     # initial mature population size
   
   ##### maturity ogive
   M <- round(pnorm(q = 1:max_age, 
@@ -297,9 +299,7 @@ initialize_population_test <- function(arguments) {
     # # which multiplier to use
     # multiplier <- max(F_Mature_multiplier, M_Mature_multiplier)
     
-    multiplier <- H_initial / sum(f_IF_raw[1], 
-                                  f_IM_raw[1], 
-                                  na.rm = TRUE)
+    multiplier <- T_initial / sum(total_raw, na.rm = TRUE)
     
     # # initial population size
     # IF_init <- round(Final_Prop_Female_Immature * multiplier)

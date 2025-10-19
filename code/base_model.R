@@ -1,6 +1,6 @@
 # base model
 
-base_model <- function(scenario, beta, years, max_age,
+base_model <- function(scenario, beta, yrs, max_age,
                        IF_survival, IM_survival, MF_survival, MM_survival,
                        IF_init, IM_init, MF_init, MM_init,
                        M, F_remigration_int, M_remigration_int,
@@ -17,7 +17,7 @@ base_model <- function(scenario, beta, years, max_age,
   ##### source initialized arrays ##############################################
   # seed <- 1325633
   # set.seed(seed)
-  init_output <- initialize_arrays(scenario, years, max_age, 
+  init_output <- initialize_arrays(scenario, yrs, max_age, 
                                    IF_init, IM_init, MF_init, MM_init,
                                    M, F_remigration_int, M_remigration_int, 
                                    T_piv, k_piv, h2_piv, ag_var_piv, 
@@ -47,7 +47,7 @@ base_model <- function(scenario, beta, years, max_age,
   
   ##### model ##################################################################
   # set.seed(seed)
-  for (y in 2:years) {
+  for (y in 2:yrs) {
     
     # population dynamics
     # survival for each age 
@@ -58,31 +58,31 @@ base_model <- function(scenario, beta, years, max_age,
                               F_remigration_int, M_remigration_int)
     
     N                    <- output_pd[[1]]
-    breeding_F           <- output_pd[[2]]
-    breeding_M           <- output_pd[[3]]
+    available_F          <- output_pd[[2]]
+    available_M          <- output_pd[[3]]
     
-    # evolution (if applicable)
-    if (evolution_piv == TRUE || evolution_threshold == TRUE) {
-      
-      evol_output <- evolution(N, max_age, y, breeding_F, breeding_M,
-                               G_piv, P_piv, Delta_piv, Pivotal_temps,
-                               Gamma_piv, Epsilon_piv, evolution_piv, 
-                               G_threshold, P_threshold, Delta_threshold, 
-                               Threshold_temps, Gamma_threshold, 
-                               Epsilon_threshold, evolution_threshold)
-      
-      Pivotal_temps[y]   <- evol_output[[1]]
-      G_piv              <- evol_output[[2]]
-      P_piv              <- evol_output[[3]]
-      Threshold_temps[y] <- evol_output[[4]]
-      G_threshold        <- evol_output[[5]]
-      P_threshold        <- evol_output[[6]]
-      
-    }
+    # # evolution (if applicable)
+    # if (evolution_piv == TRUE || evolution_threshold == TRUE) {
+    #   
+    #   evol_output <- evolution(N, max_age, y, breeding_F, breeding_M,
+    #                            G_piv, P_piv, Delta_piv, Pivotal_temps,
+    #                            Gamma_piv, Epsilon_piv, evolution_piv, 
+    #                            G_threshold, P_threshold, Delta_threshold, 
+    #                            Threshold_temps, Gamma_threshold, 
+    #                            Epsilon_threshold, evolution_threshold)
+    #   
+    #   Pivotal_temps[y]   <- evol_output[[1]]
+    #   G_piv              <- evol_output[[2]]
+    #   P_piv              <- evol_output[[3]]
+    #   Threshold_temps[y] <- evol_output[[4]]
+    #   G_threshold        <- evol_output[[5]]
+    #   P_threshold        <- evol_output[[6]]
+    #   
+    # }
     
     # reproduction
     # set.seed(seed)
-    rep_output <- reproduction(N, M, y, beta, max_age, breeding_F, breeding_M,
+    rep_output <- reproduction(N, M, y, beta, max_age, available_F, available_M,
                                clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                                emergence_success_A, emergence_success_k, 
                                emergence_success_t0, 

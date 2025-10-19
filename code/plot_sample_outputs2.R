@@ -13,14 +13,14 @@ library(ggh4x)
 
 # source functions and load data
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
-load("~/Projects/iliketurtles3/output/joined_outputs.Rdata")
-load("~/Projects/iliketurtles3/output/ideals_adjusted.Rdata")
+load("~/Projects/iliketurtles3/output/2025_10_18_new_SAD_n100_b400_all_outputs.Rdata")
+load("~/Projects/iliketurtles3/output/ideals.Rdata")
 
 ##### clean up data ############################################################
 
 # scenarios
-scenarios <- c('0.5\u00B0C', '4.5\u00B0C')
-
+scenarios_pretty <- c('0.5\u00B0C', '4.5\u00B0C')
+scenarios <- c(0.5, 4.5)
 # osrs
 osrs <- c(0.1, 0.35)
 betas <- OSRs_to_betas(osrs)
@@ -32,7 +32,7 @@ clean_ideals <- ideals %>%
   rename('Ideal_Temp' = 'Temp') %>%
   rename('Ideal_PSR' = 'PSR')
 
-examples_to_plot <- joined_outputs %>%
+examples_to_plot <- all_outputs %>%
   mutate(Beta = as.character(Beta)) %>%
   full_join(clean_ideals) %>%
   filter(Scenario %in% scenarios) %>%
@@ -62,12 +62,13 @@ examples_to_plot <- joined_outputs %>%
 
 ##### plot 1: hatchling sex ratios #############################################
 
-HSR <- ggplot(data = examples_to_plot, 
-              aes(x = Year, 
-                  y = Hatchling_Sex_Ratio_Median)) +
-  geom_ribbon(aes(ymin = Hatchling_Sex_Ratio_Q25,
-                  ymax = Hatchling_Sex_Ratio_Q75,
-                  col = Scenario,
+HSR <- examples_to_plot %>%
+  filter(Abundance == 'Hatchlings') %>%
+  ggplot(aes(x = Year, 
+             y = Sex_ratio_median)) +
+  geom_ribbon(aes(ymin = Sex_ratio_Q25,
+                  ymax = Sex_ratio_Q75,
+                  col = NULL,
                   fill = Scenario),
               alpha = 0.25, 
               show.legend = FALSE) +
@@ -104,13 +105,14 @@ HSR
 
 ##### plot 2: hatchling abundance ##############################################
 
-HA <- ggplot(data = examples_to_plot, 
-             aes(x = Year, 
-                 y = Hatchling_Abundance_Median, 
-                 col = Scenario, 
-                 lty = Mating_Function)) +
-  geom_ribbon(aes(ymin = Hatchling_Abundance_Q25,
-                  ymax = Hatchling_Abundance_Q75,
+HA <- examples_to_plot %>%
+  filter(Abundance == 'Hatchlings') %>%
+  ggplot(aes(x = Year, 
+             y = Abundance_median, 
+             col = Scenario, 
+             lty = Mating_Function)) +
+  geom_ribbon(aes(ymin = Abundance_Q25,
+                  ymax = Abundance_Q75,
                   col = NULL,
                   fill = Scenario),
               alpha = 0.25,
@@ -120,7 +122,7 @@ HA <- ggplot(data = examples_to_plot,
   facet_grid(cols = vars(TRT)) +
   # geom_hline(yintercept = ideal_0.1, lty = 2) +
   # geom_hline(yintercept = ideal_0.35, lty = 1) +
-  geom_path(linewidth = 0.75) +
+  geom_path(linewidth = 0.25) +
   guides(col = 'none', fill = 'none', lty = 'none') +
   # guides(y = guide_axis_truncated(trunc_lower = c(-Inf, 750000),
   #                                  trunc_upper = c(250000, Inf))) +
@@ -136,14 +138,15 @@ HA
 
 ##### plot 2: operational sex ratios ###########################################
 
-OSR <- ggplot(data = examples_to_plot, 
-              aes(x = Year, 
-                  y = Mature_Sex_Ratio_Median,
-                  # y = Mature_xF_Median, 
-                  col = Scenario, 
-                  lty = Mating_Function)) +
-  geom_ribbon(aes(ymin = Mature_Sex_Ratio_Q25,
-                  ymax = Mature_Sex_Ratio_Q75,
+OSR <- examples_to_plot %>%
+  filter(Abundance == 'Mature') %>%
+  ggplot(aes(x = Year, 
+             y = Sex_ratio_median,
+             # y = Mature_xF_Median, 
+             col = Scenario, 
+             lty = Mating_Function)) +
+  geom_ribbon(aes(ymin = Sex_ratio_Q25,
+                  ymax = Sex_ratio_Q75,
                   # geom_ribbon(aes(ymin = Mature_xF_Q25,
                   #                 ymax = Mature_xF_Q75,
                   col = NULL,
@@ -171,13 +174,14 @@ OSR
 
 ##### plot 4: breeding success #################################################
 
-BS <- ggplot(data = examples_to_plot, 
-             aes(x = Year, 
-                 y = Breeding_Success_Median, 
-                 col = Scenario, 
-                 lty = Mating_Function)) +
-  geom_ribbon(aes(ymin = Breeding_Success_Q25,
-                  ymax = Breeding_Success_Q75,
+BS <- examples_to_plot %>%
+  filter(Abundance == 'Mature') %>%
+  ggplot(aes(x = Year, 
+             y = Breeding_success_median, 
+             col = Scenario, 
+             lty = Mating_Function)) +
+  geom_ribbon(aes(ymin = Breeding_success_Q25,
+                  ymax = Breeding_success_Q75,
                   col = NULL,
                   fill = Scenario),
               alpha = 0.25,
@@ -201,13 +205,14 @@ BS
 
 ##### plot 5: mature abundance #################################################
 
-MA <- ggplot(data = examples_to_plot, 
-             aes(x = Year, 
-                 y = Mature_Abundance_Median, 
-                 col = Scenario, 
-                 lty = Mating_Function)) +
-  geom_ribbon(aes(ymin = Mature_Abundance_Q25,
-                  ymax = Mature_Abundance_Q75,
+MA <- examples_to_plot %>%
+  filter(Abundance == 'Mature') %>%
+  ggplot(aes(x = Year, 
+             y = Abundance_median, 
+             col = Scenario, 
+             lty = Mating_Function)) +
+  geom_ribbon(aes(ymin = Abundance_Q25,
+                  ymax = Abundance_Q75,
                   col = NULL,
                   fill = Scenario),
               alpha = 0.25,
@@ -229,11 +234,12 @@ MA
 
 ##### plot 6: median lambda ####################################################
 
-lambda <- ggplot(data = examples_to_plot, 
-                 aes(x = Year, 
-                     y = Lambda_10yr_median, 
-                     color = Scenario, 
-                     linetype = Mating_Function)) + 
+lambda <- examples_to_plot %>%
+  filter(Abundance == 'Mature') %>%
+  ggplot(aes(x = Year, 
+             y = Lambda_10yr_median, 
+             color = Scenario, 
+             linetype = Mating_Function)) + 
   # facet_grid(cols = vars(TRT), rows = vars(facet_labels)) +
   facet_grid(cols = vars(TRT)) +
   geom_hline(yintercept = 1) +
@@ -261,6 +267,6 @@ final_fig
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('sample_outputs.png', sep = ''),
+       filename = paste('SAD_n100_b400_sample_outputs.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 7, height = 10)

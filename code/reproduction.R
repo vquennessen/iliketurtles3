@@ -1,6 +1,6 @@
 # reproduction
 
-reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
+reproduction <- function(N, M, y, beta, max_age, available_F, available_M,
                          clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                          emergence_success_A, emergence_success_k, 
                          emergence_success_t0, 
@@ -10,10 +10,10 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
                          effect_size) {
   
   # breeding females this year
-  n_available_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
+  n_available_F <- sum(as.numeric(available_F, na.rm = TRUE))
   
   # breeding males this year
-  n_available_M <- sum(as.numeric(breeding_M, na.rm = TRUE))
+  n_available_M <- sum(as.numeric(available_M, na.rm = TRUE))
   
   if (n_available_F < 1 | n_available_M < 1) {
     
@@ -107,7 +107,7 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
       # list of numbers of emerged hatchlings, one for each clutch
       # set.seed(seed)
       hatchlings <- length(v_eggs) %>%
-        rbinom(size = v_eggs, prob = v_probs_emerged) %>%
+        rbinom(size = as.integer(v_eggs), prob = v_probs_emerged) %>%
         split(rep(1:length(clutches), times = clutches))  %>%
         lapply(pmax, 0) %>%
         lapply(round)
@@ -129,7 +129,7 @@ reproduction <- function(N, M, y, beta, max_age, breeding_F, breeding_M,
       # list of number of males, one for each clutch
       # set.seed(seed)
       males <- rbinom(n = length(v_hatchlings), 
-                      size = v_hatchlings, 
+                      size = as.integer(v_hatchlings), 
                       prob = v_probs_male) %>%
         split(rep(1:length(clutches), times = clutches)) %>%
         lapply(pmax, 0) %>%

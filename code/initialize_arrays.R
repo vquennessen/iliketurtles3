@@ -1,6 +1,6 @@
 # initialize arrays
 
-initialize_arrays <- function(scenario, years, max_age, 
+initialize_arrays <- function(scenario, yrs, max_age, 
                               IF_init, IM_init, MF_init, MM_init,
                               M, F_remigration_int, M_remigration_int, 
                               T_piv, k_piv, h2_piv, ag_var_piv, 
@@ -15,8 +15,8 @@ initialize_arrays <- function(scenario, years, max_age,
   
   # initialize population size array
   # dimensions = sexes * ages  * years
-  N <- array(rep(0, times = 4 * max_age * years), 
-             dim = c(4, max_age, years))  
+  N <- array(rep(0, times = 4 * max_age * yrs), 
+             dim = c(4, max_age, yrs))  
   
   # initial population size
   N[1, , 1] <- round(IF_init)
@@ -27,13 +27,13 @@ initialize_arrays <- function(scenario, years, max_age,
   ##### incubation temperatures ################################################
   
   # generate mean temperature values that go up linearly 
-  temp_mus <- seq(from = temp_mu, to = temp_mu + scenario, length = years)
+  temp_mus <- seq(from = temp_mu, to = temp_mu + scenario, length = yrs)
   
   # if we're including climate stochasticity in the model
   if (climate_stochasticity == TRUE) {
     
     # white noise for average season temperature
-    white_noise <- rnorm(n = years, mean = 0, sd = season_temp_sd)
+    white_noise <- rnorm(n = yrs, mean = 0, sd = season_temp_sd)
     
     if (noise == 'White') {
       
@@ -45,7 +45,7 @@ initialize_arrays <- function(scenario, years, max_age,
     if (noise == 'Red') {
       
       # initialize deviations
-      deviations <- rep(NA, times = years)
+      deviations <- rep(NA, times = yrs)
       
       # first deviation term
       deviations[1] <- rnorm(n = 1, 
@@ -53,7 +53,7 @@ initialize_arrays <- function(scenario, years, max_age,
                              sd = season_temp_sd)
       
       # autocorrelated deviation series
-      for (i in 2:years) {
+      for (i in 2:yrs) {
         
         deviations[i] <- AC * deviations[i - 1] + white_noise[i]
         
@@ -72,30 +72,30 @@ initialize_arrays <- function(scenario, years, max_age,
   if (evolution_piv == TRUE) {  
     
     # gamma, error term for the expected genotype, one for each year
-    Gamma_piv <- rnorm(n = years, 
+    Gamma_piv <- rnorm(n = yrs, 
                        mean = 0, 
                        sd = sqrt(ag_var_piv / 2))     
     
     # delta, error term for the expected pivotal temperature, one for each year
-    Delta_piv <- rnorm(n = years, 
-                         mean = 0, 
-                         sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))  
+    Delta_piv <- rnorm(n = yrs, 
+                       mean = 0, 
+                       sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))  
     
     # epsilon, error term for the observed pivotal temperature (phenotypic 
     # variation), one for each year
-    Epsilon_piv <- rnorm(n = years, 
-                       mean = 0, 
-                       sd = sqrt(ag_var_piv / h2_piv)) 
+    Epsilon_piv <- rnorm(n = yrs, 
+                         mean = 0, 
+                         sd = sqrt(ag_var_piv / h2_piv)) 
     
     # initial genes arrays, mu and sd, dimensions sex * age * years
-    genes_piv_mu <- array(rep(NA, times = 4 * max_age * years), 
-                       dim = c(4, max_age, years))
-    genes_piv_sd <- array(rep(NA, times = 4 * max_age * years), 
-                          dim = c(4, max_age, years))
+    genes_piv_mu <- array(rep(NA, times = 4 * max_age * yrs), 
+                          dim = c(4, max_age, yrs))
+    genes_piv_sd <- array(rep(NA, times = 4 * max_age * yrs), 
+                          dim = c(4, max_age, yrs))
     # year 1
     genes_piv_mu[, , 1] <- rnorm(n = 4*max_age, 
-                                    mean = T_piv, 
-                                    sd = sqrt(ag_var_piv / 2))
+                                 mean = T_piv, 
+                                 sd = sqrt(ag_var_piv / 2))
     
     # G_piv <- rnorm(n = max_age, 
     #                mean = T_piv, 
@@ -103,8 +103,8 @@ initialize_arrays <- function(scenario, years, max_age,
     
     # initial phenotype array, dimensions = sex * max_age * years
     # phenotype = expected pivotal temperature
-    phen_piv <- array(rep(NA, times = 4 * max_age * years), 
-                      dim = c(4, max_age, years))
+    phen_piv <- array(rep(NA, times = 4 * max_age * yrs), 
+                      dim = c(4, max_age, yrs))
     
     # year 1
     
@@ -116,14 +116,14 @@ initialize_arrays <- function(scenario, years, max_age,
     
     # initialize observed hatchling pivotal temperatures vector, one for each 
     # year
-    Pivotal_temps <- rep(NA, years)
+    Pivotal_temps <- rep(NA, yrs)
     Pivotal_temps[1] <- P_piv[1] + Epsilon_piv[1]
-
+    
     
   } else {
     
     # pivotal temperatures without evolution
-    Pivotal_temps <- rep(T_piv, times = years)
+    Pivotal_temps <- rep(T_piv, times = yrs)
     
     # no Delta, G, P, epsilon,  or gamma vectors
     Delta_piv         <- NULL
@@ -134,7 +134,7 @@ initialize_arrays <- function(scenario, years, max_age,
     
   }
   
-  ##### threshold temperatures ###################################################  
+  ##### threshold temperatures ################################################# 
   
   # if evolution_threshold is turned on, create gamma, epsilon, and delta vectors
   if (evolution_threshold == TRUE) {  
@@ -154,32 +154,32 @@ initialize_arrays <- function(scenario, years, max_age,
     
     # intialize actual threshold temperatures vector
     # expected phenotypes plus phenotypic variation
-    Threshold_temps <- rep(NA, times = years)
+    Threshold_temps <- rep(NA, times = yrs)
     Threshold_temps[1] <- P_threshold[1] + rnorm(n = 1, 
                                                  mean = 0, 
                                                  sd = sqrt(ag_var_threshold / 
                                                              h2_threshold))
     
     # gamma, error term for the expected genotype
-    Gamma_threshold <- rnorm(n = years, 
+    Gamma_threshold <- rnorm(n = yrs, 
                              mean = 0, 
                              sd = sqrt(ag_var_threshold / 2))       
     
     # epsilon, error term for the expected threshold temperature
-    Epsilon_threshold <- rnorm(n = years, 
+    Epsilon_threshold <- rnorm(n = yrs, 
                                mean = 0, 
                                sd = sqrt((ag_var_threshold / 
                                             h2_threshold - 
                                             ag_var_threshold)))
     # phenotypic variation - threshold temperatures
-    Delta_threshold <- rnorm(n = years, 
+    Delta_threshold <- rnorm(n = yrs, 
                              mean = 0, 
                              sd = sqrt(ag_var_threshold / h2_threshold))
     
   } else {
     
     # threshold temperatures without evolution
-    Threshold_temps <- rep(T_threshold, times = years)
+    Threshold_temps <- rep(T_threshold, times = yrs)
     
     # no G, P, epsilon, gamma, or delta vectors
     G_threshold             <- NULL
@@ -193,34 +193,33 @@ initialize_arrays <- function(scenario, years, max_age,
   ##### OSR ####################################################################
   
   # OSR vector - 1 for each year
-  OSRs <- rep(NA, times = years)
+  OSRs <- rep(NA, times = yrs)
   
   # breeding females this year
   # breeding males this year
-  breeding_F <- rbinom(n = max_age, 
-                       size = MF_init, 
-                       prob = 1 / F_remigration_int)  
+  available_F <- rbinom(n = max_age, 
+                        size = as.integer(MF_init), 
+                        prob = 1 / F_remigration_int)  
   
-  n_breeding_F <- sum(as.numeric(breeding_F, na.rm = TRUE))
+  n_available_F <- sum(as.numeric(available_F, na.rm = TRUE))
   
   # breeding males this year
-  breeding_M <- rbinom(n = max_age, 
-                       size = MM_init, 
-                       prob = 1 / M_remigration_int)
+  available_M <- rbinom(n = max_age, 
+                        size = as.integer(MM_init), 
+                        prob = 1 / M_remigration_int)
   
-  n_breeding_M <- sum(as.numeric(breeding_M, na.rm = TRUE))
+  n_available_M <- sum(as.numeric(available_M, na.rm = TRUE))
   
-  # as long as there is at least one mature female and one mature male:
-  if (n_breeding_F > 0.5 & n_breeding_M > 0.5) {
-    
-    # operational sex ratio - proportion of males
-    OSRs[1] <- n_breeding_M / (n_breeding_M + n_breeding_F)
-    
-  }
+  # check to make sure there is at least one available F and M
+  if (n_available_F < 1 | n_available_M < 1) { OSRs[1] <- NA
   
+  # calculate first operational sex ratio
+  } else { OSRs[1] <- n_available_M / (n_available_M + n_available_F) }
+  
+  ##### conservation ###########################################################
   if (conservation_action == TRUE) {
     
-    conservation_years <- seq(from = 1, by = frequency, length = years)
+    conservation_years <- seq(from = 1, by = frequency, length = yrs)
     
   } else { conservation_years <- NULL }
   

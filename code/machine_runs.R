@@ -15,7 +15,6 @@ library(tictoc)
 
 # source functions
 source('run_base_model.R')
-# source('run_base_model2.R')
 source('base_model.R')
 source('initialize_arrays.R')
 source('initialize_population.R')
@@ -42,11 +41,11 @@ years <- 100
 
 # total temp increases
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-# scenarios <- c(5)
+# scenarios <- c(0.5)
 
 # OSR values to get full fertilization of females
-OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
-# OSRs <- c(0.45)
+# OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
+OSRs <- c(0.45)
 
 # mating function beta values
 betas <- as.numeric(OSRs_to_betas(OSRs))
@@ -58,7 +57,7 @@ intensity <- c(1)
 frequency <- c(1)
 
 # number of simulations to run
-nsims <- c(10)
+nsims <- c(100)
 
 # make dataframe of all combinations of arguments
 DF <- expand.grid(models, 
@@ -67,7 +66,8 @@ DF <- expand.grid(models,
                   years, 
                   nsims, 
                   intensity, 
-                  frequency)
+                  frequency) %>%
+  arrange(Var2, Var3)
 
 # initialize empty arguments list
 arguments <- list()

@@ -48,17 +48,17 @@ pop_dynamics <- function(N, max_age, y, M,
   N[4, 2:max_age, y] <- as.numeric(mature_survived_M) + as.numeric(new_mature_M)
   
   # breeding females this year
-  breeding_F <- rbinom(n = max_age, 
+  available_F <- rbinom(n = max_age, 
                        size = N[3, , y], 
                        prob = 1 / F_remigration_int)
   
   # breeding males this year
-  breeding_M <- rbinom(n = max_age, 
+  available_M <- rbinom(n = max_age, 
                        size = N[4, , y], 
                        prob = 1 / M_remigration_int)
   
   # output
-  output <- list(N, breeding_F, breeding_M)
+  output <- list(N, available_F, available_M)
   
   return(output)
   
