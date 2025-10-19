@@ -17,7 +17,7 @@ library(tidyr)
 # which computer am I using?
 desktop <- TRUE
 
-folder <- '2025_09_19_red_noise'
+folder <- '2025_10_13_new_SAD_n10000_b100'
 
 # model(s)
 # models <- c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
@@ -263,4 +263,4 @@ lambdas <- SDF
 #                            sep = ''))
 
 # save dataframe as R object - cluster
-save(lambdas, file = '/home/quennessenv/iliketurtles3/output/red_noise_lambdas.Rdata')
+save(lambdas, file = '/home/quennessenv/iliketurtles3/output/lambdas.Rdata')

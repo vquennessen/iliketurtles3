@@ -4,229 +4,371 @@
 rm(list = ls())
 
 # load libraries
-library(ggplot2)
 library(matrixStats)
 library(readr)
-library(patchwork)
-library(tidyverse)
+library(ggpattern)
+library(dplyr)
+library(tidyr)
+library(magrittr)
 
-# source functions and objects
-load("~/Projects/iliketurtles3/output/red_noise_lambdas_and_persistence.Rdata")
-source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
+# source functions
+source('mating function/OSRs_to_betas.R')
 
-##### abundances and sex ratios ################################################
+# which computer we using
+computer <- 'cluster'
 
-# category titles
+# path based on computer being used
+user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
+               ifelse(computer == 'desktop',
+                      'C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/',
+                      'C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/'))
+
+# name of folder for current runs
+folder <- '2025_10_18_new_SAD_n100_b400'
+
+# model(s)
+models <- c('P_base', 'GM_base')
 TRTs <- c('Narrow transitional range', 'Wide transitional range')
-ages <- c('Hatchling', 'Mature')
-folder <- '2025_09_19_red_noise'
-years <- 100
-nsims <- 10000
-temp_mu <- 31.8
-desktop <- TRUE
-user <- ifelse(desktop == TRUE, 'Vic', 'vique')
 
-# scenarios
-temp_increases <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-scenarios <- paste(temp_increases, 'C', sep = '')
+# filepaths
+folders <- rep(folder, length(models))
+paths <- paste(folders, models, sep = "/")
 
+# temperature increase scenarios
+scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
 
 # osrs
 osrs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
 betas <- OSRs_to_betas(osrs)
 
-##### create objects ###########################################################
+# years to average over for lambdas
+average_over <- 10
 
-# initialize super data frame (SDF)
-SDF <- data.frame(TRT = NULL,
-                  Scenario = NULL, 
-                  OSR = NULL,
-                  Beta = NULL,
-                  Year = NULL,
-                  Temperature = NULL,
-                  Hatchling_Abundance_Median = NULL, 
-                  Hatchling_Abundance_Q25 = NULL, 
-                  Hatchling_Abundance_Q75 = NULL, 
-                  Hatchling_Sex_Ratio_Median = NULL, 
-                  Hatchling_Sex_Ratio_Q25 = NULL, 
-                  Hatchling_Sex_Ratio_Q75 = NULL, 
-                  Mature_Abundance_Median = NULL, 
-                  Mature_Abundance_Q25 = NULL, 
-                  Mature_Abundance_Q75 = NULL, 
-                  Mature_Sex_Ratio_Median = NULL, 
-                  Mature_Sex_Ratio_Q25 = NULL, 
-                  Mature_Sex_Ratio_Q75 = NULL, 
-                  Breeding_Success_Median = NULL, 
-                  Breeding_Success_Q25 = NULL,
-                  Breeding_success_Q75 = NULL
+# cutoff point - at what persistence value should we not track lambda?
+cutoff <- 0.1
+
+# total years run per sim
+years <- 1:100
+
+# number of sims
+nsims <- 1000
+
+# abundances / sexes
+abundances <- c('Immature Females', 'Immature Males', 'Mature Females',
+                'Mature Males', 'Hatchlings', 'Mature', 'Total')
+indices <- list(c(1), c(2), c(3), c(4), c(1:2), c(3:4), c(1:4))
+
+# dimensions
+P <- length(paths)
+S <- length(scenarios)
+B <- length(betas)
+Y <- length(years)
+A <- length(abundances)
+numrows <- P*S*B*Y*A
+
+# maturity ogive
+max_age <- 85
+age_maturity_mu <- 25
+age_maturity_sd <- 2.5
+M <- pnorm(q = 1:max_age, mean = age_maturity_mu, sd = age_maturity_sd)
+
+# other demographic parameters
+temp_mu <- 31.8
+
+# initialize super data frame
+SDF <- data.frame(
+  Folder = NULL,
+  Model = NULL,
+  TRT = NULL,
+  Scenario = NULL,
+  Beta = NULL,
+  OSR = NULL,
+  Year = NULL,
+  Abundance = NULL,
+  Persist_mean = NULL,
+  Temperature = NULL,
+  Abundance_median = NULL,
+  Abundance_Q25 = NULL,
+  Abundance_Q75 = NULL,
+  Sex_Ratio_median = NULL,
+  Sex_Ratio_Q25 = NULL,
+  Sex_Ratio_Q75 = NULL,
+  Breeding_success_median = NULL,
+  Breeding_success_Q25 = NULL,
+  Breeding_success_Q75 = NULL,
+  Lambda_mean = NULL,
+  Lambda_median = NULL,
+  Lambda_Q25 = NULL,
+  Lambda_Q75 = NULL,
+  Lambda_10yr_mean = NULL,
+  Lambda_10yr_median = NULL,
+  Lambda_10yr_Q25 = NULL,
+  Lambda_10yr_Q75 = NULL
 )
 
-# for each population / TRT
-for (t in 1:length(TRTs)) {
+# for each path (folder and model/TRT)
+for (p in 1:P) {
   
-  if (TRTs[t] == 'Narrow transitional range') { model <- 'P_base' }
-  if (TRTs[t] == 'Wide transitional range') { model <- 'GM_base' }
-  
-  # for each scenario
-  for (s in 1:length(scenarios)) {
+  # for each temp increase scenario
+  for (s in 1:S) {
     
+    # temperature increases
+    temps <- seq(from = temp_mu,
+                 to = temp_mu + scenarios[s],
+                 length = Y)
     
-    temps <- seq(from = temp_mu, 
-                 to = temp_mu + temp_increases[s], 
-                 length = years)
-    
-    # for each osr
-    for (b in 1:length(betas)) {
+    # for each mating function
+    for (b in 1:B) {
       
-      # load in sims N
-      load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/', 
-                 'model output/i like turtles/', folder, '/', model, '/', 
-                 scenarios[s], '/beta', betas[b], '/', nsims, '_N.Rda', 
-                 sep = ''))
+      # load in appropriate output files
       
-      # load in sims OSR
-      load(paste('C:/Users/', user, '/Box Sync/Quennessen_Thesis/PhD Thesis/', 
-                 'model output/i like turtles/', folder, '/', model, '/', 
-                 scenarios[s], '/beta', betas[b], '/', nsims, '_OSR.Rda', 
-                 sep = ''))
-      
-      # initialize
-      subset <- data.frame(TRT = TRTs[t],
-                           Scenario = scenarios[s], 
-                           OSR = osrs[b], 
-                           Beta = betas[b],
-                           Year = 1:100,
-                           Temperature = temps,
-                           Hatchling_Abundance_Median = NA, 
-                           Hatchling_Abundance_Q25 = NA, 
-                           Hatchling_Abundance_Q75 = NA, 
-                           Hatchling_Sex_Ratio_Median = NA, 
-                           Hatchling_Sex_Ratio_Q25 = NA, 
-                           Hatchling_Sex_Ratio_Q75 = NA,
-                           Mature_Abundance_Median = NA, 
-                           Mature_Abundance_Q25 = NA, 
-                           Mature_Abundance_Q75 = NA, 
-                           Mature_Sex_Ratio_Median = NA, 
-                           Mature_Sex_Ratio_Q25 = NA, 
-                           Mature_Sex_Ratio_Q75 = NA)
-      
-      if (is.numeric(sims_N)) {
+      # if the file exists
+      if (
+        file.exists(paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b],
+                          '/', nsims, '_N.Rda', sep = '')) &
+        file.exists(paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b],
+                          '/', nsims, '_OSR.Rda', sep = ''))
+      ) {
         
-        # extract hatchling F
-        hatchlings_F <- sims_N[1, 1, , ]
+        load(paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b], '/',
+                   nsims, '_N.Rda', sep = ''))
         
-        # extract hatchling M
-        hatchlings_M <- sims_N[2, 1, , ]
+        load(paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b], '/',
+                   nsims, '_OSR.Rda', sep = ''))
         
-        # hatchlings total
-        hatchlings_total <- hatchlings_F + hatchlings_M
+        for (a in 1:A) {        
+          
+          if (is.null(sims_N)) {
+            
+            # subset to add to super data frame
+            sub_SDF <- data.frame(
+              Folder = rep(folder, Y),
+              Model = rep(models[p], Y),
+              TRT = rep(TRTs[p], Y),
+              Scenario = rep(scenarios[s], Y),
+              Beta = rep(betas[b], Y),
+              OSR = rep(osrs[b], Y),
+              Year = years,
+              Abundance = rep(abundances[a], Y),
+              Persist_mean = rep(0, Y),
+              Temperature = temps,
+              Abundance_median = rep(0, Y),
+              Abundance_Q25 = rep(0, Y),
+              Abundance_Q75 = rep(0, Y),
+              Sex_ratio_median = rep(NA, Y),
+              Sex_ratio_Q25 = rep(NA, Y),
+              Sex_ratio_Q75 = rep(NA, Y),
+              Breeding_success_Median = rep(NA, Y),
+              Breeding_success_Q25 = rep(NA, Y),
+              Breeding_success_Q75 = rep(NA, Y),
+              Lambda_mean = rep(NA, Y),
+              Lambda_median = rep(NA, Y),
+              Lambda_Q25 = rep(NA, Y),
+              Lambda_Q75 = rep(NA, Y),
+              Lambda_10yr_mean = rep(NA, Y),
+              Lambda_10yr_median = rep(NA, Y),
+              Lambda_10yr_Q25 = rep(NA, Y),
+              Lambda_10yr_Q75 = rep(NA, Y)
+            )
+            
+            SDF <- rbind(SDF, sub_SDF) 
+            
+            print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s],
+                        'C - beta ', betas[b], ' - ', abundances[a], 
+                        ' - no SAD, all done!', sep = ''))
+            
+          } else {
+            
+            # extract abundances
+            
+            if (a < 5) {
+              
+              N_abundances <- colSums(sims_N[indices[[a]], , , ], dim = 1)
+              
+            } else if (a == 5) {
+              
+              N_abundances <- colSums(sims_N[indices[[a]], 1, , ])
+              
+            } else if (a == 6) {
+              
+              N_abundances <- colSums(sims_N[indices[[a]], , , ], dim = 2) }
+            
+            # initial and final abundances to calculate mean persistence to year y
+            # for abundance/sex a
+            inits <- N_abundances[1, ]
+            finals <- N_abundances
+            
+            # no sex ratios for most abundances / sexes
+            sex_ratio_medians <- rep(NA, Y)
+            sex_ratio_Q25s <- rep(NA, Y)
+            sex_ratio_Q75s <- rep(NA, Y)
+            
+            # hatchlings
+            if (a == 5) {
+              
+              F_hatchlings <- sims_N[1, 1, , ]
+              M_hatchlings <- sims_N[2, 1, , ]
+              sex_ratios <- M_hatchlings / (F_hatchlings + M_hatchlings)
+              sex_ratio_medians <- rowMedians(sex_ratios, na.rm = TRUE)
+              sex_ratio_Q25s <- rowQuantiles(sex_ratios, na.rm = TRUE, probs = c(0.25))
+              sex_ratio_Q75s <- rowQuantiles(sex_ratios, na.rm = TRUE, probs = c(0.75))
+              
+            }
+            
+            # mature
+            if (a == 6) {
+              
+              F_mature <- colSums(sims_N[3, , , ], dim = 1)
+              M_mature <- colSums(sims_N[4, , , ], dim = 1)
+              sex_ratios <- M_mature / (F_mature + M_mature)
+              sex_ratio_medians <- rowMedians(sex_ratios, na.rm = TRUE)
+              sex_ratio_Q25s <- rowQuantiles(sex_ratios, na.rm = TRUE, probs = c(0.25))
+              sex_ratio_Q75s <- rowQuantiles(sex_ratios, na.rm = TRUE, probs = c(0.75))
+              
+              breeding_success_medians <- pbeta(q = 2*sex_ratio_medians,
+                                                shape1 = 1,
+                                                shape2 = as.numeric(betas[b]))
+              breeding_success_Q25s <- pbeta(q = 2*sex_ratio_Q25s,
+                                             shape1 = 1,
+                                             shape2 = as.numeric(betas[b]))
+              breeding_success_Q75s <- pbeta(q = 2*sex_ratio_Q75s,
+                                             shape1 = 1,
+                                             shape2 = as.numeric(betas[b]))
+              
+            }  else {
+              
+              breeding_success_medians <- rep(NA, Y)
+              breeding_success_Q25s <- rep(NA, Y)
+              breeding_success_Q75s <- rep(NA, Y)
+              
+            }
+            
+            # abundances
+            abundance_medians <- rowMedians(N_abundances, na.rm = TRUE)
+            abundance_Q25s <- rowQuantiles(N_abundances, na.rm = TRUE, probs = c(0.25))
+            abundance_Q75s <- rowQuantiles(N_abundances, na.rm = TRUE, probs = c(0.75))
+            
+            # calculate lambdas across all years
+            lambdas <- N_abundances[2:Y, ] / N_abundances[1:(Y - 1), ]
+            
+            # replace infinite / NaN with NA
+            lambdas[!is.finite(lambdas)] <- NA
+            
+            # lambdas with NA in front for year 1
+            lambda_means <- c(NA, rowMeans(lambdas, na.rm = TRUE))
+            lambda_medians <- c(NA, rowMedians(lambdas, na.rm = TRUE))
+            lambda_Q25s <- c(NA, rowQuantiles(lambdas, prob = c(0.25),
+                                              na.rm = TRUE))
+            lambda_Q75s <- c(NA, rowQuantiles(lambdas, prob = c(0.75),
+                                              na.rm = TRUE))
+            
+            # subset to add to super data frame
+            sub_SDF <- data.frame(
+              Folder = rep(folder, Y),
+              Model = rep(models[p], Y),
+              TRT = rep(TRTs[p], Y),
+              Scenario = rep(scenarios[s], Y),
+              Beta = rep(betas[b], Y),
+              OSR = rep(osrs[b], Y),
+              Year = years,
+              Abundance = rep(abundances[a], Y),
+              Persist_mean = rowMeans(finals >= (0.10 * inits), na.rm = TRUE),
+              Temperature = temps,
+              Abundance_median = abundance_medians,
+              Abundance_Q25 = abundance_Q25s,
+              Abundance_Q75 = abundance_Q75s,
+              Sex_ratio_median = sex_ratio_medians,
+              Sex_ratio_Q25 = sex_ratio_Q25s,
+              Sex_ratio_Q75 = sex_ratio_Q75s,
+              Breeding_success_median = breeding_success_medians,
+              Breeding_success_Q25 = breeding_success_Q25s,
+              Breeding_success_Q75 = breeding_success_Q75s,
+              Lambda_mean = lambda_means,
+              Lambda_median = lambda_medians,
+              Lambda_Q25 = lambda_Q25s,
+              Lambda_Q75 = lambda_Q75s,
+              Lambda_10yr_mean = rep(NA, Y),
+              Lambda_10yr_median = rep(NA, Y),
+              Lambda_10yr_Q25 = rep(NA, Y),
+              Lambda_10yr_Q75 = rep(NA, Y)
+            )
+            
+            # calculate lambdas averaged over previous 10 years
+            lambda_10yr_means <- rep(NA, Y)
+            lambda_10yr_medians <- rep(NA, Y)
+            lambda_10yr_Q25s <- rep(NA, Y)
+            lambda_10yr_Q75s <- rep(NA, Y)
+            
+            for (y in (average_over + 1):Y) {
+              
+              lambda_10yr_means[y] <- mean(lambdas[(y - average_over):(y - 1), ],
+                                           na.rm = TRUE)
+              
+              lambda_10yr_medians[y] <- median(lambdas[(y - average_over):(y - 1), ],
+                                               na.rm = TRUE)
+              
+              lambda_10yr_Q25s[y] <- quantile(lambdas[(y - average_over):(y - 1), ],
+                                              na.rm = TRUE, probs = c(0.25))
+              
+              lambda_10yr_Q75s[y] <- quantile(lambdas[(y - average_over):(y - 1), ],
+                                              na.rm = TRUE, probs = c(0.75))
+              
+            }
+            
+            # add 10 year average lambdas to subset df
+            sub_SDF$Lambda_10yr_mean <- lambda_10yr_means
+            sub_SDF$Lambda_10yr_median <- lambda_10yr_medians
+            sub_SDF$Lambda_10yr_Q25 <- lambda_10yr_Q25s
+            sub_SDF$Lambda_10yr_Q75 <- lambda_10yr_Q75s
+            
+            SDF <- rbind(SDF, sub_SDF)
+            
+            # print progress update
+            prop <- round(nrow(SDF) / (numrows) * 100, 2)
+            
+            print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s],
+                        'C - beta ', betas[b], ' - ', abundances[a], ' - done - ', prop,
+                        '% of total done!', sep = ''))
+            
+          }
+          
+        }
         
-        # extract hatchling sex ratios, remove NaNs
-        hatchling_sex_ratio <- hatchlings_M / (hatchlings_F + hatchlings_M)
-        hatchling_sex_ratio[!is.finite(hatchling_sex_ratio)] <- NA
-        
-        # extract mature F
-        mature_F <- colSums(sims_N[3, , , ], dims = 1)
-        
-        # extract mature M
-        mature_M <- colSums(sims_N[4, , , ], dims = 1)
-        
-        # mature total
-        mature_total <- mature_F + mature_M
-        
-        # mature sex ratio, remove infinite values
-        OSR <- sims_OSR
-        OSR[!is.finite(OSR)] <- NA
-        
-        # add values to data frame
-        subset$Hatchling_Abundance_Median <- rowMedians(hatchlings_total, na.rm = TRUE)
-        subset$Hatchling_Abundance_Q25 <- rowQuantiles(hatchlings_total, prob = 0.25, na.rm = TRUE)
-        subset$Hatchling_Abundance_Q75 <- rowQuantiles(hatchlings_total, prob = 0.75, na.rm = TRUE)
-        subset$Hatchling_Sex_Ratio_Median <- rowMedians(hatchling_sex_ratio, na.rm = TRUE)
-        subset$Hatchling_Sex_Ratio_Q25 <- rowQuantiles(hatchling_sex_ratio, prob = 0.25, na.rm = TRUE)
-        subset$Hatchling_Sex_Ratio_Q75 <- rowQuantiles(hatchling_sex_ratio, prob = 0.75, na.rm = TRUE)
-        subset$Mature_Abundance_Median <- rowMedians(mature_total, na.rm = TRUE)
-        subset$Mature_Abundance_Q25 <- rowQuantiles(mature_total, prob = 0.25, na.rm = TRUE)
-        subset$Mature_Abundance_Q75 <- rowQuantiles(mature_total, prob = 0.75, na.rm = TRUE)
-        subset$Mature_Sex_Ratio_Median <- rowMedians(OSR, na.rm = TRUE)
-        subset$Mature_Sex_Ratio_Q25 <- rowQuantiles(OSR, prob = 0.25, na.rm = TRUE)
-        subset$Mature_Sex_Ratio_Q75 <- rowQuantiles(OSR, prob = 0.75, na.rm = TRUE)
-        
-        # update tracker
-        print(paste(model, ' - ', scenarios[s], ' - beta ', betas[b], 
-                    ' - done!', sep = ''))
-        print(paste('length SDF = ', nrow(SDF), sep = ''))
-        
-      } else {
-        
-        # add values to data frame
-        subset$Hatchling_Abundance_Median <- NA
-        subset$Hatchling_Abundance_Q25 <- NA
-        subset$Hatchling_Abundance_Q75 <- NA
-        subset$Hatchling_Sex_Ratio_Median <- NA
-        subset$Hatchling_Sex_Ratio_Q25 <- NA
-        subset$Hatchling_Sex_Ratio_Q75 <- NA
-        subset$Mature_Abundance_Median <- NA
-        subset$Mature_Abundance_Q25 <- NA
-        subset$Mature_Abundance_Q75 <- NA
-        subset$Mature_Sex_Ratio_Median <- NA
-        subset$Mature_Sex_Ratio_Q25 <- NA
-        subset$Mature_Sex_Ratio_Q75 <- NA
-        
-        # update tracker
-        print(paste(model, ' - ', scenarios[s], ' - beta ', betas[b], 
-                    ' - was all NA (and done)', sep = ''))
-        print(paste('length SDF = ', nrow(SDF), sep = ''))
-        
-      }
-
-        # tack subset onto SDF
-        SDF <- rbind(SDF, subset)
-        
-      }
+      } else { print('file does not exist???') }
       
     }
     
+  }
+  
 }
 
-abundance_sex_ratio_outputs <- SDF %>%
-  mutate(Breeding_Success_Median = pbeta(2 * Mature_Sex_Ratio_Median, 
-                                        shape1 = 1, 
-                                        shape2 = as.numeric(Beta))) %>%
-  mutate(Breeding_Success_Q25 = pbeta(2 * Mature_Sex_Ratio_Q25, 
-                                         shape1 = 1, 
-                                         shape2 = as.numeric(Beta))) %>%
-  mutate(Breeding_Success_Q75 = pbeta(2 * Mature_Sex_Ratio_Q75, 
-                                      shape1 = 1, 
-                                      shape2 = as.numeric(Beta))) %>%
+# save(SDF,
+#      file = paste(user, folder, '_SDF_test.Rdata', sep = ''))
+
+# adjust some stuff
+all_outputs <- SDF %>%
   mutate(Emergence_Success = 0.86 / (1 + exp(1.7 * (Temperature - 32.7)))) %>%
-  mutate(Mating_Function = if_else(as.numeric(as.character(OSR)) < 0.26, 
-                                   'Steep', 'Shallow')) %>%
-  mutate(OSR = factor(OSR))
+  mutate(Mating_Function = if_else(OSR < 0.26, 'Steep', 'Shallow')) %>%
+  mutate(Facet_label = paste(Abundance, ' abundance', sep = '')) %>%
+  mutate(Beta = factor(Beta)) %>%
+  mutate(OSR = factor(OSR)) %>%
+  mutate(Scenario = factor(Scenario)) %>%
+  mutate(Lambda_median = replace(Abundance_median, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Abundance_Q25, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Abundance_Q75, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Sex_ratio_median, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Sex_ratio_Q25, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Sex_ratio_Q75, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Breeding_success_median, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Breeding_success_Q25, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Breeding_success_Q75, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_median = replace(Lambda_median, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_Q25 = replace(Lambda_Q25, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_Q75 = replace(Lambda_Q75, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_10yr_median = replace(Lambda_10yr_mean, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_10yr_median = replace(Lambda_10yr_median, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_10yr_Q25 = replace(Lambda_10yr_Q25, Persist_mean < cutoff, NA)) %>%
+  mutate(Lambda_10yr_Q75 = replace(Lambda_10yr_Q75, Persist_mean < cutoff, NA))
 
-# save abundance and sex ratios object as its own thing
-save(abundance_sex_ratio_outputs, 
-     file = '~/Projects/iliketurtles3/output/red_noise_abundance_sex_ratio_outputs.Rdata')
-
-##### plotting parameters ######################################################
-
-# filter out stuff we don't want to plot
-median_lambdas_adjusted <- lambdas_and_persistence %>%
-  filter(Abundance == 'Mature') %>%
-  mutate(Lambda_10yr_median = replace(Lambda_10yr_median, Persistence < 0.1, 
-                                      NA)) %>%
-  mutate(Lambda_10yr_Q25 = replace(Lambda_10yr_Q25, Persistence < 0.1, NA)) %>%
-  mutate(Lambda_10yr_Q75 = replace(Lambda_10yr_Q75, Persistence < 0.1, NA)) %>%
-  mutate(Mating_Function = if_else(as.numeric(as.character(OSR)) < 0.26, 
-                                   'Steep', 'Shallow')) %>%
-  select(Scenario, OSR, Year, TRT, Mating_Function, Persistence,
-         Lambda_mean, Lambda_median, Lambda_Q25, Lambda_Q75, 
-         Lambda_10yr_mean, Lambda_10yr_median, Lambda_10yr_Q25, Lambda_10yr_Q75) %>%
-mutate(OSR = factor(OSR))
-
-joined_outputs <- abundance_sex_ratio_outputs %>%
-  full_join(median_lambdas_adjusted) %>%
-  mutate(Scenario = paste(parse_number(Scenario), '\u00B0C', sep = '')) 
-
-save(joined_outputs, 
-     file = '~/Projects/iliketurtles3/output/red_noise_joined_outputs.Rdata')
+save(all_outputs,
+     file = paste(user, folder, '_all_outputs.Rdata', sep = ''))

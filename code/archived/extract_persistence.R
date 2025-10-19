@@ -15,7 +15,7 @@ source('/home/quennessenv/iliketurtles3/code/mating function/OSRs_to_betas.R')
 computer <- 'cluster'
 
 # folder names for building paths
-folder <- c('2025_09_19_red_noise')
+folder <- c('2025_10_13_new_SAD_n10000_b100')
 
 # model names for building paths
 models <- c('P_base', 'GM_base')
@@ -192,7 +192,7 @@ SDF$Scenario <- factor(SDF$Scenario, levels = scenarios)
 base_persistence <- SDF
 save(base_persistence,
      # file = '~/Projects/iliketurtles3/output/base_persistence.Rdata')
-file = '/home/quennessenv/iliketurtles3/output/red_noise_base_persistence.Rdata')
+file = '/home/quennessenv/iliketurtles3/output/base_persistence.Rdata')
 
 # # save dataframe as R object - evolution
 # evolution_persistence <- SDF
