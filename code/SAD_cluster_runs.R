@@ -33,11 +33,11 @@ OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
 # number of simulations to run
-num_sims <- c(100, 1000)
+num_sims <- c(10)
 # num_sims <- c(1, 2)
 
 # years to run the model for
-burn_ins <- c(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000)
+burn_ins <- c(750)
 # burn_ins <- c(10, 20)
 
 # make dataframe of all combinations of arguments
@@ -45,7 +45,7 @@ DF <- expand.grid(models,
                   betas,
                   num_sims,
                   burn_ins) %>%
-  arrange(desc(Var4), desc(betas))
+  arrange(Var3, desc(Var2))
 
 # initialize empty arguments list
 arguments <- list()
@@ -62,7 +62,7 @@ for (i in 1:nrow(DF)) {
 # cluster runs
 mclapply(X = arguments,
          FUN = initialize_population_test,
-         mc.cores = 20)
+         mc.cores = 50)
 
 # # machine runs
 # tic()
