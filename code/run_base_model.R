@@ -13,12 +13,15 @@ run_base_model <- function(arguments) {
   nsims     <- arguments$Var5
   intensity <- arguments$Var6
   frequency <- arguments$Var7
-  # init_age_distribution <- arguments$Var8
+  folder    <- arguments$Var8
   
   # write to progress text file
-  update <- paste(lubridate::now(), ' - ', model, ' - ', scenario, 'C - beta ', 
-                  beta, ' - ', nsims, ' sims - ', yrs, ' years', sep = '')
-  write(update, file = '../output/progress.txt', append = TRUE)
+  # write to progress text file
+  start <- lubridate::now()
+  time1 <- format(start)
+  update1 <- paste(time1, ' - ', model, ' - ', scenario, 'C - beta ', beta, 
+                   ' - ', nsims, ' sims - ', yrs, ' years',sep = '')
+  write(update1, file = '../output/progress.txt', append = TRUE)
   
   # model parameters to modulate
   temp_mu <- 31.8                         # base incubation temp mean
@@ -154,30 +157,30 @@ run_base_model <- function(arguments) {
   
   IF_init <- IAD %>%
     filter(Sex == 'IF') %>%
-    pull(adj_abun_median)
+    pull(Abundance)
   
   IM_init <- IAD %>%
     filter(Sex == 'IM') %>%
-    pull(adj_abun_median)
+    pull(Abundance)
   
   MF_init <- IAD %>%
     filter(Sex == 'MF') %>%
-    pull(adj_abun_median)
+    pull(Abundance)
   
   MM_init <- IAD %>%
     filter(Sex == 'MM') %>%
-    pull(adj_abun_median)
+    pull(Abundance)
   
   # check to see if SAD exists or returns NaN - save everything as NA
   # and move on to the next combo
   
   if (sum(IM_init, MM_init) < 1 |
-      sum(!is.finite(IAD$adj_abun_median)) > 0) {
+      sum(!is.finite(IAD$Abundance)) > 0) {
     
     # get filepaths to save objects to
-    filepath1 = paste('../output/', model, '/', scenario, 'C/beta', beta,
+    filepath1 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
                       '/', nsims, '_N.Rda', sep = '')
-    filepath2 = paste('../output/', model, '/', scenario, 'C/beta', beta,
+    filepath2 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
                       '/', nsims, '_OSR.Rda', sep = '')
     
     # save objects
@@ -189,7 +192,7 @@ run_base_model <- function(arguments) {
     
     if (evolution_piv == TRUE) {
       
-      filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta,
+      filepath3 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
                         '/',  nsims, '_piv.Rda', sep = '')
       
       sims_piv <- NULL
@@ -199,7 +202,7 @@ run_base_model <- function(arguments) {
     
     if (evolution_threshold == TRUE) {
       
-      filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta,
+      filepath4 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
                         '/',  nsims, '_threshold.Rda', sep = '')
       
       sims_threshold <- NULL
@@ -242,10 +245,11 @@ run_base_model <- function(arguments) {
       
       # write to progress text file
       if ((i/nsims*100) %% 10 == 0) {
-        update <- paste(lubridate::now(), ' - ', model, ' - ', scenario,
+        time2 <- format(lubridate::now())
+        update2 <- paste(time2, ' - ', model, ' - ', scenario,
                         'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
                         ' years - ',  i/nsims*100, '% done!', sep = '')
-        write(update, file = '../output/progress.txt', append = TRUE)
+        write(update2, file = '../output/progress.txt', append = TRUE)
         
       }
       
@@ -255,13 +259,13 @@ run_base_model <- function(arguments) {
       
       folder <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
       
-    } else { folder <- ''}
+    } else { folder2 <- ''}
     
     # get filepaths to save objects to
-    filepath1 = paste('../output/', model, '/', scenario, 'C/beta', beta,
-                      folder, '/', nsims, '_N.Rda', sep = '')
-    filepath2 = paste('../output/', model, '/', scenario, 'C/beta', beta,
-                      folder, '/', nsims, '_OSR.Rda', sep = '')
+    filepath1 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
+                      folder2, '/', nsims, '_N.Rda', sep = '')
+    filepath2 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
+                      folder2, '/', nsims, '_OSR.Rda', sep = '')
     
     # save objects
     save(sims_N, file = filepath1)
@@ -269,8 +273,8 @@ run_base_model <- function(arguments) {
     
     if (evolution_piv == TRUE) {
       
-      filepath3 = paste('../output/', model, '/', scenario, 'C/beta', beta,
-                        '/',  nsims, '_piv.Rda', sep = '')
+      filepath3 = paste('../output/', folder, model, '/', scenario, 'C/beta', 
+                        beta, '/',  nsims, '_piv.Rda', sep = '')
       
       save(sims_piv, file = filepath3)
       
@@ -278,11 +282,20 @@ run_base_model <- function(arguments) {
     
     if (evolution_threshold == TRUE) {
       
-      filepath4 = paste('../output/', model, '/', scenario, 'C/beta', beta,
-                        '/',  nsims, '_threshold.Rda', sep = '')
+      filepath4 = paste('../output/', folder, model, '/', scenario, 'C/beta', 
+                        beta, '/',  nsims, '_threshold.Rda', sep = '')
       save(sims_threshold, file = filepath4)
       
     }
+    
+    # update progress text file with total time it took to run the thing
+    end <- lubridate::now()
+    total_time <- format(round(end - start, 3))
+    update3 <- paste(model, ' - ', scenario,
+                     'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
+                     ' years - total time: ', total_time, '\n', sep = '')
+    write(update3, 
+          file = '../output/progress.txt', append = TRUE)
     
   } 
   

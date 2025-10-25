@@ -15,7 +15,6 @@ library(lgcp)
 source('run_base_model.R')
 source('base_model.R')
 source('initialize_arrays.R')
-source('initialize_population.R')
 source('reproduction.R')
 source('pop_dynamics.R')
 source('mating function/OSRs_to_betas.R')
@@ -25,28 +24,23 @@ source('probability_male.R')
 source('conservation.R')
 
 # load in SAD object
-load("/home/quennessenv/iliketurtles3/output/SAD_n100_b400.Rdata")
+# load("~/Projects/iliketurtles3/output/SAD_deterministic_b1000.Rdata")
+load("../output/SAD_deterministic_TS_b800_medians.Rdata")
+
+# folder to save results to
+folder <- c('2025_10_23_SAD_deterministic_TS_b800_10y/')
+
+# initial total population size
+init_total <- 50000
 
 init_age_distribution <- SADdf %>%
-  filter(!is.na(Proportion)) %>%
-  filter(!is.na(Abundance)) %>%
-  group_by(Model, Beta, Sex, Age) %>%
-  summarise(prop_median = median(Proportion, na.rm = TRUE),
-            prop_Q25 = quantile(Proportion, probs = 0.25, na.rm = TRUE),
-            prop_Q75 = quantile(Proportion, probs = 0.75, na.rm = TRUE),
-            abundance_median = median(Abundance, na.rm = TRUE),
-            abundance_Q25 = quantile(Abundance, probs = 0.25, na.rm = TRUE),
-            abundance_Q75 = quantile(Abundance, probs = 0.75, na.rm = TRUE),
-            adj_abun_median = median(Adjusted_Abundance, na.rm = TRUE),
-            adj_abun_Q25 = quantile(Adjusted_Abundance, probs = 0.25,
-                                    na.rm = TRUE),
-            adj_abun_Q75 = quantile(Adjusted_Abundance, probs = 0.75,
-                                    na.rm = TRUE),
-            .groups = 'drop')
+  filter(!is.na(Prop_10yr_median)) %>%
+  filter(Year == max(Year)) %>%
+  mutate(Abundance = round(Prop_10yr_median * init_total))
 
 # models
 models <- c('P_base', 'GM_base')
-# models <- c('P_base', 'GM_base')
+# models <- c('P_base')
 # models <- c('P_evol_piv', 'P_evol_piv_high_H',
 #             'P_evol_threshold', 'P_evol_threshold_high_H',
 #             'GM_evol_piv', 'GM_evol_piv_high_H',
@@ -59,11 +53,11 @@ years <- 100
 
 # total temp increases
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-# scenarios <- c(0.5, 1, 1.5)
+# scenarios <- c(0.5, 1.5)
 
 # OSR values to get full fertilization of females
 OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
-# OSRs <- c(0.45)
+# OSRs <- c(0.45, 0.25)
 
 # mating function beta values
 betas <- as.numeric(OSRs_to_betas(OSRs))
@@ -79,7 +73,7 @@ intensity <- c(1)
 frequency <- c(1)
 
 # number of simulations to run
-nsims <- c(1000)
+nsims <- c(10000)
 
 # make dataframe of all combinations of arguments
 DF <- expand.grid(models,
@@ -88,7 +82,8 @@ DF <- expand.grid(models,
                   years,
                   nsims,
                   intensity,
-                  frequency) %>%
+                  frequency, 
+                  folder) %>%
   arrange(Var2, desc(Var3))
 
 # # dataframe with only specific combinations
@@ -116,4 +111,23 @@ for (i in 1:nrow(DF)) {
 result <- tryCatch({})
 mclapply(X = arguments, 
          FUN = run_base_model, 
-         mc.cores = 30)
+         mc.cores = 50)
+
+# ################################################################################
+# 
+# # and again, but this time with stochasticity
+# 
+# load("../output/SAD_deterministic_TS_b800.Rdata")
+# 
+# # initial total population size
+# init_total <- 20000
+# 
+# init_age_distribution <- SADdf %>%
+#   filter(!is.na(Proportion)) %>%
+#   filter(Year == max(Year)) %>%
+#   mutate(Abundance = Proportion * init_total)
+# 
+# result <- tryCatch({})
+# mclapply(X = arguments, 
+#          FUN = run_base_model, 
+#          mc.cores = 20)
