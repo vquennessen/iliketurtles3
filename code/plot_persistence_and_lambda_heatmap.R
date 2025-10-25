@@ -13,7 +13,7 @@ library(tidyr)
 # EDIT dataframes to load up ###################################################
 
 # load in persistence and lambda object
-load("~/Projects/iliketurtles3/output/red_noise_joined_outputs.Rdata")
+load("~/Projects/iliketurtles3/output/2025_10_23_SAD_deterministic_TS_b800_10y_all_outputs.Rdata")
 
 # what year to plot
 year_to_plot <- 100
@@ -22,16 +22,16 @@ name_to_use <- paste('mature_base_persistence')
 ################################################################################
 
 # make scenario and osr a factor variable
-joined_outputs$yaxislabs <- factor(parse_number(as.character(joined_outputs$Scenario)))
-joined_outputs$Scenario <- factor(joined_outputs$Scenario, 
-                              levels = unique(joined_outputs$Scenario))
-OSRs <- unique(joined_outputs$OSR)
-joined_outputs$OSR <- factor(joined_outputs$OSR, levels = unique(joined_outputs$OSR))
-# joined_outputs$xF <- factor(round(1/OSRs - 1, 2), 
+all_outputs$yaxislabs <- factor(parse_number(as.character(all_outputs$Scenario)))
+all_outputs$Scenario <- factor(all_outputs$Scenario, 
+                              levels = unique(all_outputs$Scenario))
+OSRs <- unique(all_outputs$OSR)
+all_outputs$OSR <- factor(all_outputs$OSR, levels = unique(all_outputs$OSR))
+# all_outputs$xF <- factor(round(1/OSRs - 1, 2), 
 #                         levels = rev(round(1/OSRs - 1, 2)))
 
 # EDIT #########################################################################
-DF_to_use <- joined_outputs %>% 
+DF_to_use <- all_outputs %>% 
   filter(Year == year_to_plot)
 
 # DF_to_use$xF <- factor(DF_to_use$xF, 
@@ -41,7 +41,7 @@ DF_to_use <- joined_outputs %>%
 fig4A <- ggplot(data = DF_to_use, 
                aes(x = OSR, 
                    y = yaxislabs, 
-                   fill = Persistence)) +
+                   fill = Persist_mean)) +
   geom_tile(color = "white",
             lwd = 1.5,
             linetype = 1) +
@@ -69,9 +69,10 @@ fig4A
 
 ##### final lambda #############################################################
 
-DF_to_use2 <- joined_outputs %>% 
+DF_to_use2 <- all_outputs %>% 
   filter(Year == year_to_plot) %>%
-  mutate(bins = cut(Lambda_10yr_median, 
+  mutate(Lambda_10yr_median = round(Lambda_10yr_median, 3)) %>%
+  mutate(bins = cut(Lambda_10yr_median,
                     breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
                     include.lowest = TRUE,
                     right = FALSE)) 
@@ -104,7 +105,7 @@ final_fig
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('red_noise_final_persistence_and_lambda.png', sep = ''),
+       filename = paste('TS_b800_n1000_final_persistence_and_lambda.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 6)
 

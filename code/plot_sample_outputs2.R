@@ -13,13 +13,12 @@ library(ggh4x)
 
 # source functions and load data
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
-load("~/Projects/iliketurtles3/output/2025_10_18_new_SAD_n100_b400_all_outputs.Rdata")
+load("~/Projects/iliketurtles3/output/2025_10_23_SAD_deterministic_TS_b800_10y_all_outputs.Rdata")
 load("~/Projects/iliketurtles3/output/ideals.Rdata")
 
 ##### clean up data ############################################################
 
 # scenarios
-scenarios_pretty <- c('0.5\u00B0C', '4.5\u00B0C')
 scenarios <- c(0.5, 4.5)
 # osrs
 osrs <- c(0.1, 0.35)
@@ -122,7 +121,7 @@ HA <- examples_to_plot %>%
   facet_grid(cols = vars(TRT)) +
   # geom_hline(yintercept = ideal_0.1, lty = 2) +
   # geom_hline(yintercept = ideal_0.35, lty = 1) +
-  geom_path(linewidth = 0.25) +
+  geom_path(linewidth = 0.75) +
   guides(col = 'none', fill = 'none', lty = 'none') +
   # guides(y = guide_axis_truncated(trunc_lower = c(-Inf, 750000),
   #                                  trunc_upper = c(250000, Inf))) +
@@ -267,6 +266,6 @@ final_fig
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('SAD_n100_b400_sample_outputs.png', sep = ''),
+       filename = paste('SAD_deterministic_b800_TS_10y_sample_outputs.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 7, height = 10)

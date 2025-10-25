@@ -15,7 +15,7 @@ library(magrittr)
 source('mating function/OSRs_to_betas.R')
 
 # which computer we using
-computer <- 'cluster'
+computer <- 'desktop'
 
 # path based on computer being used
 user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
@@ -24,7 +24,7 @@ user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
                       'C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/'))
 
 # name of folder for current runs
-folder <- '2025_10_18_new_SAD_n100_b400'
+folder <- '2025_10_23_SAD_deterministic_TS_b800_10y'
 
 # model(s)
 models <- c('P_base', 'GM_base')
@@ -39,6 +39,7 @@ scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
 
 # osrs
 osrs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
+# osrs <- c(0.49, 0.45)
 betas <- OSRs_to_betas(osrs)
 
 # years to average over for lambdas
@@ -121,21 +122,19 @@ for (p in 1:P) {
     for (b in 1:B) {
       
       # load in appropriate output files
+      N <- paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b],
+                          '/', nsims, '_N.Rda', sep = '')
       
+      Osr <- paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b],
+                          '/', nsims, '_OSR.Rda', sep = '')
       # if the file exists
-      if (
-        file.exists(paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b],
-                          '/', nsims, '_N.Rda', sep = '')) &
-        file.exists(paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b],
-                          '/', nsims, '_OSR.Rda', sep = ''))
-      ) {
+      if ( file.exists(N) & file.exists(Osr) ) {
         
-        load(paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b], '/',
-                   nsims, '_N.Rda', sep = ''))
+        load(N)
         
-        load(paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b], '/',
-                   nsims, '_OSR.Rda', sep = ''))
+        load(Osr)
         
+        # iterate through and get output
         for (a in 1:A) {        
           
           if (is.null(sims_N)) {
@@ -325,8 +324,8 @@ for (p in 1:P) {
             
             # print progress update
             prop <- round(nrow(SDF) / (numrows) * 100, 2)
-            
-            print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s],
+            boop <- format(lubridate::now())
+            print(paste(boop, ' - ', models[p], ' - ', scenarios[s],
                         'C - beta ', betas[b], ' - ', abundances[a], ' - done - ', prop,
                         '% of total done!', sep = ''))
             
@@ -348,27 +347,28 @@ for (p in 1:P) {
 # adjust some stuff
 all_outputs <- SDF %>%
   mutate(Emergence_Success = 0.86 / (1 + exp(1.7 * (Temperature - 32.7)))) %>%
+  mutate(OSR = as.numeric(as.character(OSR))) %>%
   mutate(Mating_Function = if_else(OSR < 0.26, 'Steep', 'Shallow')) %>%
   mutate(Facet_label = paste(Abundance, ' abundance', sep = '')) %>%
   mutate(Beta = factor(Beta)) %>%
   mutate(OSR = factor(OSR)) %>%
   mutate(Scenario = factor(Scenario)) %>%
-  mutate(Lambda_median = replace(Abundance_median, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Abundance_Q25, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Abundance_Q75, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Sex_ratio_median, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Sex_ratio_Q25, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Sex_ratio_Q75, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Breeding_success_median, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Breeding_success_Q25, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Breeding_success_Q75, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_median = replace(Lambda_median, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_Q25 = replace(Lambda_Q25, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_Q75 = replace(Lambda_Q75, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_10yr_median = replace(Lambda_10yr_mean, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_10yr_median = replace(Lambda_10yr_median, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_10yr_Q25 = replace(Lambda_10yr_Q25, Persist_mean < cutoff, NA)) %>%
-  mutate(Lambda_10yr_Q75 = replace(Lambda_10yr_Q75, Persist_mean < cutoff, NA))
+  mutate(Abundance_median = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Abundance_median)) %>%
+  mutate(Abundance_Q25 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Abundance_Q25)) %>%
+  mutate(Abundance_Q75 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Abundance_Q75)) %>%
+  mutate(Sex_ratio_median = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Sex_ratio_median)) %>%
+  mutate(Sex_ratio_Q25 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Sex_ratio_Q25)) %>%
+  mutate(Sex_ratio_Q75 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Sex_ratio_Q75)) %>%
+  mutate(Breeding_success_median = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Breeding_success_median)) %>%
+  mutate(Breeding_success_Q25 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Breeding_success_Q25)) %>%
+  mutate(Breeding_success_Q75 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Breeding_success_Q75)) %>%
+  mutate(Lambda_median = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_median)) %>%
+  mutate(Lambda_Q25 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_Q25)) %>%
+  mutate(Lambda_Q75 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_Q75)) %>%
+  mutate(Lambda_10yr_mean = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_10yr_mean)) %>%
+  mutate(Lambda_10yr_median = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_10yr_median)) %>%
+  mutate(Lambda_10yr_Q25 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_10yr_Q25)) %>%
+  mutate(Lambda_10yr_Q75 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_10yr_Q75))
 
 save(all_outputs,
      file = paste(user, folder, '_all_outputs.Rdata', sep = ''))
