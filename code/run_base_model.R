@@ -257,7 +257,7 @@ run_base_model <- function(arguments) {
     
     if (conservation_action == TRUE) {
       
-      folder <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
+      folder2 <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
       
     } else { folder2 <- ''}
     
