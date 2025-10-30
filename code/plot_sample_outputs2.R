@@ -11,12 +11,18 @@ library(patchwork)
 library(tidyverse)
 library(ggh4x)
 
+# red noise?
+red_noise <- TRUE
+noise <- ifelse(red_noise == TRUE, '_red_noise', '')
+
+# nsims
+nsims <- 10000
+
 # source functions and load data
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
-load("~/Projects/iliketurtles3/output/2025_10_23_SAD_deterministic_TS_b800_10y_all_outputs.Rdata")
+load(paste('~/Projects/iliketurtles3/output/TS_b800_10y_n', nsims, noise, 
+           '_all_outputs.Rdata', sep = ''))
 load("~/Projects/iliketurtles3/output/ideals.Rdata")
-
-##### clean up data ############################################################
 
 # scenarios
 scenarios <- c(0.5, 4.5)
@@ -24,6 +30,7 @@ scenarios <- c(0.5, 4.5)
 osrs <- c(0.1, 0.35)
 betas <- OSRs_to_betas(osrs)
 
+##### clean up data ############################################################
 
 # add ideals to dataframe
 clean_ideals <- ideals %>%
@@ -39,25 +46,6 @@ examples_to_plot <- all_outputs %>%
   mutate(Scenario = factor(Scenario, levels = scenarios)) %>%
   mutate(OSR = factor(OSR, levels = osrs)) %>%
   mutate(TRT = factor(TRT))
-
-
-#   # make scenario and OSR a factor
-# examples_to_plot$Scenario <- factor(examples_to_plot$Scenario, 
-#                                    levels = as.factor(unique(examples_to_plot$Scenario)))
-# examples_to_plot$OSR <- factor(examples_to_plot$OSR, 
-#                               levels = as.factor(unique(examples_to_plot$OSR)))
-# examples_to_plot$TRT <- factor(examples_to_plot$TRT, 
-#                               levels = as.factor(unique(examples_to_plot$TRT)))  
-
-# # ideal hatchling proportions male
-# ideal_0.1 <- 0.09997
-# ideal_0.35 <- 0.24497
-# 
-# ideal_0.1_xF <- round(1/ideal_0.1 - 1, 2)
-# ideal_0.35_xF <- round(1/ideal_0.35 - 1, 2)
-# 
-# ideal_0.1_xM <- round(ideal_0.1/(1 - ideal_0.1), 2)
-# ideal_0.35_xM <- round(ideal_0.35/(1 - ideal_0.35), 2)
 
 ##### plot 1: hatchling sex ratios #############################################
 
@@ -264,8 +252,12 @@ lambda
 final_fig <- HSR / OSR / BS / HA / MA / lambda 
 final_fig
 
+# red noise?
+noise <- ifelse(red_noise == TRUE, '_red_noise', '')
+
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('SAD_deterministic_b800_TS_10y_sample_outputs.png', sep = ''),
+       filename = paste('SAD_deterministic_b800_TS_10y_n', nsims, noise, 
+                        '_sample_outputs.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 7, height = 10)

@@ -14,6 +14,7 @@ run_base_model <- function(arguments) {
   intensity <- arguments$Var6
   frequency <- arguments$Var7
   folder    <- arguments$Var8
+  noise     <- arguments$Var9
   
   # write to progress text file
   # write to progress text file
@@ -28,7 +29,6 @@ run_base_model <- function(arguments) {
   climate_stochasticity <- TRUE           # whether or not to add in
   season_temp_sd <- 0.364                 # variance in temp at season level
   clutch_temp_sd <- 0.790                 # variance in temp at clutch level
-  noise <- 'Red'                          # noise: White or Red
   AC <- 0.5                               # autocorrelation coefficient
   
   # turtle demographics

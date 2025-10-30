@@ -80,6 +80,9 @@ frequency <- c(1)
 # number of simulations to run
 nsims <- c(1000)
 
+# white or red noise
+noise <- 'White'
+
 # make dataframe of all combinations of arguments
 DF <- expand.grid(models,
                   scenarios,
@@ -88,7 +91,8 @@ DF <- expand.grid(models,
                   nsims,
                   intensity,
                   frequency,
-                  folder) %>%
+                  folder, 
+                  noise) %>%
   arrange(Var2, desc(Var3))
 
 # # dataframe with only specific combinations

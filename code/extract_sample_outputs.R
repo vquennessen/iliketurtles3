@@ -15,7 +15,10 @@ library(magrittr)
 source('mating function/OSRs_to_betas.R')
 
 # which computer we using
-computer <- 'desktop'
+computer <- 'cluster'
+
+# red noise?
+red_noise <- TRUE
 
 # path based on computer being used
 user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
@@ -24,14 +27,20 @@ user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
                       'C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/'))
 
 # name of folder for current runs
-folder <- '2025_10_23_SAD_deterministic_TS_b800_10y'
+input_folder <- '2025_10_23_SAD_deterministic_TS_b800_10y'
+
+# number of sims
+nsims <- 10000
+
+# name to save to
+name <- paste('TS_b800_10y_n', nsims, sep = '')
 
 # model(s)
 models <- c('P_base', 'GM_base')
 TRTs <- c('Narrow transitional range', 'Wide transitional range')
 
 # filepaths
-folders <- rep(folder, length(models))
+folders <- rep(input_folder, length(models))
 paths <- paste(folders, models, sep = "/")
 
 # temperature increase scenarios
@@ -50,9 +59,6 @@ cutoff <- 0.1
 
 # total years run per sim
 years <- 1:100
-
-# number of sims
-nsims <- 1000
 
 # abundances / sexes
 abundances <- c('Immature Females', 'Immature Males', 'Mature Females',
@@ -370,5 +376,11 @@ all_outputs <- SDF %>%
   mutate(Lambda_10yr_Q25 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_10yr_Q25)) %>%
   mutate(Lambda_10yr_Q75 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_10yr_Q75))
 
+# red noise?
+noise <- ifelse(red_noise == TRUE, '_red_noise', '')
+
+# save to file
 save(all_outputs,
-     file = paste(user, folder, '_all_outputs.Rdata', sep = ''))
+     file = paste('~/Projects/iliketurtles3/output/', 
+                  name, '_n', nsims, noise, '_all_outputs.Rdata', 
+                  sep = ''))

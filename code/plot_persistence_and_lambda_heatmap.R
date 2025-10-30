@@ -12,8 +12,18 @@ library(tidyr)
 
 # EDIT dataframes to load up ###################################################
 
-# load in persistence and lambda object
-load("~/Projects/iliketurtles3/output/2025_10_23_SAD_deterministic_TS_b800_10y_all_outputs.Rdata")
+# red noise?
+red_noise <- TRUE
+noise <- ifelse(red_noise == TRUE, '_red_noise', '')
+
+# nsims
+nsims <- 10000
+
+# source functions and load data
+source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
+load(paste('~/Projects/iliketurtles3/output/TS_b800_10y_n', nsims, noise, 
+           '_all_outputs.Rdata', sep = ''))
+load("~/Projects/iliketurtles3/output/ideals.Rdata")
 
 # what year to plot
 year_to_plot <- 100
@@ -105,7 +115,7 @@ final_fig
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('TS_b800_n1000_final_persistence_and_lambda.png', sep = ''),
+       filename = paste('TS_b800_n10000_', noise, 'final_persistence_and_lambda.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 6)
 
