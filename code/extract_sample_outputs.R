@@ -18,7 +18,7 @@ source('mating function/OSRs_to_betas.R')
 computer <- 'cluster'
 
 # red noise?
-red_noise <- TRUE
+red_noise <- FALSE
 
 # path based on computer being used
 user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
@@ -147,7 +147,7 @@ for (p in 1:P) {
             
             # subset to add to super data frame
             sub_SDF <- data.frame(
-              Folder = rep(folder, Y),
+              Folder = rep(input_folder, Y),
               Model = rep(models[p], Y),
               TRT = rep(TRTs[p], Y),
               Scenario = rep(scenarios[s], Y),
@@ -269,7 +269,7 @@ for (p in 1:P) {
             
             # subset to add to super data frame
             sub_SDF <- data.frame(
-              Folder = rep(folder, Y),
+              Folder = rep(input_folder, Y),
               Model = rep(models[p], Y),
               TRT = rep(TRTs[p], Y),
               Scenario = rep(scenarios[s], Y),
@@ -381,6 +381,5 @@ noise <- ifelse(red_noise == TRUE, '_red_noise', '')
 
 # save to file
 save(all_outputs,
-     file = paste('~/Projects/iliketurtles3/output/', 
-                  name, '_n', nsims, noise, '_all_outputs.Rdata', 
+     file = paste('../output/', name, noise, '_all_outputs.Rdata', 
                   sep = ''))

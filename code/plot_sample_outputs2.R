@@ -12,7 +12,7 @@ library(tidyverse)
 library(ggh4x)
 
 # red noise?
-red_noise <- TRUE
+red_noise <- FALSE
 noise <- ifelse(red_noise == TRUE, '_red_noise', '')
 
 # nsims

@@ -13,7 +13,7 @@ library(tidyr)
 # EDIT dataframes to load up ###################################################
 
 # red noise?
-red_noise <- TRUE
+red_noise <- FALSE
 noise <- ifelse(red_noise == TRUE, '_red_noise', '')
 
 # nsims
@@ -115,7 +115,8 @@ final_fig
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('TS_b800_n10000_', noise, 'final_persistence_and_lambda.png', sep = ''),
+       filename = paste('TS_b800_n10000', noise, 
+                        '_final_persistence_and_lambda.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 6)
 
