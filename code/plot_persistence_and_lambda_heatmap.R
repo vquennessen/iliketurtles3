@@ -42,7 +42,10 @@ all_outputs$OSR <- factor(all_outputs$OSR, levels = unique(all_outputs$OSR))
 
 # EDIT #########################################################################
 DF_to_use <- all_outputs %>% 
-  filter(Year == year_to_plot)
+  filter(Year == year_to_plot) %>%
+  mutate(facet_label = case_when(TRT == 'Narrow transitional range' 
+                                   ~ '(A) Narrow transitional range', 
+                                 TRUE ~ '(B) Wide transitional range'))
 
 # DF_to_use$xF <- factor(DF_to_use$xF, 
 #                        levels = rev(as.factor(round(1/as.numeric(as.character(OSRs)) - 1, 2))))
@@ -62,11 +65,11 @@ fig4A <- ggplot(data = DF_to_use,
                        breaks = c(0, 0.25, 0.5, 0.75, 1), #breaks in the scale bar
                        limits = c(0, 1),
                        na.value = 'gray') +
-  guides(fill = guide_colourbar(title = "Probability \n of population \n persistence")) +
-  xlab('Minimum OSR required for 99% female reproductive success (xF:1M)') +
-  ylab('Temperature increase \n by year 100 (\u00B0C)') +
+  guides(fill = guide_colourbar(title = "Persistence \n probability \n")) +
+  xlab('Minimum OSR required for 99% female reproductive success \n (proportion male)') +
+  ylab('Temperature increase by year 100 (\u00B0C)') +
   facet_grid(
-    cols = vars(TRT)) +
+    cols = vars(facet_label)) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank()) +
@@ -85,7 +88,10 @@ DF_to_use2 <- all_outputs %>%
   mutate(bins = cut(Lambda_10yr_median,
                     breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
                     include.lowest = TRUE,
-                    right = FALSE)) 
+                    right = FALSE)) %>%
+  mutate(facet_label = case_when(TRT == 'Narrow transitional range' 
+                                 ~ '(C) Narrow transitional range', 
+                                 TRUE ~ '(D) Wide transitional range'))
 
 fig4B <- ggplot(data = DF_to_use2, aes(x = OSR, 
                                        y = yaxislabs, 
@@ -97,25 +103,27 @@ fig4B <- ggplot(data = DF_to_use2, aes(x = OSR,
   guides(fill = guide_legend(title = "Final \n median \n growth \n rate", 
                              reverse = TRUE)) +
   xlab('Minimum OSR required for 99% female reproductive success') +
-  ylab('Temperature increase \n by year 100 (\u00B0C)') +
+  ylab('Temperature increase by year 100 (\u00B0C)') +
   facet_grid(
-    cols = vars(TRT)) +
+    cols = vars(facet_label)) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank()) +
-  theme(strip.text = element_blank()) 
+        panel.grid.minor = element_blank()) 
+# +
+#   theme(strip.text = element_blank()) 
 
 fig4B
 
 ##### final combined figure ####################################################
 
-final_fig <- fig4A / fig4B
+final_fig <- fig4A / fig4B +
+  plot_layout(axis_titles = "collect_y")
 
-final_fig
+final_fig  
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('TS_b800_n10000', noise, 
+       filename = paste('TS_b800_n10000', noise,
                         '_final_persistence_and_lambda.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 6)
