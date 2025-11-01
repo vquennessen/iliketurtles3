@@ -1,0 +1,111 @@
+species,incubation_temp,hatching_success,emergence_success,sample_size,reference
+Chelonia mydas,27,60,NA,15,"Bustard & Greenham, 1968"
+Chelonia mydas,32,60,NA,15,"Bustard & Greenham, 1968"
+Chelonia mydas,38,0,0,15,"Bustard & Greenham, 1968"
+Chelonia mydas,29.9,NA,59,118,"Kaska et al., 1998"
+Chelonia mydas,30,NA,73,78,"Kaska et al., 1998"
+Chelonia mydas,31.3,NA,94,109,"Kaska et al., 1998"
+Chelonia mydas,30.4,NA,75,96,"Kaska et al., 1998"
+Chelonia mydas,30.9,NA,96,87,"Kaska et al., 1998"
+Chelonia mydas,29,97,NA,30,"Weber et al., 2012"
+Chelonia mydas,29,97,NA,30,"Weber et al., 2012"
+Chelonia mydas,32.5,53,NA,30,"Weber et al., 2012"
+Chelonia mydas,32.5,17,NA,30,"Weber et al., 2012"
+Caretta caretta,32.5,0,0,10,"Fisher et al., 2014"
+Caretta caretta,33,0,0,10,"Fisher et al., 2014"
+Caretta caretta,30,75,NA,8,"Fisher et al., 2014"
+Caretta caretta,32,33.3,NA,12,"Fisher et al., 2014"
+Caretta caretta,29,69.2,NA,26,"Fisher et al., 2014"
+Caretta caretta,30.6,NA,48,95,"Kaska et al., 1998"
+Caretta caretta,31.7,NA,68,77,"Kaska et al., 1998"
+Caretta caretta,31.1,NA,89,90,"Kaska et al., 1998"
+Caretta caretta,31.8,NA,68,65,"Kaska et al., 1998"
+Caretta caretta,28.1,NA,88,78,"Kaska et al., 1998"
+Caretta caretta,30.4,NA,73,93,"Kaska et al., 1998"
+Caretta caretta,29.9,NA,79,62,"Kaska et al., 1998"
+Caretta caretta,31,NA,81,77,"Kaska et al., 1998"
+Caretta caretta,31,50,NA,4,"Mrosovsky et al., 2002"
+Caretta caretta,31,100,NA,4,"Mrosovsky et al., 2002"
+Caretta caretta,30.8,100,NA,8,"Mrosovsky et al., 2002"
+Caretta caretta,30.8,100,NA,8,"Mrosovsky et al., 2002"
+Caretta caretta,30.5,100,NA,8,"Mrosovsky et al., 2002"
+Caretta caretta,30.5,100,NA,8,"Mrosovsky et al., 2002"
+Caretta caretta,29.2,92,NA,12,"Mrosovsky et al., 2002"
+Caretta caretta,29.2,83,NA,12,"Mrosovsky et al., 2002"
+Caretta caretta,29,100,NA,20,"Mrosovsky et al., 2002"
+Caretta caretta,29,95,NA,20,"Mrosovsky et al., 2002"
+Caretta caretta,28.5,90,NA,20,"Mrosovsky et al., 2002"
+Caretta caretta,28.5,85,NA,20,"Mrosovsky et al., 2002"
+Caretta caretta,28.3,88,NA,8,"Mrosovsky et al., 2002"
+Caretta caretta,28.3,86,NA,8,"Mrosovsky et al., 2002"
+Caretta caretta,27.3,92,NA,12,"Mrosovsky et al., 2002"
+Caretta caretta,27.3,100,NA,12,"Mrosovsky et al., 2002"
+Caretta caretta,27.1,100,NA,8,"Mrosovsky et al., 2002"
+Caretta caretta,27.1,75,NA,8,"Mrosovsky et al., 2002"
+Caretta caretta,29.7,97,96,94,"Read et al., 2013"
+Caretta caretta,32.3,93,90,134,"Read et al., 2013"
+Caretta caretta,31.6,68,58,102,"Read et al., 2013"
+Caretta caretta,31.8,95,91,155,"Read et al., 2013"
+Caretta caretta,32.5,59,55,135,"Read et al., 2013"
+Caretta caretta,32.2,73,56,172,"Read et al., 2013"
+Caretta caretta,32.7,87,78,104,"Read et al., 2013"
+Caretta caretta,32.5,89,76,161,"Read et al., 2013"
+Caretta caretta,30.7,86,79,128,"Read et al., 2013"
+Caretta caretta,32,67,65,156,"Read et al., 2013"
+Caretta caretta,32.1,83,74,65,"Read et al., 2013"
+Caretta caretta,29.5,95,92,134,"Read et al., 2013"
+Caretta caretta,29.7,93,91,149,"Read et al., 2013"
+Caretta caretta,28.7,98,91,87,"Read et al., 2013"
+Caretta caretta,28.1,96,96,53,"Read et al., 2013"
+Caretta caretta,29.7,99,99,102,"Read et al., 2013"
+Caretta caretta,29.1,97,96,152,"Read et al., 2013"
+Caretta caretta,29.5,99,94,126,"Read et al., 2013"
+Caretta caretta,28.6,99,94,142,"Read et al., 2013"
+Caretta caretta,30.6,87,86,123,"Read et al., 2013"
+Caretta caretta,30.6,97,95,131,"Read et al., 2013"
+Caretta caretta,30.4,98,88,121,"Read et al., 2013"
+Caretta caretta,29,98,94,128,"Read et al., 2013"
+Caretta caretta,30,80,80,162,"Read et al., 2013"
+Caretta caretta,29.3,99,98,175,"Read et al., 2013"
+Caretta caretta,29.1,94,92,137,"Read et al., 2013"
+Caretta caretta,29.6,97,97,122,"Read et al., 2013"
+Caretta caretta,28.5,84.1,82.6,32 nests,Current study
+Caretta caretta,28.9,79,76.7,32 nests,Current study
+Caretta caretta,29.1,81.7,80,32 nests,Current study
+Caretta caretta,29.2,81.6,80.8,32 nests,Current study
+Caretta caretta,29.4,82.8,81.7,32 nests,Current study
+Caretta caretta,29.5,87.6,85.2,32 nests,Current study
+Caretta caretta,29.5,78.8,75.2,32 nests,Current study
+Caretta caretta,29.5,87.1,86.5,32 nests,Current study
+Caretta caretta,29.6,90.2,89.4,32 nests,Current study
+Caretta caretta,29.7,83.1,81.8,32 nests,Current study
+Caretta caretta,29.8,83.8,82.2,32 nests,Current study
+Caretta caretta,29.9,84.4,83.2,32 nests,Current study
+Caretta caretta,30,84.7,83.8,32 nests,Current study
+Caretta caretta,30,83.6,81.5,32 nests,Current study
+Caretta caretta,30.1,80.9,79.2,32 nests,Current study
+Caretta caretta,30.1,82.7,81.8,32 nests,Current study
+Caretta caretta,30.2,75.6,73.8,32 nests,Current study
+Caretta caretta,30.3,87.6,87,32 nests,Current study
+Caretta caretta,30.3,88.6,87.2,32 nests,Current study
+Caretta caretta,30.3,75.1,72.6,32 nests,Current study
+Caretta caretta,30.4,74.3,72.6,32 nests,Current study
+Caretta caretta,30.6,84.8,80.1,32 nests,Current study
+Caretta caretta,30.7,73.8,70.3,32 nests,Current study
+Caretta caretta,30.9,78.8,75.7,32 nests,Current study
+Caretta caretta,31.3,73.4,69.9,32 nests,Current study
+Caretta caretta,31.8,74.8,72.5,32 nests,Current study
+Caretta caretta,32.2,84.5,81.3,31 nests,Current study
+Caretta caretta,26,83.3,NA,15,"Yntema & Mrosovsky, 1982"
+Caretta caretta,26,83.3,NA,12,"Yntema & Mrosovsky, 1982"
+Caretta caretta,30,93.3,NA,15,"Yntema & Mrosovsky, 1982"
+Caretta caretta,32,91.7,NA,12,"Yntema & Mrosovsky, 1982"
+Caretta caretta,34,16.7,NA,12,"Yntema & Mrosovsky, 1982"
+Caretta caretta,36,0,0,12,"Yntema & Mrosovsky, 1982"
+Lepidochelys olivacea,31,NA,73.6,53 nests,"Maulany et al., 2012"
+Lepidochelys olivacea,31,NA,54.2,56 nests,"Maulany et al., 2012"
+Lepidochelys olivacea,34.2,19,NA,100,"Valverde et al., 2010"
+Lepidochelys olivacea,33.7,3.7,NA,81,"Valverde et al., 2010"
+Lepidochelys olivacea,33.9,5.3,NA,94,"Valverde et al., 2010"
+Lepidochelys olivacea,33.1,34.3,NA,105,"Valverde et al., 2010"
+Lepidochelys olivacea,34.4,11.8,NA,85,"Valverde et al., 2010"
