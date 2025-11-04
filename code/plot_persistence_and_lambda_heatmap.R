@@ -66,8 +66,8 @@ fig4A <- ggplot(data = DF_to_use,
                        limits = c(0, 1),
                        na.value = 'gray') +
   guides(fill = guide_colourbar(title = "Persistence \n probability \n")) +
-  xlab('Minimum OSR required for 99% female reproductive success \n (proportion male)') +
-  ylab('Temperature increase by year 100 (\u00B0C)') +
+  xlab('Minimum OSR required for 99% female breeding success \n (proportion male)') +
+  ylab('Temperature increase by year 100 (\u00B0C) \n') +
   facet_grid(
     cols = vars(facet_label)) +
   theme_bw() +
@@ -102,8 +102,8 @@ fig4B <- ggplot(data = DF_to_use2, aes(x = OSR,
   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
   guides(fill = guide_legend(title = "Final \n median \n growth \n rate", 
                              reverse = TRUE)) +
-  xlab('Minimum OSR required for 99% female reproductive success') +
-  ylab('Temperature increase by year 100 (\u00B0C)') +
+  xlab('\n Minimum OSR required for 99% female breeding success \n (proportion male)') +
+  ylab('Temperature increase by year 100 (\u00B0C) \n') +
   facet_grid(
     cols = vars(facet_label)) +
   theme_bw() +

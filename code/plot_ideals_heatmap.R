@@ -102,7 +102,7 @@ to_plot <- ideals %>%
   # mutate(Above_init_temp = as.character(Temp > 31.8)) %>%
   # mutate(temps_below = replace(Temp, Temp <= 31.8, '')) %>%
   # mutate(temps_above = replace(Temp, Temp > 31.8, '')) %>%
-  mutate(labs = paste(Temp, '\n (', round(PSR, 2), ')', sep = ''))
+  mutate(labs = paste(round(Temp, 1), '\n (', round(PSR, 2), ')', sep = ''))
 
 # actually do the heatmap thing
 ideal_temps_heatmap <- ggplot(data = to_plot, 
@@ -111,7 +111,7 @@ ideal_temps_heatmap <- ggplot(data = to_plot,
                                   fill = Temp)) +
   geom_tile(color = 'white') +
   labs(fill = "Incubation \n temperature \n (\u00B0C)") +
-  xlab("Minimum OSR required for 99% female reproductive success \n (associated hatchling sex ratio as proportion male)") +
+  xlab("Minimum OSR required for 99% female reproductive success \n (associated hatchling sex ratio)") +
   scale_y_discrete(labels = c("Narrow \n transitional \n range", 
                               "Wide \n transitional \n range"
   )) +
@@ -145,7 +145,7 @@ load("~/Projects/iliketurtles3/output/ideals_without_emergence.Rdata")
 
 # adjust dataframe to get other useful columns
 to_plot2 <- ideals_without_emergence %>%
-  mutate(labs = paste(Temp, '\n (', round(PSR, 2), ')', sep = ''))
+  mutate(labs = paste(round(Temp, 1), '\n (', round(PSR, 2), ')', sep = ''))
 
 # actually do the heatmap thing
 ideal_temps_without_emergence_heatmap <- ggplot(data = to_plot2, 
@@ -156,7 +156,7 @@ ideal_temps_without_emergence_heatmap <- ggplot(data = to_plot2,
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
                        midpoint = 29.4) +
   labs(fill = "Incubation \n temperature \n (\u00B0C)") +
-  xlab("Minimum OSR required for 99% female reproductive success \n (associated hatchling sex ratio as proportion male)") +
+  xlab("Minimum OSR required for 99% female breeding success \n (associated hatchling sex ratio)") +
   scale_y_discrete(labels = c("Narrow \n transitional \n range", 
                               "Wide \n transitional \n range"
   )) +
@@ -183,21 +183,22 @@ ideal_temps_without_emergence_heatmap
 
 ##### joint figure #############################################################
 
-B <- ideal_temps_heatmap +
+A <- ideal_temps_heatmap +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
                        midpoint = 29.4, limits = c(29, 35)) + 
   guides(fill = 'none')  + 
-  labs(tag = '(B)') +
+  labs(tag = '(A)') +
   theme(plot.tag.position = c(0, 1), 
-        plot.tag = element_text(hjust = 0, vjust = 1, size = 12, face = 'bold')) 
+        plot.tag = element_text(hjust = 0, vjust = 1, size = 12, face = 'bold'))  +
+  xlab('')
 
-B
+A
 
-A <- ideal_temps_without_emergence_heatmap +
+B <- ideal_temps_without_emergence_heatmap +
   theme() +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', 
                        midpoint = 29.4, limits = c(29, 35)) +
-  labs(tag = '(A)') +
+  labs(tag = '(B)') +
   theme(axis.title.x = element_blank(), 
         axis.ticks.x = element_blank(),
         axis.text.x = element_blank(),
@@ -209,9 +210,9 @@ joint_fig <- A / plot_spacer() / B +
 
 joint_fig
 
-ggsave(joint_fig,
-       file = '~/Projects/iliketurtles3/figures/ideal_temps_joined_heatmap.png',
-       width = 7.5, height = 5)
+# ggsave(joint_fig,
+#        file = '~/Projects/iliketurtles3/figures/ideal_temps_joined_heatmap.png',
+#        width = 7.5, height = 5)
 
 ##### joint fig + difference between the two ###################################
 
@@ -219,8 +220,8 @@ joint_to_plot <- to_plot %>%
   ungroup() %>%
   mutate(WE_Temp = to_plot2$Temp) %>%
   mutate(WE_PSR = to_plot2$PSR) %>%
-  mutate(diff_Temp = round(WE_Temp - Temp, 2)) %>%
-  mutate(diff_PSR = round(WE_PSR - PSR, 2)) %>%
+  mutate(diff_Temp = round(Temp - WE_Temp, 1)) %>%
+  mutate(diff_PSR = round(PSR - WE_PSR, 2)) %>%
   mutate(diff_labs = paste(diff_Temp, '\n (', diff_PSR, ')', sep = ''))
 
 
@@ -229,10 +230,10 @@ joint_fig_diff <- ggplot(data = joint_to_plot,
              y = TRT, 
              fill = diff_Temp)) +
   geom_tile(color = 'white') +
-  scale_fill_gradient2(high = 'dodgerblue3', mid = 'white', low = 'red', 
+  scale_fill_gradient2(high = 'red', mid = 'white', low = 'dodgerblue3', 
                        midpoint = 0) +
-  labs(fill = "Difference in \n incubation \n temperature \n (\u00B0C)") +
-  xlab("Minimum OSR required for 99% female reproductive success \n (associated hatchling sex ratio as proportion male)") +
+  labs(fill = "\n Difference in \n incubation \n temperature \n (\u00B0C)") +
+  xlab("Minimum OSR required for 99% female breeding success \n (associated hatchling sex ratio)") +
   scale_y_discrete(labels = c("Narrow \n transitional \n range", 
                               "Wide \n transitional \n range"
   )) +
@@ -245,9 +246,7 @@ joint_fig_diff <- ggplot(data = joint_to_plot,
   theme(axis.text = element_text(size = 9)) +
   theme(strip.text = element_text(size = 9)) +
   theme(legend.title = element_text(size = 9)) +
-  geom_text(aes(label = diff_Temp), 
-            size = 3, 
-            fontface = 'bold')
+  geom_text(aes(label = diff_labs), size = 3, fontface = 'bold')
 
 joint_fig_diff
 
@@ -256,8 +255,13 @@ B2 <- B +
         axis.text.x = element_blank(), 
         axis.ticks.x = element_blank())
 
-joint_fig2 <- A / plot_spacer() / B2 +
-  plot_layout(ncol = 1, heights = c(1, -0.1, 1), guides = 'collect')
+A2 <- A  +
+  theme(axis.title.x = element_blank(), 
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+joint_fig2 <- A2 / plot_spacer() / B2 +
+  plot_layout(ncol = 1, heights = c(1, -0.5, 1), guides = 'collect')
 
 final_fig <- joint_fig2 / plot_spacer() / joint_fig_diff +
   plot_layout(ncol = 1, heights = c(1, -0.45, 1, -0.45, 1)) +

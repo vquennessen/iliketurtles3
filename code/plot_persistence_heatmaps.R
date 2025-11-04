@@ -1,5 +1,7 @@
 # make figures representing output
 
+rm(list = ls())
+
 # set working directory
 setwd('~/Projects/iliketurtles3')
 
@@ -23,37 +25,17 @@ noise <- ifelse(red_noise == TRUE, '_red_noise', '')
 years_to_plot <- c(55, 70, 80, 90, 100)
 name_to_use <- paste('mature_base_persistence', noise, sep = '')
 
-################################################################################
-
-# # make scenario and osr a factor variable
-# all_combos$yaxislabs <- factor(parse_number(as.character(all_combos$Scenario)))
-# all_combos$Scenario <- factor(all_combos$Scenario, 
-#                               levels = unique(all_combos$Scenario))
-# OSRs <- unique(all_combos$OSR)
-# all_combos$OSR <- factor(all_combos$OSR, levels = unique(all_combos$OSR))
-# all_combos$xF <- factor(round(1/OSRs - 1, 2), 
-                        # levels = rev(round(1/OSRs - 1, 2)))
-
-# # shorter time scales
-# short <- all_combos
-
-# pivotal <- all_combos %>%
-#   filter(Stochasticity == 'temperature stochasticity') %>%
-#   filter(Model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
-#                       'GM_base', 'GM_evol_piv', 'GM_evol_piv_high_H'))
-#   
-# threshold <- all_combos %>%
-#   filter(Stochasticity == 'temperature stochasticity') %>%
-#   filter(Model %in% c('P_base', 'P_evol_threshold', 'P_evol_threshold_high_H', 
-#                       'GM_base', 'GM_evol_threshold', 'GM_evol_threshold_high_H'))
-
 # EDIT #########################################################################
+
+all_outputs$OSR <- factor(all_outputs$OSR, levels = unique(all_outputs$OSR))
+
+year_levels <- paste('Year ', years_to_plot, sep = '')
+
 DF_to_use <- all_outputs %>% 
   filter(Year %in% years_to_plot) %>%
   filter(Abundance == 'Mature') %>%
-  mutate(facet_labels = factor(paste('Year', Year, sep = ' '), 
-                               levels = paste('Year', unique(DF_to_use$Year, 
-                                                             sep = ''))))
+  mutate(facet_label = factor(paste('Year ', Year, sep = ''), 
+                              levels = year_levels))
 
   # filter(Stochasticity == 'white noise') %>%
   # select(Population, Scenario, OSR, Survive_to, Abundance, Probability_mean) %>%
@@ -80,7 +62,7 @@ DF_to_use <- all_outputs %>%
 
 ##### plotting all abundances  #################################################
 fig3 <- ggplot(data = DF_to_use, 
-               aes(x = OSR, 
+               aes(x = OSR,
                    y = Scenario, 
                    fill = Persist_mean)) +
   geom_tile(color = "white",
@@ -94,13 +76,13 @@ fig3 <- ggplot(data = DF_to_use,
                        limits = c(0, 1),
                        na.value = 'gray') +
   guides(fill = guide_colourbar(title = "Persistence \n probability \n")) +
-  xlab('Minimum OSR required for 99% female reproductive success \n (proportion male)') +
+  xlab('Minimum OSR required for 99% female breeding success \n (proportion male)') +
   ylab('Temperature increase \n by year 100 (\u00B0C)') +
   # ggtitle(paste(name_to_use, ': Probability of population persistence \n
   #         (> 10% of starting abundance) by year', year_to_plot, 
   #               sep = '')) +
   facet_grid(
-    rows = vars(facet_labels),
+    rows = vars(facet_label),
     cols = vars(TRT)) +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
@@ -113,6 +95,8 @@ fig3 <- ggplot(data = DF_to_use,
   theme(strip.text = element_text(size = 16)) +
   # theme(title = element_text(size = 13)) +
   theme(legend.title = element_text(size = 18))
+
+fig3
 
 # save combined figure to file
 ggsave(plot = fig3,

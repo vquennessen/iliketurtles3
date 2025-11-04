@@ -12,7 +12,7 @@ library(tidyverse)
 library(ggh4x)
 
 # red noise?
-red_noise <- FALSE
+red_noise <- TRUE
 noise <- ifelse(red_noise == TRUE, '_red_noise', '')
 
 # nsims
@@ -240,7 +240,7 @@ lambda <- examples_to_plot %>%
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
   xlab('Year') +
-  ylab('(F) Median \n mature growth rate') +
+  ylab('(E) Median \n mature growth rate') +
   guides(col = 'none', fill = 'none', lty = 'none') +
   theme_bw() +
   theme(strip.text = element_blank())
@@ -249,7 +249,7 @@ lambda
 
 ##### final figure #############################################################
 
-final_fig <- HSR / OSR / BS / HA / MA / lambda 
+final_fig <- HSR / OSR / BS / HA / lambda 
 final_fig
 
 # red noise?
