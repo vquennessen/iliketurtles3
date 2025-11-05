@@ -63,9 +63,9 @@ B <- ggplot(data = DF, aes(x = Operational_Sex_Ratio,
   scale_color_manual(values = rev(colors)[-1], 
                      labels = OSRs) +
   # for replacement legend - delete for legend with beta values
-  labs(color = 'Minimum \n OSR needed \n for 99% \n reproductive \n success') +
+  labs(color = 'Minimum \n OSR needed \n for 99% \n breeding \n success') +
   ylab('Reproductive success \n (probability females find a mate)') +
-  xlab('Operational sex ratio (OSR)') +
+  xlab('Operational sex ratio \n (proportion male)') +
   geom_point(data = points, 
              col = rev(colors)[-1], 
              size = 3) +
