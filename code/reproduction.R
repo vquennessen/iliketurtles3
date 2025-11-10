@@ -1,6 +1,7 @@
 # reproduction
 
-reproduction <- function(N, M, y, beta, max_age, available_F, available_M,
+reproduction <- function(N, M, y, beta, max_age, 
+                         F_remigration_int, M_remigration_int,
                          clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                          emergence_success_A, emergence_success_k, 
                          emergence_success_t0, 
@@ -10,11 +11,22 @@ reproduction <- function(N, M, y, beta, max_age, available_F, available_M,
                          effect_size) {
   
   # breeding females this year
+  available_F <- rbinom(n = max_age, 
+                        size = N[3, , y], 
+                        prob = 1 / F_remigration_int)
+  
+  # breeding males this year
+  available_M <- rbinom(n = max_age, 
+                        size = N[4, , y], 
+                        prob = 1 / M_remigration_int)
+  
+  # breeding females this year
   n_available_F <- sum(as.numeric(available_F, na.rm = TRUE))
   
   # breeding males this year
   n_available_M <- sum(as.numeric(available_M, na.rm = TRUE))
   
+  # check that there is at least one available female and one available male
   if (n_available_F < 1 | n_available_M < 1) {
     
     OSR <- NA
@@ -29,16 +41,11 @@ reproduction <- function(N, M, y, beta, max_age, available_F, available_M,
     OSR <- n_available_M / (n_available_M + n_available_F)
     
     # calculate reproductive success
-    # if 50% males or fewer, use beta function to calculate breeding success
-    # multiply OSR by 2 to transform to beta function with x from 0 to 0.5 
-    # instead of 0 to 1
-    if (OSR < 0.5) {
-      breeding_success <- pbeta(2 * OSR, 
-                                shape1 = 1, 
-                                shape2 = beta) 
-      
-      # if OSR > 0.5 all the females get to mate
-    } else { breeding_success <- 1 }
+    # use beta function to calculate breeding success multiply OSR by 2 to 
+    # transform to beta function with x from 0 to 0.5 instead of 0 to 1
+    breeding_success <- pbeta(2 * OSR, 
+                              shape1 = 1, 
+                              shape2 = beta) 
     
     # how many females actually find a male to mate with and then nest
     # set.seed(seed)

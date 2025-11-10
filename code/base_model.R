@@ -20,30 +20,20 @@ base_model <- function(scenario, beta, yrs, max_age,
   init_output <- initialize_arrays(scenario, yrs, max_age, 
                                    IF_init, IM_init, MF_init, MM_init,
                                    M, F_remigration_int, M_remigration_int, 
-                                   T_piv, k_piv, h2_piv, ag_var_piv, 
-                                   evolution_piv,
-                                   T_threshold, h2_threshold, ag_var_threshold, 
-                                   evolution_threshold,
+                                   T_piv, k_piv, T_threshold, 
                                    temp_mu, climate_stochasticity, 
                                    season_temp_sd, clutch_temp_sd, noise, AC, 
+                                   evolution, trait, h2, varGenetic, 
                                    conservation_action, frequency)
   
-  N                  <- init_output[[1]]    # population size array
-  season_temp_mus    <- init_output[[2]]    # mean temps at the season level
-  G_piv              <- init_output[[3]]    # genotypes array
-  P_piv              <- init_output[[4]]    # expected phenotypes array
-  Gamma_piv          <- init_output[[5]]    # error around expected genotype
-  Epsilon_piv        <- init_output[[6]]    # error around expected phenotype
-  Delta_piv          <- init_output[[7]]    # phenotypic variance
-  Pivotal_temps      <- init_output[[8]]    # pivotal temperature
-  G_threshold        <- init_output[[9]]    # genotypes array
-  P_threshold        <- init_output[[10]]   # expected phenotypes array
-  Gamma_threshold    <- init_output[[11]]   # error around expected genotype
-  Epsilon_threshold  <- init_output[[12]]   # error around expected phenotype  
-  Delta_threshold    <- init_output[[13]]   # phenotypic variance
-  Threshold_temps    <- init_output[[14]]   # threshold temperature
-  OSRs               <- init_output[[15]]   # operational sex ratio
-  conservation_years <- init_output[[16]]   # years for conservation action
+  N                  <- init_output[[1]]   # population size array
+  season_temp_mus    <- init_output[[2]]   # mean temps at the season level
+  OSRs               <- init_output[[3]]   # operational sex ratio
+  sdSegregation      <- init_output[[4]]   # evolution segregation variance
+  sdPhenotypic       <- init_output[[5]]   # evolution phenotypic variance
+  G                  <- init_output[[6]]   # genotypes
+  P                  <- init_output[[7]]   # phenotypes
+  conservation_years <- init_output[[8]]   # years for conservation action
   
   ##### model ##################################################################
   # set.seed(seed)
@@ -52,14 +42,9 @@ base_model <- function(scenario, beta, yrs, max_age,
     # population dynamics
     # survival for each age 
     # set.seed(seed)
-    output_pd <- pop_dynamics(N, max_age, y, M,
-                              IF_survival, IM_survival, 
-                              MF_survival, MM_survival,
-                              F_remigration_int, M_remigration_int)
-    
-    N                    <- output_pd[[1]]
-    available_F          <- output_pd[[2]]
-    available_M          <- output_pd[[3]]
+    N <- pop_dynamics(N, max_age, y, M,
+                      IF_survival, IM_survival, MF_survival, MM_survival, 
+                      G, P)
     
     # # evolution (if applicable)
     # if (evolution_piv == TRUE || evolution_threshold == TRUE) {
@@ -82,12 +67,14 @@ base_model <- function(scenario, beta, yrs, max_age,
     
     # reproduction
     # set.seed(seed)
-    rep_output <- reproduction(N, M, y, beta, max_age, available_F, available_M,
+    rep_output <- reproduction(N, M, y, beta, max_age, 
+                               F_remigration_interval, M_remigration_interval,
                                clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                                emergence_success_A, emergence_success_k, 
                                emergence_success_t0, 
                                season_temp_mus, clutch_temp_sd,
-                               k_piv, Pivotal_temps, Threshold_temps, 
+                               k_piv, T_piv, T_threshold, evolution, 
+                               trait, sdSegregation, sdPhenotypic, G, P, 
                                conservation_action, conservation_years, 
                                intensity, effect_size)
     
@@ -95,6 +82,8 @@ base_model <- function(scenario, beta, yrs, max_age,
     N[1, 1, y]          <- rep_output[[1]]
     N[2, 1, y]          <- rep_output[[2]]
     OSRs[y]             <- rep_output[[3]]
+    G[, , y]            <- rep_output[[4]]
+    P[, , y]            <- rep_output[[5]]
     
     # break out of loop if there are zero males or females at any age
     if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], 

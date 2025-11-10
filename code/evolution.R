@@ -1,11 +1,9 @@
 # evolution script
 
 evolution <- function(N, max_age, y, breeding_F, breeding_M,
-                      G_piv, P_piv, Delta_piv, Pivotal_temps,
-                      Gamma_piv, Epsilon_piv, evolution_piv, 
-                      G_threshold, P_threshold, Delta_threshold, 
-                      Threshold_temps, Gamma_threshold, Epsilon_threshold, 
-                      evolution_threshold)
+                      trait, h2, varG)
+  
+  
   
 {
   

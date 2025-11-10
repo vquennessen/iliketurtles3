@@ -44,14 +44,19 @@ init_age_distribution <- SADdf %>%
 #   summarize(nMM = sum(Abundance))
 
 # models
-models <- c('P_base', 'GM_base')
-# models <- c('P_base')
-# models <- c('P_evol_piv', 'P_evol_piv_high_H',
-#             'P_evol_threshold', 'P_evol_threshold_high_H',
-#             'GM_evol_piv', 'GM_evol_piv_high_H',
-#             'GM_evol_threshold', 'GM_evol_threshold_high_H')
-# models <- c('P_conservation', 'GM_conservation')
+TRT <- c('narrow', 'wide')
 
+# evolution
+evolution <- c(FALSE)
+trait <- c(NULL)
+rate <- c(NULL)
+
+evolution <- c(TRUE)
+trait <- c('T_piv', 'emergence_success_t0')
+rate <- c('', 'high')
+
+# conservation?
+conservation <- c(FALSE, TRUE)
 
 # years to run the model for
 years <- 100
@@ -80,30 +85,30 @@ frequency <- c(1)
 # number of simulations to run
 nsims <- c(1000)
 
+# maximum population size for any sex, age, year
+max_N <- 224000
+
 # white or red noise
 noise <- 'White'
 
 # make dataframe of all combinations of arguments
-DF <- expand.grid(models,
+DF <- expand.grid(folder, 
+                  noise,
+                  TRT, 
                   scenarios,
                   betas,
                   years,
                   nsims,
+                  max_N,
+                  
+                  evolution,
+                  trait, 
+                  rate, 
+                  
+                  conservation,
                   intensity,
-                  frequency,
-                  folder, 
-                  noise) %>%
-  arrange(Var2, desc(Var3))
-
-# # dataframe with only specific combinations
-# DF <- data.frame(Var1 = models,
-#                  Var2 = scenarios,
-#                  Var3 = betas,
-#                  Var4 = years,
-#                  Var5 = num_sims,
-#                  Var6 = intensity,
-#                  Var7 = frequency) %>%
-#   arrange(Var2, Var3)
+                  frequency) %>%
+  arrange(Var4, desc(Var5))
 
 # initialize empty arguments list
 arguments <- list()

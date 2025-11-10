@@ -3,12 +3,10 @@
 initialize_arrays <- function(scenario, yrs, max_age, 
                               IF_init, IM_init, MF_init, MM_init,
                               M, F_remigration_int, M_remigration_int, 
-                              T_piv, k_piv, h2_piv, ag_var_piv, 
-                              evolution_piv,
-                              T_threshold, h2_threshold, ag_var_threshold, 
-                              evolution_threshold,
+                              T_piv, k_piv, T_threshold, 
                               temp_mu, climate_stochasticity, 
                               season_temp_sd, clutch_temp_sd, noise, AC, 
+                              evolution, trait, h2, varGenetic, 
                               conservation_action, frequency) {
   
   ##### population size ########################################################
@@ -66,130 +64,6 @@ initialize_arrays <- function(scenario, yrs, max_age,
     # if no climate stochasticity, the temperatures are just the means
   } else { season_temp_mus <- temp_mus }
   
-  ##### pivotal temperatures ###################################################
-  
-  # if evolution_piv is turned on, create gamma, epsilon, and delta vectors
-  if (evolution_piv == TRUE) {  
-    
-    # gamma, error term for the expected genotype, one for each year
-    Gamma_piv <- rnorm(n = yrs, 
-                       mean = 0, 
-                       sd = sqrt(ag_var_piv / 2))     
-    
-    # delta, error term for the expected pivotal temperature, one for each year
-    Delta_piv <- rnorm(n = yrs, 
-                       mean = 0, 
-                       sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))  
-    
-    # epsilon, error term for the observed pivotal temperature (phenotypic 
-    # variation), one for each year
-    Epsilon_piv <- rnorm(n = yrs, 
-                         mean = 0, 
-                         sd = sqrt(ag_var_piv / h2_piv)) 
-    
-    # initial genes arrays, mu and sd, dimensions sex * age * years
-    genes_piv_mu <- array(rep(NA, times = 4 * max_age * yrs), 
-                          dim = c(4, max_age, yrs))
-    genes_piv_sd <- array(rep(NA, times = 4 * max_age * yrs), 
-                          dim = c(4, max_age, yrs))
-    # year 1
-    genes_piv_mu[, , 1] <- rnorm(n = 4*max_age, 
-                                 mean = T_piv, 
-                                 sd = sqrt(ag_var_piv / 2))
-    
-    # G_piv <- rnorm(n = max_age, 
-    #                mean = T_piv, 
-    #                sd = sqrt(ag_var_piv / 2))
-    
-    # initial phenotype array, dimensions = sex * max_age * years
-    # phenotype = expected pivotal temperature
-    phen_piv <- array(rep(NA, times = 4 * max_age * yrs), 
-                      dim = c(4, max_age, yrs))
-    
-    # year 1
-    
-    
-    # # initial expected phenotypes vector, one for each age, updated each year
-    # P_piv <- G_piv + rnorm(n = max_age, 
-    #                        mean = 0, 
-    #                        sd = sqrt((ag_var_piv / h2_piv - ag_var_piv)))
-    
-    # initialize observed hatchling pivotal temperatures vector, one for each 
-    # year
-    Pivotal_temps <- rep(NA, yrs)
-    Pivotal_temps[1] <- P_piv[1] + Epsilon_piv[1]
-    
-    
-  } else {
-    
-    # pivotal temperatures without evolution
-    Pivotal_temps <- rep(T_piv, times = yrs)
-    
-    # no Delta, G, P, epsilon,  or gamma vectors
-    Delta_piv         <- NULL
-    G_piv             <- NULL
-    P_piv             <- NULL
-    Epsilon_piv       <- NULL 
-    Gamma_piv         <- NULL
-    
-  }
-  
-  ##### threshold temperatures ################################################# 
-  
-  # if evolution_threshold is turned on, create gamma, epsilon, and delta vectors
-  if (evolution_threshold == TRUE) {  
-    
-    # distribution of G - starting genotypes plus genotypic variation
-    G_threshold <- rnorm(n = max_age, 
-                         mean = T_threshold, 
-                         sd = sqrt(ag_var_threshold))
-    
-    # distribution of P - starting expected phenotypes
-    # starting genotypes plus environmental variation
-    P_threshold<- G_threshold + rnorm(n = max_age, 
-                                      mean = 0, 
-                                      sd = sqrt((ag_var_threshold / 
-                                                   h2_threshold - 
-                                                   ag_var_threshold)))
-    
-    # intialize actual threshold temperatures vector
-    # expected phenotypes plus phenotypic variation
-    Threshold_temps <- rep(NA, times = yrs)
-    Threshold_temps[1] <- P_threshold[1] + rnorm(n = 1, 
-                                                 mean = 0, 
-                                                 sd = sqrt(ag_var_threshold / 
-                                                             h2_threshold))
-    
-    # gamma, error term for the expected genotype
-    Gamma_threshold <- rnorm(n = yrs, 
-                             mean = 0, 
-                             sd = sqrt(ag_var_threshold / 2))       
-    
-    # epsilon, error term for the expected threshold temperature
-    Epsilon_threshold <- rnorm(n = yrs, 
-                               mean = 0, 
-                               sd = sqrt((ag_var_threshold / 
-                                            h2_threshold - 
-                                            ag_var_threshold)))
-    # phenotypic variation - threshold temperatures
-    Delta_threshold <- rnorm(n = yrs, 
-                             mean = 0, 
-                             sd = sqrt(ag_var_threshold / h2_threshold))
-    
-  } else {
-    
-    # threshold temperatures without evolution
-    Threshold_temps <- rep(T_threshold, times = yrs)
-    
-    # no G, P, epsilon, gamma, or delta vectors
-    G_threshold             <- NULL
-    P_threshold             <- NULL
-    Epsilon_threshold       <- NULL 
-    Gamma_threshold         <- NULL
-    Delta_threshold         <- NULL
-    
-  }
-  
   ##### OSR ####################################################################
   
   # OSR vector - 1 for each year
@@ -216,7 +90,56 @@ initialize_arrays <- function(scenario, yrs, max_age,
   # calculate first operational sex ratio
   } else { OSRs[1] <- n_available_M / (n_available_M + n_available_F) }
   
+  ##### evolution ##############################################################
+  
+  # if evolution_piv is turned on, create gamma, epsilon, and delta vectors
+  if (evolution == TRUE) {  
+    
+    # segregation variance, error term for offspring genotype, one for each year
+    sdSegregation <- rnorm(n = yrs, 
+                           mean = 0, 
+                           sd = sqrt(varGenetic / 2))     
+    
+    # phenotypic variance, error term for offspring phenotype, one for each year
+    varPhenotypic <- varGenetic / h2  
+    
+    # genotype array, dimensions sex * age * years
+    G <- array(rep(NA, times = 4 * max_age * yrs * 224000), 
+               dim = c(4, max_age, yrs, 224000))
+    
+    # which trait is evolving?
+    value <- ifelse(trait == 'pivotal_temperature', 
+                    T_piv, 
+                    emergence_succcess_t0)
+    
+    # year 1
+    G[, , 1, ] <- c(apply(N[, , 1], 
+                          c(1, 2), 
+                          rnorm, mean = value, sd = sqrt(varGenetic)), 
+                    rep(NA, 224000 - N[, , 1]))
+    
+    
+    # phenotype array, dimensions sex * age * years
+    P <- array(rep(NA, times = 4 * max_age * yrs), 
+               dim = c(4, max_age, yrs))
+    
+    # year 1
+    P[, , 1] <- rnorm(n = 4*max_age, 
+                      mean = value, 
+                      sd = sqrt(varPhenotypic))
+    
+  } else {
+    
+    # pivotal temperatures without evolution
+    sdSegregation <- NULL
+    sdPhenotypic <- NULL
+    G <- NULL
+    P <- NULL
+    
+  }
+  
   ##### conservation ###########################################################
+  
   if (conservation_action == TRUE) {
     
     conservation_years <- seq(from = 1, by = frequency, length = yrs)
@@ -226,11 +149,8 @@ initialize_arrays <- function(scenario, yrs, max_age,
   ##### output #################################################################
   
   # output
-  output <- list(N, season_temp_mus,
-                 G_piv, P_piv, Gamma_piv, Epsilon_piv, Delta_piv, Pivotal_temps, 
-                 G_threshold, P_threshold, Gamma_threshold, Epsilon_threshold, 
-                 Delta_threshold, Threshold_temps, 
-                 OSRs, 
+  output <- list(N, season_temp_mus, OSRs, 
+                 sdSegregation, sdPhenotypic, G, P, 
                  conservation_years)
   
   return(output)

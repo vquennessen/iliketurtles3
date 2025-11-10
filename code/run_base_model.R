@@ -68,47 +68,55 @@ run_base_model <- function(arguments) {
   T_threshold <- 35                         # lethal temperature threshold
   
   # pivotal temperature and evolution stats
-  k_piv <- ifelse(model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H',
-                               'P_evol_threshold', 'P_evol_threshold_high_H',
-                               'P_conservation'),
-                  # -1.34,
+  k_piv <- ifelse(model %in% c('narrow_TRT'),
                   -1.54,
-                  # -0.561
                   -0.77)
   
-  evolution_piv <- ifelse(model %in% c('P_evol_piv', 'P_evol_piv_high_H',
-                                       'GM_evol_piv', 'GM_evol_piv_high_H'),
-                          TRUE,
-                          FALSE)
+  if (evolution == TRUE) {
+    
+    if (trait == 'T_piv') {
+      
+      if (rate == '') {
+        
+        h2 <- 0.221
+        varGenetic <- 0.926
+        
+      } else {
+        
+        h2 <- 0.576
+        varGenetic <- 2.41
+        
+      }
+    
+    # or, if the evolvable trait is the emergence success midpoint (t0)
+    } else {
+      
+      if (rate == '') {
+        
+        h2 <- 0.75
+        # varGenetic <- 
+        
+      } else {
+        
+        h2 <- 0.88
+        # varGenetic <- 
+        
+      }
+      
+    }
+    
+  } else {
+    
+    h2 <- NULL
+    varGenetic <- NULL
+    
+  }
+      
+      
   
-  h2_piv <- ifelse(model %in% c('P_evol_piv', 'GM_evol_piv'),
-                   0.135,
-                   ifelse(model %in% c('P_evol_piv_high_H',
-                                       'GM_evol_piv_high_H'),
-                          0.351,
-                          NA))
   
-  ag_var_piv <- ifelse(evolution_piv == TRUE,
-                       0.017,
-                       NA)
   
-  # threshold evolution stats
-  evolution_threshold <- ifelse(model %in% c('P_evol_threshold',
-                                             'P_evol_threshold_high_H',
-                                             'GM_evol_threshold',
-                                             'GM_evol_threshold_high_H'),
-                                TRUE,
-                                FALSE)
   
-  h2_threshold <- ifelse(model %in% c('P_evol_threshold', 'GM_evol_threshold'),
-                         0.2, ifelse(model %in% c('P_evol_threshold_high_H',
-                                                  'GM_evol_threshold_high_H'),
-                                     0.38,
-                                     NA))
-  
-  ag_var_threshold <- ifelse(evolution_threshold == TRUE,
-                             0.017,
-                             NA)
   
   # conservation values
   conservation_action <- ifelse(model %in% c('P_conservation',
