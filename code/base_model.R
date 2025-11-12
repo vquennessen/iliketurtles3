@@ -29,11 +29,13 @@ base_model <- function(scenario, beta, yrs, max_age,
   N                  <- init_output[[1]]   # population size array
   season_temp_mus    <- init_output[[2]]   # mean temps at the season level
   OSRs               <- init_output[[3]]   # operational sex ratio
-  sdSegregation      <- init_output[[4]]   # evolution segregation variance
-  sdPhenotypic       <- init_output[[5]]   # evolution phenotypic variance
+  varSegregation     <- init_output[[4]]   # evolution segregation variance
+  varPhenotypic      <- init_output[[5]]   # evolution phenotypic variance
   G                  <- init_output[[6]]   # genotypes
-  P                  <- init_output[[7]]   # phenotypes
-  conservation_years <- init_output[[8]]   # years for conservation action
+  G_stats            <- init_output[[7]]   # genotype stats, to keep
+  P                  <- init_output[[8]]   # phenotypes
+  P_stats            <- init_output[[9]]   # phenotype stats, to keep  
+  conservation_years <- init_output[[10]]  # years for conservation action
   
   ##### model ##################################################################
   # set.seed(seed)
@@ -42,9 +44,16 @@ base_model <- function(scenario, beta, yrs, max_age,
     # population dynamics
     # survival for each age 
     # set.seed(seed)
-    N <- pop_dynamics(N, max_age, y, M,
+    popdy_output <- pop_dynamics(N, max_age, y, M,
                       IF_survival, IM_survival, MF_survival, MM_survival, 
-                      G, P)
+                      G, G_stats, P, P_stats)
+    
+    N       <- popdy_output[[1]]
+    G       <- popdy_output[[2]]
+    G_stats <- popdy_output[[3]]
+    P       <- popdy_output[[4]]
+    P_stats <- popdy_output[[5]]
+    
     
     # # evolution (if applicable)
     # if (evolution_piv == TRUE || evolution_threshold == TRUE) {
@@ -74,33 +83,33 @@ base_model <- function(scenario, beta, yrs, max_age,
                                emergence_success_t0, 
                                season_temp_mus, clutch_temp_sd,
                                k_piv, T_piv, T_threshold, evolution, 
-                               trait, sdSegregation, sdPhenotypic, G, P, 
+                               trait, varSegregation, varPhenotypic, 
+                               G, G_stats, P, P_stats,  
                                conservation_action, conservation_years, 
                                intensity, effect_size)
     
     # add recruits to population size array
-    N[1, 1, y]          <- rep_output[[1]]
-    N[2, 1, y]          <- rep_output[[2]]
-    OSRs[y]             <- rep_output[[3]]
-    G[, , y]            <- rep_output[[4]]
-    P[, , y]            <- rep_output[[5]]
+    N[1, 1, y] <- rep_output[[1]]
+    N[2, 1, y] <- rep_output[[2]]
+    OSRs[y]    <- rep_output[[3]]
+    G          <- rep_output[[4]]
+    G_stats    <- rep_output[[5]]
+    P          <- rep_output[[6]]
+    P_stats    <- rep_output[[7]]
     
     # break out of loop if there are zero males or females at any age
-    if (sum(N[1, , y], na.rm = TRUE) < 0.5 || sum(N[2, , y], 
-                                                  na.rm = TRUE) < 0.5) {
+    if (sum(N[1, , y], 
+            na.rm = TRUE) < 0.5 || sum(N[2, , y], 
+                                       na.rm = TRUE) < 0.5) {
       break }
   }
   
   ##### output #################################################################
-  
-  if (evolution_piv == FALSE) { Pivotal_temps <- NA }
-  
-  if (evolution_threshold == FALSE) { Threshold_temps <- NA }
-  
+
   output <- list(N, 
                  OSRs,
-                 Pivotal_temps, 
-                 Threshold_temps)
+                 G_stats, 
+                 P_stats)
   
   return(output)
   

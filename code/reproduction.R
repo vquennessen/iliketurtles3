@@ -1,14 +1,16 @@
 # reproduction
 
 reproduction <- function(N, M, y, beta, max_age, 
-                         F_remigration_int, M_remigration_int,
+                         F_remigration_interval, M_remigration_interval,
                          clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                          emergence_success_A, emergence_success_k, 
                          emergence_success_t0, 
                          season_temp_mus, clutch_temp_sd,
-                         k_piv, Pivotal_temps, Threshold_temps, 
-                         conservation_action, conservation_years, intensity, 
-                         effect_size) {
+                         k_piv, T_piv, T_threshold, evolution, 
+                         trait, varSegregation, varPhenotypic, 
+                         G, G_stats, P, P_stats,  
+                         conservation_action, conservation_years, 
+                         intensity, effect_size) {
   
   # breeding females this year
   available_F <- rbinom(n = max_age, 
@@ -92,6 +94,13 @@ reproduction <- function(N, M, y, beta, max_age,
         clutch_temps <- conservation(initial_temps = clutch_temps, 
                                      intensity = intensity, 
                                      effect_size = effect_size)
+        
+      }
+      
+      # if evolution
+      if (evolution == TRUE) {
+        
+        
         
       }
       

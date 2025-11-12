@@ -24,7 +24,6 @@ source('probability_male.R')
 source('conservation.R')
 
 # load in SAD object
-# load("~/Projects/iliketurtles3/output/SAD_deterministic_b1000.Rdata")
 load("../output/SAD_deterministic_TS_b800_medians.Rdata")
 
 # folder to save results to
@@ -36,7 +35,8 @@ init_total <- 20000
 init_age_distribution <- SADdf %>%
   filter(!is.na(Prop_10yr_median)) %>%
   filter(Year == max(Year)) %>%
-  mutate(Abundance = round(Prop_10yr_median * init_total))
+  mutate(Abundance = round(Prop_10yr_median * init_total)) %>%
+  mutate(TRangeT = ifelse(Model == 'P_base', 'narrow', 'wide'))
 
 # init_age_distribution %>%
 #   filter(Sex == 'MM') %>%
@@ -100,6 +100,7 @@ DF <- expand.grid(folder,
                   years,
                   nsims,
                   max_N,
+                  init_age_distribution,
                   
                   evolution,
                   trait, 

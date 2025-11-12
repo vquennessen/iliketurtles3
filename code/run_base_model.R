@@ -6,21 +6,27 @@ run_base_model <- function(arguments) {
   ###### model inputs ##########################################################
   
   # function arguments
-  model     <- arguments$Var1
-  scenario  <- arguments$Var2
-  beta      <- arguments$Var3
-  yrs       <- arguments$Var4
-  nsims     <- arguments$Var5
-  intensity <- arguments$Var6
-  frequency <- arguments$Var7
-  folder    <- arguments$Var8
-  noise     <- arguments$Var9
+  folder       <- arguments$Var1
+  noise        <- arguments$Var2
+  TRT          <- arguments$Var3
+  scenario     <- arguments$Var4
+  beta         <- arguments$Var5
+  yrs          <- arguments$Var6
+  nsims        <- arguments$Var7
+  max_N        <- arguments$Var8
+  init_age_distribution <- arguments$Var9
+  evolution    <- arguments$Var10
+  trait        <- arguments$Var11 
+  rate         <- arguments$Var12
+  conservation_action <- arguments$Var13
+  intensity    <- arguments$Var14
+  frequency    <- arguments$Var15
   
   # write to progress text file
   # write to progress text file
   start <- lubridate::now()
   time1 <- format(start)
-  update1 <- paste(time1, ' - ', model, ' - ', scenario, 'C - beta ', beta, 
+  update1 <- paste(time1, ' - ', TRT, ' - ', scenario, 'C - beta ', beta, 
                    ' - ', nsims, ' sims - ', yrs, ' years',sep = '')
   write(update1, file = '../output/progress.txt', append = TRUE)
   
@@ -68,7 +74,7 @@ run_base_model <- function(arguments) {
   T_threshold <- 35                         # lethal temperature threshold
   
   # pivotal temperature and evolution stats
-  k_piv <- ifelse(model %in% c('narrow_TRT'),
+  k_piv <- ifelse(TRT == 'narrow',
                   -1.54,
                   -0.77)
   
@@ -112,18 +118,7 @@ run_base_model <- function(arguments) {
     
   }
       
-      
-  
-  
-  
-  
-  
-  # conservation values
-  conservation_action <- ifelse(model %in% c('P_conservation',
-                                             'GM_conservation'),
-                                TRUE,
-                                FALSE)
-  
+  # if conservation is TRUE    
   effect_size <- ifelse(conservation_action == TRUE,
                         1.3,
                         NA)
@@ -161,7 +156,7 @@ run_base_model <- function(arguments) {
   # stable age distributions to start with
   IAD <- init_age_distribution %>%
     filter(Beta == beta) %>%
-    filter(Model == model) 
+    filter(TRangeT == TRT)
   
   IF_init <- IAD %>%
     filter(Sex == 'IF') %>%
