@@ -1,0 +1,202 @@
+---
+title: "Brazil data"
+author: "Vic Quennessen"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# load libraries
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(tidyverse)
+library(patchwork)
+library(e1071)
+library(fitdistrplus)
+library(extraDistr)
+library(goft)
+
+# load data
+# TO DO: edit path to file as needed
+BSR_Info_VIC_2025_MaleContribution <- read_csv(
+  "~/Projects/iliketurtles3/data/BSR_Info_VIC_2025 - MaleContribution.csv")
+
+# clean up data
+clean_data <- BSR_Info_VIC_2025_MaleContribution %>%
+  # don't need empty column or notes
+  dplyr::select(mom_nest_combo, dad, hatchling_count, NestTotalHatchCount, 
+                propdadcontribute, LowNestSampleSize) %>%
+  # filter out rows with low nest sample sizes
+  filter(LowNestSampleSize == 'No') %>%
+  # extract season
+  mutate(Season = substring(mom_nest_combo, 10, 11)) %>%
+  # extract mom ID
+  mutate(Female = substring(mom_nest_combo, 5, 8)) %>%
+  # extract nest ID
+  mutate(Nest = substring(mom_nest_combo, 13, 16)) 
+```
+## 1. are all males represented in all clutches?
+
+```{r}
+clean_data %>%
+  group_by(Season, Female) %>%
+  filter(length(unique(Nest)) > 1)
+```
+
+Not applicable, no more than one clutch is represented per female per season 
+
+
+## 2. how many males do females mate with in one season?
+
+```{r}
+
+# TO DO make pretty table of stats
+
+males_per_female <- clean_data %>%
+  dplyr::select(Season, Female) %>%
+  filter(Season != 'S1') %>%
+  group_by(Season, Female) %>%
+  mutate(nMales = n())
+
+round(prop.table(table(males_per_female$nMales)), 2)
+
+ggplot(data = males_per_female, 
+       aes(x = nMales, y = stat_count)
+
+summary(males_per_female$nMales)
+
+# variance
+var(males_per_female$nMales)
+
+# standard deviation
+sd(males_per_female$nMales)
+
+# skew
+skewness(males_per_female$nMales)
+
+# kurtosis ('fatness' of tails)
+kurtosis(males_per_female$nMales)
+```
+
+## 3. what distribution works best for modeling the number of males females mate with?
+
+### why fit a model
+we can't just use the proportions of females that mated with 1 - 7 males since 
+sample sizes are small, and no recorded female mated with 5 males
+
+```{r, echo = FALSE, eval = FALSE, warning = FALSE}
+# discrete gamma distribution
+fit_dgamma <- fitdist(males_per_female$nMales, 'gamma', discrete = TRUE)
+summary(fit_dgamma)
+
+# poisson distribution
+fit_poisson <- fitdist(males_per_female$nMales, 'pois')
+summary(fit_poisson)
+
+# negative binomial distribution
+fit_negative_binomial <- fitdist(males_per_female$nMales, 'nbinom')
+summary(fit_negative_binomial)
+
+# geometric distribution
+fit_geometric <- fitdist(males_per_female$nMales, 'geom')
+summary(fit_geometric)
+```
+
+
+### discrete gamma distribution had best fit
+
+```{r}
+# TO DO make pretty table
+```
+
+
+discrete gamma ____ Loglikelihood:  -215.0036 | AIC:  434.0071 | BIC:  439.6152 
+
+poisson ___________ Loglikelihood:  -223.1883 | AIC:  448.3767 | BIC:  451.1807  
+
+negative binomial ___ Loglikelihood:  -223.1884 | AIC:  450.3767 | BIC:  455.9848 
+
+geometric _________ Loglikelihood:  -278.3816 | AIC:  558.7632 | BIC:  561.5673 
+
+```{r, warning = FALSE, echo = FALSE, results = 'hide'}
+gamma_test(males_per_female$nMales)
+# p-value for null hypothesis that data are gamma-distributed (but continuous)
+
+# model with fitted discrete gamma distribution
+fit_dgamma <- fitdist(males_per_female$nMales, 'gamma', discrete = TRUE)
+
+# estimates for shape and rate parameters for discrete gamma distribution
+summary(fit_dgamma)$estimate
+```
+
+```{r}
+# plot data (black) vs. fitted discrete gamma distribution (red)
+plot(fit_dgamma)
+```
+
+```{r}
+# max number of males females can mate with (7 in data)
+max_males <- 7
+
+# weighted probabilities for females mating with 1 - 7 males
+weightedP <- ddgamma(1:max_males, 
+                     shape = fit_dgamma$estimate['shape'], 
+                     rate = fit_dgamma$estimate['rate'])
+
+raw_weights <- round(weightedP, 3)
+# 0.214 0.283 0.219 0.130 0.065 0.030 0.012
+
+total_sum <- sum(raw_weights)
+# 0.9531114
+
+# normalize weights so that they add up to 1
+# this assumes we can't have females mating with more than 7 males)
+# to adjust this assumption, adjust max_males values 
+weights_to_use <- round(weightedP / sum(weightedP), 3)
+probability_of_mating_with_n_Males <- data.frame(number_of_males = 1:7, 
+                                                 probability = weights_to_use)
+probability_of_mating_with_n_Males
+```
+
+## how do males contribute to nests?
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE, results = 'hide'}
+
+contributions <- clean_data %>%
+  group_by(Season, Female, Nest) %>%
+  mutate(nMales = n()) %>%
+  group_by(Season, Female, Nest, nMales) %>%
+  mutate(Rank = rank(desc(propdadcontribute), ties.method = 'first'))
+
+# turtles work like gravitational waves - jerry sun
+# power law
+fit_power <- lm(log(propdadcontribute) ~ log(Rank), 
+                data = contributions)
+summary(fit_power)
+predict(fit_power, new.data = data.frame(Rank = 1:7))
+```
+
+
+#### decaying power law fits very well: \ $y(x) = a \cdot p^{-x}$
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+test.power <- data.frame(Rank = 1:7, 
+                         Fit = exp(-0.37648)*c(1:7)^(-1.71013))
+
+ggplot(data = contributions, 
+       aes(x = factor(Rank), 
+           y = propdadcontribute,
+           fill = factor(nMales))) +
+  geom_boxplot() +
+  labs(fill = 'total number \n of males \n contributing') +
+  ggtitle('Fertilization contributions by Rank (Rank 1 = dominant father)') +
+    geom_point(inherit.aes = FALSE, 
+             data = test.power, aes(x = Rank, y = Fit), col = 'red', size = 3) +
+  xlab('Rank')
+```
+
