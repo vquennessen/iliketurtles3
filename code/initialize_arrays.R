@@ -6,7 +6,7 @@ initialize_arrays <- function(scenario, yrs, max_age,
                               T_piv, k_piv, T_threshold, 
                               temp_mu, climate_stochasticity, 
                               season_temp_sd, clutch_temp_sd, noise, AC, 
-                              evolution, trait, h2, varGenetic, 
+                              evolution, trait, h2, varGenetic, max_N,
                               conservation_action, frequency) {
   
   ##### population size ########################################################
@@ -33,14 +33,14 @@ initialize_arrays <- function(scenario, yrs, max_age,
     # white noise for average season temperature
     white_noise <- rnorm(n = yrs, mean = 0, sd = season_temp_sd)
     
-    if (noise == 'White') {
+    if (noise == 'white') {
       
       # generate stochastic temperatures from means given temp_sd
       season_temp_mus <- temp_mus + white_noise
       
     }
     
-    if (noise == 'Red') {
+    if (noise == 'red') {
       
       # initialize deviations
       deviations <- rep(NA, times = yrs)
@@ -133,8 +133,8 @@ initialize_arrays <- function(scenario, yrs, max_age,
     G_stats[, , 1, 3] <- apply(G, c(1, 2), var, na.rm = TRUE)
     
     # phenotype array, dimensions sex * age * years
-    P <- rnorm(n = c(4 * max_age * max_N), 
-                   mean = G, 
+    P <- G + rnorm(n = c(4 * max_age * max_N), 
+                   mean = 0, 
                    sd = sqrt(varPhenotypic))
     
     # phenotype summary stats to save, dimensions sex * age * year * # stats

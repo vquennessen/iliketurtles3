@@ -23,7 +23,7 @@ base_model <- function(scenario, beta, yrs, max_age,
                                    T_piv, k_piv, T_threshold, 
                                    temp_mu, climate_stochasticity, 
                                    season_temp_sd, clutch_temp_sd, noise, AC, 
-                                   evolution, trait, h2, varGenetic, 
+                                   evolution, trait, h2, varGenetic, max_N,
                                    conservation_action, frequency)
   
   N                  <- init_output[[1]]   # population size array
@@ -46,7 +46,7 @@ base_model <- function(scenario, beta, yrs, max_age,
     # set.seed(seed)
     popdy_output <- pop_dynamics(N, max_age, y, M,
                       IF_survival, IM_survival, MF_survival, MM_survival, 
-                      G, G_stats, P, P_stats)
+                      evolution, G, G_stats, P, P_stats)
     
     N       <- popdy_output[[1]]
     G       <- popdy_output[[2]]

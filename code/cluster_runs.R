@@ -38,10 +38,21 @@ init_age_distribution <- SADdf %>%
   mutate(Abundance = round(Prop_10yr_median * init_total)) %>%
   mutate(TRangeT = ifelse(Model == 'P_base', 'narrow', 'wide'))
 
-# init_age_distribution %>%
-#   filter(Sex == 'MM') %>%
-#   group_by(Model, Beta) %>%
-#   summarize(nMM = sum(Abundance))
+# # troubleshooting
+# TRT <- 'narrow'
+# evolution <- TRUE
+# trait <- 'T_piv'
+# rate <- ''
+# conservation <- FALSE
+# yrs <- 100
+# scenario <- 0.5
+# beta <- 1.17
+# intensity <- 1
+# frequency <- 1
+# nsims <- 10
+# max_N <- 200000
+# noise <- 'white'
+
 
 # models
 TRT <- c('narrow', 'wide')

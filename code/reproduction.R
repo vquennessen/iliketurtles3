@@ -51,9 +51,11 @@ reproduction <- function(N, M, y, beta, max_age,
     
     # how many females actually find a male to mate with and then nest
     # set.seed(seed)
-    n_breeding_F <- sum(rbinom(n = n_available_F, 
+    breeding_F <- rbinom(n = n_available_F, 
                                size = 1, 
-                               prob = breeding_success))
+                               prob = breeding_success)
+    
+    n_breeding_F <- sum(breeding_F)
     
     if (n_breeding_F < 1) {
       
@@ -100,6 +102,19 @@ reproduction <- function(N, M, y, beta, max_age,
       # if evolution
       if (evolution == TRUE) {
         
+        # initialize breeding female and male genotypes
+        G_F <- NULL
+        G_M <- NULL
+        
+        # extract breeding female and available male genotypes
+        for (a in 1:max_age) {
+          G_F <- append(G_F, sample(!is.na(G[3, a, ]), breeding_F[a]))
+          G_M <- append(G_M, sample(!is.na(G[4, a, ]), available_M[a]))
+        }
+        
+        G_F <- apply(!is.na(G[3, , ], c(1), sample, breeding_F))
+        
+        # build breeding pool of males
         
         
       }

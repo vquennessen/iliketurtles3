@@ -56,59 +56,82 @@ pop_dynamics <- function(N, max_age, y, M,
     
     for (a in 2:max_age) {
       
-      # survived immature females
-      G_new[1, a, y] <- c(sample(!is.na(G[1, a - 1, ]), 
-                                 survived_immature_F[a]), 
-                          rep(NA, max_N - survived_immature_F[a]))
+      # immature females
+      if (length(G[1, a - 1, ][!is.na(G[1, a - 1, ])]) > 0) {
+        G_new[1, a, ] <- c(sample(G[1, a - 1, ][!is.na(G[1, a - 1, ])], 
+                                  survived_immature_F[a] - new_mature_F[a]), 
+                           rep(NA, max_N - survived_immature_F[a] + new_mature_F[a]))
+      }
       
       # survived immature males
-      G_new[2, a, y] <- c(sample(!is.na(G[2, a - 1, ]), 
-                                 survived_immature_M[a]), 
-                          rep(NA, max_N - survived_immature_M[a]))
+      if (length(G[2, a - 1, ][!is.na(G[2, a - 1, ])]) > 0) {
+        G_new[2, a, ] <- c(sample(G[2, a - 1, ][!is.na(G[2, a - 1, ])], 
+                                  survived_immature_M[a] - new_mature_M[a]), 
+                           rep(NA, max_N - survived_immature_M[a] + new_mature_M[a]))
+      }
       
       # survived mature females
-      G_new[3, a, y] <- c(sample(!is.na(G[3, a - 1, ]), 
-                                 survived_mature_F[a]), 
-                          rep(NA, max_N - survived_mature_F[a]))
+      if (length(G[3, a - 1, ][!is.na(G[3, a - 1, ])]) > 0) {
+        g_survived_mature <- sample(G[3, a - 1, ][!is.na(G[3, a - 1, ])], 
+                                    survived_mature_F[a]) 
+      } else { g_survived_mature <- NULL }
+      
+      if (length(G[1, a - 1, ][!is.na(G[1, a - 1, ])])) {
+        g_new_mature <- sample(G[1, a - 1, ][!is.na(G[1, a - 1, ])], 
+                               new_mature_F[a]) 
+      } else { g_new_mature <- NULL }
+      
+      G_new[3, a, ] <- c(append(g_survived_mature, g_new_mature), 
+                         NA - length(g_survived_mature) - length(g_new_mature))
       
       # survived mature males
-      G_new[4, a, y] <- c(sample(!is.na(G[4, a - 1, ]), 
-                                 survived_mature_M[a]), 
-                          rep(NA, max_N - survived_mature_M[a]))
+      if (length(G[4, a - 1, ][!is.na(G[4, a - 1, ])]) > 0) {
+        g_survived_mature <- sample(G[4, a - 1, ][!is.na(G[4, a - 1, ])], 
+                                    survived_mature_M[a]) 
+      } else { g_survived_mature <- NULL }
       
+      if (length(G[2, a - 1, ][!is.na(G[2, a - 1, ])])) {
+        g_new_mature <- sample(G[2, a - 1, ][!is.na(G[2, a - 1, ])], 
+                               new_mature_M[a]) 
+      } else { g_new_mature <- NULL }
+      
+      G_new[4, a, ] <- c(append(g_survived_mature, g_new_mature), 
+                         NA - length(g_survived_mature) - length(g_new_mature))
     }
-    
-    # new arrays
-    G <- G_new
-    
-    # genotype stats
-    G_stats[, , y, 1] <- apply(G, c(1, 2), mean, na.rm = TRUE)
-    G_stats[, , y, 2] <- apply(G, c(1, 2), median, na.rm = TRUE)
-    G_stats[, , y, 3] <- apply(G, c(1, 2), var, na.rm = TRUE)
-    
-    # phenotype array, dimensions sex * age * max N value
-    P <- rnorm(n = c(4 * max_age * max_N), 
-               mean = G, 
-               sd = sqrt(varPhenotypic))
-    
-    # phenotype stats
-    P_stats[, , y, 1] <- apply(P, c(1, 2), mean, na.rm = TRUE)
-    P_stats[, , y, 2] <- apply(P, c(1, 2), median, na.rm = TRUE)
-    P_stats[, , y, 3] <- apply(P, c(1, 2), var, na.rm = TRUE)
-    
-  } else {
-    
-    G       <- NULL
-    G_stats <- NULL 
-    P       <- NULL
-    P_stats <- NULL
     
   }
   
-  # what objects to return
-  output <- list(N, G, G_stats, P, P_stats)
+  # new arrays
+  G <- G_new
   
-  # output
-  return(output)
+  # genotype stats
+  G_stats[, , y, 1] <- apply(G, c(1, 2), mean, na.rm = TRUE)
+  G_stats[, , y, 2] <- apply(G, c(1, 2), median, na.rm = TRUE)
+  G_stats[, , y, 3] <- apply(G, c(1, 2), var, na.rm = TRUE)
   
+  # phenotype array, dimensions sex * age * max N value
+  P <- rnorm(n = c(4 * max_age * max_N), 
+             mean = G, 
+             sd = sqrt(varPhenotypic))
+  
+  # phenotype stats
+  P_stats[, , y, 1] <- apply(P, c(1, 2), mean, na.rm = TRUE)
+  P_stats[, , y, 2] <- apply(P, c(1, 2), median, na.rm = TRUE)
+  P_stats[, , y, 3] <- apply(P, c(1, 2), var, na.rm = TRUE)
+  
+} else {
+  
+  G       <- NULL
+  G_stats <- NULL 
+  P       <- NULL
+  P_stats <- NULL
+  
+}
+
+# what objects to return
+output <- list(N, G, G_stats, P, P_stats)
+
+# output
+return(output)
+
 }
