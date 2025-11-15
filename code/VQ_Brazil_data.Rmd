@@ -2,12 +2,16 @@
 title: "Brazil data"
 author: "Vic Quennessen"
 date: "2025-11-13"
-output: html_document
+output: pdf_document
+header-includes:
+  - \usepackage{graphicx}
+  - \graphicspath{{figures/}}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # load libraries
@@ -20,6 +24,7 @@ library(e1071)
 library(fitdistrplus)
 library(extraDistr)
 library(goft)
+library(bbmle)
 
 # load data
 # TO DO: edit path to file as needed
@@ -40,6 +45,7 @@ clean_data <- BSR_Info_VIC_2025_MaleContribution %>%
   # extract nest ID
   mutate(Nest = substring(mom_nest_combo, 13, 16)) 
 ```
+
 ## 1. are all males represented in all clutches?
 
 ```{r}
@@ -51,6 +57,7 @@ clean_data %>%
 Not applicable, no more than one clutch is represented per female per season 
 
 
+\newpage
 ## 2. how many males do females mate with in one season?
 
 ```{r}
@@ -61,12 +68,18 @@ males_per_female <- clean_data %>%
   dplyr::select(Season, Female) %>%
   filter(Season != 'S1') %>%
   group_by(Season, Female) %>%
-  mutate(nMales = n())
+  mutate(nMales = n()) 
 
 round(prop.table(table(males_per_female$nMales)), 2)
 
 ggplot(data = males_per_female, 
-       aes(x = nMales, y = stat_count)
+       aes(x = nMales)) +
+  geom_histogram(aes(y = after_stat(count)/sum(after_stat(count))), 
+                 bins = 7, col = 'black', fill = 'cyan3') +
+  theme_bw() +
+  xlab('\n Number of males females mated with') +
+  ylab('Proportion \n') +
+  scale_x_continuous(breaks = c(1:7))
 
 summary(males_per_female$nMales)
 
@@ -82,8 +95,6 @@ skewness(males_per_female$nMales)
 # kurtosis ('fatness' of tails)
 kurtosis(males_per_female$nMales)
 ```
-
-## 3. what distribution works best for modeling the number of males females mate with?
 
 ### why fit a model
 we can't just use the proportions of females that mated with 1 - 7 males since 
@@ -163,7 +174,8 @@ probability_of_mating_with_n_Males <- data.frame(number_of_males = 1:7,
 probability_of_mating_with_n_Males
 ```
 
-## how do males contribute to nests?
+\newpage
+## 3. how do males contribute to nests?
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE, results = 'hide'}
 
@@ -184,6 +196,7 @@ predict(fit_power, new.data = data.frame(Rank = 1:7))
 
 #### decaying power law fits very well: \ $y(x) = a \cdot p^{-x}$
 
+
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 test.power <- data.frame(Rank = 1:7, 
                          Fit = exp(-0.37648)*c(1:7)^(-1.71013))
@@ -195,8 +208,154 @@ ggplot(data = contributions,
   geom_boxplot() +
   labs(fill = 'total number \n of males \n contributing') +
   ggtitle('Fertilization contributions by Rank (Rank 1 = dominant father)') +
-    geom_point(inherit.aes = FALSE, 
+  geom_point(inherit.aes = FALSE, 
              data = test.power, aes(x = Rank, y = Fit), col = 'red', size = 3) +
   xlab('Rank')
 ```
+
+\newpage
+## 4. how often do males remigrate
+
+#### male remigration interval used in Chapter 2: 1.47 (years)
+for green turtle males at Atol das Rocas (Grossman et al., 2019
+https://www.int-res.com/abstracts/meps/v609/p197-207/)
+
+
+#### FdN genetic data
+
+\includegraphics[width=0.5\textwidth]{C://Users/Vic/Documents/Projects/iliketurtles3/figures/UpdatedMalePresence.png}
+
+Original data, obtained from Dr. Lisa Komoroske (lkomoroske@umass.edu) on Thursday October 9, 2025. Note: "...Estefany made this upsetR graph for Mariana for an upcoming talk, helps visualize the observed remigration interavl a bit for the males (again, keep in mind the difference in sampling effort in S3 and S4, these will need to be normalized to the number of samples run eventually).
+
+
+#### approach
+
+
+We have at least 145 males identified through kinship analysis in the FdN population, which are most likely a mixture of FdN males and stray males that mated with females at the feeding grounds or during migration towards breeding grounds. All the males observed in Season 4 were alive all four sampling seasons, and so they are the only individuals that we know that didn't die over that timeframe and could therefore have been observed the other years. Looking only at those males in Season 4, we can break down the proportion that were seen in 1, 2, 3, and 4 years:
+
+66 males total observed in Season 4
+- 44 males observed in 1 season
+- 14 males observed in 2 seasons
+- 7 males observed in 3 seasons
+- 1 male observed in 4 seasons
+
+We assumed that if a male bred more than once, he was not a transient, so only those 44 males that were observed in a single season were a mix of transient males and FdN resident males. We therefore determined the best fitting model using only those males that were seen in 2, 3, and 4 seasons. 
+
+For each potential remigration interval (from 1 to 5, by 0.01), we fit a binomial model with a size of 4 (for the 4 years of observed data) and a probability equal to 1 over the assumed remigration interval (i.e. the probability that an individual male would mate in any given year), and recorded the maximum likelihood estimator for that model. 
+
+```{r}
+
+# initialize dataframe with number of resident males out of 44 and log likelihoods
+results <- data.frame(S1 = 1:44,
+                      loglikelihood = rep(NA, 44),
+                      remigration_interval = rep(NA, 44))
+
+for (s1 in 1:43) {
+  
+  # fill in 0 and 1 observations based on S1 (number of males observed in only one year)
+  successes <- c(rep(0, times = 66 - 14 - 7 - 1 - s1),
+                 rep(1, times = s1),
+                 rep(2, times = 14),
+                 rep(3, times = 7),
+                 rep(4, times = 1))
+  
+  # fit models to data
+  fit_binomial2 <- mle2(successes ~ dbinom(size = 4, prob = P),
+                        start = list(P = 0.3),
+                        data = data.frame(successes))
+  
+  
+  results$loglikelihood[s1] <- logLik(fit_binomial2)
+  results$probability[s1] <- coef(fit_binomial2)[[1]]
+}
+
+results %>%
+  mutate(remigration_interval = 1/probability) %>%
+  arrange(desc(loglikelihood))
+
+```  
+
+
+```{r}
+# only includes males seen in Season 4
+all_males <- 66
+successes <- c(rep(0, times = 16), 
+               rep(1, times = 28), 
+               rep(2, times = 14),
+               rep(3, times = 7),
+               rep(4, times = 1))
+
+# # includes all males
+# all_males <- 169
+# successes <- c(rep(2, times = 23), 
+#                rep(3, times = 7), 
+#                rep(4, times = 1))
+
+def_residents <- length(successes)
+maybe_residents <- all_males - def_residents
+
+# binomFXN <- function(S1, RI) {
+binomFXN <- function(RI) {
+  
+  # S1 = number of resident males seen once across 4 years
+  # S0 = number of resident males seen 0 times across 4 years
+  # R1 = male remigration interval
+  
+  # S0 <- maybe_residents - round(S1)
+  
+  # S0 <- dbinom()
+  
+  output <- -sum(dbinom(
+    # x = c(2, 3, 4),
+    x = successes,
+    #                           rep(0, S0),
+    #                           rep(1, round(S1)) 
+    #                           ),
+    size = 4,
+    prob = 1/RI, 
+    log = TRUE))
+  
+  return(output)
+  
+}
+
+# fit models to data
+fit_binomial2 <- mle2(binomFXN, 
+                      start = list(RI = 3), 
+                      data = list(successes)
+                      # start = list(S1 = 22, RI = 3) # , 
+                      # method = 'L-BFGS-B', 
+                      # lower = c(S1 = 1, R1 = 1),
+                      # upper = c(S1 = maybe_residents - 1, R1 = 5)
+)
+
+summary(fit_binomial2)
+
+```
+
+
+For 100 simulations:
+
+I simulated 50 years of 66 males breeding based on a probabiliy equal to the inverse of the remigration interval (i.e. if the remigration interval is 5 years, the probability of an individual male breeding each year is 1/5 = 0.2). Then, I took a random sample of 4 years from that timeseries of simulated data to count how many males were observed in 1, 2, 3, or 4 seasons. 
+
+After all 100 simulations, I fitted a binomial model to the output, and calculated the maximum likelihood estimator using the mle2() function in the bblme package in R. 
+
+Once I calculated the maximum likelihood estimator for each potential remigration interval, I selected the remigration interval that produced the best fit to the observed data. 
+
+```{r}
+
+# raw data
+seasons <- c('S1', 'S2', 'S3', 'S4', 
+             'S1.S2', 'S1.S3', 'S1.S4', 'S2.S3', 'S2.S4', 'S3.S4', 
+             'S1.S2.S3', 'S1.S2.S4', 'S1.S3.S4', 'S2.S3.S4', 
+             'S1.S2.S3.S4')
+
+counts <- c(44, 42, 35, 17, 
+            1, 6, 3, 2, 7, 4, 
+            0, 3, 3, 1, 
+            1)
+```
+
+
+
 
