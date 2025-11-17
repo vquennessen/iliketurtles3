@@ -46,7 +46,7 @@ clean_data <- BSR_Info_VIC_2025_MaleContribution %>%
   mutate(Nest = substring(mom_nest_combo, 13, 16)) 
 ```
 
-## 1. are all males represented in all clutches?
+## 1. are all males represented in all clutches of females they mate with in a season?
 
 ```{r}
 clean_data %>%
@@ -54,15 +54,17 @@ clean_data %>%
   filter(length(unique(Nest)) > 1)
 ```
 
-Not applicable, no more than one clutch is represented per female per season 
+Not applicable, no more than one clutch is represented per female per season in the dataset. 
+
+I will therefore assume that all males are represented in all clutches by the same female throughout the same season. 
 
 
 \newpage
 ## 2. how many males do females mate with in one season?
 
-```{r}
+In order to more accurately model evolution with maternal and paternal genotypes, I will build a 'breeding pool' of males, where each male will be represented X times, where X is the average number of females that males can mate with, rounded to the nearest integer, dependent upon the mating function. Then, for each female, I need to be able to determine how many males she will mate with to draw that many unique males from the breeding pool. 
 
-# TO DO make pretty table of stats
+```{r, echo = FALSE, results = 'hide'}
 
 males_per_female <- clean_data %>%
   dplyr::select(Season, Female) %>%
@@ -71,17 +73,10 @@ males_per_female <- clean_data %>%
   mutate(nMales = n()) 
 
 round(prop.table(table(males_per_female$nMales)), 2)
+#    1    2    3    4    6    7 
+# 0.11 0.34 0.15 0.30 0.05 0.06 
 
-ggplot(data = males_per_female, 
-       aes(x = nMales)) +
-  geom_histogram(aes(y = after_stat(count)/sum(after_stat(count))), 
-                 bins = 7, col = 'black', fill = 'cyan3') +
-  theme_bw() +
-  xlab('\n Number of males females mated with') +
-  ylab('Proportion \n') +
-  scale_x_continuous(breaks = c(1:7))
-
-summary(males_per_female$nMales)
+summary(males_per_female$nMales) 
 
 # variance
 var(males_per_female$nMales)
@@ -96,9 +91,49 @@ skewness(males_per_female$nMales)
 kurtosis(males_per_female$nMales)
 ```
 
+
+\bfseries{Number of males that females mated with in raw data:}
+
+
+\begin{table}[h]
+\begin{tabular}{llllllll}
+ Number of males & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+ \hline
+ Number & 13 & 42 & 18 & 36 & 0 & 6 & 7 \\
+ Proportion & 0.11 & 0.34 & 0.15 & 0.30 & 0 & 0.05 & 0.06
+\end{tabular}
+\end{table}
+
+
+\bfseries{Summary statistics of number of males females mated with:}
+
+
+\begin{table}[h]
+\begin{tabular}{lllllllllll}
+ Min & 1st Q & Median & Mean & 3rd Q & Max & Variance & SD & Skew & Kurtosis \\
+ \hline
+ 1.000 & 2.000 & 3.000 & 3.115 & 4.000 & 7.000 & 2.433 & 1.560 & 0.861 & 0.265 \\
+\end{tabular}
+\end{table}
+
+
+\bfseries{Density histogram}
+
+```{r, echo = FALSE, fig.height = 4}
+ggplot(data = males_per_female, 
+       aes(x = nMales)) +
+  geom_histogram(aes(y = after_stat(count)/sum(after_stat(count))), 
+                 bins = 7, col = 'black', fill = 'cyan3') +
+  theme_bw() +
+  xlab('\n Number of males females mated with') +
+  ylab('Proportion \n') +
+  scale_x_continuous(breaks = c(1:7))
+```
+
+\newpage
 ### why fit a model
 we can't just use the proportions of females that mated with 1 - 7 males since 
-sample sizes are small, and no recorded female mated with 5 males
+sample sizes are small, and no recorded female mated with 5 males. 
 
 ```{r, echo = FALSE, eval = FALSE, warning = FALSE}
 # discrete gamma distribution
@@ -119,40 +154,46 @@ summary(fit_geometric)
 ```
 
 
-### discrete gamma distribution had best fit
-
-```{r}
-# TO DO make pretty table
-```
+#### discrete gamma distribution had the best fit:
 
 
-discrete gamma ____ Loglikelihood:  -215.0036 | AIC:  434.0071 | BIC:  439.6152 
 
-poisson ___________ Loglikelihood:  -223.1883 | AIC:  448.3767 | BIC:  451.1807  
+\begin{table}[h]
+\begin{tabular}{lllll}
+ Distribution & Log likelihood & AIC & BIC \\
+ discrete gamma & -215.0036 & 434.0071 & 439.6152 \\
+ poisson & -223.1883 & 448.3767 & 451.1807 \\
+ negative binomial & -223.1884 & 450.3767 & 455.9848 \\
+ geometric & -278.3816 & 558.7632 & 561.5673 
+\end{tabular}
+\end{table}
 
-negative binomial ___ Loglikelihood:  -223.1884 | AIC:  450.3767 | BIC:  455.9848 
 
-geometric _________ Loglikelihood:  -278.3816 | AIC:  558.7632 | BIC:  561.5673 
 
-```{r, warning = FALSE, echo = FALSE, results = 'hide'}
-gamma_test(males_per_female$nMales)
-# p-value for null hypothesis that data are gamma-distributed (but continuous)
+#### model fit:
+
+
+```{r, warning = FALSE}
 
 # model with fitted discrete gamma distribution
 fit_dgamma <- fitdist(males_per_female$nMales, 'gamma', discrete = TRUE)
 
 # estimates for shape and rate parameters for discrete gamma distribution
-summary(fit_dgamma)$estimate
-```
+summary(fit_dgamma)
 
-```{r}
 # plot data (black) vs. fitted discrete gamma distribution (red)
 plot(fit_dgamma)
 ```
 
+
+\newpage
+#### given this discrete model...
+
+what are the weights for females mating with 1 X males, where X is the maximum number of males we will allow (currently set to 10):
+
 ```{r}
 # max number of males females can mate with (7 in data)
-max_males <- 7
+max_males <- 10
 
 # weighted probabilities for females mating with 1 - 7 males
 weightedP <- ddgamma(1:max_males, 
@@ -166,16 +207,16 @@ total_sum <- sum(raw_weights)
 # 0.9531114
 
 # normalize weights so that they add up to 1
-# this assumes we can't have females mating with more than 7 males)
+# this assumes we can't have females mating with more than max_males males)
 # to adjust this assumption, adjust max_males values 
 weights_to_use <- round(weightedP / sum(weightedP), 3)
-probability_of_mating_with_n_Males <- data.frame(number_of_males = 1:7, 
+probability_of_mating_with_n_Males <- data.frame(number_of_males = 1:max_males, 
                                                  probability = weights_to_use)
 probability_of_mating_with_n_Males
 ```
 
 \newpage
-## 3. how do males contribute to nests?
+## 3. how do males fertilize nests?
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE, results = 'hide'}
 
@@ -185,21 +226,53 @@ contributions <- clean_data %>%
   group_by(Season, Female, Nest, nMales) %>%
   mutate(Rank = rank(desc(propdadcontribute), ties.method = 'first'))
 
+contributions <- rbind(contributions, 
+                       data.frame(mom_nest_combo = NA, 
+                                  dad = NA, 
+                                  hatchling_count = NA, 
+                                  NestTotalHatchCount = NA, 
+                                  propdadcontribute = NA, 
+                                  LowNestSampleSize = NA,
+                                  Season = NA, 
+                                  Female = NA, 
+                                  Nest = NA, 
+                                  nMales = NA, 
+                                  Rank = c(8:10)))
+
+ggplot(data = contributions, 
+       aes(x = factor(Rank), 
+           y = propdadcontribute,
+           fill = factor(nMales))) +
+  geom_boxplot() +
+  labs(fill = 'total number \n of males \n contributing') +
+  ggtitle('Fertilization contributions by Rank (Rank 1 = dominant father)') +
+  xlab('Rank')
+
+```
+
+
+\newpage
+#### decaying power law fits very well: \ $y(x) = a \cdot p^{-x}$
+
+Where the intercept = -0.37648 and the log(Rank) = -1.71013: 
+
+```{r}
+
 # turtles work like gravitational waves - jerry sun
 # power law
 fit_power <- lm(log(propdadcontribute) ~ log(Rank), 
                 data = contributions)
 summary(fit_power)
-predict(fit_power, new.data = data.frame(Rank = 1:7))
 ```
 
 
-#### decaying power law fits very well: \ $y(x) = a \cdot p^{-x}$
 
+Model fit is plotted in red points:
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-test.power <- data.frame(Rank = 1:7, 
-                         Fit = exp(-0.37648)*c(1:7)^(-1.71013))
+test.power <- data.frame(Rank = 1:max_males, 
+                         Fit = exp(fit_power$coefficients[[1]])*c(1:max_males)^(
+                           fit_power$coefficients[[2]]))
 
 ggplot(data = contributions, 
        aes(x = factor(Rank), 
@@ -213,8 +286,10 @@ ggplot(data = contributions,
   xlab('Rank')
 ```
 
+
 \newpage
 ## 4. how often do males remigrate
+
 
 #### male remigration interval used in Chapter 2: 1.47 (years)
 for green turtle males at Atol das Rocas (Grossman et al., 2019
@@ -223,414 +298,158 @@ https://www.int-res.com/abstracts/meps/v609/p197-207/)
 
 #### FdN genetic data
 
-\includegraphics[width=0.5\textwidth]{C://Users/Vic/Documents/Projects/iliketurtles3/figures/UpdatedMalePresence.png}
+\includegraphics[width=0.5\textwidth]{C://Users/vique/Documents/Projects/iliketurtles3/figures/UpdatedMalePresence.png}
+
 
 Original data, obtained from Dr. Lisa Komoroske (lkomoroske@umass.edu) on Thursday October 9, 2025. Note: "...Estefany made this upsetR graph for Mariana for an upcoming talk, helps visualize the observed remigration interavl a bit for the males (again, keep in mind the difference in sampling effort in S3 and S4, these will need to be normalized to the number of samples run eventually).
 
 
-#### approach
-
-
-We have at least 145 males identified through kinship analysis in the FdN population, which are most likely a mixture of FdN males and stray males that mated with females at the feeding grounds or during migration towards breeding grounds. All the males observed in Season 4 were alive all four sampling seasons, and so they are the only individuals that we know that didn't die over that timeframe and could therefore have been observed the other years. Looking only at those males in Season 4, we can break down the proportion that were seen in 1, 2, 3, and 4 years:
-
-66 males total observed in Season 4
-- 44 males observed in 1 season
-- 14 males observed in 2 seasons
-- 7 males observed in 3 seasons
-- 1 male observed in 4 seasons
-
-We assumed that if a male bred more than once, he was not a transient, so only those 44 males that were observed in a single season were a mix of transient males and FdN resident males. We therefore determined the best fitting model using only those males that were seen in 2, 3, and 4 seasons. 
-
-For each potential remigration interval (from 1 to 5, by 0.01), we fit a binomial model with a size of 4 (for the 4 years of observed data) and a probability equal to 1 over the assumed remigration interval (i.e. the probability that an individual male would mate in any given year), and recorded the maximum likelihood estimator for that model. 
-
-```{r}
-
-# initialize dataframe with number of resident males out of 44 and log likelihoods
-results <- data.frame(S1 = 1:44,
-                      loglikelihood = rep(NA, 44),
-                      remigration_interval = rep(NA, 44))
-
-for (s1 in 1:43) {
-  
-  # fill in 0 and 1 observations based on S1 (number of males observed in only one year)
-  successes <- c(rep(0, times = 66 - 14 - 7 - 1 - s1),
-                 rep(1, times = s1),
-                 rep(2, times = 14),
-                 rep(3, times = 7),
-                 rep(4, times = 1))
-  
-  # fit models to data
-  fit_binomial2 <- mle2(successes ~ dbinom(size = 4, prob = P),
-                        start = list(P = 0.3),
-                        data = data.frame(successes))
-  
-  
-  results$loglikelihood[s1] <- logLik(fit_binomial2)
-  results$probability[s1] <- coef(fit_binomial2)[[1]]
-}
-
-results %>%
-  mutate(remigration_interval = 1/probability) %>%
-  arrange(desc(loglikelihood))
-
-```  
-
-
-```{r}
-# only includes males seen in Season 4
-all_males <- 66
-successes <- c(rep(0, times = 16), 
-               rep(1, times = 28), 
-               rep(2, times = 14),
-               rep(3, times = 7),
-               rep(4, times = 1))
-
-# # includes all males
-# all_males <- 169
-# successes <- c(rep(2, times = 23), 
-#                rep(3, times = 7), 
-#                rep(4, times = 1))
-
-def_residents <- length(successes)
-maybe_residents <- all_males - def_residents
-
-# binomFXN <- function(S1, RI) {
-binomFXN <- function(RI) {
-  
-  # S1 = number of resident males seen once across 4 years
-  # S0 = number of resident males seen 0 times across 4 years
-  # R1 = male remigration interval
-  
-  # S0 <- maybe_residents - round(S1)
-  
-  # S0 <- dbinom()
-  
-  output <- -sum(dbinom(
-    # x = c(2, 3, 4),
-    x = successes,
-    #                           rep(0, S0),
-    #                           rep(1, round(S1)) 
-    #                           ),
-    size = 4,
-    prob = 1/RI, 
-    log = TRUE))
-  
-  return(output)
-  
-}
-
-# fit models to data
-fit_binomial2 <- mle2(binomFXN, 
-                      start = list(RI = 3), 
-                      data = list(successes)
-                      # start = list(S1 = 22, RI = 3) # , 
-                      # method = 'L-BFGS-B', 
-                      # lower = c(S1 = 1, R1 = 1),
-                      # upper = c(S1 = maybe_residents - 1, R1 = 5)
-)
-
-summary(fit_binomial2)
-
-```
-
-
-```{r}
-n1s <- 1:43
-Ps <- seq(from = 0.1, to = 0.6, by = 0.01)
-
-results <- data.frame(N1 = rep(n1s, each = length(Ps)), 
-                      P = rep(Ps, times = length(n1s)),
-                      negLogLik = rep(NA, length(n1s) * length(Ps)), 
-                      remigration_int = rep(NA, length(n1s) * length(Ps)))
-
-for (n1 in 1:length(n1s)) {
-  
-  for (p in 1:length(Ps)) {
-    
-    all_males <- 66
-    N4 <- 1
-    N3 <- 7
-    N2 <- 14
-    N1 <- n1
-    N0 <- all_males - N4 - N3 - N2 - N1
-    
-    successes <- c(rep(4, N4), 
-                   rep(3, N3), 
-                   rep(2, N2), 
-                   rep(1, N1), 
-                   rep(0, N0))
-    
-    index <- (n1 - 1)*length(Ps) + p
-    
-    results$negLogLik[index] <- -sum(dbinom(x = successes, 
-                                            size = 4, 
-                                            prob = Ps[p], 
-                                            log = TRUE))
-    
-  }
-  
-  
-  
-  
-  # binomFXN <- function(P) {
-  #   
-  #   -sum(dbinom(x = successes, 
-  #               size = 4, 
-  #               prob = P, 
-  #               log = TRUE))
-  #   
-  # }
-  
-  # model <- mle2(successes ~ dbinom(size = 4, prob = P), 
-  #               start = list(P = 0.1),
-  #               data = data.frame(successes))
-  # 
-  #   model <- mle2(binomFXN, 
-  #               start = list(P = 0.1),
-  #               data = list(successes))
-  # 
-  # results$loglikelihood[s1] <- logLik(model)
-  # results$P[s1] <- coef(model)[[1]]
-  # results$remigration_int[s1] <- 1/coef(model)[[1]]
-  
-}
-
-results %>%
-  ggplot(aes(x = P, y = N1, fill = exp(-negLogLik))) +
-  geom_tile() +
-  scale_fill_viridis()
-
-```
-
-```{r}
-n1s <- 1:43
-
-results <- data.frame(N1 = rep(n1s), 
-                      P = rep(NA, times = length(n1s)),
-                      LogLik = rep(NA, length(n1s)))
-
-for (n1 in 1:length(n1s)) {
-  
-  n1 <- 43
-  all_males <- 66
-  N4 <- 1
-  N3 <- 7
-  N2 <- 14
-  N1 <- n1
-  N0 <- all_males - N4 - N3 - N2 - N1
-  
-  successes <- c(rep(4, N4), 
-                 rep(3, N3), 
-                 rep(2, N2), 
-                 rep(1, N1), 
-                 rep(0, N0))
-  
-  p <- successes
-  q <- 4 - successes
-  binom.test(x = c(sum(p), sum(q)))
-  
-  model <- mle2(successes ~ dbinom(size = 4, prob = P), 
-                start = list(P = 0.3), 
-                data = list(successes))
-  
-  results$P[n1] <- coef(model)[[1]]
-  results$LogLik[n1] <- logLik(model)
-  
-}
-
-results %>%
-  ggplot(aes(x = P, y = N1, col = LogLik)) +
-  geom_point()
-
-
-# binomFXN <- function(P) {
-#   
-#   -sum(dbinom(x = successes, 
-#               size = 4, 
-#               prob = P, 
-#               log = TRUE))
-#   
-# }
-
-
-
-```
-##### binomial likelihood
-
+#### fit a binomial model
 
 ##### marginalized likelihoods over number of 0 and 1 successes
 
-For any resident male green turtle, the probability of seeing it k = 1, 2, 3, or 4 times across n years is equal to:
 
-$ L(k) = {n \choose k} \cdot p^k \cdot (1 - p)^{n - k} $
+Given a binomial model, or any resident male green turtle, the probability of seeing it k = 1, 2, 3, or 4 times across n years is equal to:
+
+$$ 
+L(k) = \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} 
+$$
 
 We know that n = 4, since our data were collected over 4 years, giving 4 chances to observe each male. 66 males were observed in season 4, meaning they could have been observed for all previous seasons. We can assume that those males that were observed more than once were residents. For the remaining 44 males, some unknown number of them were residents and others were transient males. For RM1 resident males observed once, there were RM1 + 22 total resident males observed in our dataset. 
 
 Given probability p, the likelihoods of observing RM1 males once, 14 males twice, 7 males 3 times, and 1 male 4 times is the probability of seeing a resident male 1, 2, 3, or 4 times in any given trial of size 4 to the power of the number of times it was observed:
 
-<!-- $ L(k = 0\ |\ p) = \left( {4 \choose 0} \cdot p^0 \cdot (1-p)^{4} \right) ^{44 - RM1} $ -->
-$ L(k = 1\ |\ p) = \left( {4 \choose 1} \cdot p^1 \cdot (1-p)^{3} \right) ^{RM1} $
-$ L(k = 2\ |\ p) = \left( {4 \choose 2} \cdot p^2 \cdot (1-p)^{2} \right) ^14 $
-$ L(k = 3\ |\ p) = \left( {4 \choose 3} \cdot p^3 \cdot (1-p)^{1} \right) ^7 $
-$ L(k = 4\ |\ p) = \left( {4 \choose 4} \cdot p^4 \cdot (1-p)^{0} \right) ^1 $
+<!-- $$ L(k = 1\ |\ p) = \left( \{4 \choose 1} \cdot p^1 \cdot (1-p)^3 \right)^{RM1} $$ -->
+<!-- $$ L(k = 2\ |\ p) = \left( \{4 \choose 2} \cdot p^2 \cdot (1-p)^2 \right)^14 $$ -->
+<!-- $$ L(k = 3\ |\ p) = \left( \{4 \choose 3} \cdot p^3 \cdot (1-p)^1 \right)^7 $$ -->
+<!-- $$ L(k = 4\ |\ p) = \left( \{4 \choose 4} \cdot p^4 \cdot (1-p)^0 \right)^1 $$ -->
 
 And the total likelihood of seeing all of these is the product of each probability times the number of potential combinations of the order in which they were observed:
 
-$ L(data\ |\ RM1,p) = \frac{(RM1 + 14 + 7 + 1)!}{RM1!\,14!\,7!\,1!} \cdot \prod_{k=1}^{k=4} L (k\ |\ RM1, p) $
+<!-- $$ L(data\ |\ RM1,p) = \frac{(RM1 + 14 + 7 + 1)!}{RM1!\,14!\,7!\,1!} \cdot \prod_{k=1}^{k=4} P (k\ |\ RM1, p) $$ -->
 
-the conditional likelihood is then the probability of observing RM1 males once out of all males observed (RM1 + 22) given probability p:
+The conditional likelihood is then the probability of observing RM1 males once out of all males observed (RM1 + 22) given probability p:
 
-$ P(RM1 = 1) = {RM1 + 22 \choose RM1} \cdot (p(1 - p)^3)^{RM1} \cdot (1 - p(1 - p)^3)^{22} $
+<!-- $$ P(RM1 = 1) = \{RM1 + 22 \choose RM1} \cdot (p(1 - p)^3)^{RM1} \cdot (1 - p(1 - p)^3)^{22} $$ -->
 
 The marginalized likelihood for each value of N is then the likelihood times the conditional likelihood, and the total likelihood for each probability P is equal to the sum of all the marginalized likelihoods across all potential values of N. 
 
 ```{r, echo = FALSE, message = FALSE}
-total_males <- 66
-observed234 <- c(14, 7, 1)
-def_resident_males <- sum(observed234)
-maybe_resident_males <- total_males - def_resident_males
-potential_RM1 <- 1:maybe_resident_males
+
+analyses <- c('S4 males', 'all males')
+total_males <- c(66, 169)
+observed234 <- list(c(14, 7, 1), 
+                    c(23, 7, 1))
 
 probabilities <- seq(from = 0.1, to = 0.9, by = 0.01)
 
-results <- data.frame(P = probabilities, 
-                      Likelihood = rep(NA, length(probabilities)))
+results <- data.frame(Analysis = rep(analyses, each = length(probabilities)),
+                      P = rep(probabilities, times = length(analyses)),
+                      Likelihood = rep(NA, 
+                                       length(analyses) * length(probabilities)))
 
-for (p in 1:(length(probabilities))) {
+for (a in 1:length(analyses)) {
   
-  P <- probabilities[p]
+  def_resident_males <- sum(observed234[[a]])
+  maybe_resident_males <- total_males[a] - def_resident_males
+  potential_RM1 <- 1:maybe_resident_males
   
-  marginalized_likelihoods <- c(NULL)
-  
-  for (rm1 in potential_RM1) {
+  for (p in 1:(length(probabilities))) {
     
-    # probability of seeing data - observed males seen 2, 3, 4 times, plus some N males seen once
-    L1 <- (choose(4, 1) * P^1 * (1 - P)^3)^rm1
-    L2 <- (choose(4, 2) * P^2 * (1 - P)^2)^observed234[1]
-    L3 <- (choose(4, 3) * P^3 * (1 - P)^1)^observed234[2]
-    L4 <- (choose(4, 4) * P^4 * (1 - P)^0)^observed234[3]
+    P <- probabilities[p]
     
-    # factorials for combination
-    F1 <- factorial(rm1)
-    F2 <- factorial(observed234[1])
-    F3 <- factorial(observed234[2])
-    F4 <- factorial(observed234[3])
+    marginalized_likelihoods <- c(NULL)
     
-    likelihood <- factorial(rm1 + sum(observed234))/(F1 * F2 * F3 * F4) * (L1 * L2 * L3 * L4)
+    for (rm1 in potential_RM1) {
+      
+      # probability of seeing data - observed males seen 2, 3, 4 times, plus some N males seen once
+      L1 <- (choose(4, 1) * P^1 * (1 - P)^3)^rm1
+      L2 <- (choose(4, 2) * P^2 * (1 - P)^2)^observed234[[a]][1]
+      L3 <- (choose(4, 3) * P^3 * (1 - P)^1)^observed234[[a]][2]
+      L4 <- (choose(4, 4) * P^4 * (1 - P)^0)^observed234[[a]][3]
+      
+      L_all <- L1 * L2 * L3 * L4
+      
+      # factorials for combination
+      F1 <- factorial(rm1)
+      F2 <- factorial(observed234[[a]][1])
+      F3 <- factorial(observed234[[a]][2])
+      F4 <- factorial(observed234[[a]][3])
+      
+      F_all <- F1 * F2 * F3 * F4
+      
+      likelihood <- factorial(rm1 + def_resident_males)/(F_all) * (L_all)
+      
+      conditional_likelihood <- choose(rm1 + def_resident_males, rm1) * (
+        P*(1 - P)^3)^rm1 * (1 - P*(1 - P)^3)^(def_resident_males)
+      
+      marginalized_likelihood <- likelihood * conditional_likelihood
+      
+      marginalized_likelihoods <- c(marginalized_likelihoods, marginalized_likelihood)
+      
+    }
     
-    conditional_likelihood <- choose(rm1 + sum(observed234), rm1) * (
-      P*(1 - P)^3)^rm1 * (1 - P*(1 - P)^3)^(sum(observed234))
+    index <- (a - 1)*length(probabilities) + p
     
-    marginalized_likelihood <- likelihood * conditional_likelihood
-    
-    marginalized_likelihoods <- c(marginalized_likelihoods, marginalized_likelihood)
+    results$Likelihood[index] <- sum(marginalized_likelihoods)
     
   }
   
-  results$Likelihood[p] <- sum(marginalized_likelihoods)
-  
-  results$RM1[p] <- dbinom
-  
 }
 
-maxL_P <- results$P[which(results$Likelihood == max(results$Likelihood))]
-
-ggplot(data = results, 
-            aes(x = P, y = Likelihood)) +
-  geom_path(lwd = 1) +
-  xlab('probability of migrating in any given year') +
-  geom_vline(xintercept = maxL_P, col = 'green', lwd = 1) + 
-  annotate(geom = 'text', x = 0.61, y = 0, label = 'P = 0.55') +
-  ylab('Likelihood') +
-  ggtitle('Maximum likelihood estimation for FdN male probability of mating')
-
+# maximum likelihood binomial probability values
+results %>%
+  group_by(Analysis) %>%
+  filter(Likelihood == max(Likelihood))
+         
 ```
 
 
+\begin{table}[h]
+\begin{tabular}{llll}
+ Analysis & Log likelihood & Probability \\
+ All males & 0.00000378 & 0.52 \\
+ Season 4 males only & 0.000288 & 0.55
+\end{tabular}
+\end{table}
 
-##### simulated data iterating through different remigration intervals and probabilities
 
-for each potential remigration interval (from 1.1 to 4.9):
-
-simulate 0 and 1 successes by drawing 66 values from a binomial distribution with size 4 and the probability equal to 1 over the remigration interval
-
-take out the 0 and 1 observations, and calculate the distance between the remaining predicted successes (2 thru 4) and our given data vector
-
-```{r, cache = TRUE, echo = FALSE}
-
-observed <- c(rep(2, 14), 
-              rep(3, 7), 
-              rep(4, 1))
-
-remigration_intervals <- seq(from = 1.1, to = 4.9, by = 0.01)
-
-nsims <- 10000
-
-R <- length(remigration_intervals)
-
-avg_distances <- data.frame(remigration_interval = remigration_intervals, 
-                            probability = 1/remigration_intervals,
-                            avg_distance = rep(NA, R))
-
-for (r in 1:R) {
-  
-  probability <- 1/remigration_intervals[r]
-  
-  distances <- rep(NA, nsims)
-  
-  for (i in 1:nsims) {
-    
-    predicted <- rbinom(n = 1:66, size = 4, prob = probability)
-    
-    clean_predicted <- sort(predicted[predicted > 1])
-    
-    if (length(clean_predicted) < length(observed)) {
-      observed <- sample(observed, 
-                         size = length(clean_predicted), 
-                         replace = FALSE)
-    }
-    
-    if (length(observed) < length(clean_predicted)) {
-      clean_predicted <- sample(clean_predicted, 
-                                size = length(observed), 
-                                replace = FALSE)
-    }
-    
-    distances[i] <- dist(rbind(observed, clean_predicted))
-    
-  }
-  
-  avg_distances$avg_distance[r] <- mean(distances, na.rm = TRUE)
-  
-}
-
-```
+If we compare the results from analysing only those resident males observed in Season 4 (as opposed to all resident males), the results do not substantially change. The maximum likelihood estimator for P drops from 0.55 to 0.52, but the overall likelihoods are much smaller. 
 
 ```{r}
 
-# lowest distance values
-low_P <- avg_distances$probability[which(
-  avg_distances$avg_distance == min(avg_distances$avg_distance))]
-low_RI <- avg_distances$remigration_interval[which(
-  avg_distances$avg_distance == min(avg_distances$avg_distance))]
+S4P <- results %>%
+  filter(Analysis == 'S4 males') %>%
+  filter(Likelihood == max(Likelihood)) %>%
+  pull(P)
 
-P <- ggplot(data = avg_distances, 
-            aes(x = probability, y = avg_distance)) +
+allMP <- results %>%
+  filter(Analysis == 'all males') %>%
+  filter(Likelihood == max(Likelihood)) %>%
+  pull(P) 
+
+to_plot <- results %>%
+  mutate(maxL = ifelse(Analysis == 'S4 males', S4P, allMP))
+
+fig_labels <- data.frame(Analysis = c('all males', 'S4 males'), 
+                         label = c('P = 0.52', 'P = 0.55'))
+
+ggplot(data = to_plot, 
+       aes(x = P, y = Likelihood)) +
+  geom_line(aes(x = maxL, y = Likelihood), 
+            col = 'blue', lwd = 1) +    
   geom_path(lwd = 1) +
-  xlab('probability of migrating in any given year') +
-  geom_vline(xintercept = low_P, col = 'green', lwd = 1) + 
-  annotate(geom = 'text', x = 0.42, y = 25, label = 'P = 0.29') +
-  ylab('average distance')
-
-RI <- ggplot(data = avg_distances, 
-             aes(x = remigration_interval, y = avg_distance)) +
-  geom_path(lwd = 1) +
-  xlab('remigration interval (years)') +
-  ylab('') +
-  geom_vline(xintercept = low_RI, col = 'green', lwd = 1) +
-  annotate(geom = 'text', x = 4.2, y = 25, label = 'RI = 3.41')
-
-P + RI
+  facet_wrap(vars(Analysis), 
+             scales = 'free') +
+  xlab('probability of migrating to breeding grounds in any given year') +
+  ylab('Likelihood') +
+  ggtitle('Maximum likelihood estimation for FdN male probability of migrating') +
+  geom_text(data = fig_labels, 
+            mapping = aes(x = 0.75, y = Inf, label = label), 
+            vjust = 4.5, 
+            col = 'blue')
 
 ```
+
+The final maximum likelihood estimator for the binomial probability of males mating is therefore p = 0.55, with an associated average remigration interval of 1.82 years. 
 
