@@ -334,28 +334,303 @@ summary(fit_binomial2)
 ```
 
 
-For 100 simulations:
+```{r}
+n1s <- 1:43
+Ps <- seq(from = 0.1, to = 0.6, by = 0.01)
 
-I simulated 50 years of 66 males breeding based on a probabiliy equal to the inverse of the remigration interval (i.e. if the remigration interval is 5 years, the probability of an individual male breeding each year is 1/5 = 0.2). Then, I took a random sample of 4 years from that timeseries of simulated data to count how many males were observed in 1, 2, 3, or 4 seasons. 
+results <- data.frame(N1 = rep(n1s, each = length(Ps)), 
+                      P = rep(Ps, times = length(n1s)),
+                      negLogLik = rep(NA, length(n1s) * length(Ps)), 
+                      remigration_int = rep(NA, length(n1s) * length(Ps)))
 
-After all 100 simulations, I fitted a binomial model to the output, and calculated the maximum likelihood estimator using the mle2() function in the bblme package in R. 
+for (n1 in 1:length(n1s)) {
+  
+  for (p in 1:length(Ps)) {
+    
+    all_males <- 66
+    N4 <- 1
+    N3 <- 7
+    N2 <- 14
+    N1 <- n1
+    N0 <- all_males - N4 - N3 - N2 - N1
+    
+    successes <- c(rep(4, N4), 
+                   rep(3, N3), 
+                   rep(2, N2), 
+                   rep(1, N1), 
+                   rep(0, N0))
+    
+    index <- (n1 - 1)*length(Ps) + p
+    
+    results$negLogLik[index] <- -sum(dbinom(x = successes, 
+                                            size = 4, 
+                                            prob = Ps[p], 
+                                            log = TRUE))
+    
+  }
+  
+  
+  
+  
+  # binomFXN <- function(P) {
+  #   
+  #   -sum(dbinom(x = successes, 
+  #               size = 4, 
+  #               prob = P, 
+  #               log = TRUE))
+  #   
+  # }
+  
+  # model <- mle2(successes ~ dbinom(size = 4, prob = P), 
+  #               start = list(P = 0.1),
+  #               data = data.frame(successes))
+  # 
+  #   model <- mle2(binomFXN, 
+  #               start = list(P = 0.1),
+  #               data = list(successes))
+  # 
+  # results$loglikelihood[s1] <- logLik(model)
+  # results$P[s1] <- coef(model)[[1]]
+  # results$remigration_int[s1] <- 1/coef(model)[[1]]
+  
+}
 
-Once I calculated the maximum likelihood estimator for each potential remigration interval, I selected the remigration interval that produced the best fit to the observed data. 
+results %>%
+  ggplot(aes(x = P, y = N1, fill = exp(-negLogLik))) +
+  geom_tile() +
+  scale_fill_viridis()
+
+```
 
 ```{r}
+n1s <- 1:43
 
-# raw data
-seasons <- c('S1', 'S2', 'S3', 'S4', 
-             'S1.S2', 'S1.S3', 'S1.S4', 'S2.S3', 'S2.S4', 'S3.S4', 
-             'S1.S2.S3', 'S1.S2.S4', 'S1.S3.S4', 'S2.S3.S4', 
-             'S1.S2.S3.S4')
+results <- data.frame(N1 = rep(n1s), 
+                      P = rep(NA, times = length(n1s)),
+                      LogLik = rep(NA, length(n1s)))
 
-counts <- c(44, 42, 35, 17, 
-            1, 6, 3, 2, 7, 4, 
-            0, 3, 3, 1, 
-            1)
+for (n1 in 1:length(n1s)) {
+  
+  n1 <- 43
+  all_males <- 66
+  N4 <- 1
+  N3 <- 7
+  N2 <- 14
+  N1 <- n1
+  N0 <- all_males - N4 - N3 - N2 - N1
+  
+  successes <- c(rep(4, N4), 
+                 rep(3, N3), 
+                 rep(2, N2), 
+                 rep(1, N1), 
+                 rep(0, N0))
+  
+  p <- successes
+  q <- 4 - successes
+  binom.test(x = c(sum(p), sum(q)))
+  
+  model <- mle2(successes ~ dbinom(size = 4, prob = P), 
+                start = list(P = 0.3), 
+                data = list(successes))
+  
+  results$P[n1] <- coef(model)[[1]]
+  results$LogLik[n1] <- logLik(model)
+  
+}
+
+results %>%
+  ggplot(aes(x = P, y = N1, col = LogLik)) +
+  geom_point()
+
+
+# binomFXN <- function(P) {
+#   
+#   -sum(dbinom(x = successes, 
+#               size = 4, 
+#               prob = P, 
+#               log = TRUE))
+#   
+# }
+
+
+
+```
+##### binomial likelihood
+
+
+##### marginalized likelihoods over number of 0 and 1 successes
+
+For any resident male green turtle, the probability of seeing it k = 1, 2, 3, or 4 times across n years is equal to:
+
+$ L(k) = {n \choose k} \cdot p^k \cdot (1 - p)^{n - k} $
+
+We know that n = 4, since our data were collected over 4 years, giving 4 chances to observe each male. 66 males were observed in season 4, meaning they could have been observed for all previous seasons. We can assume that those males that were observed more than once were residents. For the remaining 44 males, some unknown number of them were residents and others were transient males. For RM1 resident males observed once, there were RM1 + 22 total resident males observed in our dataset. 
+
+Given probability p, the likelihoods of observing RM1 males once, 14 males twice, 7 males 3 times, and 1 male 4 times is the probability of seeing a resident male 1, 2, 3, or 4 times in any given trial of size 4 to the power of the number of times it was observed:
+
+<!-- $ L(k = 0\ |\ p) = \left( {4 \choose 0} \cdot p^0 \cdot (1-p)^{4} \right) ^{44 - RM1} $ -->
+$ L(k = 1\ |\ p) = \left( {4 \choose 1} \cdot p^1 \cdot (1-p)^{3} \right) ^{RM1} $
+$ L(k = 2\ |\ p) = \left( {4 \choose 2} \cdot p^2 \cdot (1-p)^{2} \right) ^14 $
+$ L(k = 3\ |\ p) = \left( {4 \choose 3} \cdot p^3 \cdot (1-p)^{1} \right) ^7 $
+$ L(k = 4\ |\ p) = \left( {4 \choose 4} \cdot p^4 \cdot (1-p)^{0} \right) ^1 $
+
+And the total likelihood of seeing all of these is the product of each probability times the number of potential combinations of the order in which they were observed:
+
+$ L(data\ |\ RM1,p) = \frac{(RM1 + 14 + 7 + 1)!}{RM1!\,14!\,7!\,1!} \cdot \prod_{k=1}^{k=4} L (k\ |\ RM1, p) $
+
+the conditional likelihood is then the probability of observing RM1 males once out of all males observed (RM1 + 22) given probability p:
+
+$ P(RM1 = 1) = {RM1 + 22 \choose RM1} \cdot (p(1 - p)^3)^{RM1} \cdot (1 - p(1 - p)^3)^{22} $
+
+The marginalized likelihood for each value of N is then the likelihood times the conditional likelihood, and the total likelihood for each probability P is equal to the sum of all the marginalized likelihoods across all potential values of N. 
+
+```{r, echo = FALSE, message = FALSE}
+total_males <- 66
+observed234 <- c(14, 7, 1)
+def_resident_males <- sum(observed234)
+maybe_resident_males <- total_males - def_resident_males
+potential_RM1 <- 1:maybe_resident_males
+
+probabilities <- seq(from = 0.1, to = 0.9, by = 0.01)
+
+results <- data.frame(P = probabilities, 
+                      Likelihood = rep(NA, length(probabilities)))
+
+for (p in 1:(length(probabilities))) {
+  
+  P <- probabilities[p]
+  
+  marginalized_likelihoods <- c(NULL)
+  
+  for (rm1 in potential_RM1) {
+    
+    # probability of seeing data - observed males seen 2, 3, 4 times, plus some N males seen once
+    L1 <- (choose(4, 1) * P^1 * (1 - P)^3)^rm1
+    L2 <- (choose(4, 2) * P^2 * (1 - P)^2)^observed234[1]
+    L3 <- (choose(4, 3) * P^3 * (1 - P)^1)^observed234[2]
+    L4 <- (choose(4, 4) * P^4 * (1 - P)^0)^observed234[3]
+    
+    # factorials for combination
+    F1 <- factorial(rm1)
+    F2 <- factorial(observed234[1])
+    F3 <- factorial(observed234[2])
+    F4 <- factorial(observed234[3])
+    
+    likelihood <- factorial(rm1 + sum(observed234))/(F1 * F2 * F3 * F4) * (L1 * L2 * L3 * L4)
+    
+    conditional_likelihood <- choose(rm1 + sum(observed234), rm1) * (
+      P*(1 - P)^3)^rm1 * (1 - P*(1 - P)^3)^(sum(observed234))
+    
+    marginalized_likelihood <- likelihood * conditional_likelihood
+    
+    marginalized_likelihoods <- c(marginalized_likelihoods, marginalized_likelihood)
+    
+  }
+  
+  results$Likelihood[p] <- sum(marginalized_likelihoods)
+  
+  results$RM1[p] <- dbinom
+  
+}
+
+maxL_P <- results$P[which(results$Likelihood == max(results$Likelihood))]
+
+ggplot(data = results, 
+            aes(x = P, y = Likelihood)) +
+  geom_path(lwd = 1) +
+  xlab('probability of migrating in any given year') +
+  geom_vline(xintercept = maxL_P, col = 'green', lwd = 1) + 
+  annotate(geom = 'text', x = 0.61, y = 0, label = 'P = 0.55') +
+  ylab('Likelihood') +
+  ggtitle('Maximum likelihood estimation for FdN male probability of mating')
+
 ```
 
 
 
+##### simulated data iterating through different remigration intervals and probabilities
+
+for each potential remigration interval (from 1.1 to 4.9):
+
+simulate 0 and 1 successes by drawing 66 values from a binomial distribution with size 4 and the probability equal to 1 over the remigration interval
+
+take out the 0 and 1 observations, and calculate the distance between the remaining predicted successes (2 thru 4) and our given data vector
+
+```{r, cache = TRUE, echo = FALSE}
+
+observed <- c(rep(2, 14), 
+              rep(3, 7), 
+              rep(4, 1))
+
+remigration_intervals <- seq(from = 1.1, to = 4.9, by = 0.01)
+
+nsims <- 10000
+
+R <- length(remigration_intervals)
+
+avg_distances <- data.frame(remigration_interval = remigration_intervals, 
+                            probability = 1/remigration_intervals,
+                            avg_distance = rep(NA, R))
+
+for (r in 1:R) {
+  
+  probability <- 1/remigration_intervals[r]
+  
+  distances <- rep(NA, nsims)
+  
+  for (i in 1:nsims) {
+    
+    predicted <- rbinom(n = 1:66, size = 4, prob = probability)
+    
+    clean_predicted <- sort(predicted[predicted > 1])
+    
+    if (length(clean_predicted) < length(observed)) {
+      observed <- sample(observed, 
+                         size = length(clean_predicted), 
+                         replace = FALSE)
+    }
+    
+    if (length(observed) < length(clean_predicted)) {
+      clean_predicted <- sample(clean_predicted, 
+                                size = length(observed), 
+                                replace = FALSE)
+    }
+    
+    distances[i] <- dist(rbind(observed, clean_predicted))
+    
+  }
+  
+  avg_distances$avg_distance[r] <- mean(distances, na.rm = TRUE)
+  
+}
+
+```
+
+```{r}
+
+# lowest distance values
+low_P <- avg_distances$probability[which(
+  avg_distances$avg_distance == min(avg_distances$avg_distance))]
+low_RI <- avg_distances$remigration_interval[which(
+  avg_distances$avg_distance == min(avg_distances$avg_distance))]
+
+P <- ggplot(data = avg_distances, 
+            aes(x = probability, y = avg_distance)) +
+  geom_path(lwd = 1) +
+  xlab('probability of migrating in any given year') +
+  geom_vline(xintercept = low_P, col = 'green', lwd = 1) + 
+  annotate(geom = 'text', x = 0.42, y = 25, label = 'P = 0.29') +
+  ylab('average distance')
+
+RI <- ggplot(data = avg_distances, 
+             aes(x = remigration_interval, y = avg_distance)) +
+  geom_path(lwd = 1) +
+  xlab('remigration interval (years)') +
+  ylab('') +
+  geom_vline(xintercept = low_RI, col = 'green', lwd = 1) +
+  annotate(geom = 'text', x = 4.2, y = 25, label = 'RI = 3.41')
+
+P + RI
+
+```
 
