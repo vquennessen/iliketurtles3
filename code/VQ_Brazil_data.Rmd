@@ -4,7 +4,7 @@ author: "Vic Quennessen"
 date: "2025-11-13"
 output: pdf_document
 sansfont: Calibri Light
-classoption: 11pt
+classoption: 12pt
 header-includes:
   - \usepackage{graphicx}
   - \graphicspath{{figures/}}
@@ -64,8 +64,8 @@ clean_data %>%
   filter(length(unique(Nest)) > 1)
 ```
 
-So far, no more than one clutch is represented per female per season in the dataset. 
-
+So far, no more than one clutch is represented per female per season in the dataset. I will therefore assume that...
+\bigskip
 
 \begin{center}
 \setlength{\fboxsep}{10pt}
@@ -74,7 +74,7 @@ So far, no more than one clutch is represented per female per season in the data
 \begin{center}
 \setstretch{1.25}
 {\fontsize{13}{10}\selectfont
-I will therefore assume that all males are represented in all clutches by the same female throughout the same season.}
+All males are represented in all clutches by the same female throughout the same season.}
 \end{center}
 \end{minipage}
 }
@@ -192,20 +192,21 @@ geometric & -278.3816 & 558.7632 & 561.5673
 \end{tabular}
 \end{table}
 
-\textbf{Table 3. Model fit outputs.} 
+\textbf{Table 3. Model fits.} 
 \newline
 The discrete gamma distribution had the best fit with the lowest log likelihood, AIC, and BIC values. 
 \newline
 
-## model output and fit:
+## model output:
 
-```{r, echo = FALSE, warning = FALSE, fig.height = 3.25}
+```{r, echo = FALSE, warning = FALSE, fig.height = 4, size = 'small'}
 
 # model with fitted discrete gamma distribution
 fit_dgamma <- fitdist(males_per_female$nMales, 'gamma', discrete = TRUE)
 
 # estimates for shape and rate parameters for discrete gamma distribution
-summary(fit_dgamma)
+print('coefficients:')
+coef(summary(fit_dgamma))
 
 # plot data (black) vs. fitted discrete gamma distribution (red)
 plot(fit_dgamma)
@@ -320,7 +321,7 @@ ggplot(data = contributions %>% filter(Rank < 8),
 
 \textbf{Figure 3. Fertilization contributions organized by father 'rank'}
 
-Where rank indicates proportion of offspring fertilized by the r^{th} most dominant father, i.e. Rank 1 indicates the father that fertilized the most offspring sampled from that clutch. Per this data, it looks like the total number of contributing fathers does matter, but samples sizes are too small to extrapolate the effect, so the model was fit to grouped data where only Rank mattered. 
+Where rank indicates proportion of offspring fertilized by the $r^{th}$ most dominant father, i.e. Rank 1 indicates the father that fertilized the most offspring sampled from that clutch. Per this data, it looks like the total number of contributing fathers does matter, but samples sizes are too small to extrapolate the effect, so the model was fit to grouped data where only Rank mattered. 
 
 \newpage
 
@@ -328,7 +329,7 @@ Where rank indicates proportion of offspring fertilized by the r^{th} most domin
 
 I chose to use a power law because mechanistically it makes sense that for the first male turtle, a certain proportion of eggs will be fertilized. For the second male, a certain proportion of what is left, and for the third male and so on it will always be a proportion of what eggs are left to fertilize, which can easily be quantified using a power rule with a negative exponent. 
 
-Power law: \ $y(x) = a \cdot p^{-x}$
+Power law: $y(x) = a \cdot p^{-x}$
 
 ```{r, echo = FALSE, size = 'small'}
 
@@ -337,17 +338,27 @@ Power law: \ $y(x) = a \cdot p^{-x}$
 fit_power <- lm(log(propdadcontribute) ~ log(Rank), 
                 data = contributions)
 
+print('coefficients:')
 summary(fit_power)$coefficients
 
+print('adjusted R^2:')
 summary(fit_power)$adj.r.squared
 ```
 
 Where the intercept $a = exp(-0.376) = 0.687$ and the exponent $x = -1.710$:
 
-$$ Proportion\ father\ contributes(Rank) = 0.687 \cdot Rank^{-1.710}$$
+\begin{center}
+\setlength{\fboxsep}{10pt}
+\fbox{
+{\fontsize{13}{10}\selectfont
+$\displaystyle Proportion\ father\ contributes(Rank) = 0.687 \cdot Rank^{-1.710}$}
+}
+\end{center}
 
-\textit{Turtles work like gravitational waves! - Jerry}
+\bigskip
+\bigskip
 
+## model predictions
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.height = 3.5}
 test.power <- data.frame(Rank = 1:max_males, 
@@ -367,6 +378,10 @@ ggplot(data = contributions,
 ```
 
 \textbf{Figure 4. Power law model fit to paternal fertilization contributions organized by father 'rank'}
+
+\bigskip
+\bigskip
+\textit{Turtles work like gravitational waves! - Jerry}
 
 \newpage
 
@@ -395,7 +410,7 @@ Original data, obtained from Dr. Lisa Komoroske (lkomoroske@umass.edu) on Thursd
 
 ### marginalized likelihoods over number of 0 and 1 successes
 
-Given a binomial model, or any resident male green turtle, the probability of seeing it k = 1, 2, 3, or 4 times across n years is equal to:
+Given a binomial model, or any resident male green turtle, the probability of seeing it $k = 1, 2, 3, or\ 4$ times across $n = 4$ years is equal to:
 
 $$
 L(k) = \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} 
@@ -403,11 +418,10 @@ $$
 
 We know that n = 4, since our data were collected over 4 years, giving 4 chances to observe each male. 66 males were observed in season 4, meaning they could have been observed for all previous seasons. We can assume that those males that were observed more than once were residents. For the remaining 44 males, some unknown number of them were residents and others were transient males. For RM1 resident males observed once, there were RM1 + 22 total resident males observed in our dataset. 
 
-Given probability p, the likelihoods of observing RM1 males once, 14 males twice, 7 males 3 times, and 1 male 4 times is the probability of seeing a resident male 1, 2, 3, or 4 times in any given trial of size 4 to the power of the number of times it was observed:
+Given probability p, the likelihoods of observing RM1 males once, 14 males twice, 7 males 3 times, and 1 male 4 times is the probability of seeing a resident male $k = 1, 2, 3, 4$ times in any given trial of size $n = 4$ years to the power of the count $c = RM1, 14, 7, 1$ times it was observed:
 
 $$ L(k = 1\ |\ p) = \left( \binom{4}{1} \cdot p^1 \cdot (1-p)^3 \right)^{RM1} $$
-$$ L(k = 2\ |\ p) = \left( \binom{4}{2} \cdot p^2 \cdot (1-p)^2 \right)^{14} $$
-$$ L(k = 3\ |\ p) = \left( \binom{4}{3} \cdot p^3 \cdot (1-p)^1 \right)^{7} $$
+$$ ... $$
 $$ L(k = 4\ |\ p) = \left( \binom{4}{4} \cdot p^4 \cdot (1-p)^0 \right)^{1} $$
 
 And the total likelihood of seeing all of these is the product of each probability times the number of potential combinations of the order in which they were observed:
@@ -496,7 +510,9 @@ results %>%
 
 ## should we use all males or only males seen in Season 4?
 
-If we compare the results from analysing only those resident males observed in Season 4 (as opposed to all resident males), the results do not substantially change. The maximum likelihood estimator for P drops from 0.55 to 0.52, but the overall likelihoods are much smaller. 
+If we compare the results from analysing only those resident males observed in Season 4 (as opposed to all resident males), the results do not substantially change. The maximum likelihood estimator for P drops from 0.55 to 0.52, but the overall likelihoods are much smaller.
+\bigskip
+\bigskip
 
 ```{r, echo = FALSE, results = 'hide'}
 
@@ -522,7 +538,7 @@ fig_labels <- data.frame(Analysis = c('all males', 'S4 males'),
 ```
 
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.height = 4}
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.height = 3.5}
 ggplot(data = to_plot, 
        aes(x = P, y = Likelihood)) +
   geom_line(aes(x = maxL, y = Likelihood), 
@@ -554,6 +570,8 @@ Season 4 males only & 0.000288 & 0.55 & 1.82
 \end{table}
 
 \textbf{Table 5. Maximum likelihood estimators for probability P of any one resident FdN male migrating to breeding grounds in any breeding season.}
+\newline
+\newline
 \newline
 \newline
 
