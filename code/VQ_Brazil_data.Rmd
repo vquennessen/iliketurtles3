@@ -3,13 +3,23 @@ title: "Brazil data"
 author: "Vic Quennessen"
 date: "2025-11-13"
 output: pdf_document
+sansfont: Calibri Light
+classoption: 11pt
 header-includes:
   - \usepackage{graphicx}
   - \graphicspath{{figures/}}
+  - \usepackage{stackengine}
+  - \usepackage{setspace}
+  - \usepackage{caption}
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_hooks$set(chunk = function(x, options) {
+  if (!is.null(options$size)) {
+    paste0('\n \\', options$size, '\n\n', x, '\n\n \\small')
+  } else x
+})
 ```
 
 
@@ -46,7 +56,7 @@ clean_data <- BSR_Info_VIC_2025_MaleContribution %>%
   mutate(Nest = substring(mom_nest_combo, 13, 16)) 
 ```
 
-## 1. are all males represented in all clutches of females they mate with in a season?
+# 1. are all males represented in all clutches of females they mate with in a season?
 
 ```{r}
 clean_data %>%
@@ -54,13 +64,24 @@ clean_data %>%
   filter(length(unique(Nest)) > 1)
 ```
 
-Not applicable, no more than one clutch is represented per female per season in the dataset. 
+So far, no more than one clutch is represented per female per season in the dataset. 
 
-I will therefore assume that all males are represented in all clutches by the same female throughout the same season. 
 
+\begin{center}
+\setlength{\fboxsep}{10pt}
+\fbox{
+\begin{minipage}{35em}
+\begin{center}
+\setstretch{1.25}
+{\fontsize{13}{10}\selectfont
+I will therefore assume that all males are represented in all clutches by the same female throughout the same season.}
+\end{center}
+\end{minipage}
+}
+\end{center}
 
 \newpage
-## 2. how many males do females mate with in one season?
+# 2. how many males do females mate with in one season?
 
 In order to more accurately model evolution with maternal and paternal genotypes, I will build a 'breeding pool' of males, where each male will be represented X times, where X is the average number of females that males can mate with, rounded to the nearest integer, dependent upon the mating function. Then, for each female, I need to be able to determine how many males she will mate with to draw that many unique males from the breeding pool. 
 
@@ -92,32 +113,31 @@ kurtosis(males_per_female$nMales)
 ```
 
 
-\bfseries{Number of males that females mated with in raw data:}
-
-
 \begin{table}[h]
 \begin{tabular}{llllllll}
- Number of males & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
- \hline
- Number & 13 & 42 & 18 & 36 & 0 & 6 & 7 \\
- Proportion & 0.11 & 0.34 & 0.15 & 0.30 & 0 & 0.05 & 0.06
+\textbf{Number of males} & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+\hline
+\textbf{Count} & 13 & 42 & 18 & 36 & 0 & 6 & 7 \\
+\textbf{Proportion} & 0.11 & 0.34 & 0.15 & 0.30 & 0 & 0.05 & 0.06
 \end{tabular}
 \end{table}
 
-
-\bfseries{Summary statistics of number of males females mated with:}
-
+\textbf{Table 1. Number of males that females mated with in raw data}
+\newline
+\newline
 
 \begin{table}[h]
 \begin{tabular}{lllllllllll}
- Min & 1st Q & Median & Mean & 3rd Q & Max & Variance & SD & Skew & Kurtosis \\
- \hline
- 1.000 & 2.000 & 3.000 & 3.115 & 4.000 & 7.000 & 2.433 & 1.560 & 0.861 & 0.265 \\
+\textbf{Min} & \textbf{1st Q} & \textbf{Median} & \textbf{Mean} & \textbf{3rd Q} & \textbf{Max} & \textbf{Variance} & \textbf{SD} & \textbf{Skew} & \textbf{Kurtosis} \\
+\hline
+1.000 & 2.000 & 3.000 & 3.115 & 4.000 & 7.000 & 2.433 & 1.560 & 0.861 & 0.265 \\
 \end{tabular}
 \end{table}
 
-
-\bfseries{Density histogram}
+\textbf{Table 2. Summary statistics of number of males females mated with}
+\newline
+\newline
+\newline
 
 ```{r, echo = FALSE, fig.height = 4}
 ggplot(data = males_per_female, 
@@ -129,9 +149,13 @@ ggplot(data = males_per_female,
   ylab('Proportion \n') +
   scale_x_continuous(breaks = c(1:7))
 ```
+\textbf{Figure 1. Density histogram of number of males females mated with per season}
+
 
 \newpage
-### why fit a model
+
+## why fit a model?
+
 we can't just use the proportions of females that mated with 1 - 7 males since 
 sample sizes are small, and no recorded female mated with 5 males. 
 
@@ -154,26 +178,28 @@ summary(fit_geometric)
 ```
 
 
-#### discrete gamma distribution had the best fit:
 
 
 
 \begin{table}[h]
 \begin{tabular}{lllll}
- Distribution & Log likelihood & AIC & BIC \\
- discrete gamma & -215.0036 & 434.0071 & 439.6152 \\
- poisson & -223.1883 & 448.3767 & 451.1807 \\
- negative binomial & -223.1884 & 450.3767 & 455.9848 \\
- geometric & -278.3816 & 558.7632 & 561.5673 
+\textbf{Distribution} & \textbf{Log likelihood} & \textbf{AIC} & \textbf{BIC} \\
+\hline
+discrete gamma & -215.0036 & 434.0071 & 439.6152 \\
+poisson & -223.1883 & 448.3767 & 451.1807 \\
+negative binomial & -223.1884 & 450.3767 & 455.9848 \\
+geometric & -278.3816 & 558.7632 & 561.5673 
 \end{tabular}
 \end{table}
 
+\textbf{Table 3. Model fit outputs.} 
+\newline
+The discrete gamma distribution had the best fit with the lowest log likelihood, AIC, and BIC values. 
+\newline
 
+## model output and fit:
 
-#### model fit:
-
-
-```{r, warning = FALSE}
+```{r, echo = FALSE, warning = FALSE, fig.height = 3.25}
 
 # model with fitted discrete gamma distribution
 fit_dgamma <- fitdist(males_per_female$nMales, 'gamma', discrete = TRUE)
@@ -185,13 +211,18 @@ summary(fit_dgamma)
 plot(fit_dgamma)
 ```
 
+\textbf{Figure 2. Discrete gamma model fit for the number of males females mate with in one season.}
+
+Black lines indicate the density of males females mated with in our FdN dataset, while red lines indicate the predicted density based on the discrete gamma model fit to the data. 
 
 \newpage
-#### given this discrete model...
 
-what are the weights for females mating with 1 X males, where X is the maximum number of males we will allow (currently set to 10):
+## given this discrete model...
 
-```{r}
+If we assume that females can mate with up to 10 males (i.e. we did not observe all contributing males in our dataset), then we can predict the proportion of females that would mate with 1 to 10 males. Unfortunately, the discrete gamma distribution has a tail that cannot be incorporated into a discrete number of potential male values, so the sum of the weights does not add up to 1, so we have to normalize the weights to add up to one in order to sample from 1:10 males in the code.\newline 
+
+
+```{r, echo = FALSE, results = 'hide'}
 # max number of males females can mate with (7 in data)
 max_males <- 10
 
@@ -201,10 +232,10 @@ weightedP <- ddgamma(1:max_males,
                      rate = fit_dgamma$estimate['rate'])
 
 raw_weights <- round(weightedP, 3)
-# 0.214 0.283 0.219 0.130 0.065 0.030 0.012
+# 0.214 0.283 0.219 0.130 0.065 0.030 0.012 0.005 0.002 0.001
 
 total_sum <- sum(raw_weights)
-# 0.9531114
+# 0.961
 
 # normalize weights so that they add up to 1
 # this assumes we can't have females mating with more than max_males males)
@@ -212,34 +243,71 @@ total_sum <- sum(raw_weights)
 weights_to_use <- round(weightedP / sum(weightedP), 3)
 probability_of_mating_with_n_Males <- data.frame(number_of_males = 1:max_males, 
                                                  probability = weights_to_use)
+
 probability_of_mating_with_n_Males
 ```
 
+\begin{center}
+\setlength{\fboxsep}{10pt}
+\fbox{
+\begin{minipage}{35em}
+\begin{center}
+\setstretch{1.75}
+{\fontsize{13}{10}\selectfont
+\begin{tabular}{llll}
+\textbf{Number of males} & \textbf{Model weight} & \textbf{Normalized weight} \\
+\hline
+1 &  0.214 & 0.222 \\
+2 &  0.283 & 0.295 \\
+3 &  0.219 & 0.228 \\
+4 &  0.130 & 0.135 \\
+5 &  0.065 & 0.068 \\
+6 &  0.030 & 0.031 \\
+7 &  0.012 & 0.013 \\
+8 &  0.005 & 0.205 \\
+9 &  0.002 & 0.002 \\
+10 & 0.001 & 0.001 \\
+\hline
+\textbf{Sum} & 0.961 & 1.000
+\end{tabular}
+}
+\end{center}
+{\fontsize{13}{10}\selectfont
+\bigskip
+\textbf{Table 4.} Weighted probabilities for females to mate with 1 to 10 males in any given breeding season.}
+\end{minipage}
+}
+\end{center}
+
+
 \newpage
-## 3. how do males fertilize nests?
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE, results = 'hide'}
+# 3. how do males fertilize nests?
 
+Within each clutch, do males fertilize offspring randomly, such that each male has the same probability of fertilizing any individual offspring? And do those probabilities change as the total number of contributing males changes?
+
+```{r, echo = FALSE, results = 'hide'}
 contributions <- clean_data %>%
   group_by(Season, Female, Nest) %>%
   mutate(nMales = n()) %>%
   group_by(Season, Female, Nest, nMales) %>%
-  mutate(Rank = rank(desc(propdadcontribute), ties.method = 'first'))
+  mutate(Rank = rank(desc(propdadcontribute), ties.method = 'first')) %>%
+  rbind(data.frame(mom_nest_combo = NA, 
+                   dad = NA, 
+                   hatchling_count = NA, 
+                   NestTotalHatchCount = NA, 
+                   propdadcontribute = NA, 
+                   LowNestSampleSize = NA,
+                   Season = NA, 
+                   Female = NA, 
+                   Nest = NA, 
+                   nMales = NA, 
+                   Rank = c(8:10)))
+```
 
-contributions <- rbind(contributions, 
-                       data.frame(mom_nest_combo = NA, 
-                                  dad = NA, 
-                                  hatchling_count = NA, 
-                                  NestTotalHatchCount = NA, 
-                                  propdadcontribute = NA, 
-                                  LowNestSampleSize = NA,
-                                  Season = NA, 
-                                  Female = NA, 
-                                  Nest = NA, 
-                                  nMales = NA, 
-                                  Rank = c(8:10)))
 
-ggplot(data = contributions, 
+```{r, echo = FALSE, fig.height = 4}
+ggplot(data = contributions %>% filter(Rank < 8), 
        aes(x = factor(Rank), 
            y = propdadcontribute,
            fill = factor(nMales))) +
@@ -250,26 +318,38 @@ ggplot(data = contributions,
 
 ```
 
+\textbf{Figure 3. Fertilization contributions organized by father 'rank'}
+
+Where rank indicates proportion of offspring fertilized by the r^{th} most dominant father, i.e. Rank 1 indicates the father that fertilized the most offspring sampled from that clutch. Per this data, it looks like the total number of contributing fathers does matter, but samples sizes are too small to extrapolate the effect, so the model was fit to grouped data where only Rank mattered. 
 
 \newpage
-#### decaying power law fits very well: \ $y(x) = a \cdot p^{-x}$
 
-Where the intercept = -0.37648 and the log(Rank) = -1.71013: 
+## model fit
 
-```{r}
+I chose to use a power law because mechanistically it makes sense that for the first male turtle, a certain proportion of eggs will be fertilized. For the second male, a certain proportion of what is left, and for the third male and so on it will always be a proportion of what eggs are left to fertilize, which can easily be quantified using a power rule with a negative exponent. 
+
+Power law: \ $y(x) = a \cdot p^{-x}$
+
+```{r, echo = FALSE, size = 'small'}
 
 # turtles work like gravitational waves - jerry sun
 # power law
 fit_power <- lm(log(propdadcontribute) ~ log(Rank), 
                 data = contributions)
-summary(fit_power)
+
+summary(fit_power)$coefficients
+
+summary(fit_power)$adj.r.squared
 ```
 
+Where the intercept $a = exp(-0.376) = 0.687$ and the exponent $x = -1.710$:
+
+$$ Proportion\ father\ contributes(Rank) = 0.687 \cdot Rank^{-1.710}$$
+
+\textit{Turtles work like gravitational waves! - Jerry}
 
 
-Model fit is plotted in red points:
-
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.height = 3.5}
 test.power <- data.frame(Rank = 1:max_males, 
                          Fit = exp(fit_power$coefficients[[1]])*c(1:max_males)^(
                            fit_power$coefficients[[2]]))
@@ -286,32 +366,38 @@ ggplot(data = contributions,
   xlab('Rank')
 ```
 
+\textbf{Figure 4. Power law model fit to paternal fertilization contributions organized by father 'rank'}
 
 \newpage
-## 4. how often do males remigrate
+
+# 4. how often do males remigrate
+
+## male remigration interval used in Chapter 2: 1.47 (years)
+
+for male green turtles at Atol das Rocas (Grossman et al., 2019)
+
+https://www.int-res.com/abstracts/meps/v609/p197-207/
 
 
-#### male remigration interval used in Chapter 2: 1.47 (years)
-for green turtle males at Atol das Rocas (Grossman et al., 2019
-https://www.int-res.com/abstracts/meps/v609/p197-207/)
+## FdN genetic data
+
+\includegraphics[width=1\textwidth]{C://Users/Vic/Documents/Projects/iliketurtles3/figures/UpdatedMalePresence.png}
 
 
-#### FdN genetic data
-
-\includegraphics[width=0.5\textwidth]{C://Users/vique/Documents/Projects/iliketurtles3/figures/UpdatedMalePresence.png}
-
+\textbf{Figure 4. FdN male remigration data}
 
 Original data, obtained from Dr. Lisa Komoroske (lkomoroske@umass.edu) on Thursday October 9, 2025. Note: "...Estefany made this upsetR graph for Mariana for an upcoming talk, helps visualize the observed remigration interavl a bit for the males (again, keep in mind the difference in sampling effort in S3 and S4, these will need to be normalized to the number of samples run eventually).
 
 
-#### fit a binomial model
+\newpage
 
-##### marginalized likelihoods over number of 0 and 1 successes
+## fit a binomial model
 
+### marginalized likelihoods over number of 0 and 1 successes
 
 Given a binomial model, or any resident male green turtle, the probability of seeing it k = 1, 2, 3, or 4 times across n years is equal to:
 
-$$ 
+$$
 L(k) = \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} 
 $$
 
@@ -319,22 +405,25 @@ We know that n = 4, since our data were collected over 4 years, giving 4 chances
 
 Given probability p, the likelihoods of observing RM1 males once, 14 males twice, 7 males 3 times, and 1 male 4 times is the probability of seeing a resident male 1, 2, 3, or 4 times in any given trial of size 4 to the power of the number of times it was observed:
 
-<!-- $$ L(k = 1\ |\ p) = \left( \{4 \choose 1} \cdot p^1 \cdot (1-p)^3 \right)^{RM1} $$ -->
-<!-- $$ L(k = 2\ |\ p) = \left( \{4 \choose 2} \cdot p^2 \cdot (1-p)^2 \right)^14 $$ -->
-<!-- $$ L(k = 3\ |\ p) = \left( \{4 \choose 3} \cdot p^3 \cdot (1-p)^1 \right)^7 $$ -->
-<!-- $$ L(k = 4\ |\ p) = \left( \{4 \choose 4} \cdot p^4 \cdot (1-p)^0 \right)^1 $$ -->
+$$ L(k = 1\ |\ p) = \left( \binom{4}{1} \cdot p^1 \cdot (1-p)^3 \right)^{RM1} $$
+$$ L(k = 2\ |\ p) = \left( \binom{4}{2} \cdot p^2 \cdot (1-p)^2 \right)^{14} $$
+$$ L(k = 3\ |\ p) = \left( \binom{4}{3} \cdot p^3 \cdot (1-p)^1 \right)^{7} $$
+$$ L(k = 4\ |\ p) = \left( \binom{4}{4} \cdot p^4 \cdot (1-p)^0 \right)^{1} $$
 
 And the total likelihood of seeing all of these is the product of each probability times the number of potential combinations of the order in which they were observed:
 
-<!-- $$ L(data\ |\ RM1,p) = \frac{(RM1 + 14 + 7 + 1)!}{RM1!\,14!\,7!\,1!} \cdot \prod_{k=1}^{k=4} P (k\ |\ RM1, p) $$ -->
+$$ L(data\ |\ RM1,p) = \frac{(RM1 + 14 + 7 + 1)!}{RM1!\,14!\,7!\,1!} \cdot \prod_{k=1}^{k=4} P (k\ |\ RM1, p) $$
 
 The conditional likelihood is then the probability of observing RM1 males once out of all males observed (RM1 + 22) given probability p:
 
-<!-- $$ P(RM1 = 1) = \{RM1 + 22 \choose RM1} \cdot (p(1 - p)^3)^{RM1} \cdot (1 - p(1 - p)^3)^{22} $$ -->
+$$ P(RM1) = \binom{RM1 + 22}{RM1} \cdot (p(1 - p)^3)^{RM1} \cdot (1 - p(1 - p)^3)^{22} $$
+$$ P(RM1 = 1) = \binom{23}{1} \cdot (p(1 - p)^3)^{1} \cdot (1 - p(1 - p)^3)^{22} $$
 
-The marginalized likelihood for each value of N is then the likelihood times the conditional likelihood, and the total likelihood for each probability P is equal to the sum of all the marginalized likelihoods across all potential values of N. 
+The marginalized likelihood for each value of RM1 is then the likelihood times the conditional likelihood, and the total likelihood for each probability P is equal to the sum of all the marginalized likelihoods across all potential values of RM1. 
 
-```{r, echo = FALSE, message = FALSE}
+\newpage
+
+```{r, echo = FALSE, results = 'hide'}
 
 analyses <- c('S4 males', 'all males')
 total_males <- c(66, 169)
@@ -401,22 +490,15 @@ for (a in 1:length(analyses)) {
 results %>%
   group_by(Analysis) %>%
   filter(Likelihood == max(Likelihood))
-         
+
 ```
 
 
-\begin{table}[h]
-\begin{tabular}{llll}
- Analysis & Log likelihood & Probability \\
- All males & 0.00000378 & 0.52 \\
- Season 4 males only & 0.000288 & 0.55
-\end{tabular}
-\end{table}
-
+## should we use all males or only males seen in Season 4?
 
 If we compare the results from analysing only those resident males observed in Season 4 (as opposed to all resident males), the results do not substantially change. The maximum likelihood estimator for P drops from 0.55 to 0.52, but the overall likelihoods are much smaller. 
 
-```{r}
+```{r, echo = FALSE, results = 'hide'}
 
 S4P <- results %>%
   filter(Analysis == 'S4 males') %>%
@@ -429,11 +511,18 @@ allMP <- results %>%
   pull(P) 
 
 to_plot <- results %>%
-  mutate(maxL = ifelse(Analysis == 'S4 males', S4P, allMP))
+  mutate(maxL = ifelse(Analysis == 'S4 males', S4P, allMP)) %>%
+  rbind(data.frame(Analysis = c('S4 males', 'all males'), 
+                   P = rep(NA, 2), 
+                   Likelihood = c(3e-4, 4e-6), 
+                   maxL = c(S4P, allMP)))
 
 fig_labels <- data.frame(Analysis = c('all males', 'S4 males'), 
                          label = c('P = 0.52', 'P = 0.55'))
+```
 
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.height = 4}
 ggplot(data = to_plot, 
        aes(x = P, y = Likelihood)) +
   geom_line(aes(x = maxL, y = Likelihood), 
@@ -451,5 +540,32 @@ ggplot(data = to_plot,
 
 ```
 
-The final maximum likelihood estimator for the binomial probability of males mating is therefore p = 0.55, with an associated average remigration interval of 1.82 years. 
+\textbf{Figure 5. Likelihood of different probabilities $P$ of FdN resident males mating in any given breeding year}
+\newline
+\newline
 
+\begin{table}[h]
+\begin{tabular}{lllll}
+\textbf{Analysis} & \textbf{Log likelihood} & \textbf{Probability} & \textbf{Remigration Interval} \\
+\hline
+All males & 0.00000378 & 0.52 & 1.92 \\
+Season 4 males only & 0.000288 & 0.55 & 1.82
+\end{tabular}
+\end{table}
+
+\textbf{Table 5. Maximum likelihood estimators for probability P of any one resident FdN male migrating to breeding grounds in any breeding season.}
+\newline
+\newline
+
+\begin{center}
+\setlength{\fboxsep}{10pt}
+\fbox{
+\begin{minipage}{35em}
+\begin{center}
+\setstretch{1.25}
+{\fontsize{13}{10}\selectfont
+The final maximum likelihood estimator for the binomial probability of males mating is therefore p = 0.55, with an associated average remigration interval of 1.82 years.}
+\end{center}
+\end{minipage}
+}
+\end{center}
