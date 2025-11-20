@@ -1,7 +1,7 @@
 ---
-title: "Brazil data"
-author: "Vic Quennessen"
-date: "2025-11-13"
+title: "Breeding ecology parameterization based on FdN data"
+author: "Vic Quennessen, viquennessen@gmail.com"
+date: "2025-11-19"
 output: pdf_document
 sansfont: Calibri Light
 classoption: 12pt
@@ -11,6 +11,8 @@ header-includes:
   - \usepackage{stackengine}
   - \usepackage{setspace}
   - \usepackage{caption}
+  - \usepackage{titling}
+  - \setlength{\droptitle}{-1.1in}
 ---
 
 ```{r setup, include = FALSE}
@@ -56,44 +58,29 @@ clean_data <- BSR_Info_VIC_2025_MaleContribution %>%
   mutate(Nest = substring(mom_nest_combo, 13, 16)) 
 ```
 
-I'm only using data from clutches without a low nest sample size (LowNestSampleSize == 'No'), but I am retaining data from Season 1 since it should not affect how many males a female mates with (assuming all males are represented in all clutches of females they mate with) or the way that ranked males fertilize offspring in individual clutches. Season 1 data also do not seem to skew the remigration interval analysis in the way that we'd expect (i.e. to have migrating males that we'd miss observing), so we kept the partial Season 1 data for that analysis as well. 
 
-I'd like to credit the folks who collected and started analyzing these data:
+\textbf{Model parameters to estimate:}
+\begin{enumerate}
+\item distribution of the number of males that females mate with
+\item the way that multiple males fertilize offspring in a clutch
+\item the remigration interval for resident males
+\end{enumerate}
 
-\textbf{Research leads:}
-- Lisa Komoroske
-- Mariana Fuentes
-- Will White
-
-\textbf{Field crew:}
-- Armando Barsante Santos
-- Cintia Miranda
-- Blair Bentley
-- Estefany Argueta
-
-\textbf{Lab crew:}
-- Estefany Argueta
-- 
-
-The goal of this analysis is to parameterize my model of sea turtle population dynamics by improving the reproductive demographic parameters, including the
-
-Q1. distribution of the number of males that females mate with
-Q2. the way that multiple males fertilize offspring in a clutch
-Q3. the remigration interval for resident males
-
-Basic overview of reproductive sub-model in my code:
+\textbf{Overview of reproductive sub-model:}
 
 For each sex, age class, year, and simulation, I am tracking the number of individuals as well as the mean, median, and variance of genotypes (which are tracked at the sex and age class level). For each year and simulation, I am also tracking the operational sex ratio of the population.
 
-For each breeding season, after survival and maturity, the number of adults that become available to breed are the sum of successful draws from a binomial distribution with probability equal to one over the remigration interval (Q3). For example, if there are 5 mature females with a remigration interval of 5 years, I will take 5 draws from a binomial distribution with probability of success equal to 1/5 = 0.2. 
+For each breeding season, after survival and maturity are stepped forward in the population dynamics sub-model, the number of adults that become available to breed are the sum of successful draws from a binomial distribution with probability equal to one over the remigration interval (Q3). For example, if there are 5 females with a remigration interval of 5 years, I would take 5 draws from a binomial distribution with probability equal to 1/5 = 0.2. 
 
-Once I have the number of available males and females, I can calculate the operational sex ratio (number of males / number of all available adults), and use the mating function to translate that to the probability of females finding mates. 
+Once I have the number of available males and females, I can calculate the operational sex ratio (number of males / number of all available adults), and use the mating function to translate that to reproductive success.
 
-The number of actually breeding females is then the sum of draws from a binomial distribution with the probability of success equal to the mating function output. For each female who breeds, she will mate with a certain number of males (Q1), to be drawn from a breeding pool, where each male is represented X times based on the minimum OSR for each mating function. For example, for the mating function with a minimum OSR of 0.05, each male can theoretically mate with 19 females, so there will be 19 copies of each male in the 'breeding pool', where the 'copies' are actually genotypes sampled from the mature male population genotypes. Maternal genotypes are similarly sampled from the mature female population genotypes. 
+The number of actually breeding females is then the sum of draws from a binomial distribution with the probability of successfully finding a mate equal to the reproductive success. For each female who breeds, she will mate with a certain number of males (Q1), to be drawn from a 'breeding pool', where each male is represented X times based on the minimum OSR for each mating function. For example, for the mating function with a minimum OSR of 0.05, each male can theoretically mate with 19 females, so there will be 19 copies of each male in the breeding pool. 
 
-Then, she will lay a number of clutches and a number of eggs for each clutch drawn individually from the distributions of numbers of clutches per females and numbers of eggs per clutch from FdN data we collected 2020 - 2023. 
+Then, she will lay a number of clutches and a number of eggs for each clutch drawn from the distributions of clutches per females and eggs per clutch from our FdN field data. 
 
 For each clutch, the maternal genotype is based on the breeding female, and eggs are assigned paternal genotypes based on the pattern of multiple male fertilization (Q2). These are used to calculate the offspring genotypes, and then the offspring phenotypes. Evolvable traits are the midpoints of the temperature-mediated emergence success and the thermal reaction norm (i.e. the pivotal temperature). Then, offspring survive based on temperature-mediated emergence success and are assigned sex based on the clutch temperature and the thermal reaction norm. 
+
+I'm only using data from clutches with a high nest sample size, but I am retaining data from Season 1 since the partial season should not affect how many males a female mates with (assuming all males are represented in all clutches of females they mate with), the way that ranked males fertilize offspring in individual clutches, or skew the remigration interval analysis in the way that we'd expect (i.e. to have migrating males that we'd miss observing). 
 
 
 \newpage
@@ -414,7 +401,7 @@ https://www.int-res.com/abstracts/meps/v609/p197-207/
 
 ## FdN genetic data
 
-\includegraphics[width=1\textwidth]{C://Users/vique/Documents/Projects/iliketurtles3/figures/UpdatedMalePresence.png}
+\includegraphics[width=1\textwidth]{C://Users/Vic/Documents/Projects/iliketurtles3/figures/UpdatedMalePresence.png}
 
 
 \textbf{Figure 4. FdN male remigration data}
@@ -607,3 +594,30 @@ The final maximum likelihood estimator for the binomial probability of males mat
 \end{minipage}
 }
 \end{center}
+
+\newpage
+
+\textbf{Acknowledgments}
+\bigskip
+\bigskip
+
+\underline{Research leads:}
+\begin{itemize}
+\item{Lisa Komoroske}
+\item{Mariana Fuentes}
+\item{Will White}
+\end{itemize}
+
+\underline{Field work:}
+\begin{itemize}
+\item{Armando J. B. Santos}
+\item{Cintia Miranda}
+\item{Blair Bentley}
+\item{Estefany Argueta Herrera}
+\end{itemize}
+
+\underline{Lab work:}
+\begin{itemize}
+\item{Estefany Argueta Herrera}
+\end{itemize}
+
