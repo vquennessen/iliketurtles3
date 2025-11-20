@@ -4,14 +4,13 @@ base_model <- function(scenario, beta, yrs, max_age,
                        IF_survival, IM_survival, MF_survival, MM_survival,
                        IF_init, IM_init, MF_init, MM_init,
                        M, F_remigration_int, M_remigration_int,
-                       clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
-                       emergence_success_A, emergence_success_k, 
-                       emergence_success_t0, 
-                       T_piv, k_piv, h2_piv, ag_var_piv, evolution_piv,
-                       T_threshold, h2_threshold, ag_var_threshold, 
-                       evolution_threshold,
-                       temp_mu, climate_stochasticity, 
-                       season_temp_sd, clutch_temp_sd, noise, AC, 
+                       clutches_mu, clutches_sd, eggs_mu, eggs_sd,
+                       emergence_success_A, emergence_success_k,
+                       emergence_success_t0, T_piv, k_piv, T_threshold, 
+                       evolution, trait, max_N,
+                       h2, varGenetic, varPhenotypic, G, P,
+                       temp_mu, climate_stochasticity,
+                       season_temp_sd, clutch_temp_sd, noise, AC,
                        conservation_action, frequency, intensity, effect_size) {
   
   ##### source initialized arrays ##############################################
@@ -23,19 +22,15 @@ base_model <- function(scenario, beta, yrs, max_age,
                                    T_piv, k_piv, T_threshold, 
                                    temp_mu, climate_stochasticity, 
                                    season_temp_sd, clutch_temp_sd, noise, AC, 
-                                   evolution, trait, h2, varGenetic, max_N,
+                                   evolution, max_N,
                                    conservation_action, frequency)
   
   N                  <- init_output[[1]]   # population size array
   season_temp_mus    <- init_output[[2]]   # mean temps at the season level
   OSRs               <- init_output[[3]]   # operational sex ratio
-  varSegregation     <- init_output[[4]]   # evolution segregation variance
-  varPhenotypic      <- init_output[[5]]   # evolution phenotypic variance
-  G                  <- init_output[[6]]   # genotypes
-  G_stats            <- init_output[[7]]   # genotype stats, to keep
-  P                  <- init_output[[8]]   # phenotypes
-  P_stats            <- init_output[[9]]   # phenotype stats, to keep  
-  conservation_years <- init_output[[10]]  # years for conservation action
+  G_stats            <- init_output[[4]]   # genotype stats, to keep
+  P_stats            <- init_output[[5]]   # phenotype stats, to keep  
+  conservation_years <- init_output[[6]]  # years for conservation action
   
   ##### model ##################################################################
   # set.seed(seed)
@@ -45,8 +40,9 @@ base_model <- function(scenario, beta, yrs, max_age,
     # survival for each age 
     # set.seed(seed)
     popdy_output <- pop_dynamics(N, max_age, y, M,
-                      IF_survival, IM_survival, MF_survival, MM_survival, 
-                      evolution, G, G_stats, P, P_stats)
+                                 IF_survival, IM_survival, 
+                                 MF_survival, MM_survival, 
+                                 evolution, G, G_stats, P, P_stats)
     
     N       <- popdy_output[[1]]
     G       <- popdy_output[[2]]
@@ -62,9 +58,9 @@ base_model <- function(scenario, beta, yrs, max_age,
                                emergence_success_A, emergence_success_k, 
                                emergence_success_t0, 
                                season_temp_mus, clutch_temp_sd,
-                               k_piv, T_piv, T_threshold, evolution, 
-                               trait, varSegregation, varPhenotypic, 
-                               G, G_stats, P, P_stats,  
+                               k_piv, T_piv, T_threshold, 
+                               evolution, trait, h2, varGenetic, varPhenotypic, 
+                               G, G_stats, P, P_stats, max_N,
                                conservation_action, conservation_years, 
                                intensity, effect_size)
     
@@ -85,11 +81,17 @@ base_model <- function(scenario, beta, yrs, max_age,
   }
   
   ##### output #################################################################
-
-  output <- list(N, 
-                 OSRs,
-                 G_stats, 
-                 P_stats)
+  
+  if (evolution == TRUE) {
+    
+    output <- list(N, 
+                   OSRs, 
+                   G_stats, 
+                   P_stats)
+  } else {  
+    output <- list(N, 
+                   OSRs) 
+  }
   
   return(output)
   

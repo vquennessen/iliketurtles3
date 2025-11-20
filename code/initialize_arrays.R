@@ -92,77 +92,22 @@ initialize_arrays <- function(scenario, yrs, max_age,
   
   ##### evolution ##############################################################
   
-  # if evolution_piv is turned on, create gamma, epsilon, and delta vectors
-  if (evolution == TRUE) {  
+  if (evolution == TRUE) {
     
-    # segregation variance, error term for offspring genotype, one for each year
-    varSegregation <- varGenetic / 2 
-    
-    # phenotypic variance, error term for offspring phenotype, one for each year
-    varPhenotypic <- varGenetic / h2  
-    
-    # genotype array, dimensions sex * age * max pop size
-    G <- array(rep(NA, times = 4 * max_age * max_N), 
-               dim = c(4, max_age, max_N))
-    
-    # genotype summary stats to save, dimensions sex * age * year * # stats
+    # genotype and phenotype summary stats, dimensions sex * age * year * # stats
     # G[, , , 1] = mean
     # G[, , , 2] = median
     # G[, , , 3] = variance
     G_stats <- array(rep(NA, times = 4 * max_age * yrs * 3), 
-                    dim = c(4, max_age, yrs, 3))
+                     dim = c(4, max_age, yrs, 3))
     
-    # which trait is evolving?
-    value <- ifelse(trait == 'T_piv', 
-                    T_piv, 
-                    emergence_succcess_t0)
-    
-    # year 1
-    A <- apply(N[, , 1], c(1, 2), rnorm, mean = value, sd = sqrt(varGenetic))
-    
-    # https://stackoverflow.com/questions/43415577/equalizing-the-lengths-of-all-the-lists-within-a-list
-    # G[, , ] <- aperm(array(unlist(lapply(lapply(sapply(A, unlist), 
-    #                                    "length<-", max_N), 
-    #                             as.list)), 
-    #                        dim = c(max_N, 4, max_age)), 
-    #                    c(2, 3, 1))
-    
-    G <- array(rnorm(n = 4 * max_age * max_N, 
-                     mean = value, 
-                     sd = sqrt(varGenetic)), 
-               dim = c(4, max_age, max_N))
-    
-    # genotype stats
-    # G_stats[, , 1, 1] <- apply(G, c(1, 2), mean, na.rm = TRUE)
-    # G_stats[, , 1, 2] <- apply(G, c(1, 2), median, na.rm = TRUE)
-    # G_stats[, , 1, 3] <- apply(G, c(1, 2), var, na.rm = TRUE)
-    
-    # phenotype array, dimensions sex * age * years
-    P <- G + rnorm(n = c(4 * max_age * max_N), 
-                   mean = 0, 
-                   sd = sqrt(varPhenotypic))
-    
-    # phenotype summary stats to save, dimensions sex * age * year * # stats
-    # P_stats[, , , 1] = mean
-    # P_stats[, , , 2] = median
-    # P_stats[, , , 3] = variance
     P_stats <- array(rep(NA, times = 4 * max_age * yrs * 3), 
                      dim = c(4, max_age, yrs, 3))
     
-    # phenotype stats
-    # P_stats[, , 1, 1] <- apply(P, c(1, 2), mean, na.rm = TRUE)
-    # P_stats[, , 1, 2] <- apply(P, c(1, 2), median, na.rm = TRUE)
-    # P_stats[, , 1, 3] <- apply(P, c(1, 2), var, na.rm = TRUE)
-    
   } else {
     
-    # pivotal temperatures without evolution
-    varSegregation <- NULL
-    varPhenotypic  <- NULL
-    G              <- NULL
-    G_stats        <- NULL
-    P              <- NULL
-    P_stats        <- NULL
+    G_stats <- NULL
+    P_stats <- NULL
     
   }
   
@@ -177,8 +122,10 @@ initialize_arrays <- function(scenario, yrs, max_age,
   ##### output #################################################################
   
   # output
-  output <- list(N, season_temp_mus, OSRs, 
-                 varSegregation, varPhenotypic, G, G_stats, P, P_stats, 
+  output <- list(N, 
+                 season_temp_mus, 
+                 OSRs, 
+                 G_stats, P_stats, 
                  conservation_years)
   
   return(output)

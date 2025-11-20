@@ -6,9 +6,9 @@ reproduction <- function(N, M, y, beta, max_age,
                          emergence_success_A, emergence_success_k, 
                          emergence_success_t0, 
                          season_temp_mus, clutch_temp_sd,
-                         k_piv, T_piv, T_threshold, evolution, 
-                         trait, varSegregation, varPhenotypic, 
-                         G, G_stats, P, P_stats,  
+                         k_piv, T_piv, T_threshold, 
+                         evolution, trait, h2, varGenetic, varPhenotypic, 
+                         G, G_stats, P, P_stats, max_N,  
                          conservation_action, conservation_years, 
                          intensity, effect_size) {
   
@@ -22,10 +22,10 @@ reproduction <- function(N, M, y, beta, max_age,
                         size = N[4, , y], 
                         prob = 1 / M_remigration_int)
   
-  # breeding females this year
+  # number of breeding females this year
   n_available_F <- sum(as.numeric(available_F, na.rm = TRUE))
   
-  # breeding males this year
+  # number of breeding males this year
   n_available_M <- sum(as.numeric(available_M, na.rm = TRUE))
   
   # check that there is at least one available female and one available male
@@ -34,6 +34,10 @@ reproduction <- function(N, M, y, beta, max_age,
     OSR <- NA
     female_hatchlings <- 0
     male_hatchlings <- 0  
+    G[, 1, ] <- rep(NA, times = 4 * max_N)
+    P[, 1, ] <- rep(NA, times = 4 * max_N)
+    G_stats[, 1, y, ] <- rep(NA, times = 4 * 3)
+    P_stats[, 1, y, ] <- rep(NA, times = 4 * 3)
     
   } else {
     
@@ -52,8 +56,8 @@ reproduction <- function(N, M, y, beta, max_age,
     # how many females actually find a male to mate with and then nest
     # set.seed(seed)
     breeding_F <- rbinom(n = n_available_F, 
-                               size = 1, 
-                               prob = breeding_success)
+                         size = 1, 
+                         prob = breeding_success)
     
     n_breeding_F <- sum(breeding_F)
     
@@ -102,32 +106,37 @@ reproduction <- function(N, M, y, beta, max_age,
       # if evolution
       if (evolution == TRUE) {
         
-        # initialize breeding female and male genotypes
-        G_F <- NULL
-        G_M <- NULL
+        # extract maternal genotypes
         
-        # extract breeding female and available male genotypes
-        for (a in 1:max_age) {
-          G_F <- append(G_F, sample(!is.na(G[3, a, ]), breeding_F[a]))
-          G_M <- append(G_M, sample(!is.na(G[4, a, ]), available_M[a]))
-        }
+        # build breeding pool
         
-        G_F <- apply(!is.na(G[3, , ], c(1), sample, breeding_F))
+        # assign males to each female
         
-        # build breeding pool of males
+        # extract paternal genotypes
+        
+        # for each clutch, assign paternal genotypes to offspring
+        
+        # calculate offspring genotypes
+        
+        # calculate offspring phenotypes
+        
         
         
       }
       
-      # list of probability of emergence, one number for each clutch 
-      # set.seed(seed)
-      probs_emerged <- lapply(clutch_temps, 
-                              emergence_success, 
-                              A = emergence_success_A, 
-                              k = emergence_success_k, 
-                              t0 = emergence_success_t0, 
-                              thermal_limit = Threshold_temps[y]) %>%
-        lapply(pmax, 0)
+      if (trait != 'emergence_success_t0') {
+        
+        # list of probability of emergence, one number for each clutch 
+        # set.seed(seed)
+        probs_emerged <- lapply(clutch_temps, 
+                                emergence_success, 
+                                A = emergence_success_A, 
+                                k = emergence_success_k, 
+                                t0 = emergence_success_t0, 
+                                thermal_limit = T_threshold) %>%
+          lapply(pmax, 0)
+        
+      }
       
       # vector of eggs
       v_eggs <- as.integer(unlist(eggs))
@@ -143,13 +152,17 @@ reproduction <- function(N, M, y, beta, max_age,
         lapply(pmax, 0) %>%
         lapply(round)
       
-      # list of probabilities of developing as male, one for each clutch
-      # set.seed(seed)
-      probs_male <- lapply(clutch_temps, 
-                           probability_male,
-                           k = k_piv, 
-                           pivotal_temp = Pivotal_temps[y]) %>%
-        lapply(pmax, 0)
+      if (trait != 'T_piv') {
+        
+        # list of probabilities of developing as male, one for each clutch
+        # set.seed(seed)
+        probs_male <- lapply(clutch_temps, 
+                             probability_male,
+                             k = k_piv, 
+                             pivotal_temp = T_piv) %>%
+          lapply(pmax, 0)
+        
+      }
       
       # vector of hatchlings
       v_hatchlings <- unlist(hatchlings)
