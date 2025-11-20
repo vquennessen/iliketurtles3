@@ -7,3 +7,5 @@
 2025-11-12 01:17:26 - narrow - 0.5C - beta 1.17 - 10 sims - 100 years
 2025-11-12 01:17:39 - narrow - 0.5C - beta 1.17 - 10 sims - 100 years
 2025-11-12 01:19:34 - narrow - 0.5C - beta 1.17 - 10 sims - 100 years
+2025-11-19 17:32:07 - narrow - 0.5C - beta 1.17 - 10 sims - 100 years
+2025-11-19 18:56:23 - narrow - 0.5C - beta 1.17 - 10 sims - 100 years

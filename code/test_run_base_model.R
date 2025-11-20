@@ -12,7 +12,7 @@ library(lubridate)
 library(lgcp)
 
 # set working directory
-# setwd('~/Projects/iliketurtles3/code')
+setwd('~/Projects/iliketurtles3/code')
 
 source('run_base_model.R')
 source('base_model.R')

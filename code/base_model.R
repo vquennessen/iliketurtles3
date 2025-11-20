@@ -54,26 +54,6 @@ base_model <- function(scenario, beta, yrs, max_age,
     P       <- popdy_output[[4]]
     P_stats <- popdy_output[[5]]
     
-    
-    # # evolution (if applicable)
-    # if (evolution_piv == TRUE || evolution_threshold == TRUE) {
-    #   
-    #   evol_output <- evolution(N, max_age, y, breeding_F, breeding_M,
-    #                            G_piv, P_piv, Delta_piv, Pivotal_temps,
-    #                            Gamma_piv, Epsilon_piv, evolution_piv, 
-    #                            G_threshold, P_threshold, Delta_threshold, 
-    #                            Threshold_temps, Gamma_threshold, 
-    #                            Epsilon_threshold, evolution_threshold)
-    #   
-    #   Pivotal_temps[y]   <- evol_output[[1]]
-    #   G_piv              <- evol_output[[2]]
-    #   P_piv              <- evol_output[[3]]
-    #   Threshold_temps[y] <- evol_output[[4]]
-    #   G_threshold        <- evol_output[[5]]
-    #   P_threshold        <- evol_output[[6]]
-    #   
-    # }
-    
     # reproduction
     # set.seed(seed)
     rep_output <- reproduction(N, M, y, beta, max_age, 

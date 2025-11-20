@@ -121,16 +121,21 @@ initialize_arrays <- function(scenario, yrs, max_age,
     A <- apply(N[, , 1], c(1, 2), rnorm, mean = value, sd = sqrt(varGenetic))
     
     # https://stackoverflow.com/questions/43415577/equalizing-the-lengths-of-all-the-lists-within-a-list
-    G[, , ] <- aperm(array(unlist(lapply(lapply(sapply(A, unlist), 
-                                       "length<-", max_N), 
-                                as.list)), 
-                           dim = c(max_N, 4, max_age)), 
-                       c(2, 3, 1))
+    # G[, , ] <- aperm(array(unlist(lapply(lapply(sapply(A, unlist), 
+    #                                    "length<-", max_N), 
+    #                             as.list)), 
+    #                        dim = c(max_N, 4, max_age)), 
+    #                    c(2, 3, 1))
+    
+    G <- array(rnorm(n = 4 * max_age * max_N, 
+                     mean = value, 
+                     sd = sqrt(varGenetic)), 
+               dim = c(4, max_age, max_N))
     
     # genotype stats
-    G_stats[, , 1, 1] <- apply(G, c(1, 2), mean, na.rm = TRUE)
-    G_stats[, , 1, 2] <- apply(G, c(1, 2), median, na.rm = TRUE)
-    G_stats[, , 1, 3] <- apply(G, c(1, 2), var, na.rm = TRUE)
+    # G_stats[, , 1, 1] <- apply(G, c(1, 2), mean, na.rm = TRUE)
+    # G_stats[, , 1, 2] <- apply(G, c(1, 2), median, na.rm = TRUE)
+    # G_stats[, , 1, 3] <- apply(G, c(1, 2), var, na.rm = TRUE)
     
     # phenotype array, dimensions sex * age * years
     P <- G + rnorm(n = c(4 * max_age * max_N), 
@@ -145,9 +150,9 @@ initialize_arrays <- function(scenario, yrs, max_age,
                      dim = c(4, max_age, yrs, 3))
     
     # phenotype stats
-    P_stats[, , 1, 1] <- apply(P, c(1, 2), mean, na.rm = TRUE)
-    P_stats[, , 1, 2] <- apply(P, c(1, 2), median, na.rm = TRUE)
-    P_stats[, , 1, 3] <- apply(P, c(1, 2), var, na.rm = TRUE)
+    # P_stats[, , 1, 1] <- apply(P, c(1, 2), mean, na.rm = TRUE)
+    # P_stats[, , 1, 2] <- apply(P, c(1, 2), median, na.rm = TRUE)
+    # P_stats[, , 1, 3] <- apply(P, c(1, 2), var, na.rm = TRUE)
     
   } else {
     
