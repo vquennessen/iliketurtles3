@@ -14,19 +14,19 @@ reproduction <- function(N, M, y, beta, max_age,
   
   # breeding females this year
   available_F <- rbinom(n = max_age, 
-                        size = N[3, , y], 
+                        size = N[3, 2:max_age, y], 
                         prob = 1 / F_remigration_int)
   
   # breeding males this year
   available_M <- rbinom(n = max_age, 
-                        size = N[4, , y], 
+                        size = N[4, 2:max_age, y], 
                         prob = 1 / M_remigration_int)
   
   # number of breeding females this year
-  n_available_F <- sum(as.numeric(available_F, na.rm = TRUE))
+  n_available_F <- sum(as.numeric(available_F), na.rm = TRUE)
   
   # number of breeding males this year
-  n_available_M <- sum(as.numeric(available_M, na.rm = TRUE))
+  n_available_M <- sum(as.numeric(available_M), na.rm = TRUE)
   
   # check that there is at least one available female and one available male
   if (n_available_F < 1 | n_available_M < 1) {
@@ -107,6 +107,9 @@ reproduction <- function(N, M, y, beta, max_age,
       if (evolution == TRUE) {
         
         # extract maternal genotypes
+        G_M <- 3
+        
+        apply(G[3, , ][!is.na(G[3, , ])], 1, sample, size = 1)
         
         # build breeding pool
         

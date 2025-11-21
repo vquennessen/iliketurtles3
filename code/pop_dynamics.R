@@ -1,18 +1,8 @@
 # population dynamics with demographic stochasticity
 
-pop_dynamics <- function(N,
-                         max_age,
-                         y,
-                         M,
-                         IF_survival,
-                         IM_survival,
-                         MF_survival,
-                         MM_survival,
-                         evolution,
-                         G,
-                         G_stats,
-                         P,
-                         P_stats) {
+pop_dynamics <- function(N, max_age, y, M,
+                         IF_survival, IM_survival, MF_survival, MM_survival,
+                         evolution, varPhenotypic, G, G_stats, P, P_stats) {
   
   # survival based on binomial distribution with survival rates as probabilities
   # immature females that survived

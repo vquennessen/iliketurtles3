@@ -42,7 +42,8 @@ base_model <- function(scenario, beta, yrs, max_age,
     popdy_output <- pop_dynamics(N, max_age, y, M,
                                  IF_survival, IM_survival, 
                                  MF_survival, MM_survival, 
-                                 evolution, G, G_stats, P, P_stats)
+                                 evolution, varPhenotypic, 
+                                 G, G_stats, P, P_stats)
     
     N       <- popdy_output[[1]]
     G       <- popdy_output[[2]]

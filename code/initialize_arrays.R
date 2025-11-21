@@ -6,7 +6,7 @@ initialize_arrays <- function(scenario, yrs, max_age,
                               T_piv, k_piv, T_threshold, 
                               temp_mu, climate_stochasticity, 
                               season_temp_sd, clutch_temp_sd, noise, AC, 
-                              evolution, trait, h2, varGenetic, max_N,
+                              evolution, max_N,
                               conservation_action, frequency) {
   
   ##### population size ########################################################
@@ -75,14 +75,14 @@ initialize_arrays <- function(scenario, yrs, max_age,
                         size = as.integer(MF_init), 
                         prob = 1 / F_remigration_int)  
   
-  n_available_F <- sum(as.numeric(available_F, na.rm = TRUE))
+  n_available_F <- sum(as.numeric(available_F), na.rm = TRUE)
   
   # breeding males this year
   available_M <- rbinom(n = max_age, 
                         size = as.integer(MM_init), 
                         prob = 1 / M_remigration_int)
   
-  n_available_M <- sum(as.numeric(available_M, na.rm = TRUE))
+  n_available_M <- sum(as.numeric(available_M), na.rm = TRUE)
   
   # check to make sure there is at least one available F and M
   if (n_available_F < 1 | n_available_M < 1) { OSRs[1] <- NA
