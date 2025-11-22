@@ -7,8 +7,8 @@ reproduction <- function(N, M, y, beta, max_age,
                          emergence_success_t0, 
                          season_temp_mus, clutch_temp_sd,
                          k_piv, T_piv, T_threshold, 
-                         evolution, trait, h2, varGenetic, varPhenotypic, 
-                         G, G_stats, P, P_stats, max_N,  
+                         evolution, trait, max_N, male_probs,
+                         h2, varGenetic, varPhenotypic, G, P,
                          conservation_action, conservation_years, 
                          intensity, effect_size) {
   
@@ -107,11 +107,17 @@ reproduction <- function(N, M, y, beta, max_age,
       if (evolution == TRUE) {
         
         # extract maternal genotypes
-        G_M <- 3
+
+        GM <- sample(unlist(G[3, ])[!is.na(unlist(G[3, ]))], 
+                     size = n_breeding_F)
+
+        # extract paternal genotypes
         
-        apply(G[3, , ][!is.na(G[3, , ])], 1, sample, size = 1)
+        GP <- sample(unlist(G[4, ])[!is.na(unlist(G[4, ]))], 
+                     size = n_available_M)        
         
-        # build breeding pool
+        # how many males does each female mate with
+        nMales <- sample(1:length(male_probs), size = n_breeding_F, prob = male_probs)
         
         # assign males to each female
         

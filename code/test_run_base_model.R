@@ -44,7 +44,7 @@ init_age_distribution <- SADdf %>%
 TRT <- 'narrow'
 evolution <- TRUE
 trait <- 'T_piv'
-rate <- ''
+rate <- 'effective'
 conservation_action <- FALSE
 yrs <- 100
 scenario <- 0.5
@@ -113,9 +113,18 @@ k_piv <- ifelse(TRT == 'narrow',
 
 if (evolution == TRUE) {
   
+  # avg_males <- round(1/(qbeta(0.99, shape1 = 1, shape2 = beta)/2) - 1, 2)
+  # extra <- round(6*(avg_males - trunc(avg_males)))
+  # breeding_pool_repeats <- c(rep(floor(avg_males), times = 6 - extra), 
+  #                            rep(ceiling(avg_males), times = extra))
+  # 
+  # # probabilities of females mating with 1-10 males
+  male_probs <- c(0.188, 0.280, 0.236, 0.150, 0.080, 0.038, 0.017, 0.007, 0.003, 0.001)
+  # stop_at_male_probs <- cumsum(male_probs)
+  
   if (trait == 'T_piv') {
     
-    if (rate == '') { h2 <- 0.221
+    if (rate == 'effective') { h2 <- 0.221
     varGenetic <- 0.926
     
     } else { h2 <- 0.576
@@ -124,12 +133,11 @@ if (evolution == TRUE) {
     # or, if the evolvable trait is the emergence success midpoint (t0)
   } else {
     
-    if (rate == '') { h2 <- 0.75
-    # varGenetic <- 
+    if (rate == 'effective') { h2 <- 0.75
+                      varGenetic <- 1.19
     
     } else { h2 <- 0.88
-    varGenetic <- 1.58
-    }
+             varGenetic <- 1.39 }
     
     }
   
@@ -175,12 +183,13 @@ if (evolution == TRUE) {
     
   } else {
     
-    h2 <- NULL
-    varGenetic <- NULL
-    varSegregation <- NULL
-    varPhenotypic  <- NULL
-    G              <- NULL
-    P              <- NULL
+    h2                    <- NULL
+    varGenetic            <- NULL
+    varSegregation        <- NULL
+    varPhenotypic         <- NULL
+    G                     <- NULL
+    P                     <- NULL
+    male_probs            <- NULL
   
   }
 
@@ -290,7 +299,7 @@ if (evolution == TRUE) {
 #                          clutches_mu, clutches_sd, eggs_mu, eggs_sd,
 #                          emergence_success_A, emergence_success_k,
 #                          emergence_success_t0, T_piv, k_piv, T_threshold, 
-#                          evolution, trait, max_N,
+#                          evolution, trait, max_N, male_probs,
 #                          h2, varGenetic, varPhenotypic, G, P,
 #                          temp_mu, climate_stochasticity,
 #                          season_temp_sd, clutch_temp_sd, noise, AC,

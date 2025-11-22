@@ -237,10 +237,10 @@ weightedP <- ddgamma(1:max_males,
                      rate = fit_dgamma$estimate['rate'])
 
 raw_weights <- round(weightedP, 3)
-# 0.214 0.283 0.219 0.130 0.065 0.030 0.012 0.005 0.002 0.001
+#  0.183 0.272 0.230 0.146 0.078 0.037 0.016 0.007 0.003 0.001
 
 total_sum <- sum(raw_weights)
-# 0.961
+# 0.973
 
 # normalize weights so that they add up to 1
 # this assumes we can't have females mating with more than max_males males)
@@ -265,7 +265,7 @@ probability_of_mating_with_n_Males
 \hline
 1 &  0.183 & 0.188 \\
 2 &  0.272 & 0.280 \\
-3 &  0.230 & 0.237 \\
+3 &  0.230 & 0.236 \\
 4 &  0.146 & 0.150 \\
 5 &  0.078 & 0.080 \\
 6 &  0.037 & 0.038 \\
