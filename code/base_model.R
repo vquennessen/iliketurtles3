@@ -7,7 +7,7 @@ base_model <- function(scenario, beta, yrs, max_age,
                        clutches_mu, clutches_sd, eggs_mu, eggs_sd,
                        emergence_success_A, emergence_success_k,
                        emergence_success_t0, T_piv, k_piv, T_threshold, 
-                       evolution, trait, max_N, male_probs,
+                       evolve, trait, max_N, male_probs, contributions,
                        h2, varGenetic, varPhenotypic, G, P,
                        temp_mu, climate_stochasticity,
                        season_temp_sd, clutch_temp_sd, noise, AC,
@@ -22,7 +22,7 @@ base_model <- function(scenario, beta, yrs, max_age,
                                    T_piv, k_piv, T_threshold, 
                                    temp_mu, climate_stochasticity, 
                                    season_temp_sd, clutch_temp_sd, noise, AC, 
-                                   evolution, max_N,
+                                   evolve, max_N,
                                    conservation_action, frequency)
   
   N                  <- init_output[[1]]   # population size array
@@ -30,7 +30,7 @@ base_model <- function(scenario, beta, yrs, max_age,
   OSRs               <- init_output[[3]]   # operational sex ratio
   G_stats            <- init_output[[4]]   # genotype stats, to keep
   P_stats            <- init_output[[5]]   # phenotype stats, to keep  
-  conservation_years <- init_output[[6]]  # years for conservation action
+  conservation_years <- init_output[[6]]   # years for conservation action
   
   ##### model ##################################################################
   # set.seed(seed)
@@ -42,13 +42,13 @@ base_model <- function(scenario, beta, yrs, max_age,
     popdy_output <- pop_dynamics(N, max_age, y, M,
                                  IF_survival, IM_survival, 
                                  MF_survival, MM_survival, 
-                                 evolution, varPhenotypic, 
-                                 G, G_stats, P, P_stats)
+                                 evolve, varPhenotypic, 
+                                 G, P, G_stats, P_stats)
     
     N       <- popdy_output[[1]]
     G       <- popdy_output[[2]]
-    G_stats <- popdy_output[[3]]
-    P       <- popdy_output[[4]]
+    P       <- popdy_output[[3]]
+    G_stats <- popdy_output[[4]]
     P_stats <- popdy_output[[5]]
     
     # reproduction
@@ -60,30 +60,38 @@ base_model <- function(scenario, beta, yrs, max_age,
                                emergence_success_t0, 
                                season_temp_mus, clutch_temp_sd,
                                k_piv, T_piv, T_threshold, 
-                               evolution, trait, max_N, male_probs,
-                               h2, varGenetic, varPhenotypic, G, P,
+                               evolve, trait, max_N, 
+                               male_probs, contributions,
+                               h2, varGenetic, varPhenotypic, 
+                               G, P, G_stats, P_stats,
                                conservation_action, conservation_years, 
                                intensity, effect_size)
     
     # add recruits to population size array
-    N[1, 1, y] <- rep_output[[1]]
-    N[2, 1, y] <- rep_output[[2]]
-    OSRs[y]    <- rep_output[[3]]
+    OSRs[y]    <- rep_output[[1]]
+    N[1, 1, y] <- rep_output[[2]]
+    N[2, 1, y] <- rep_output[[3]]
     G          <- rep_output[[4]]
-    G_stats    <- rep_output[[5]]
-    P          <- rep_output[[6]]
+    P          <- rep_output[[5]]
+    G_stats    <- rep_output[[6]]
     P_stats    <- rep_output[[7]]
     
     # break out of loop if there are zero males or females at any age
-    if (sum(N[1, , y], 
-            na.rm = TRUE) < 0.5 || sum(N[2, , y], 
-                                       na.rm = TRUE) < 0.5) {
-      break }
+    if (sum(N[c(1, 3), , y], na.rm = TRUE) < 1 || 
+        sum(N[c(2, 4), , y], na.rm = TRUE) < 1) {
+      
+      print('ran out of females or males!')
+      
+      break 
+    }
+    
+    print(y)
+    
   }
   
   ##### output #################################################################
   
-  if (evolution == TRUE) {
+  if (evolve == TRUE) {
     
     output <- list(N, 
                    OSRs, 

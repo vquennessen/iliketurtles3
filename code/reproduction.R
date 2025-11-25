@@ -7,8 +7,8 @@ reproduction <- function(N, M, y, beta, max_age,
                          emergence_success_t0, 
                          season_temp_mus, clutch_temp_sd,
                          k_piv, T_piv, T_threshold, 
-                         evolution, trait, max_N, male_probs,
-                         h2, varGenetic, varPhenotypic, G, P,
+                         evolution, trait, max_N, male_probs, contributions,
+                         h2, varGenetic, varPhenotypic, G, P, G_stats, P_stats,
                          conservation_action, conservation_years, 
                          intensity, effect_size) {
   
@@ -33,11 +33,13 @@ reproduction <- function(N, M, y, beta, max_age,
     
     OSR <- NA
     female_hatchlings <- 0
-    male_hatchlings <- 0  
-    G[, 1, ] <- rep(NA, times = 4 * max_N)
-    P[, 1, ] <- rep(NA, times = 4 * max_N)
-    G_stats[, 1, y, ] <- rep(NA, times = 4 * 3)
-    P_stats[, 1, y, ] <- rep(NA, times = 4 * 3)
+    male_hatchlings <- 0 
+    G[1, 1] <- list(NA)
+    G[2, 1] <- list(NA)
+    P[1, 1] <- list(NA)
+    P[2, 1] <- list(NA)
+    G_stats[1:2, 1, y, ] <- rep(NA, 6)
+    P_stats[1:2, 1, y, ] <- rep(NA, 6)
     
   } else {
     
@@ -64,7 +66,13 @@ reproduction <- function(N, M, y, beta, max_age,
     if (n_breeding_F < 1) {
       
       female_hatchlings <- 0
-      male_hatchlings <- 0  
+      male_hatchlings <- 0 
+      G[1, 1] <- list(NA)
+      G[2, 1] <- list(NA)
+      P[1, 1] <- list(NA)
+      P[2, 1] <- list(NA)
+      G_stats[1:2, 1, y, ] <- rep(NA, 6)
+      P_stats[1:2, 1, y, ] <- rep(NA, 6)
       
     } else {
       
@@ -104,36 +112,29 @@ reproduction <- function(N, M, y, beta, max_age,
       }
       
       # if evolution
-      if (evolution == TRUE) {
+      if (evolve == TRUE) {
         
-        # extract maternal genotypes
-
-        GM <- sample(unlist(G[3, ])[!is.na(unlist(G[3, ]))], 
-                     size = n_breeding_F)
-
-        # extract paternal genotypes
+        evo_output <- evolution(G, P, n_breeding_F, n_available_M, 
+                                male_probs, contributions, trait,
+                                clutches, eggs, clutch_temps, 
+                                emergence_success_A, emergence_success_k, 
+                                emergence_success_t0, 
+                                T_threshold, k_piv, T_piv)
         
-        GP <- sample(unlist(G[4, ])[!is.na(unlist(G[4, ]))], 
-                     size = n_available_M)        
+        G[1, 1] <- evo_output[[1]]
+        G[2, 1] <- evo_output[[2]]
         
-        # how many males does each female mate with
-        nMales <- sample(1:length(male_probs), size = n_breeding_F, prob = male_probs)
+        P[1, 1] <- evo_output[[3]]
+        P[2, 1] <- evo_output[[4]]
         
-        # assign males to each female
+        G_stats[1:2, 1, y, ] <- evo_output[[5]]
+        P_stats[1:2, 1, y, ] <- evo_output[[6]]
         
-        # extract paternal genotypes
+        # numbers of hatchlings produced
+        female_hatchlings <- length(unlist(G[1, 1]))
+        male_hatchlings <- length(unlist(G[2, 1]))
         
-        # for each clutch, assign paternal genotypes to offspring
-        
-        # calculate offspring genotypes
-        
-        # calculate offspring phenotypes
-        
-        
-        
-      }
-      
-      if (trait != 'emergence_success_t0') {
+       } else {
         
         # list of probability of emergence, one number for each clutch 
         # set.seed(seed)
@@ -145,23 +146,7 @@ reproduction <- function(N, M, y, beta, max_age,
                                 thermal_limit = T_threshold) %>%
           lapply(pmax, 0)
         
-      }
-      
-      # vector of eggs
-      v_eggs <- as.integer(unlist(eggs))
-      
-      # vector of prop_emerged
-      v_probs_emerged <- unlist(probs_emerged)
-      
-      # list of numbers of emerged hatchlings, one for each clutch
-      # set.seed(seed)
-      hatchlings <- length(v_eggs) %>%
-        rbinom(size = as.integer(v_eggs), prob = v_probs_emerged) %>%
-        split(rep(1:length(clutches), times = clutches))  %>%
-        lapply(pmax, 0) %>%
-        lapply(round)
-      
-      if (trait != 'T_piv') {
+        # v_probs_emerged <- unlist(probs_emerged)
         
         # list of probabilities of developing as male, one for each clutch
         # set.seed(seed)
@@ -171,39 +156,42 @@ reproduction <- function(N, M, y, beta, max_age,
                              pivotal_temp = T_piv) %>%
           lapply(pmax, 0)
         
+        # list of numbers of emerged hatchlings, one for each clutch
+        # set.seed(seed)
+        hatchlings <- length(as.integer(unlist(eggs))) %>%
+          rbinom(size = as.integer(unlist(eggs)), 
+                 prob = unlist(probs_emerged)) %>%
+          split(rep(1:length(clutches), times = clutches))  %>%
+          lapply(pmax, 0) %>%
+          lapply(round)
+        
+        # list of number of males, one for each clutch
+        males <- rbinom(n = length(unlist(hatchlings)), 
+                        size = as.integer(unlist(hatchlings)), 
+                        prob = unlist(probs_male)) %>%
+          split(rep(1:length(clutches), times = clutches)) %>%
+          lapply(pmax, 0) %>%
+          lapply(round)
+        
+        # list of number of females, one for each clutch
+        females <- Map('-', hatchlings, males) %>%
+          lapply(round)
+        
+        # total number of male hatchlings
+        male_hatchlings <- sum(unlist(males))
+        
+        # total number of female hatchlings
+        female_hatchlings <- sum(unlist(females))
+        
       }
-      
-      # vector of hatchlings
-      v_hatchlings <- unlist(hatchlings)
-      
-      # vector of probs_male
-      v_probs_male <- unlist(probs_male)
-      
-      # list of number of males, one for each clutch
-      # set.seed(seed)
-      males <- rbinom(n = length(v_hatchlings), 
-                      size = as.integer(v_hatchlings), 
-                      prob = v_probs_male) %>%
-        split(rep(1:length(clutches), times = clutches)) %>%
-        lapply(pmax, 0) %>%
-        lapply(round)
-      
-      # list of number of females, one for each clutch
-      females <- Map('-', hatchlings, males) %>%
-        lapply(round)
-      
-      # total number of male hatchlings
-      male_hatchlings <- sum(unlist(males))
-      
-      # total number of female hatchlings
-      female_hatchlings <- sum(unlist(females))
       
     }
     
   }
   
   # output
-  output <- list(female_hatchlings, male_hatchlings, OSR)
+  output <- list(OSR, female_hatchlings, male_hatchlings, 
+                 G, P, G_stats, P_stats)
   
   return(output)
   

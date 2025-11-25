@@ -1,80 +1,190 @@
-# evolution script
-
-evolution <- function(N, max_age, y, breeding_F, breeding_M,
-                      trait, h2, varG)
+evolution <- function(G, 
+                      P,
+                      n_breeding_F, 
+                      n_available_M, 
+                      male_probs, 
+                      contributions, 
+                      trait,
+                      clutches, 
+                      eggs,
+                      clutch_temps, 
+                      emergence_success_A, 
+                      emergence_success_k, 
+                      emergence_success_t0, 
+                      T_threshold, 
+                      k_piv, 
+                      T_piv
+) {
   
+  # extract maternal genotypes
+  GM <- sample(unlist(G[3, ])[!is.na(unlist(G[3, ]))], 
+               size = n_breeding_F)
   
+  # extract potential paternal genotypes
+  potential_GP <- sample(unlist(G[4, 2:max_age])[!is.na(unlist(G[4, 2:max_age]))], 
+                         size = n_available_M)        
   
-{
+  # how many males does each female mate with
+  nMales <- sample(1:length(male_probs), 
+                   size = n_breeding_F, 
+                   prob = male_probs, 
+                   replace = TRUE)
   
-  ##### pivotal temperature ####################################################
+  # if there are more males assigned to a female than there are available, reduce
+  # it with the maximum number of males available
+  nMales[nMales > n_available_M] <- n_available_M
   
-  # evolution in the pivotal temperature
-  if (evolution_piv == TRUE) {
+  # assign male genotypes to each female
+  GP <- map(nMales, ~ sample(potential_GP, size = .x))
+  
+  # calculate offspring genotypes and phenotypes
+  G_females <- list()
+  G_males <- list()
+  P_females <- list()
+  P_males <- list()
+  
+  for (i in 1:n_breeding_F) {
     
-    # weighted average of genotypes for mature females from last year
-    GF_piv <- weighted.mean(x = G_piv, w = breeding_F)    
+    # for each clutch, assign maternal genotypes to offspring
+    GM_eggs <- lapply(eggs[[i]], function(x) rep(GM[[i]], times = x))
     
-    # weighted average of genotypes for mature males from last year
-    GM_piv <- weighted.mean(x = G_piv, w = breeding_M)
+    # for each clutch, assign paternal genotypes to offspring
+    if (nMales[[i]] == 1) {
+      
+      # paternal genotypes per egg 
+      GP_eggs <- lapply(eggs[[i]], function(x) rep(GP[[i]], times = x))
+      
+    } else {
+      
+      GP_eggs <- lapply(eggs[[i]], 
+                        function(x) {
+                          sample(GP[[i]], 
+                                 size = x, 
+                                 prob = contributions[[nMales[[i]]]], 
+                                 replace = TRUE)
+                        }
+      )
+    }
     
-    # hatchling genotype = average of parental genotypes + genotypic variation 
-    GH_piv <- (GF_piv + GM_piv) / 2 + Gamma_piv[y]
+    # calculate offspring genotypes
+    G_eggs <- lapply(Map('+', GM_eggs, GP_eggs), function(x) x/2)
     
-    # hatchling expected phenotype = hatchling genotype + epsilon
-    PH_piv <- GH_piv + Epsilon_piv[y]
+    # calculate offspring phenotypes
+    P_eggs <- lapply(G_eggs, 
+                     function(x) rnorm(n = length(x), 
+                                       mean = x, 
+                                       sd = sqrt(
+                                         varGenetic*(1 - h2)/h2
+                                       ))
+    )
     
-    # hatchling actual phenotype = expected phenotype + phenotypic variation
-    Pivotal_temps[y] <- PH_piv + Delta_piv[y]    
+    # # for each clutch, assign difference in clutch temperature and trait to offspring
+    # temps_diff <- pmap(list(clutch_temps[[i]], 
+    #                         eggs[[i]], 
+    #                         P_eggs),
+    #                    function(x, y, z) { rep(x, times = y) - z 
+    #                    }
+    # )
     
-    # update genotypes vector
-    new_G_piv <- c(GH_piv, G_piv[1:(max_age - 1)])
+    if (trait == 'T_piv') {
+      
+      # list of probability of emergence, one number for each clutch 
+      probs_emerged <- lapply(clutch_temps[[i]], 
+                              emergence_success, 
+                              A = emergence_success_A, 
+                              k = emergence_success_k, 
+                              t0 = emergence_success_t0, 
+                              thermal_limit = T_threshold) %>%
+        lapply(pmax, 0)
+      
+    } else {
+      
+      probs_emerged <- map2(clutch_temps[[i]], 
+                            P_eggs, 
+                            ~ emergence_success_A / (
+                              1 + exp(-emergence_success_k * (.x - .y))))
+      
+    }
     
-    # update expected phenotypes vector
-    new_P_piv <- c(PH_piv, P_piv[1:(max_age - 1)])
+    # which eggs emerge as hatchlings?
+    indices_hatchlings <- map2(eggs[[i]], probs_emerged, 
+                               function(x, y) {
+                                 rbinom(n = x, size = 1, prob = y)
+                               })
     
-  } else {
+    hatchlings <- unlist(lapply(indices_hatchlings, 
+                                sum))
     
-    new_G_piv <- NULL
-    new_P_piv <- NULL
+    # hatchling genotypes
+    G_hatchlings <- map2(G_eggs, 
+                         indices_hatchlings, 
+                         ~ .x[as.logical(.y)])
+    
+    # hatchling phenotypes
+    P_hatchlings <- map2(P_eggs, 
+                         indices_hatchlings, 
+                         ~ .x[as.logical(.y)])
+    
+    if (trait == 'T_piv') {
+      
+      probs_male <- map2(clutch_temps[[i]], 
+                         P_hatchlings, 
+                         ~ 1 / (1 + exp(-k_piv * (.x - .y))))
+      
+    } else {
+      
+      # list of probability of emergence, one number for each clutch 
+      probs_male <- lapply(clutch_temps[[i]], 
+                           probability_male, 
+                           k = k_piv, 
+                           pivotal_temp = T_piv) %>%
+        lapply(pmax, 0)
+      
+    }
+    
+    # which hatchlings developed as male?
+    indices_males <- map2(hatchlings, probs_male, 
+                          function(x, y) {
+                            rbinom(n = x, size = 1, prob = y)
+                          })
+    
+    G_females[[i]] <- map2(G_hatchlings, indices_males, 
+                           ~ .x[-as.logical(.y)])
+    G_males[[i]] <- map2(G_hatchlings, indices_males, 
+                         ~ .x[as.logical(.y)])
+    
+    P_females[[i]] <- map2(P_hatchlings, indices_males, 
+                           ~ .x[-as.logical(.y)])
+    P_males[[i]] <- map2(P_hatchlings, indices_males, 
+                         ~ .x[as.logical(.y)])
     
   }
   
-  ##### threshold temperature ##################################################
+  # assign hatchling genotypes
+  EGF <- list(unlist(lapply(G_females, unlist)))
+  EGM <- list(unlist(lapply(G_males, unlist)))
   
-  # evolution in thermal threshold
-  if (evolution_threshold == TRUE) {
-    
-    # weighted average of genotypes for mature females from last year
-    GF_threshold <- weighted.mean(x = G_threshold, w = breeding_F)    
-    
-    # weighted average of genotypes for mature males from last year
-    GM_threshold <- weighted.mean(x = G_threshold, w = breeding_M)
-    
-    # parent genotypes to hatchling genotype, with genotypic variance
-    GH_threshold <- (GF_threshold + GM_threshold) / 2 + Gamma_threshold[y]
-    
-    # hatchling genotype to expected hatchling phenotype
-    PH_threshold <- GH_threshold + Epsilon_threshold[y]
-    
-    # hatchling actual phenotype with phenotypic variation
-    Threshold_temps[y] <- PH_threshold + Delta_threshold[y]
-    
-    # update genotypes vector
-    new_G_threshold <- c(GH_threshold, G_threshold[1:(max_age - 1)])
-    
-    # update expected phenotypes vector
-    new_P_threshold <- c(PH_threshold, P_threshold[1:(max_age - 1)])
-    
-  } else {
-    
-    new_G_threshold <- NULL
-    new_P_threshold <- NULL
-    
-  }
+  # assign hatchling phenotypes
+  EPF <- list(unlist(lapply(P_females, unlist)))
+  EPM <- list(unlist(lapply(P_males, unlist)))
   
-  output <- list(Pivotal_temps[y], new_G_piv, new_P_piv, 
-                 Threshold_temps[y], new_G_threshold, new_P_threshold)
+  # G stats values
+  G_means <- lapply(c(EGF, EGM), function(x) mean(unlist(x), na.rm = TRUE))    
+  G_medians <- lapply(c(EGF, EGM), function(x) median(unlist(x), na.rm = TRUE))
+  G_variances <- lapply(c(EGF, EGM), function(x) var(unlist(x), na.rm = TRUE))
+  
+  # P stats values
+  P_means <- lapply(c(EPF, EPM), function(x) mean(unlist(x), na.rm = TRUE))    
+  P_medians <- lapply(c(EPF, EPM), function(x) median(unlist(x), na.rm = TRUE))
+  P_variances <- lapply(c(EPF, EPM), function(x) var(unlist(x), na.rm = TRUE))
+  
+  EG_stats <- unlist(c(G_means, G_medians, G_variances))
+  
+  EP_stats <- unlist(c(P_means, P_medians, P_variances))
+  
+  ##### output #################################################################
+  
+  output <- list(EGF, EGM, EPF, EPM, EG_stats, EP_stats)
   
   return(output)
   

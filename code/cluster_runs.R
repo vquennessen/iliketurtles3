@@ -10,7 +10,7 @@ library(lubridate)
 library(lgcp)
 
 # set working directory
-# setwd('~/Projects/iliketurtles3/code')
+setwd('~/Projects/iliketurtles3/code')
 
 source('run_base_model.R')
 source('base_model.R')
@@ -27,7 +27,7 @@ source('conservation.R')
 load("../output/SAD_deterministic_TS_b800_medians.Rdata")
 
 # folder to save results to
-folder <- c('2025_10_23_SAD_deterministic_TS_b800_10y/')
+folder <- c('2025_11_24_new_evolution/')
 
 # initial total population size
 init_total <- 20000
@@ -38,47 +38,33 @@ init_age_distribution <- SADdf %>%
   mutate(Abundance = round(Prop_10yr_median * init_total)) %>%
   mutate(TRangeT = ifelse(Model == 'P_base', 'narrow', 'wide'))
 
-# # troubleshooting
-# TRT <- 'narrow'
-# evolution <- TRUE
-# trait <- 'T_piv'
-# rate <- ''
-# conservation <- FALSE
-# yrs <- 100
-# scenario <- 0.5
-# beta <- 1.17
-# intensity <- 1
-# frequency <- 1
-# nsims <- 10
-# max_N <- 200000
-# noise <- 'white'
-
+save(init_age_distribution, 
+     file = '../output/init_age_distribution.Rdata')
 
 # models
-TRT <- c('narrow', 'wide')
+TRT <- c('narrow')
+# TRT <- c('narrow', 'wide')
 
 # evolution
-evolution <- c(FALSE)
-trait <- c(NULL)
-rate <- c(NULL)
-
-evolution <- c(TRUE)
-trait <- c('T_piv', 'emergence_success_t0')
-rate <- c('', 'high')
+evolve <- c(TRUE)
+trait <- c('T_piv')
+# trait <- c('T_piv', 'emergence_success_t0')
+rate <- c('effective')
+# rate <- c('effective', 'high')
 
 # conservation?
-conservation <- c(FALSE, TRUE)
+conservation_action <- c(FALSE)
 
 # years to run the model for
-years <- 100
+yrs <- 100
 
 # total temp increases
-scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-# scenarios <- c(0.5)
+# scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
+scenarios <- c(0.5, 0.35)
 
 # OSR values to get full fertilization of females
-OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
-# OSRs <- c(0.45, 0.25)
+# OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
+OSRs <- c(0.45, 0.25)
 
 # mating function beta values
 betas <- as.numeric(OSRs_to_betas(OSRs))
@@ -94,10 +80,10 @@ intensity <- c(1)
 frequency <- c(1)
 
 # number of simulations to run
-nsims <- c(1000)
+nsims <- c(2)
 
 # maximum population size for any sex, age, year
-max_N <- 224000
+max_N <- 20000
 
 # white or red noise
 noise <- 'White'
@@ -108,16 +94,13 @@ DF <- expand.grid(folder,
                   TRT, 
                   scenarios,
                   betas,
-                  years,
+                  yrs,
                   nsims,
                   max_N,
-                  init_age_distribution,
-                  
-                  evolution,
+                  evolve,
                   trait, 
                   rate, 
-                  
-                  conservation,
+                  conservation_action,
                   intensity,
                   frequency) %>%
   arrange(Var4, desc(Var5))
@@ -136,10 +119,13 @@ for (i in 1:nrow(DF)) {
 
 begin <- lubridate::now()
 
-result <- tryCatch({})
-mclapply(X = arguments,
-         FUN = run_base_model,
-         mc.cores = 20)
+# result <- tryCatch({})
+# mclapply(X = arguments,
+#          FUN = run_base_model,
+#          mc.cores = 20)
+
+lapply(X = arguments,
+         FUN = run_base_model)
 
 finish <- lubridate::now()
 
@@ -152,21 +138,3 @@ final_update <- paste('Models: ', models, '\n', 'Betas: ', betas, '\n',
 write(final_update, 
       file = '../output/progress.txt', append = TRUE)
 
-# ################################################################################
-#
-# # and again, but this time with stochasticity
-#
-# load("../output/SAD_deterministic_TS_b800.Rdata")
-#
-# # initial total population size
-# init_total <- 20000
-#
-# init_age_distribution <- SADdf %>%
-#   filter(!is.na(Proportion)) %>%
-#   filter(Year == max(Year)) %>%
-#   mutate(Abundance = Proportion * init_total)
-#
-# result <- tryCatch({})
-# mclapply(X = arguments,
-#          FUN = run_base_model,
-#          mc.cores = 20)

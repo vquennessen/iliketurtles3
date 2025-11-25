@@ -42,7 +42,7 @@ init_age_distribution <- SADdf %>%
 
 # troubleshooting
 TRT <- 'narrow'
-evolution <- TRUE
+evolve <- TRUE
 trait <- 'T_piv'
 rate <- 'effective'
 conservation_action <- FALSE
@@ -111,7 +111,7 @@ k_piv <- ifelse(TRT == 'narrow',
                 -1.54,
                 -0.77)
 
-if (evolution == TRUE) {
+if (evolve == TRUE) {
   
   # avg_males <- round(1/(qbeta(0.99, shape1 = 1, shape2 = beta)/2) - 1, 2)
   # extra <- round(6*(avg_males - trunc(avg_males)))
@@ -122,22 +122,38 @@ if (evolution == TRUE) {
   male_probs <- c(0.188, 0.280, 0.236, 0.150, 0.080, 0.038, 0.017, 0.007, 0.003, 0.001)
   # stop_at_male_probs <- cumsum(male_probs)
   
+  # male fertilization contributions
+  raw_contributions <- 0.687 * (c(1:10))^(-1.710)
+  
+  contributions <- list(1)
+  
+  for (i in 2:length(raw_contributions)) {
+    
+    contributions[i] <- list(c(
+      raw_contributions[1:i]/sum(raw_contributions[1:i])))
+    
+  }
+  
   if (trait == 'T_piv') {
     
-    if (rate == 'effective') { h2 <- 0.221
-    varGenetic <- 0.926
+    if (rate == 'effective') { 
+      h2 <- 0.221
+      varGenetic <- 0.926
     
-    } else { h2 <- 0.576
-    varGenetic <- 2.41 }
+    } else { 
+      h2 <- 0.576
+      varGenetic <- 2.41 }
     
     # or, if the evolvable trait is the emergence success midpoint (t0)
   } else {
     
-    if (rate == 'effective') { h2 <- 0.75
-                      varGenetic <- 1.19
+    if (rate == 'effective') { 
+      h2 <- 0.75
+      varGenetic <- 1.19
     
-    } else { h2 <- 0.88
-             varGenetic <- 1.39 }
+    } else { 
+      h2 <- 0.88
+      varGenetic <- 1.39 }
     
     }
   
@@ -299,7 +315,7 @@ if (evolution == TRUE) {
 #                          clutches_mu, clutches_sd, eggs_mu, eggs_sd,
 #                          emergence_success_A, emergence_success_k,
 #                          emergence_success_t0, T_piv, k_piv, T_threshold, 
-#                          evolution, trait, max_N, male_probs,
+#                          evolve, trait, max_N, male_probs, contributions, 
 #                          h2, varGenetic, varPhenotypic, G, P,
 #                          temp_mu, climate_stochasticity,
 #                          season_temp_sd, clutch_temp_sd, noise, AC,

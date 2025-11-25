@@ -6,7 +6,7 @@ initialize_arrays <- function(scenario, yrs, max_age,
                               T_piv, k_piv, T_threshold, 
                               temp_mu, climate_stochasticity, 
                               season_temp_sd, clutch_temp_sd, noise, AC, 
-                              evolution, max_N,
+                              evolve, max_N,
                               conservation_action, frequency) {
   
   ##### population size ########################################################
@@ -92,12 +92,9 @@ initialize_arrays <- function(scenario, yrs, max_age,
   
   ##### evolution ##############################################################
   
-  if (evolution == TRUE) {
+  if (evolve == TRUE) {
     
     # genotype and phenotype summary stats, dimensions sex * age * year * # stats
-    # G[, , , 1] = mean
-    # G[, , , 2] = median
-    # G[, , , 3] = variance
     G_stats <- array(rep(NA, times = 4 * max_age * yrs * 3), 
                      dim = c(4, max_age, yrs, 3))
     
