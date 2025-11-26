@@ -7,8 +7,8 @@ base_model <- function(scenario, beta, yrs, max_age,
                        clutches_mu, clutches_sd, eggs_mu, eggs_sd,
                        emergence_success_A, emergence_success_k,
                        emergence_success_t0, T_piv, k_piv, T_threshold, 
-                       evolve, trait, max_N, male_probs, contributions,
-                       h2, varGenetic, varPhenotypic, G, P,
+                       evolve, trait, value, male_probs, contributions,
+                       h2, varGenetic, varPhenotypic, 
                        temp_mu, climate_stochasticity,
                        season_temp_sd, clutch_temp_sd, noise, AC,
                        conservation_action, frequency, intensity, effect_size) {
@@ -22,15 +22,18 @@ base_model <- function(scenario, beta, yrs, max_age,
                                    T_piv, k_piv, T_threshold, 
                                    temp_mu, climate_stochasticity, 
                                    season_temp_sd, clutch_temp_sd, noise, AC, 
-                                   evolve, max_N,
+                                   evolve, trait, value, 
+                                   varGenetic, varPhenotypic,
                                    conservation_action, frequency)
   
   N                  <- init_output[[1]]   # population size array
   season_temp_mus    <- init_output[[2]]   # mean temps at the season level
   OSRs               <- init_output[[3]]   # operational sex ratio
-  G_stats            <- init_output[[4]]   # genotype stats, to keep
-  P_stats            <- init_output[[5]]   # phenotype stats, to keep  
-  conservation_years <- init_output[[6]]   # years for conservation action
+  G                  <- init_output[[4]]
+  P                  <- init_output[[5]]
+  G_stats            <- init_output[[6]]   # genotype stats, to keep
+  P_stats            <- init_output[[7]]   # phenotype stats, to keep  
+  conservation_years <- init_output[[8]]   # years for conservation action
   
   ##### model ##################################################################
   # set.seed(seed)
@@ -42,8 +45,7 @@ base_model <- function(scenario, beta, yrs, max_age,
     popdy_output <- pop_dynamics(N, max_age, y, M,
                                  IF_survival, IM_survival, 
                                  MF_survival, MM_survival, 
-                                 evolve, varPhenotypic, 
-                                 G, P, G_stats, P_stats)
+                                 evolve, G, P, G_stats, P_stats)
     
     N       <- popdy_output[[1]]
     G       <- popdy_output[[2]]
@@ -54,14 +56,13 @@ base_model <- function(scenario, beta, yrs, max_age,
     # reproduction
     # set.seed(seed)
     rep_output <- reproduction(N, M, y, beta, max_age, 
-                               F_remigration_interval, M_remigration_interval,
+                               F_remigration_int, M_remigration_int,
                                clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                                emergence_success_A, emergence_success_k, 
                                emergence_success_t0, 
                                season_temp_mus, clutch_temp_sd,
                                k_piv, T_piv, T_threshold, 
-                               evolve, trait, max_N, 
-                               male_probs, contributions,
+                               evolve, trait, male_probs, contributions,
                                h2, varGenetic, varPhenotypic, 
                                G, P, G_stats, P_stats,
                                conservation_action, conservation_years, 
@@ -85,7 +86,7 @@ base_model <- function(scenario, beta, yrs, max_age,
       break 
     }
     
-    print(y)
+    # print(y)
     
   }
   

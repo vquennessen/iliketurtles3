@@ -1,41 +1,55 @@
-evolution <- function(G, 
-                      P,
-                      n_breeding_F, 
-                      n_available_M, 
-                      male_probs, 
-                      contributions, 
-                      trait,
-                      clutches, 
-                      eggs,
-                      clutch_temps, 
-                      emergence_success_A, 
-                      emergence_success_k, 
+evolution <- function(max_age, G, P, 
+                      n_breeding_F, n_available_M, 
+                      trait, male_probs, contributions, 
+                      h2, varGenetic, varPhenotypic,
+                      clutches, eggs, clutch_temps, 
+                      emergence_success_A, emergence_success_k, 
                       emergence_success_t0, 
-                      T_threshold, 
-                      k_piv, 
-                      T_piv
-) {
+                      T_threshold, k_piv, T_piv) {
   
   # extract maternal genotypes
-  GM <- sample(unlist(G[3, ])[!is.na(unlist(G[3, ]))], 
-               size = n_breeding_F)
+  GM <- as.list(resample(unlist(G[3, ]), size = n_breeding_F))
   
   # extract potential paternal genotypes
-  potential_GP <- sample(unlist(G[4, 2:max_age])[!is.na(unlist(G[4, 2:max_age]))], 
-                         size = n_available_M)        
+  potential_GP <- resample(unlist(G[4, ]), size = n_available_M)       
   
   # how many males does each female mate with
-  nMales <- sample(1:length(male_probs), 
+  nMales <- as.list(resample(1:length(male_probs), 
                    size = n_breeding_F, 
                    prob = male_probs, 
-                   replace = TRUE)
+                   replace = TRUE))
   
-  # if there are more males assigned to a female than there are available, reduce
-  # it with the maximum number of males available
+  # if there are more males assigned to a female than there are available, 
+  # reduce it with the maximum number of males available
   nMales[nMales > n_available_M] <- n_available_M
   
   # assign male genotypes to each female
-  GP <- map(nMales, ~ sample(potential_GP, size = .x))
+  GP <- map(nMales, ~ resample(potential_GP, size = .x))
+  
+  ##############################################################################
+  # TO DO: make this function work without a for loop ##########################
+  ##############################################################################
+  
+  # lapply(clutches, replicate, 
+  #        function(i) {
+  #          pmap(list(GP, eggs, nMales, GM), 
+  #               function(w, x, y, z) {
+  #                 rnorm(n = unlist(x), 
+  #                       mean = (z + unlist(resample(unlist(w), 
+  #                                                   size = unlist(x), 
+  #                                                   prob = unlist(contributions[y]), 
+  #                                                   replace = TRUE))) / 2, 
+  #                       sd = sqrt(varGenetic/2))
+  #               }
+  #          )
+  #        }
+  # )
+  
+  # GM_eggs <- map2(GM_clutches, eggs, 
+  #                 function(x, y) lapply(seq_along(x), 
+  #                                       function(i) rep(x[[i]], times = y[i])))
+  
+  ##############################################################################
   
   # calculate offspring genotypes and phenotypes
   G_females <- list()
@@ -43,28 +57,32 @@ evolution <- function(G,
   P_females <- list()
   P_males <- list()
   
+  # GP_eggs <- pmap(list(eggs, GP, nMales), 
+  #                 function(x, y, z) {
+  #                   lapply(x, function(w) {
+  #                     unlist(resample(resample(unlist(y)), 
+  #                                   size = x[w], 
+  #                                   prob = contributions[[z]], 
+  #                                   replace = TRUE))}
+  #                   )
+  #                   }
+  #                 )
+
+  
+  
   for (i in 1:n_breeding_F) {
     
     # for each clutch, assign maternal genotypes to offspring
     GM_eggs <- lapply(eggs[[i]], function(x) rep(GM[[i]], times = x))
     
-    # for each clutch, assign paternal genotypes to offspring
-    if (nMales[[i]] == 1) {
-      
-      # paternal genotypes per egg 
-      GP_eggs <- lapply(eggs[[i]], function(x) rep(GP[[i]], times = x))
-      
-    } else {
-      
-      GP_eggs <- lapply(eggs[[i]], 
-                        function(x) {
-                          sample(GP[[i]], 
+    GP_eggs <- lapply(eggs[[i]], 
+                      function(x) {
+                        resample(resample(GP[[i]]), 
                                  size = x, 
                                  prob = contributions[[nMales[[i]]]], 
                                  replace = TRUE)
-                        }
-      )
-    }
+                      }
+    )
     
     # calculate offspring genotypes
     G_eggs <- lapply(Map('+', GM_eggs, GP_eggs), function(x) x/2)
@@ -73,18 +91,8 @@ evolution <- function(G,
     P_eggs <- lapply(G_eggs, 
                      function(x) rnorm(n = length(x), 
                                        mean = x, 
-                                       sd = sqrt(
-                                         varGenetic*(1 - h2)/h2
-                                       ))
-    )
-    
-    # # for each clutch, assign difference in clutch temperature and trait to offspring
-    # temps_diff <- pmap(list(clutch_temps[[i]], 
-    #                         eggs[[i]], 
-    #                         P_eggs),
-    #                    function(x, y, z) { rep(x, times = y) - z 
-    #                    }
-    # )
+                                       sd = sqrt(varGenetic*(1 - h2)/h2))
+                     )
     
     if (trait == 'T_piv') {
       
@@ -108,22 +116,14 @@ evolution <- function(G,
     
     # which eggs emerge as hatchlings?
     indices_hatchlings <- map2(eggs[[i]], probs_emerged, 
-                               function(x, y) {
-                                 rbinom(n = x, size = 1, prob = y)
-                               })
+                               ~ as.logical(
+                                 rbinom(n = .x, size = 1, prob = .y)))
     
-    hatchlings <- unlist(lapply(indices_hatchlings, 
-                                sum))
+    hatchlings <- unlist(lapply(indices_hatchlings, sum, na.rm = TRUE))
     
-    # hatchling genotypes
-    G_hatchlings <- map2(G_eggs, 
-                         indices_hatchlings, 
-                         ~ .x[as.logical(.y)])
-    
-    # hatchling phenotypes
-    P_hatchlings <- map2(P_eggs, 
-                         indices_hatchlings, 
-                         ~ .x[as.logical(.y)])
+    # hatchling genotypes and phenotypes
+    G_hatchlings <- map2(G_eggs, indices_hatchlings, ~ .x[as.logical(.y)])
+    P_hatchlings <- map2(P_eggs, indices_hatchlings, ~ .x[as.logical(.y)])
     
     if (trait == 'T_piv') {
       
@@ -144,19 +144,15 @@ evolution <- function(G,
     
     # which hatchlings developed as male?
     indices_males <- map2(hatchlings, probs_male, 
-                          function(x, y) {
-                            rbinom(n = x, size = 1, prob = y)
-                          })
+                          ~ as.logical(rbinom(n = .x, size = 1, prob = .y)))
+    indices_females <- map(indices_males, ~ as.logical(Map(`-`, 1, .x)))
+
     
-    G_females[[i]] <- map2(G_hatchlings, indices_males, 
-                           ~ .x[-as.logical(.y)])
-    G_males[[i]] <- map2(G_hatchlings, indices_males, 
-                         ~ .x[as.logical(.y)])
+    G_females[[i]] <- map2(G_hatchlings, indices_females, ~ .x[as.logical(.y)])
+    G_males[[i]] <- map2(G_hatchlings, indices_males, ~ .x[as.logical(.y)])
     
-    P_females[[i]] <- map2(P_hatchlings, indices_males, 
-                           ~ .x[-as.logical(.y)])
-    P_males[[i]] <- map2(P_hatchlings, indices_males, 
-                         ~ .x[as.logical(.y)])
+    P_females[[i]] <- map2(P_hatchlings, indices_females, ~ .x[as.logical(.y)])
+    P_males[[i]] <- map2(P_hatchlings, indices_males, ~ .x[as.logical(.y)])
     
   }
   

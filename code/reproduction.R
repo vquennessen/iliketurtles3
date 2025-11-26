@@ -1,32 +1,33 @@
 # reproduction
 
 reproduction <- function(N, M, y, beta, max_age, 
-                         F_remigration_interval, M_remigration_interval,
+                         F_remigration_int, M_remigration_int,
                          clutches_mu, clutches_sd, eggs_mu, eggs_sd, 
                          emergence_success_A, emergence_success_k, 
                          emergence_success_t0, 
                          season_temp_mus, clutch_temp_sd,
                          k_piv, T_piv, T_threshold, 
-                         evolution, trait, max_N, male_probs, contributions,
-                         h2, varGenetic, varPhenotypic, G, P, G_stats, P_stats,
+                         evolve, trait, male_probs, contributions,
+                         h2, varGenetic, varPhenotypic, 
+                         G, P, G_stats, P_stats,
                          conservation_action, conservation_years, 
                          intensity, effect_size) {
   
   # breeding females this year
-  available_F <- rbinom(n = max_age, 
-                        size = N[3, 2:max_age, y], 
-                        prob = 1 / F_remigration_int)
+  n_available_F <- sum(rbinom(n = max_age, 
+                        size = N[3, , y], 
+                        prob = 1 / F_remigration_int), na.rm = TRUE)
   
   # breeding males this year
-  available_M <- rbinom(n = max_age, 
-                        size = N[4, 2:max_age, y], 
-                        prob = 1 / M_remigration_int)
+  n_available_M <- sum(rbinom(n = max_age, 
+                        size = N[4, , y], 
+                        prob = 1 / M_remigration_int), na.rm = TRUE)
   
-  # number of breeding females this year
-  n_available_F <- sum(as.numeric(available_F), na.rm = TRUE)
-  
-  # number of breeding males this year
-  n_available_M <- sum(as.numeric(available_M), na.rm = TRUE)
+  # # number of breeding females this year
+  # n_available_F <- sum(as.numeric(available_F), na.rm = TRUE)
+  # 
+  # # number of breeding males this year
+  # n_available_M <- sum(as.numeric(available_M), na.rm = TRUE)
   
   # check that there is at least one available female and one available male
   if (n_available_F < 1 | n_available_M < 1) {
@@ -34,12 +35,6 @@ reproduction <- function(N, M, y, beta, max_age,
     OSR <- NA
     female_hatchlings <- 0
     male_hatchlings <- 0 
-    G[1, 1] <- list(NA)
-    G[2, 1] <- list(NA)
-    P[1, 1] <- list(NA)
-    P[2, 1] <- list(NA)
-    G_stats[1:2, 1, y, ] <- rep(NA, 6)
-    P_stats[1:2, 1, y, ] <- rep(NA, 6)
     
   } else {
     
@@ -57,28 +52,22 @@ reproduction <- function(N, M, y, beta, max_age,
     
     # how many females actually find a male to mate with and then nest
     # set.seed(seed)
-    breeding_F <- rbinom(n = n_available_F, 
+    n_breeding_F <- sum(rbinom(n = n_available_F, 
                          size = 1, 
-                         prob = breeding_success)
+                         prob = breeding_success), na.rm = TRUE)
     
-    n_breeding_F <- sum(breeding_F)
+    # n_breeding_F <- sum(breeding_F)
     
     if (n_breeding_F < 1) {
       
       female_hatchlings <- 0
       male_hatchlings <- 0 
-      G[1, 1] <- list(NA)
-      G[2, 1] <- list(NA)
-      P[1, 1] <- list(NA)
-      P[2, 1] <- list(NA)
-      G_stats[1:2, 1, y, ] <- rep(NA, 6)
-      P_stats[1:2, 1, y, ] <- rep(NA, 6)
       
     } else {
       
       # vector of number of clutches per female (round to nearest integer)
       # set.seed(seed)
-      clutches <- round(rnorm(n = round(n_breeding_F), 
+      clutches <- round(rnorm(n = n_breeding_F, 
                               mean = clutches_mu, 
                               sd = clutches_sd)) 
       
@@ -114,8 +103,10 @@ reproduction <- function(N, M, y, beta, max_age,
       # if evolution
       if (evolve == TRUE) {
         
-        evo_output <- evolution(G, P, n_breeding_F, n_available_M, 
-                                male_probs, contributions, trait,
+        evo_output <- evolution(max_age, G, P, 
+                                n_breeding_F, n_available_M, 
+                                trait, male_probs, contributions,
+                                h2, varGenetic, varPhenotypic,
                                 clutches, eggs, clutch_temps, 
                                 emergence_success_A, emergence_success_k, 
                                 emergence_success_t0, 

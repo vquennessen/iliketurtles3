@@ -1,5 +1,10 @@
 ### cluster runs
 
+rm(list = ls())
+
+# scenario <- 0.5
+# beta <- 1.17
+
 # load libraries
 library(parallel)
 library(dplyr)
@@ -8,9 +13,13 @@ library(magrittr)
 library(readr)
 library(lubridate)
 library(lgcp)
+library(purrr)
+
+# stricter sample function
+resample <- function(x, ...) x[sample.int(length(x), ...)]
 
 # set working directory
-setwd('~/Projects/iliketurtles3/code')
+# setwd('~/Projects/iliketurtles3/code')
 
 source('run_base_model.R')
 source('base_model.R')
@@ -26,9 +35,6 @@ source('conservation.R')
 # load in SAD object
 load("../output/SAD_deterministic_TS_b800_medians.Rdata")
 
-# folder to save results to
-folder <- c('2025_11_24_new_evolution/')
-
 # initial total population size
 init_total <- 20000
 
@@ -42,15 +48,15 @@ save(init_age_distribution,
      file = '../output/init_age_distribution.Rdata')
 
 # models
-TRT <- c('narrow')
-# TRT <- c('narrow', 'wide')
+# TRT <- c('narrow')
+TRT <- c('narrow', 'wide')
 
 # evolution
 evolve <- c(TRUE)
-trait <- c('T_piv')
-# trait <- c('T_piv', 'emergence_success_t0')
-rate <- c('effective')
-# rate <- c('effective', 'high')
+# trait <- c('emergence_success_t0')
+trait <- c('T_piv', 'emergence_success_t0')
+# rate <- c('effective')
+rate <- c('effective', 'high')
 
 # conservation?
 conservation_action <- c(FALSE)
@@ -59,17 +65,19 @@ conservation_action <- c(FALSE)
 yrs <- 100
 
 # total temp increases
-# scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-scenarios <- c(0.5, 0.35)
+scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
+# scenarios <- c(0.5, 3.5)
+# scenario <- c(0.5)
 
 # OSR values to get full fertilization of females
-# OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
-OSRs <- c(0.45, 0.25)
+OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
+# OSRs <- c(0.45, 0.25)
 
 # mating function beta values
 betas <- as.numeric(OSRs_to_betas(OSRs))
 # betas <- c(3.82, 3.82, 3.82, 5.02, 6.64, 9.01, 3.82, 5.02, 6.64, 3.82, 5.02,
 #            6.64, 9.01, 3.82, 5.02, 6.64, 9.01, 12.91, 5.02, 20.63, 43.7)
+# beta <- 2
 
 # how many clutches to do conservation action on
 # intensity <- c(0.1, 0.2, 0.3, 0.4, 0.5)
@@ -80,30 +88,34 @@ intensity <- c(1)
 frequency <- c(1)
 
 # number of simulations to run
-nsims <- c(2)
+nsims <- c(100)
 
 # maximum population size for any sex, age, year
-max_N <- 20000
+# max_N <- 20000
 
 # white or red noise
-noise <- 'White'
+noise <- 'white'
 
 # make dataframe of all combinations of arguments
-DF <- expand.grid(folder, 
-                  noise,
+DF <- expand.grid(noise,
                   TRT, 
                   scenarios,
                   betas,
                   yrs,
                   nsims,
-                  max_N,
                   evolve,
                   trait, 
                   rate, 
                   conservation_action,
                   intensity,
                   frequency) %>%
-  arrange(Var4, desc(Var5))
+  mutate(folder = paste(gsub('-', '_', Sys.Date()), '/',
+                        ifelse(Var7 == TRUE, 
+                               paste('evolution_', Var8, '_', Var8, '/', 
+                                     sep = ''),
+                               ''),
+                        Var2, '/', Var3, 'C/beta', Var4, sep = '')) %>%
+  arrange(Var5, Var3, desc(Var4))
 
 # initialize empty arguments list
 arguments <- list()
@@ -117,21 +129,21 @@ for (i in 1:nrow(DF)) {
 
 ########### do the runs ########################################################
 
-begin <- lubridate::now()
+TIME1 <- lubridate::now()
 
-# result <- tryCatch({})
-# mclapply(X = arguments,
-#          FUN = run_base_model,
-#          mc.cores = 20)
+result <- tryCatch({})
+mclapply(X = arguments,
+         FUN = run_base_model,
+         mc.cores = 20)
 
-lapply(X = arguments,
-         FUN = run_base_model)
+# lapply(X = arguments,
+#        FUN = run_base_model)
 
-finish <- lubridate::now()
+TIME4 <- lubridate::now()
 
-Total_time <- format(round(finish - begin), 3)
+Total_time <- format(round(TIME4 - TIME1), 3)
 
-final_update <- paste('Models: ', models, '\n', 'Betas: ', betas, '\n', 
+final_update <- paste('Models: ', TRT, '\n', 'Betas: ', betas, '\n', 
                       nsims, ' sims \n ', yrs, ' years \n total time: ', 
                       Total_time, '\n', sep = '')
 
