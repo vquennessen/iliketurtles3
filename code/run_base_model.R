@@ -26,8 +26,19 @@ run_base_model <- function(arguments) {
   # write to progress text file
   TIME2 <- lubridate::now()
   time2 <- format(TIME2)
+  
+  if (evolve == TRUE) {
+    
+    update1 <- paste(time2, ' - evolution - ', trait, ' - ', rate, ' - ', 
+                     TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
+                     ' sims - ', yrs, ' years', sep = '')
+    
+  } else {
+  
   update1 <- paste(time2, ' - ', TRT, ' - ', scenario, 'C - beta ', beta, 
                    ' - ', nsims, ' sims - ', yrs, ' years', sep = '')
+  }
+  
   write(update1, file = '../output/progress.txt', append = TRUE)
   
   # model parameters to modulate
@@ -232,9 +243,20 @@ run_base_model <- function(arguments) {
     # write to progress text file
     if ((i/nsims*100) %% 10 == 0) {
       time2.5 <- format(lubridate::now())
-      update2 <- paste(time2.5, ' - ', TRT, ' - ', scenario,
-                       'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
-                       ' years - ',  i/nsims*100, '% done!', sep = '')
+      
+      if (evolve == TRUE) {
+        
+        update2 <- paste(time2.5, ' - evolution - ', trait, ' - ', rate, ' - ', 
+                         TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
+                         ' sims - ', yrs, ' years - ',  i/nsims*100, '% done!', 
+                         sep = '')
+        
+      } else {
+        update2 <- paste(time2.5, ' - ', TRT, ' - ', scenario,
+                         'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
+                         ' years - ',  i/nsims*100, '% done!', sep = '')
+      }
+      
       write(update2, file = '../output/progress.txt', append = TRUE)
       
     }
@@ -248,8 +270,10 @@ run_base_model <- function(arguments) {
   } else { folder2 <- ''}
   
   # get filepaths to save objects to
-  filepath1 = paste('../output/', folder, '/', nsims, '_N.Rda', sep = '')
-  filepath2 = paste('../output/', folder, '/', nsims, '_OSR.Rda', sep = '')
+  filepath1 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta', 
+                    beta, '/', nsims, '_N.Rda', sep = '')
+  filepath2 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta', 
+                    beta, '/', nsims, '_OSR.Rda', sep = '')
   
   # save objects
   save(sims_N, file = filepath1)
@@ -257,8 +281,10 @@ run_base_model <- function(arguments) {
   
   if (evolve == TRUE) {
     
-    filepath3 = paste('../output/', folder, '/',  nsims, '_G_stats.Rda', sep = '')
-    filepath4 = paste('../output/', folder, '/',  nsims, '_P_stats.Rda', sep = '')
+    filepath3 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta', 
+                      beta, '/', nsims, '_G_stats.Rda', sep = '')
+    filepath4 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta', 
+                      beta, '/', nsims, '_P_stats.Rda', sep = '')
     
     save(sims_G_stats, file = filepath3)
     save(sims_P_stats, file = filepath4)
@@ -268,9 +294,19 @@ run_base_model <- function(arguments) {
   # update progress text file with total time it took to run the thing
   TIME3 <- lubridate::now()
   total_time <- format(round(TIME3 - TIME2, 3))
-  update3 <- paste(TRT, ' - ', scenario,
-                   'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
-                   ' years - total time: ', total_time, '\n', sep = '')
+  
+  if (evolve == TRUE) {
+    
+    update3 <- paste('evolution - ', trait, ' - ', rate, ' - ', TRT, ' - ', 
+                     scenario, 'C - beta ', beta, ' - ', nsims, ' sims - ', 
+                     yrs, ' years - total time: ', total_time, '\n', sep = '')
+    
+  } else {
+    update3 <- paste(TRT, ' - ', scenario,
+                     'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
+                     ' years - total time: ', total_time, '\n', sep = '')
+  }
+  
   write(update3,
         file = '../output/progress.txt', append = TRUE)
   

@@ -18,7 +18,7 @@ library(purrr)
 # stricter sample function
 resample <- function(x, ...) x[sample.int(length(x), ...)]
 
-# set working directory
+# # set working directory
 # setwd('~/Projects/iliketurtles3/code')
 
 source('run_base_model.R')
@@ -47,51 +47,36 @@ init_age_distribution <- SADdf %>%
 save(init_age_distribution, 
      file = '../output/init_age_distribution.Rdata')
 
-# models
-# TRT <- c('narrow')
+# full set
 TRT <- c('narrow', 'wide')
-
-# evolution
 evolve <- c(TRUE)
-# trait <- c('emergence_success_t0')
 trait <- c('T_piv', 'emergence_success_t0')
-# rate <- c('effective')
-rate <- c('effective', 'high')
+# rate <- c('effective', 'high')
+scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
+OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
+# intensity <- c(0.1, 0.2, 0.3, 0.4, 0.5)
+# frequency <- c(1, 2, 3, 4, 5)
+
+# # testing
+# TRT <- c('narrow')
+# evolve <- c(TRUE)
+# trait <- c('emergence_success_t0')
+rate <- c('effective')
+# scenarios <- c(0.5, 3.5)
+# OSRs <- c(0.45, 0.25)
 
 # conservation?
 conservation_action <- c(FALSE)
+intensity <- c(1)
+frequency <- c(1)
 
 # years to run the model for
 yrs <- 100
 
-# total temp increases
-scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-# scenarios <- c(0.5, 3.5)
-# scenario <- c(0.5)
-
-# OSR values to get full fertilization of females
-OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
-# OSRs <- c(0.45, 0.25)
-
-# mating function beta values
 betas <- as.numeric(OSRs_to_betas(OSRs))
-# betas <- c(3.82, 3.82, 3.82, 5.02, 6.64, 9.01, 3.82, 5.02, 6.64, 3.82, 5.02,
-#            6.64, 9.01, 3.82, 5.02, 6.64, 9.01, 12.91, 5.02, 20.63, 43.7)
-# beta <- 2
-
-# how many clutches to do conservation action on
-# intensity <- c(0.1, 0.2, 0.3, 0.4, 0.5)
-intensity <- c(1)
-
-# how often to do the conservation action (years)
-# frequency <- c(1, 2, 3, 4, 5)
-frequency <- c(1)
 
 # number of simulations to run
-nsims <- c(100)
-
-# maximum population size for any sex, age, year
-# max_N <- 20000
+nsims <- c(1000)
 
 # white or red noise
 noise <- 'white'
@@ -109,12 +94,10 @@ DF <- expand.grid(noise,
                   conservation_action,
                   intensity,
                   frequency) %>%
-  mutate(folder = paste(gsub('-', '_', Sys.Date()), '/',
+  mutate(Var13 = paste(gsub('-', '_', Sys.Date()), '/',
                         ifelse(Var7 == TRUE, 
-                               paste('evolution_', Var8, '_', Var8, '/', 
-                                     sep = ''),
-                               ''),
-                        Var2, '/', Var3, 'C/beta', Var4, sep = '')) %>%
+                               paste('evolution_', Var8, '_', Var9, sep = ''),
+                               ''), sep = '')) %>%
   arrange(Var5, Var3, desc(Var4))
 
 # initialize empty arguments list
@@ -134,19 +117,29 @@ TIME1 <- lubridate::now()
 result <- tryCatch({})
 mclapply(X = arguments,
          FUN = run_base_model,
-         mc.cores = 20)
+         mc.cores = 50)
 
 # lapply(X = arguments,
 #        FUN = run_base_model)
 
-TIME4 <- lubridate::now()
-
-Total_time <- format(round(TIME4 - TIME1), 3)
-
-final_update <- paste('Models: ', TRT, '\n', 'Betas: ', betas, '\n', 
-                      nsims, ' sims \n ', yrs, ' years \n total time: ', 
-                      Total_time, '\n', sep = '')
-
-write(final_update, 
-      file = '../output/progress.txt', append = TRUE)
+# TIME4 <- lubridate::now()
+# 
+# Total_time <- format(round(TIME4 - TIME1), 3)
+# 
+# if (evolve == TRUE) {
+#   
+#   final_update <- paste(time2.5, ' - evolution - ', trait, ' - ', rate, ' - ', 
+#                    TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
+#                    ' sims - ', yrs, ' years - ',  i/nsims*100, '% done!', 
+#                    sep = '')
+#   
+# } else {
+# 
+# final_update <- paste('Models: ', TRT, '\n', 'Betas: ', betas, '\n', 
+#                       nsims, ' sims \n ', yrs, ' years \n total time: ', 
+#                       Total_time, '\n', sep = '')
+# }
+# 
+# write(final_update, 
+#       file = '../output/progress.txt', append = TRUE)
 
