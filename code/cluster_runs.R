@@ -76,7 +76,7 @@ yrs <- 100
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
 # number of simulations to run
-nsims <- c(1000)
+nsims <- c(100)
 
 # white or red noise
 noise <- 'white'
@@ -94,10 +94,10 @@ DF <- expand.grid(noise,
                   conservation_action,
                   intensity,
                   frequency) %>%
-  mutate(Var13 = paste(gsub('-', '_', Sys.Date()), '/',
+  mutate(Var13 = paste(gsub('-', '_', Sys.Date()),
                         ifelse(Var7 == TRUE, 
-                               paste('evolution_', Var8, '_', Var9, sep = ''),
-                               ''), sep = '')) %>%
+                               paste('_evolution', Var8, Var9, sep = '/')), 
+                               sep = '')) %>%
   arrange(Var5, Var3, desc(Var4))
 
 # initialize empty arguments list

@@ -116,10 +116,10 @@ evolution <- function(max_age, G, P,
       probs_emerged <- lapply(
         clutch_temps[[i]], 
         function(x) {
-          if (x < T_threhold) {
+          if (x < T_threshold) {
             emergence_success_A / (
               1 + exp(-emergence_success_k * (x - emergence_success_t0)))
-          } else { 0 }
+            } else { 0 }
           }
         ) %>% lapply(pmax, 0)
       
@@ -156,7 +156,9 @@ evolution <- function(max_age, G, P,
       
       # list of probability of developing as male, one for each clutch 
       probs_male <- lapply(clutch_temps[[i]], 
-                           ~ 1 / (1 + exp(-k_piv * (.x - T_piv)))) %>%
+                           function(x) {
+                             1 / (1 + exp(-k_piv * (x - T_piv)))
+                           }) %>%
         lapply(pmax, 0)
       
     }
