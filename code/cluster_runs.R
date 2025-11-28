@@ -76,7 +76,7 @@ yrs <- 100
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
 # number of simulations to run
-nsims <- c(100)
+nsims <- c(1000)
 
 # white or red noise
 noise <- 'white'
