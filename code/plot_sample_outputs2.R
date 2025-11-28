@@ -12,15 +12,15 @@ library(tidyverse)
 library(ggh4x)
 
 # red noise?
-red_noise <- TRUE
+red_noise <- FALSE
 noise <- ifelse(red_noise == TRUE, '_red_noise', '')
 
 # nsims
-nsims <- 10000
+nsims <- 100
 
 # source functions and load data
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
-load(paste('~/Projects/iliketurtles3/output/TS_b800_10y_n', nsims, noise, 
+load(paste('~/Projects/iliketurtles3/output/evolution_n', nsims, noise, 
            '_all_outputs.Rdata', sep = ''))
 load("~/Projects/iliketurtles3/output/ideals.Rdata")
 
@@ -30,22 +30,32 @@ scenarios <- c(0.5, 4.5)
 osrs <- c(0.1, 0.35)
 betas <- OSRs_to_betas(osrs)
 
+# filename
+name <- 'evolution_ESt0_effective'
+
 ##### clean up data ############################################################
 
 # add ideals to dataframe
 clean_ideals <- ideals %>%
   mutate(Beta = as.character(Beta)) %>%
-  rename('Ideal_Temp' = 'Temp') %>%
-  rename('Ideal_PSR' = 'PSR')
+  rename('Ideal_PSR' = 'PSR') %>% 
+  mutate(TRT = case_when(TRT == 'Narrow transitional range' 
+                               ~ 'narrow', 
+                               TRUE ~ 'wide')) 
 
 examples_to_plot <- all_outputs %>%
-  mutate(Beta = as.character(Beta)) %>%
-  full_join(clean_ideals) %>%
+  mutate(Beta = as.character(Beta))  %>%
+  full_join(clean_ideals, relationship = 'many-to-many') %>%
   filter(Scenario %in% scenarios) %>%
   filter(OSR %in% factor(osrs)) %>%
   mutate(Scenario = factor(Scenario, levels = scenarios)) %>%
   mutate(OSR = factor(OSR, levels = osrs)) %>%
-  mutate(TRT = factor(TRT))
+  mutate(facet_label = case_when(TRT == 'narrow' 
+                                 ~ '(A) Narrow transitional range', 
+                                 TRUE ~ '(B) Wide transitional range')) %>% 
+  mutate(TRT = factor(TRT)) %>%
+  filter(Trait == 'emergence_success_t0') %>%
+  filter(Rate == 'effective')
 
 ##### plot 1: hatchling sex ratios #############################################
 
@@ -57,15 +67,15 @@ HSR <- examples_to_plot %>%
                   ymax = Sex_ratio_Q75,
                   col = NULL,
                   fill = Scenario),
-              alpha = 0.25, 
+              alpha = 0.25,
               show.legend = FALSE) +
-  scale_color_manual(values = c('#00BFC4', '#F8766D'), 
+  scale_color_manual(values = c('#00BFC4', '#F8766D'),
                      name = 'Emergence \n success') +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  geom_line(aes(x = Year, 
-                y = Ideal_PSR, 
-                lty = Mating_Function), 
-            col = 'black', 
+  geom_line(aes(x = Year,
+                y = Ideal_PSR,
+                lty = Mating_Function),
+            col = 'black',
             show.legend = FALSE) +
   geom_path(aes(col = Scenario, 
                 lty = Mating_Function), 
@@ -81,8 +91,6 @@ HSR <- examples_to_plot %>%
              size = 1) +
   facet_grid(cols = vars(TRT)) +
   ylab("(A) Median \n hatchling sex ratio") +
-  # guides(fill = guide_legend(override.aes = list(color = NA)), 
-  #        lty = 'none') +
   theme_bw() +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(), 
@@ -129,13 +137,10 @@ OSR <- examples_to_plot %>%
   filter(Abundance == 'Mature') %>%
   ggplot(aes(x = Year, 
              y = Sex_ratio_median,
-             # y = Mature_xF_Median, 
              col = Scenario, 
              lty = Mating_Function)) +
   geom_ribbon(aes(ymin = Sex_ratio_Q25,
                   ymax = Sex_ratio_Q75,
-                  # geom_ribbon(aes(ymin = Mature_xF_Q25,
-                  #                 ymax = Mature_xF_Q75,
                   col = NULL,
                   fill = Scenario),
               alpha = 0.25,
@@ -149,7 +154,6 @@ OSR <- examples_to_plot %>%
   geom_hline(yintercept = 0.1, lty = 2) +
   geom_hline(yintercept = 0.35, lty = 1) +
   ylab("(B) Median \n operational sex ratio") +
-  # ylab("(C) Median operational \n sex ratio (xF:1M)") +
   labs(x = NULL) +
   theme_bw() +
   theme(axis.title.x = element_blank(),
@@ -257,7 +261,6 @@ noise <- ifelse(red_noise == TRUE, '_red_noise', '')
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('SAD_deterministic_b800_TS_10y_n', nsims, noise, 
-                        '_sample_outputs.png', sep = ''),
+       filename = paste(name, nsims, noise, '_sample_outputs.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 7, height = 10)

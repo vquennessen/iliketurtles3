@@ -94,23 +94,34 @@ evolution <- function(max_age, G, P,
                                        sd = sqrt(varGenetic*(1 - h2)/h2))
                      )
     
-    if (trait == 'T_piv') {
+    if (trait == 'emergence_success_t0') {
       
-      # list of probability of emergence, one number for each clutch 
-      probs_emerged <- lapply(clutch_temps[[i]], 
-                              emergence_success, 
-                              A = emergence_success_A, 
-                              k = emergence_success_k, 
-                              t0 = emergence_success_t0, 
-                              thermal_limit = T_threshold) %>%
+      # list of probability of emergence, one for each egg 
+      probs_emerged <- map2(clutch_temps[[i]], P_eggs, 
+                            ~ emergence_success_A / (
+                              1 + exp(-emergence_success_k * (.x - .y)))) %>%
         lapply(pmax, 0)
       
     } else {
       
-      probs_emerged <- map2(clutch_temps[[i]], 
-                            P_eggs, 
-                            ~ emergence_success_A / (
-                              1 + exp(-emergence_success_k * (.x - .y))))
+      # list of probability of emergence, one for each clutch 
+      # probs_emerged <- lapply(clutch_temps[[i]], 
+      #                         emergence_success, 
+      #                         A = emergence_success_A, 
+      #                         k = emergence_success_k, 
+      #                         t0 = emergence_success_t0, 
+      #                         thermal_limit = T_threshold) %>%
+      #   lapply(pmax, 0)
+      
+      probs_emerged <- lapply(
+        clutch_temps[[i]], 
+        function(x) {
+          if (x < T_threhold) {
+            emergence_success_A / (
+              1 + exp(-emergence_success_k * (x - emergence_success_t0)))
+          } else { 0 }
+          }
+        ) %>% lapply(pmax, 0)
       
     }
     
@@ -119,6 +130,7 @@ evolution <- function(max_age, G, P,
                                ~ as.logical(
                                  rbinom(n = .x, size = 1, prob = .y)))
     
+    # how many hatchlings are there?
     hatchlings <- unlist(lapply(indices_hatchlings, sum, na.rm = TRUE))
     
     # hatchling genotypes and phenotypes
@@ -127,17 +139,24 @@ evolution <- function(max_age, G, P,
     
     if (trait == 'T_piv') {
       
+      # probability of developing as male, one for each egg
       probs_male <- map2(clutch_temps[[i]], 
                          P_hatchlings, 
-                         ~ 1 / (1 + exp(-k_piv * (.x - .y))))
+                         ~ 1 / (1 + exp(-k_piv * (.x - .y)))) %>%
+        lapply(pmax, 0)
       
     } else {
       
-      # list of probability of emergence, one number for each clutch 
+      # list of probability of developing as male, one for each clutch 
+      # probs_male <- lapply(clutch_temps[[i]], 
+      #                      probability_male, 
+      #                      k = k_piv, 
+      #                      pivotal_temp = T_piv) %>%
+      #   lapply(pmax, 0)
+      
+      # list of probability of developing as male, one for each clutch 
       probs_male <- lapply(clutch_temps[[i]], 
-                           probability_male, 
-                           k = k_piv, 
-                           pivotal_temp = T_piv) %>%
+                           ~ 1 / (1 + exp(-k_piv * (.x - T_piv)))) %>%
         lapply(pmax, 0)
       
     }
@@ -147,10 +166,11 @@ evolution <- function(max_age, G, P,
                           ~ as.logical(rbinom(n = .x, size = 1, prob = .y)))
     indices_females <- map(indices_males, ~ as.logical(Map(`-`, 1, .x)))
 
-    
+    # genotypes of females and males
     G_females[[i]] <- map2(G_hatchlings, indices_females, ~ .x[as.logical(.y)])
     G_males[[i]] <- map2(G_hatchlings, indices_males, ~ .x[as.logical(.y)])
     
+    # phenotypes of females and males
     P_females[[i]] <- map2(P_hatchlings, indices_females, ~ .x[as.logical(.y)])
     P_males[[i]] <- map2(P_hatchlings, indices_males, ~ .x[as.logical(.y)])
     

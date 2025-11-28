@@ -17,38 +17,34 @@ red_noise <- FALSE
 noise <- ifelse(red_noise == TRUE, '_red_noise', '')
 
 # nsims
-nsims <- 10000
+nsims <- 100
 
 # source functions and load data
 source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
-load(paste('~/Projects/iliketurtles3/output/TS_b800_10y_n', nsims, noise, 
-           '_all_outputs.Rdata', sep = ''))
 load("~/Projects/iliketurtles3/output/ideals.Rdata")
+
+# EDIT #########################################################################
+
+# load data object
+load(paste('~/Projects/iliketurtles3/output/evolution_n', nsims, noise, 
+           '_all_outputs.Rdata', sep = ''))
 
 # what year to plot
 year_to_plot <- 100
-name_to_use <- paste('mature_base_persistence')
+name_to_use <- paste('evolution_ESt0_effective')
 
-################################################################################
-
-# make scenario and osr a factor variable
-all_outputs$yaxislabs <- factor(parse_number(as.character(all_outputs$Scenario)))
-all_outputs$Scenario <- factor(all_outputs$Scenario, 
-                              levels = unique(all_outputs$Scenario))
-OSRs <- unique(all_outputs$OSR)
-all_outputs$OSR <- factor(all_outputs$OSR, levels = unique(all_outputs$OSR))
-# all_outputs$xF <- factor(round(1/OSRs - 1, 2), 
-#                         levels = rev(round(1/OSRs - 1, 2)))
-
-# EDIT #########################################################################
+# dataframe of data to plot
 DF_to_use <- all_outputs %>% 
   filter(Year == year_to_plot) %>%
-  mutate(facet_label = case_when(TRT == 'Narrow transitional range' 
+  filter(Trait == 'emergence_success_t0') %>%
+  filter(Rate == 'effective') %>% 
+  mutate(facet_label = case_when(TRT == 'narrow' 
                                    ~ '(A) Narrow transitional range', 
-                                 TRUE ~ '(B) Wide transitional range'))
+                                 TRUE ~ '(B) Wide transitional range')) %>%
+  mutate(yaxislabs = factor(parse_number(as.character(Scenario)))) %>%
+  mutate(Scenario = factor(Scenario, levels = unique(Scenario))) %>%
+  mutate(OSR = factor(OSR, levels = unique(OSR)))
 
-# DF_to_use$xF <- factor(DF_to_use$xF, 
-#                        levels = rev(as.factor(round(1/as.numeric(as.character(OSRs)) - 1, 2))))
 
 ##### probability of persistence ###############################################
 fig4A <- ggplot(data = DF_to_use, 
@@ -82,16 +78,12 @@ fig4A
 
 ##### final lambda #############################################################
 
-DF_to_use2 <- all_outputs %>% 
-  filter(Year == year_to_plot) %>%
+DF_to_use2 <- DF_to_use %>% 
   mutate(Lambda_10yr_median = round(Lambda_10yr_median, 3)) %>%
   mutate(bins = cut(Lambda_10yr_median,
                     breaks = rev(c(0, 0.9, 0.99, 1, 1.01, 1.025, 1.05)), 
                     include.lowest = TRUE,
-                    right = FALSE)) %>%
-  mutate(facet_label = case_when(TRT == 'Narrow transitional range' 
-                                 ~ '(C) Narrow transitional range', 
-                                 TRUE ~ '(D) Wide transitional range'))
+                    right = FALSE)) 
 
 fig4B <- ggplot(data = DF_to_use2, aes(x = OSR, 
                                        y = yaxislabs, 
@@ -123,7 +115,7 @@ final_fig
 
 # save to file
 ggsave(plot = final_fig,
-       filename = paste('TS_b800_n10000', noise,
+       filename = paste(name_to_use, noise,
                         '_final_persistence_and_lambda.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 8, height = 6)

@@ -3,6 +3,9 @@
 # empty environment
 rm(list = ls())
 
+# set working directory
+setwd('~/Projects/iliketurtles3/code')
+
 # load libraries
 library(matrixStats)
 library(readr)
@@ -15,7 +18,7 @@ library(magrittr)
 source('mating function/OSRs_to_betas.R')
 
 # which computer we using
-computer <- 'cluster'
+computer <- 'desktop'
 
 # red noise?
 red_noise <- FALSE
@@ -23,25 +26,26 @@ red_noise <- FALSE
 # path based on computer being used
 user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
                ifelse(computer == 'desktop',
-                      'C:/Users/Vic/Box Sync/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/',
-                      'C:/Users/vique/Box Sync/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/'))
+                      'C:/Users/Vic/Box/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/',
+                      'C:/Users/vique/Box/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/'))
 
 # name of folder for current runs
-input_folder <- '2025_10_23_SAD_deterministic_TS_b800_10y'
+input_folders <- c('2025_11_26_evolution')
 
 # number of sims
-nsims <- 10000
+nsims <- 100
 
 # name to save to
-name <- paste('TS_b800_10y_n', nsims, sep = '')
+name <- paste('evolution_n', nsims, sep = '')
 
 # model(s)
-models <- c('P_base', 'GM_base')
-TRTs <- c('Narrow transitional range', 'Wide transitional range')
+traits <- c('T_piv', 'emergence_success_t0')
+rates <- c('effective', 'high')
+TRTs <- c('narrow', 'wide')
 
-# filepaths
-folders <- rep(input_folder, length(models))
-paths <- paste(folders, models, sep = "/")
+paths <- expand.grid(input_folders, TRTs, traits, rates) %>%
+  # mutate(path = paste(Var1, Var2, sep = '/')) 
+  mutate(path = paste(Var1, Var3, Var4, Var2, sep = '/')) 
 
 # temperature increase scenarios
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
@@ -66,7 +70,8 @@ abundances <- c('Immature Females', 'Immature Males', 'Mature Females',
 indices <- list(c(1), c(2), c(3), c(4), c(1:2), c(3:4), c(1:4))
 
 # dimensions
-P <- length(paths)
+# P <- length(paths)
+P <- nrow(paths)
 S <- length(scenarios)
 B <- length(betas)
 Y <- length(years)
@@ -84,9 +89,10 @@ temp_mu <- 31.8
 
 # initialize super data frame
 SDF <- data.frame(
-  Folder = NULL,
-  Model = NULL,
+  Input_folder = NULL,
   TRT = NULL,
+  Trait = NULL, 
+  Rate = NULL, 
   Scenario = NULL,
   Beta = NULL,
   OSR = NULL,
@@ -128,10 +134,10 @@ for (p in 1:P) {
     for (b in 1:B) {
       
       # load in appropriate output files
-      N <- paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b],
+      N <- paste(user, paths[p, ]$path, '/', scenarios[s], 'C/beta', betas[b],
                           '/', nsims, '_N.Rda', sep = '')
       
-      Osr <- paste(user, paths[p], '/', scenarios[s], 'C/beta', betas[b],
+      Osr <- paste(user, paths[p, ]$path, '/', scenarios[s], 'C/beta', betas[b],
                           '/', nsims, '_OSR.Rda', sep = '')
       # if the file exists
       if ( file.exists(N) & file.exists(Osr) ) {
@@ -147,9 +153,10 @@ for (p in 1:P) {
             
             # subset to add to super data frame
             sub_SDF <- data.frame(
-              Folder = rep(input_folder, Y),
-              Model = rep(models[p], Y),
-              TRT = rep(TRTs[p], Y),
+              Folder = rep(paths[p, ]$Var1, Y),
+              TRT = rep(paths[p, ]$Var2, Y),
+              Trait = rep(paths[p, ]$Var3, Y),
+              Rate = rep(paths[p, ]$Var4, Y),
               Scenario = rep(scenarios[s], Y),
               Beta = rep(betas[b], Y),
               OSR = rep(osrs[b], Y),
@@ -269,9 +276,10 @@ for (p in 1:P) {
             
             # subset to add to super data frame
             sub_SDF <- data.frame(
-              Folder = rep(input_folder, Y),
-              Model = rep(models[p], Y),
-              TRT = rep(TRTs[p], Y),
+              Folder = rep(paths[p, ]$Var1, Y),
+              TRT = rep(paths[p, ]$Var2, Y),
+              Trait = rep(paths[p, ]$Var3, Y),
+              Rate = rep(paths[p, ]$Var4, Y),
               Scenario = rep(scenarios[s], Y),
               Beta = rep(betas[b], Y),
               OSR = rep(osrs[b], Y),
@@ -331,9 +339,10 @@ for (p in 1:P) {
             # print progress update
             prop <- round(nrow(SDF) / (numrows) * 100, 2)
             boop <- format(lubridate::now())
-            print(paste(boop, ' - ', models[p], ' - ', scenarios[s],
-                        'C - beta ', betas[b], ' - ', abundances[a], ' - done - ', prop,
-                        '% of total done!', sep = ''))
+            print(paste(boop, ' - ', paths[p, ]$Var2, ' - ', paths[p, ]$Var3, 
+                        ' - ', paths[p, ]$Var4, ' - ', scenarios[s],
+                        'C - beta ', betas[b], ' - ', abundances[a], 
+                        ' - done - ', prop, '% of total done!', sep = ''))
             
           }
           
