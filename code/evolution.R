@@ -8,10 +8,10 @@ evolution <- function(max_age, G, P,
                       T_threshold, k_piv, T_piv) {
   
   # extract maternal genotypes
-  GM <- as.list(resample(unlist(G[3, ]), size = n_breeding_F))
+  GM <- as.list(resample(unlist(G[3, 2:max_age]), size = n_breeding_F))
   
   # extract potential paternal genotypes
-  potential_GP <- resample(unlist(G[4, ]), size = n_available_M)       
+  potential_GP <- resample(unlist(G[4, 2:max_age]), size = n_available_M)       
   
   # how many males does each female mate with
   nMales <- as.list(resample(1:length(male_probs), 
@@ -51,7 +51,7 @@ evolution <- function(max_age, G, P,
   
   ##############################################################################
   
-  # calculate offspring genotypes and phenotypes
+  # initialize offspring genotypes and phenotypes
   G_females <- list()
   G_males <- list()
   P_females <- list()
@@ -72,9 +72,10 @@ evolution <- function(max_age, G, P,
   
   for (i in 1:n_breeding_F) {
     
-    # for each clutch, assign maternal genotypes to offspring
+    # for each egg in each clutch, assign maternal genotypes to offspring
     GM_eggs <- lapply(eggs[[i]], function(x) rep(GM[[i]], times = x))
     
+    # for each egg in each clutch, assign paternal genotypes to offspring
     GP_eggs <- lapply(eggs[[i]], 
                       function(x) {
                         resample(resample(GP[[i]]), 
@@ -85,7 +86,10 @@ evolution <- function(max_age, G, P,
     )
     
     # calculate offspring genotypes
-    G_eggs <- lapply(Map('+', GM_eggs, GP_eggs), function(x) x/2)
+    G_eggs <- lapply(Map('+', GM_eggs, GP_eggs), 
+                     function(x) rnorm(n = length(x), 
+                                       mean = x/2, 
+                                       sd = sqrt(varGenetic / 2)))
     
     # calculate offspring phenotypes
     P_eggs <- lapply(G_eggs, 

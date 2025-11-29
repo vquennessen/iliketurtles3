@@ -129,44 +129,41 @@ reproduction <- function(N, M, y, beta, max_age,
         
         # list of probability of emergence, one number for each clutch 
         # set.seed(seed)
-        probs_emerged <- lapply(clutch_temps, 
-                                emergence_success, 
-                                A = emergence_success_A, 
-                                k = emergence_success_k, 
-                                t0 = emergence_success_t0, 
-                                thermal_limit = T_threshold) %>%
-          lapply(pmax, 0)
+         probs_emerged <- lapply(
+           clutch_temps, 
+           function(x) {
+             a <- emergence_success_A / (
+                 1 + exp(-emergence_success_k * (x - emergence_success_t0)))
+             a[x > T_threshold] <- 0
+             return(a)
+           }
+         ) %>% lapply(pmax, 0)
         
         # v_probs_emerged <- unlist(probs_emerged)
         
         # list of probabilities of developing as male, one for each clutch
         # set.seed(seed)
-        probs_male <- lapply(clutch_temps, 
-                             probability_male,
-                             k = k_piv, 
-                             pivotal_temp = T_piv) %>%
-          lapply(pmax, 0)
+         probs_male <- lapply(clutch_temps, 
+                              function(x) {
+                                1 / (1 + exp(-k_piv * (x - T_piv)))
+                              }) %>%
+           lapply(pmax, 0)
         
         # list of numbers of emerged hatchlings, one for each clutch
         # set.seed(seed)
-        hatchlings <- length(as.integer(unlist(eggs))) %>%
-          rbinom(size = as.integer(unlist(eggs)), 
-                 prob = unlist(probs_emerged)) %>%
-          split(rep(1:length(clutches), times = clutches))  %>%
-          lapply(pmax, 0) %>%
-          lapply(round)
+        hatchlings <- map2(eggs, probs_emerged,
+                            ~ unlist(map2(.x, .y,
+                                   ~ sum(rbinom(n = .x, size = 1, prob = .y),
+                                                na.rm = TRUE))))
         
         # list of number of males, one for each clutch
-        males <- rbinom(n = length(unlist(hatchlings)), 
-                        size = as.integer(unlist(hatchlings)), 
-                        prob = unlist(probs_male)) %>%
-          split(rep(1:length(clutches), times = clutches)) %>%
-          lapply(pmax, 0) %>%
-          lapply(round)
+        males <- map2(hatchlings, probs_male,
+                      ~ unlist(map2(.x, .y,
+                                    ~ sum(rbinom(n = .x, size = 1, prob = .y),
+                                          na.rm = TRUE))))
         
         # list of number of females, one for each clutch
-        females <- Map('-', hatchlings, males) %>%
-          lapply(round)
+        females <- Map(`-`, hatchlings, males) 
         
         # total number of male hatchlings
         male_hatchlings <- sum(unlist(males))

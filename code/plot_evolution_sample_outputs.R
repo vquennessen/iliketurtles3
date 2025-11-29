@@ -30,8 +30,11 @@ scenarios <- c(0.5, 4.5)
 osrs <- c(0.1, 0.35)
 betas <- OSRs_to_betas(osrs)
 
+trait <- 'T_piv'
+rate <- 'effective'
+
 # filename
-name <- 'evolution_tpiv_effective'
+name <- paste('evolution', trait, rate, sep = '_')
 
 ##### clean up data ############################################################
 
@@ -94,7 +97,8 @@ HSR <- examples_to_plot %>%
   theme_bw() +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(), 
-        axis.ticks.x = element_blank())
+        axis.ticks.x = element_blank()) +
+  ggtitle(paste('evolution of ', trait, ' with ', rate, ' heritability', sep = ''))
 
 HSR
 
@@ -253,7 +257,7 @@ lambda
 
 ##### final figure #############################################################
 
-final_fig <- HSR / OSR / BS / HA / lambda 
+final_fig <- HSR / OSR / BS / HA / lambda
 final_fig
 
 # red noise?

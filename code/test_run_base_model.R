@@ -1,35 +1,30 @@
-### test run base model
+# test run base model
 
 rm(list = ls())
 
 # load libraries
-library(parallel)
 library(dplyr)
 library(tidyr)
 library(magrittr)
 library(readr)
 library(lubridate)
 library(lgcp)
+library(purrr)
 
-# set working directory
-setwd('~/Projects/iliketurtles3/code')
+# stricter sample function
+resample <- function(x, ...) x[sample.int(length(x), ...)]
 
-source('run_base_model.R')
+# # set working directory
+# setwd('~/Projects/iliketurtles3/code')
+
 source('base_model.R')
 source('initialize_arrays.R')
 source('reproduction.R')
 source('pop_dynamics.R')
-source('mating function/OSRs_to_betas.R')
 source('evolution.R')
-source('emergence_success.R')
-source('probability_male.R')
-source('conservation.R')
 
 # load in SAD object
 load("../output/SAD_deterministic_TS_b800_medians.Rdata")
-
-# folder to save results to
-folder <- c('2025_10_23_SAD_deterministic_TS_b800_10y/')
 
 # initial total population size
 init_total <- 20000
@@ -40,28 +35,50 @@ init_age_distribution <- SADdf %>%
   mutate(Abundance = round(Prop_10yr_median * init_total)) %>%
   mutate(TRangeT = ifelse(Model == 'P_base', 'narrow', 'wide'))
 
-# troubleshooting
-TRT <- 'narrow'
-evolve <- TRUE
-trait <- 'T_piv'
-rate <- 'effective'
-conservation_action <- FALSE
-yrs <- 100
-scenario <- 0.5
-beta <- 1.17
-intensity <- 1
-frequency <- 1
-nsims <- 10
-max_N <- 200000
-noise <- 'white'
+# testing
+TRT <- c('narrow')
+evolve <- c(TRUE)
+trait <- c('T_piv')
+rate <- c('high')
+scenario <- c(3.5)
+beta <- 2.86
 
-# write to progress text file
-# write to progress text file
-start <- lubridate::now()
-time1 <- format(start)
-update1 <- paste(time1, ' - ', TRT, ' - ', scenario, 'C - beta ', beta, 
-                 ' - ', nsims, ' sims - ', yrs, ' years',sep = '')
-write(update1, file = '../output/progress.txt', append = TRUE)
+# conservation?
+conservation_action <- c(FALSE)
+intensity <- c(1)
+frequency <- c(1)
+
+# years to run the model for
+yrs <- 100
+
+# number of simulations to run
+nsims <- c(2)
+
+# white or red noise
+noise <- 'white'  
+
+folder <- paste('test_evolution', trait, rate, sep = '/')
+
+
+###### model inputs ##########################################################
+
+# # write to progress text file
+# TIME2 <- lubridate::now()
+# time2 <- format(TIME2)
+# 
+# if (evolve == TRUE) {
+#   
+#   update1 <- paste(time2, ' - evolution - ', trait, ' - ', rate, ' - ', 
+#                    TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
+#                    ' sims - ', yrs, ' years', sep = '')
+#   
+# } else {
+#   
+#   update1 <- paste(time2, ' - ', TRT, ' - ', scenario, 'C - beta ', beta, 
+#                    ' - ', nsims, ' sims - ', yrs, ' years', sep = '')
+# }
+# 
+# write(update1, file = '../output/progress.txt', append = TRUE)
 
 # model parameters to modulate
 temp_mu <- 31.8                         # base incubation temp mean
@@ -94,8 +111,13 @@ MM_survival <- 0.799
 
 age_maturity_mu <- 25                     # age at first reproduction, mean
 age_maturity_sd <- 2.5                    # age at first reproduction, SD
+M <- round(pnorm(q = 1:max_age,           # maturity ogive
+                 mean = age_maturity_mu,
+                 sd = age_maturity_sd),
+           3)
+
 F_remigration_int <- 3.87                 # remigration interval - females
-M_remigration_int <- 1.47                 # remigration interval - males
+M_remigration_int <- 1.82                 # remigration interval - males
 clutches_mu <- 4.95                       # mean # of clutches/F/season
 clutches_sd <- 2.09                       # sd of # of clutches/F/season
 eggs_mu <- 100.58                         # mean number of eggs/clutch - 100.58
@@ -103,25 +125,38 @@ eggs_sd <- 22.61                          # sd of number of eggs/clutch - 22.61
 emergence_success_A <- 0.86               # logistic by temp - A
 emergence_success_k <- -1.7               # logistic by temp - beta
 emergence_success_t0 <- 32.7              # logistic by temp - t0
-T_piv <- 29.4                             # thermal reaction norm midpoint
 T_threshold <- 35                         # lethal temperature threshold
-
-###### evolution stats #########################################################
 k_piv <- ifelse(TRT == 'narrow',
                 -1.54,
-                -0.77)
+                -0.77)  
+T_piv <- 29.4                             # thermal reaction norm midpoint
+
+# stable age distributions to start with
+IAD <- init_age_distribution %>%
+  filter(Beta == beta) %>%
+  filter(TRangeT == TRT)
+
+IF_init <- IAD %>%
+  filter(Sex == 'IF') %>%
+  pull(Abundance)
+
+IM_init <- IAD %>%
+  filter(Sex == 'IM') %>%
+  pull(Abundance)
+
+MF_init <- IAD %>%
+  filter(Sex == 'MF') %>%
+  pull(Abundance)
+
+MM_init <- IAD %>%
+  filter(Sex == 'MM') %>%
+  pull(Abundance)
 
 if (evolve == TRUE) {
   
-  # avg_males <- round(1/(qbeta(0.99, shape1 = 1, shape2 = beta)/2) - 1, 2)
-  # extra <- round(6*(avg_males - trunc(avg_males)))
-  # breeding_pool_repeats <- c(rep(floor(avg_males), times = 6 - extra), 
-  #                            rep(ceiling(avg_males), times = extra))
-  # 
-  # # probabilities of females mating with 1-10 males
+  # probabilities of females mating with 1-10 males
   male_probs <- c(0.188, 0.280, 0.236, 0.150, 0.080, 0.038, 0.017, 0.007, 0.003, 0.001)
-  # stop_at_male_probs <- cumsum(male_probs)
-  
+
   # male fertilization contributions
   raw_contributions <- 0.687 * (c(1:10))^(-1.710)
   
@@ -136,253 +171,166 @@ if (evolve == TRUE) {
   
   if (trait == 'T_piv') {
     
+    value <- T_piv
+    
     if (rate == 'effective') { 
       h2 <- 0.221
-      varGenetic <- 0.926
+      varGenetic <- 0.926 } 
     
-    } else { 
+    if (rate == 'high') { 
       h2 <- 0.576
       varGenetic <- 2.41 }
     
     # or, if the evolvable trait is the emergence success midpoint (t0)
-  } else {
+  } 
+  
+  if (trait == 'emergence_success_t0') {
+    
+    value <- emergence_success_t0
     
     if (rate == 'effective') { 
       h2 <- 0.75
-      varGenetic <- 1.19
+      varGenetic <- 1.19 } 
     
-    } else { 
+    if (rate == 'high') { 
       h2 <- 0.88
       varGenetic <- 1.39 }
     
-    }
-  
-    # phenotypic variance, error term for offspring phenotype, one for each year
-    varPhenotypic <- varGenetic / h2  
-    
-    # which trait is evolving?
-    value <- ifelse(trait == 'T_piv', 
-                    T_piv, 
-                    emergence_succcess_t0)
-    
-    # fancy list things to make dimensions match up for year 1
-    # A <- apply(N[, , 1], c(1, 2), rnorm, mean = value, sd = sqrt(varGenetic))
-    # https://stackoverflow.com/questions/43415577/equalizing-the-lengths-of-all-the-lists-within-a-list
-    # G[, , ] <- aperm(array(unlist(lapply(lapply(sapply(A, unlist), 
-    #                                    "length<-", max_N), 
-    #                             as.list)), 
-    #                        dim = c(max_N, 4, max_age)), 
-    #                    c(2, 3, 1))
-    
-    G0 <- array(rnorm(n = 4 * max_age * max_N, 
-                     mean = value, 
-                     sd = sqrt(varGenetic)), 
-               dim = c(4, max_age, max_N))
-    
-    # phenotype array, dimensions sex * age * years
-    P0 <- G0 + rnorm(n = c(4 * max_age * max_N), 
-                   mean = 0, 
-                   sd = sqrt(varPhenotypic))
-    
-    G <- asplit(G0, c(1, 2))
-    P <- asplit(P0, c(1, 2))
-    
-    # genotype and phenotype summary stats, dimensions sex * age * year * # stats
-    # G[, , , 1] = mean
-    # G[, , , 2] = median
-    # G[, , , 3] = variance
-    sims_G_stats <- array(rep(NA, times = 4 * max_age * yrs * 3 * nsims), 
-                          dim = c(4, max_age, yrs, 3, nsims))
-    
-    sims_P_stats <- array(rep(NA, times = 4 * max_age * yrs * 3 * nsims), 
-                          dim = c(4, max_age, yrs, 3, nsims))
-    
-  } else {
-    
-    h2                    <- NULL
-    varGenetic            <- NULL
-    varSegregation        <- NULL
-    varPhenotypic         <- NULL
-    G                     <- NULL
-    P                     <- NULL
-    male_probs            <- NULL
-  
   }
+  
+  # phenotypic variance, error term for offspring phenotype, one for each year
+  varPhenotypic <- varGenetic / h2  
+  
+  # genotype and phenotype summary stats, dimensions sex * age * year * # stats
+  sims_G_stats <- array(rep(NA, times = 4 * max_age * yrs * 3 * nsims), 
+                        dim = c(4, max_age, yrs, 3, nsims))
+  
+  sims_P_stats <- array(rep(NA, times = 4 * max_age * yrs * 3 * nsims), 
+                        dim = c(4, max_age, yrs, 3, nsims))
+  
+} else {
+  
+  value                 <- NULL
+  h2                    <- NULL
+  varGenetic            <- NULL
+  varPhenotypic         <- NULL
+  G                     <- NULL
+  P                     <- NULL
+  male_probs            <- NULL
+  contributions         <- NULL
+  
+}
 
 ##### conservation #############################################################
+
+# if conservation is TRUE    
+effect_size <- ifelse(conservation_action == TRUE,
+                      1.3,
+                      NA)
+
+##### initialize output ########################################################
+
+# initialize population size array by sex/maturity, age, years, sims
+sims_N <- array(rep(NA, times = 4 * max_age * yrs * nsims),
+                dim = c(4, max_age, yrs, nsims))
+
+sims_OSR <- array(rep(NA, times = yrs * nsims),
+                  dim = c(yrs, nsims))
+
+##### run sims and save output #################################################
+
+# run the model for each simulation
+for (i in 1:nsims) {
   
-  # if conservation is TRUE    
-  effect_size <- ifelse(conservation_action == TRUE,
-                        1.3,
-                        NA)
+  output <- base_model(scenario, beta, yrs, max_age,
+                       IF_survival, IM_survival, MF_survival, MM_survival,
+                       IF_init, IM_init, MF_init, MM_init,
+                       M, F_remigration_int, M_remigration_int,
+                       clutches_mu, clutches_sd, eggs_mu, eggs_sd,
+                       emergence_success_A, emergence_success_k,
+                       emergence_success_t0, T_piv, k_piv, T_threshold,
+                       evolve, trait, value, male_probs, contributions,
+                       h2, varGenetic, varPhenotypic,
+                       temp_mu, climate_stochasticity,
+                       season_temp_sd, clutch_temp_sd, noise, AC,
+                       conservation_action, frequency, intensity,
+                       effect_size)
   
-  ##### initialize output ######################################################
+  # save the output arrays
+  sims_N[, , , i]             <- output[[1]]
+  sims_OSR[, i]               <- output[[2]]
   
-  # initialize yield and biomass arrays
+  if (evolve == TRUE) {
+    sims_G_stats[, , , , i]       <- output[[3]]
+    sims_P_stats[, , , , i]       <- output[[4]]
+  }
   
-  # initialize population size array by sex/maturity, age, years, sims
-  sims_N <- array(rep(NA, times = 4 * max_age * yrs * nsims),
-                  dim = c(4, max_age, yrs, nsims))
-  
-  sims_OSR <- array(rep(NA, times = yrs * nsims),
-                    dim = c(yrs, nsims))
-  
-  ##### initialize population ##################################################
-  
-  ##### maturity ogive
-  M <- round(pnorm(q = 1:max_age,
-                   mean = age_maturity_mu,
-                   sd = age_maturity_sd),
-             3)
-  
-  # stable age distributions to start with
-  IAD <- init_age_distribution %>%
-    filter(Beta == beta) %>%
-    filter(TRangeT == TRT)
-  
-  IF_init <- IAD %>%
-    filter(Sex == 'IF') %>%
-    pull(Abundance)
-  
-  IM_init <- IAD %>%
-    filter(Sex == 'IM') %>%
-    pull(Abundance)
-  
-  MF_init <- IAD %>%
-    filter(Sex == 'MF') %>%
-    pull(Abundance)
-  
-  MM_init <- IAD %>%
-    filter(Sex == 'MM') %>%
-    pull(Abundance)
-  
-  # # check to see if SAD exists or returns NaN - save everything as NA
-  # # and move on to the next combo
-  # 
-  # if (sum(IM_init, MM_init) < 1 |
-  #     sum(!is.finite(IAD$Abundance)) > 0) {
+  # # write to progress text file
+  # if ((i/nsims*100) %% 10 == 0) {
+  #   time2.5 <- format(lubridate::now())
   #   
-  #   # get filepaths to save objects to
-  #   filepath1 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
-  #                     '/', nsims, '_N.Rda', sep = '')
-  #   filepath2 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
-  #                     '/', nsims, '_OSR.Rda', sep = '')
-  #   
-  #   # save objects
-  #   sims_N <- NULL
-  #   save(sims_N, file = filepath1)
-  #   
-  #   sims_OSR <- NULL
-  #   save(sims_OSR, file = filepath2)
-  #   
-  #   if (evolution_piv == TRUE) {
+  #   if (evolve == TRUE) {
   #     
-  #     filepath3 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
-  #                       '/',  nsims, '_piv.Rda', sep = '')
+  #     update2 <- paste(time2.5, ' - evolution - ', trait, ' - ', rate, ' - ',
+  #                      TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims,
+  #                      ' sims - ', yrs, ' years - ',  i/nsims*100, '% done!',
+  #                      sep = '')
   #     
-  #     sims_piv <- NULL
-  #     save(sims_piv, file = filepath3)
-  #     
+  #   } else {
+  #     update2 <- paste(time2.5, ' - ', TRT, ' - ', scenario,
+  #                      'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
+  #                      ' years - ',  i/nsims*100, '% done!', sep = '')
   #   }
   #   
-  #   if (evolution_threshold == TRUE) {
-  #     
-  #     filepath4 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
-  #                       '/',  nsims, '_threshold.Rda', sep = '')
-  #     
-  #     sims_threshold <- NULL
-  #     save(sims_threshold, file = filepath4)
-  #     
-  #   }
+  #   write(update2, file = '../output/progress.txt', append = TRUE)
   #   
-  #   update <- paste(lubridate::now(), ' - ', model, ' - ', scenario,
-  #                   'C - beta ', beta, ' - ', nsims, ' sims - ', years,
-  #                   ' years - no SAD, all done!', sep = '')
-  #   write(update, file = '../output/progress.txt', append = TRUE)
-  #   
-  # } else {
-  #   
+  # }
   
-  ##### run sims and save output #############################################
+}
+
+if (conservation_action == TRUE) {
   
-  # run the model for each simulation
-#   for (i in 1:nsims) {
-#     
-#     output <- base_model(scenario, beta, yrs, max_age,
-#                          IF_survival, IM_survival, MF_survival, MM_survival,
-#                          IF_init, IM_init, MF_init, MM_init,
-#                          M, F_remigration_int, M_remigration_int,
-#                          clutches_mu, clutches_sd, eggs_mu, eggs_sd,
-#                          emergence_success_A, emergence_success_k,
-#                          emergence_success_t0, T_piv, k_piv, T_threshold, 
-#                          evolve, trait, max_N, male_probs, contributions, 
-#                          h2, varGenetic, varPhenotypic, G, P,
-#                          temp_mu, climate_stochasticity,
-#                          season_temp_sd, clutch_temp_sd, noise, AC,
-#                          conservation_action, frequency, intensity,
-#                          effect_size)
-#     
-#     # save the output arrays
-#     sims_N[, , , i]             <- output[[1]]
-#     sims_OSR[, i]               <- output[[2]]
-#     
-#     if (evolution == TRUE) {
-#       sims_G_stats[, , , i]       <- output[[3]]
-#       sims_P_stats[, , , i]       <- output[[4]]
-#     }
-#     
-#     # write to progress text file
-#     if ((i/nsims*100) %% 10 == 0) {
-#       time2 <- format(lubridate::now())
-#       update2 <- paste(time2, ' - ', model, ' - ', scenario,
-#                        'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
-#                        ' years - ',  i/nsims*100, '% done!', sep = '')
-#       write(update2, file = '../output/progress.txt', append = TRUE)
-#       
-#     }
-#     
-#   }
+  folder2 <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
+  
+} else { folder2 <- ''}
+
+# get filepaths to save objects to
+filepath1 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta',
+                  beta, '/', nsims, '_N.Rda', sep = '')
+filepath2 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta',
+                  beta, '/', nsims, '_OSR.Rda', sep = '')
+
+# save objects
+save(sims_N, file = filepath1)
+save(sims_OSR, file = filepath2)
+
+if (evolve == TRUE) {
+  
+  filepath3 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta',
+                    beta, '/', nsims, '_G_stats.Rda', sep = '')
+  filepath4 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta',
+                    beta, '/', nsims, '_P_stats.Rda', sep = '')
+  
+  save(sims_G_stats, file = filepath3)
+  save(sims_P_stats, file = filepath4)
+  
+}
+
+# # update progress text file with total time it took to run the thing
+# TIME3 <- lubridate::now()
+# total_time <- format(round(TIME3 - TIME2, 3))
+# 
+# if (evolve == TRUE) {
 #   
-#   if (conservation_action == TRUE) {
-#     
-#     folder2 <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
-#     
-#   } else { folder2 <- ''}
+#   update3 <- paste('evolution - ', trait, ' - ', rate, ' - ', TRT, ' - ',
+#                    scenario, 'C - beta ', beta, ' - ', nsims, ' sims - ',
+#                    yrs, ' years - total time: ', total_time, '\n', sep = '')
 #   
-#   # get filepaths to save objects to
-#   filepath1 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
-#                     folder2, '/', nsims, '_N.Rda', sep = '')
-#   filepath2 = paste('../output/', folder, model, '/', scenario, 'C/beta', beta,
-#                     folder2, '/', nsims, '_OSR.Rda', sep = '')
-#   
-#   # save objects
-#   save(sims_N, file = filepath1)
-#   save(sims_OSR, file = filepath2)
-#   
-#   if (evolution_piv == TRUE) {
-#     
-#     filepath3 = paste('../output/', folder, model, '/', scenario, 'C/beta',
-#                       beta, '/',  nsims, '_piv.Rda', sep = '')
-#     
-#     save(sims_piv, file = filepath3)
-#     
-#   }
-#   
-#   if (evolution_threshold == TRUE) {
-#     
-#     filepath4 = paste('../output/', folder, model, '/', scenario, 'C/beta',
-#                       beta, '/',  nsims, '_threshold.Rda', sep = '')
-#     save(sims_threshold, file = filepath4)
-#     
-#   }
-#   
-#   # update progress text file with total time it took to run the thing
-#   end <- lubridate::now()
-#   total_time <- format(round(end - start, 3))
-#   update3 <- paste(model, ' - ', scenario,
+# } else {
+#   update3 <- paste(TRT, ' - ', scenario,
 #                    'C - beta ', beta, ' - ', nsims, ' sims - ', yrs,
 #                    ' years - total time: ', total_time, '\n', sep = '')
-#   write(update3,
-#         file = '../output/progress.txt', append = TRUE)
-#   
 # }
+# 
+# write(update3,
+#       file = '../output/progress.txt', append = TRUE)

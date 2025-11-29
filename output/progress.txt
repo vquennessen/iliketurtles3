@@ -11,3 +11,23 @@
 evolution - T_piv - effective - narrow - 0.5C - beta 43.7 - 1 sims - 100 years - total time: 48.666 secs
 
 2025-11-28 01:45:25 - evolution - T_piv - effective - wide - 0.5C - beta 43.7 - 1 sims - 100 years
+2025-11-29 11:28:09 - evolution - emergence_success_t0 - high - narrow - 5.5C - beta 2.86 - 100 sims - 100 years
+2025-11-29 11:50:49 - evolution - T_piv - high - narrow - 5.5C - beta 2.86 - 100 sims - 100 years
+2025-11-29 11:58:26 - evolution - T_piv - high - narrow - 5.5C - beta 2.86 - 2 sims - 100 years
+2025-11-29 11:58:33 - evolution - T_piv - high - narrow - 5.5C - beta 2.86 - 2 sims - 100 years - 50% done!
+2025-11-29 11:58:38 - evolution - T_piv - high - narrow - 5.5C - beta 2.86 - 2 sims - 100 years - 100% done!
+2025-11-29 11:59:37 - evolution - T_piv - high - narrow - 5.5C - beta 2.86 - 2 sims - 100 years
+2025-11-29 11:59:43 - evolution - T_piv - high - narrow - 5.5C - beta 2.86 - 2 sims - 100 years - 50% done!
+2025-11-29 11:59:49 - evolution - T_piv - high - narrow - 5.5C - beta 2.86 - 2 sims - 100 years - 100% done!
+2025-11-29 12:00:13 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years
+2025-11-29 12:00:21 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years - 50% done!
+2025-11-29 12:00:27 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years - 100% done!
+2025-11-29 12:01:25 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years
+2025-11-29 12:01:34 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years - 50% done!
+2025-11-29 12:01:41 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years - 100% done!
+2025-11-29 12:02:40 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years
+2025-11-29 12:02:49 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years - 50% done!
+2025-11-29 12:02:56 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years - 100% done!
+evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years - total time: 15.397 secs
+
+2025-11-29 12:25:49 - evolution - T_piv - high - narrow - 3.5C - beta 2.86 - 2 sims - 100 years

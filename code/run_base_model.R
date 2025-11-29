@@ -78,7 +78,7 @@ run_base_model <- function(arguments) {
              3)
   
   F_remigration_int <- 3.87                 # remigration interval - females
-  M_remigration_int <- 1.47                 # remigration interval - males
+  M_remigration_int <- 1.82                 # remigration interval - males
   clutches_mu <- 4.95                       # mean # of clutches/F/season
   clutches_sd <- 2.09                       # sd of # of clutches/F/season
   eggs_mu <- 100.58                         # mean number of eggs/clutch - 100.58

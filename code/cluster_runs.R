@@ -28,8 +28,6 @@ source('reproduction.R')
 source('pop_dynamics.R')
 source('mating function/OSRs_to_betas.R')
 source('evolution.R')
-source('emergence_success.R')
-source('probability_male.R')
 source('conservation.R')
 
 # load in SAD object
@@ -50,9 +48,9 @@ save(init_age_distribution,
 # full set
 TRT <- c('narrow', 'wide')
 evolve <- c(TRUE)
-trait <- c('T_piv', 'emergence_success_t0')
+# trait <- c('T_piv', 'emergence_success_t0')
 rate <- c('effective', 'high')
-scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
+# scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
 OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
 # intensity <- c(0.1, 0.2, 0.3, 0.4, 0.5)
 # frequency <- c(1, 2, 3, 4, 5)
@@ -60,9 +58,9 @@ OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
 # # testing
 # TRT <- c('narrow')
 # evolve <- c(TRUE)
-# trait <- c('emergence_success_t0')
+trait <- c('emergence_success_t0')
 # rate <- c('high')
-# scenarios <- c(0.5, 3.5)
+scenarios <- c(0.5)
 # OSRs <- c(0.45, 0.25)
 
 # conservation?
@@ -76,7 +74,7 @@ yrs <- 100
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
 # number of simulations to run
-nsims <- c(1000)
+nsims <- c(100)
 
 # white or red noise
 noise <- 'white'
@@ -117,7 +115,7 @@ TIME1 <- lubridate::now()
 result <- tryCatch({})
 mclapply(X = arguments,
          FUN = run_base_model,
-         mc.cores = 50)
+         mc.cores = 10)
 
 # lapply(X = arguments,
 #        FUN = run_base_model)

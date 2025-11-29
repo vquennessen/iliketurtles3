@@ -9,6 +9,7 @@ library(viridis)
 library(patchwork)
 library(gridExtra)
 library(tidyr)
+library(readr)
 
 # EDIT dataframes to load up ###################################################
 
@@ -31,7 +32,9 @@ load(paste('~/Projects/iliketurtles3/output/evolution_n', nsims, noise,
 
 # what year to plot
 year_to_plot <- 100
-name_to_use <- paste('evolution_tpiv_effective')
+trait <- 'T_piv'
+rate <- 'effective'
+name_to_use <- paste('evolution', trait, rate, sep = '_')
 
 # dataframe of data to plot
 DF_to_use <- all_outputs %>% 
@@ -72,7 +75,8 @@ fig4A <- ggplot(data = DF_to_use,
   xlab('') +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(), 
-        axis.ticks.x = element_blank())
+        axis.ticks.x = element_blank()) +
+  ggtitle(paste('evolution of ', trait, ' with ', rate, ' heritability', sep = ''))
 
 fig4A
 

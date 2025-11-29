@@ -51,7 +51,7 @@ average_over <- 10
 years <- 1:100
 
 # temperature increase scenarios
-scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
+scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
 
 # operational sex ratios / betas
 osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
@@ -63,9 +63,6 @@ S <- length(scenarios)
 B <- length(betas)
 Y <- length(years)
 numrows <- P*S*B*Y
-
-# initialize plot list
-plot_list <- list()
 
 # initialize super data frame
 SDF <- data.frame(Folder = NULL,
@@ -105,10 +102,10 @@ for (p in 1:P) {
       
       # load in appropriate output file
       
-      G_stats <- paste(user, paths[p, ]$path, '/', scenarios[s], '/beta', 
+      G_stats <- paste(user, paths[p, ]$path, '/', scenarios[s], 'C/beta', 
                             betas[b], '/', nsims, '_G_stats.Rda', sep = '')
       
-      P_stats <- paste(user, paths[p, ]$path, '/', scenarios[s], '/beta', 
+      P_stats <- paste(user, paths[p, ]$path, '/', scenarios[s], 'C/beta', 
                             betas[b], '/', nsims, '_P_stats.Rda', sep = '')
       
       # if the file exists - cluster
@@ -139,7 +136,7 @@ for (p in 1:P) {
       boop <- format(lubridate::now())
       print(paste(boop, ' - ', paths[p, ]$Var2, ' - ', paths[p, ]$Var3, 
                   ' - ', paths[p, ]$Var4, ' - ', scenarios[s],
-                  ' - beta ', betas[b], ' - done - ', prop, 
+                  'C - beta ', betas[b], ' - done - ', prop, 
                   '% of total done!', sep = ''))
       
     }
