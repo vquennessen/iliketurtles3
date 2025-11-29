@@ -30,7 +30,7 @@ user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
                       'C:/Users/vique/Box/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/'))
 
 # name of folder for current runs
-input_folders <- c('2025_11_26_evolution')
+input_folders <- c('2025_11_28_evolution')
 
 # number of sims
 nsims <- 100
@@ -348,7 +348,8 @@ for (p in 1:P) {
           
         }
         
-      } else { print('file does not exist???') }
+      } else { print(paste(paths[p, ]$Var2, paths[p, ]$Var3, paths[p, ]$Var4, 
+                           'file does not exist??? \n', N, sep = ' - '))}
       
     }
     

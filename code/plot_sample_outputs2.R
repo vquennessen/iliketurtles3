@@ -31,7 +31,7 @@ osrs <- c(0.1, 0.35)
 betas <- OSRs_to_betas(osrs)
 
 # filename
-name <- 'evolution_ESt0_effective'
+name <- 'evolution_tpiv_effective'
 
 ##### clean up data ############################################################
 
@@ -54,7 +54,7 @@ examples_to_plot <- all_outputs %>%
                                  ~ '(A) Narrow transitional range', 
                                  TRUE ~ '(B) Wide transitional range')) %>% 
   mutate(TRT = factor(TRT)) %>%
-  filter(Trait == 'emergence_success_t0') %>%
+  filter(Trait == 'T_piv') %>%
   filter(Rate == 'effective')
 
 ##### plot 1: hatchling sex ratios #############################################

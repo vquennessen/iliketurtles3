@@ -31,12 +31,12 @@ load(paste('~/Projects/iliketurtles3/output/evolution_n', nsims, noise,
 
 # what year to plot
 year_to_plot <- 100
-name_to_use <- paste('evolution_ESt0_effective')
+name_to_use <- paste('evolution_tpiv_effective')
 
 # dataframe of data to plot
 DF_to_use <- all_outputs %>% 
   filter(Year == year_to_plot) %>%
-  filter(Trait == 'emergence_success_t0') %>%
+  filter(Trait == 'T_piv') %>%
   filter(Rate == 'effective') %>% 
   mutate(facet_label = case_when(TRT == 'narrow' 
                                    ~ '(A) Narrow transitional range', 

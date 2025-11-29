@@ -1,7 +1,9 @@
 # extract pivotal temperatures
 
+rm(list = ls())
+
 # set working directory
-# setwd('~/Projects/iliketurtles3')
+setwd('~/Projects/iliketurtles3/code')
 
 # source functions
 source('mating function/OSRs_to_betas.R')
@@ -14,165 +16,131 @@ library(tidyr)
 
 ##### to modify ################################################################
 
-# which computer am I using?
-desktop <- FALSE
+# which computer we using
+computer <- 'desktop'
 
-# folder(s)
-stochasticity <- c('temp_stochasticity')
+# red noise?
+red_noise <- FALSE
+
+# path based on computer being used
+user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
+               ifelse(computer == 'desktop',
+                      'C:/Users/Vic/Box/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/',
+                      'C:/Users/vique/Box/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/'))
+
+# name of folder for current runs
+input_folders <- c('2025_11_28_evolution')
+
+# number of sims
+nsims <- 100
+
+# name to save to
+name <- paste('evolution_n', nsims, sep = '')
 
 # model(s)
-models <- c('P_evol_piv', 'P_evol_piv_high_H', 
-            'GM_evol_piv', 'GM_evol_piv_high_H')
+traits <- c('T_piv', 'emergence_success_t0')
+rates <- c('effective', 'high')
+TRTs <- c('narrow', 'wide')
 
-# filepaths
-paths <- as.vector(outer(stochasticity, models, paste, sep="/"))
+paths <- expand.grid(input_folders, TRTs, traits, rates) %>%
+  # mutate(path = paste(Var1, Var2, sep = '/')) 
+  mutate(path = paste(Var1, Var3, Var4, Var2, sep = '/')) 
 
 # years to average over
 average_over <- 10
 years <- 1:100
 
-# plotting model parameters
-nsims <- 10000
-
-# column names for combined heatmap
-populations <- rep(c('West Africa', 'Suriname'), each = length(models)/2)
-
-# row names for combined heatmap
-stochasticity <- rep('temperature stochasticity',
-                     times = length(models))
-
 # temperature increase scenarios
 scenarios <- paste(c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5), 'C', sep = '')
 
 # operational sex ratios / betas
-osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
+osrs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
 betas <- OSRs_to_betas(osrs)
 
 # dimensions
-P <- length(paths)
-M <- length(models)
+P <- nrow(paths)
 S <- length(scenarios)
-OSR <- length(osrs)
+B <- length(betas)
 Y <- length(years)
-
-# clear DF and SDF objects
-# rm(DF)
-# rm(SDF)
+numrows <- P*S*B*Y
 
 # initialize plot list
 plot_list <- list()
 
 # initialize super data frame
-SDF <- data.frame(Stochasticity = NULL, 
-                  Population = NULL, 
-                  Model = NULL,
+SDF <- data.frame(Folder = NULL,
+                  TRT = NULL,
+                  Trait = NULL, 
+                  Rate = NULL, 
                   Scenario = NULL, 
                   OSR = NULL, 
                   Year = NULL,
-                  Piv_mean = NULL,
-                  Piv_median = NULL,
-                  Piv_Q25 = NULL, 
-                  Piv_Q75 = NULL)
+                  G_mean = NULL,
+                  G_median = NULL,
+                  G_var = NULL, 
+                  P_mean = NULL,
+                  P_median = NULL,
+                  P_var = NULL)
 
 for (p in 1:P) {
   
   for (s in 1:S) {
     
-    for (osr in 1:OSR) {
+    for (b in 1:B) {
       
       # initialize empty dataframe, one for each filepath
-      DF <- data.frame(Stochasticity = stochasticity[1], 
-                       Population = populations[p], 
-                       Model = models[p],
-                       Scenario = scenarios[s], 
-                       OSR = osrs[osr], 
-                       Year = years, 
-                       Piv_mean = NA,
-                       Piv_median = NA,
-                       Piv_Q25 = NA, 
-                       Piv_Q75 = NA)
+      sub_DF <- data.frame(Folder = rep(paths[p, ]$Var1, Y),
+                           TRT = rep(paths[p, ]$Var2, Y),
+                           Trait = rep(paths[p, ]$Var3, Y),
+                           Rate = rep(paths[p, ]$Var4, Y),
+                           Scenario = rep(scenarios[s], Y),
+                           Beta = rep(betas[b], Y),
+                           Year = years, 
+                           G_mean = rep(NA, Y),
+                           G_median = rep(NA, Y),
+                           G_var = rep(NA, Y), 
+                           P_mean = rep(NA, Y),
+                           P_median = rep(NA, Y),
+                           P_var = rep(NA, Y))
       
       # load in appropriate output file
       
-      if (desktop == TRUE) { user <- 'Vic' } else { user <- 'vique' }
+      G_stats <- paste(user, paths[p, ]$path, '/', scenarios[s], '/beta', 
+                            betas[b], '/', nsims, '_G_stats.Rda', sep = '')
       
-      # # if the file exists - desktop or laptop
-      # if (file.exists(paste('C:/Users/', user, 
-      #                       '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-      #                       paths[p], '/', scenarios[s], '/beta', 
-      #                       betas[osr], '/', nsims, '_', abundances[1], '.Rda', 
-      #                       sep = '')) 
-      #     
-      #     &
-      #     
-      #     file.exists(paste('C:/Users/', user, 
-      #                       '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-      #                       paths[p], '/', scenarios[s], '/beta', 
-      #                       betas[osr], '/', nsims, '_', abundances[2], '.Rda', 
-      #                       sep = ''))
-      #     
-      # )  {
-      #   
-      #   # load in total abundance object
-      #   load(paste('C:/Users/', user, 
-      #              '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-      #              paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
-      #              '_', abundances[1], '.Rda', sep = ''))
-      #   
-      #   # load in mature abundance object
-      #   load(paste('C:/Users/', user, 
-      #              '/Box Sync/Quennessen_Thesis/PhD Thesis/model output/',
-      #              paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
-      #              '_', abundances[2], '.Rda', sep = ''))
-      #   
-      # }
+      P_stats <- paste(user, paths[p, ]$path, '/', scenarios[s], '/beta', 
+                            betas[b], '/', nsims, '_P_stats.Rda', sep = '')
       
       # if the file exists - cluster
-      if (file.exists(paste('/home/quennessenv/iliketurtles3/output/',
-                            paths[p], '/', scenarios[s], '/beta', 
-                            betas[osr], '/', nsims, '_piv.Rda', sep = '')) 
-          
-          &
-          
-          file.exists(paste('/home/quennessenv/iliketurtles3/output/',
-                            paths[p], '/', scenarios[s], '/beta', 
-                            betas[osr], '/', nsims, '_piv.Rda', 
-                            sep = ''))
-          
-      )  {
+      if (file.exists(G_stats) & file.exists(P_stats))  {
         
-        # load in total abundance object
-        load(paste('/home/quennessenv/iliketurtles3/output/',
-                   paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
-                   '_piv.Rda', sep = ''))
+        # load in genetics stats
+        load(G_stats)
         
-        # load in mature abundance object
-        load(paste('/home/quennessenv/iliketurtles3/output/',
-                   paths[p], '/', scenarios[s], '/beta', betas[osr], '/', nsims, 
-                   '_piv.Rda', sep = ''))
+        # load in phenotypes stats
+        load(P_stats)
         
       }
-      
-      # replace Inf and NaN with NA
-      sims_piv[!is.finite(sims_piv)] <- NA
-      
-      # calculate pivotal temps for hatchlings for each year for each simulation
 
-      # add average lambdas across simulations to DF
-      DF$Piv_mean[1:Y] <- rowMeans(sims_piv, na.rm = TRUE)
+      # extract mean g stats for hatchlings by year, across simulations
+      sub_DF$G_mean <- rowMeans(sims_G_stats[1:2, 1, , 1, ], na.rm = TRUE)
+      sub_DF$G_median <- rowMeans(sims_G_stats[1:2, 1, , 2, ], na.rm = TRUE)
+      sub_DF$G_var <- rowMeans(sims_G_stats[1:2, 1, , 3, ], na.rm = TRUE)
       
-      DF$Piv_median[1:Y] <- rowMedians(sims_piv, na.rm = TRUE)
-
-      DF$Piv_Q25[1:Y] <- rowQuantiles(sims_piv, prob = c(0.25), na.rm = TRUE)
-      
-      DF$Piv_Q75[1:Y] <- rowQuantiles(sims_piv, prob = c(0.75), na.rm = TRUE)
+      # extract mean p stats for hatchlings by year, across simulations
+      sub_DF$P_mean <- rowMeans(sims_P_stats[1:2, 1, , 1, ], na.rm = TRUE)
+      sub_DF$P_median <- rowMeans(sims_P_stats[1:2, 1, , 2, ], na.rm = TRUE)
+      sub_DF$P_var <- rowMeans(sims_P_stats[1:2, 1, , 3, ], na.rm = TRUE)
       
       # add DF to SDF
-      SDF <- rbind(SDF, DF)
+      SDF <- rbind(SDF, sub_DF)
       
-      # print progress update
-      print(paste(Sys.time(), ' - ', models[p], ' - ', scenarios[s], ' - beta ', 
-                  betas[osr], ' pivotal temps all done!', sep = ''))
+      prop <- round(nrow(SDF) / (numrows) * 100, 2)
+      boop <- format(lubridate::now())
+      print(paste(boop, ' - ', paths[p, ]$Var2, ' - ', paths[p, ]$Var3, 
+                  ' - ', paths[p, ]$Var4, ' - ', scenarios[s],
+                  ' - beta ', betas[b], ' - done - ', prop, 
+                  '% of total done!', sep = ''))
       
     }
     
@@ -180,11 +148,8 @@ for (p in 1:P) {
   
 }
 
-pivotal_temps <- SDF
+traits <- SDF
 
-# # save dataframe as R object - desktop or laptop
-# save(pivotal_temps, file = paste('~/Projects/iliketurtles3/output/pivotal_temperatures.Rdata', 
-#                            sep = ''))
-
-# save dataframe as R object - cluster
-save(pivotal_temps, file = '/home/quennessenv/iliketurtles3/output/pivotal_temperatures.Rdata')
+# save dataframe as R object
+save(traits, 
+     file = '../output/evolution_trait_values.Rdata')
