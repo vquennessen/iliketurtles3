@@ -15,32 +15,36 @@ source('initialize_population_test.R')
 source('reproduction.R')
 source('pop_dynamics.R')
 source('mating function/OSRs_to_betas.R')
-source('emergence_success.R')
-source('probability_male.R')
 source('run_base_model.R')
 source('base_model.R')
 source('initialize_arrays.R')
-source('initialize_population.R')
 source('mating function/OSRs_to_betas.R')
 source('evolution.R')
-source('conservation.R')
 
 # models
-models <- c('P_base', 'GM_base')
+TRTs <- c('narrow', 'wide')
 
 # beta values to get full fertilization of females
-OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3)
+OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
+# evolution
+evolution <- c(TRUE)
+trait <- c('T_piv', 'emergence_success_t0')
+rate <- c('effective', 'high')
+
 # number of simulations to run
-num_sims <- c(10)
+num_sims <- c(1)
 
 # years to run the model for
 burn_ins <- c(500)
 
 # make dataframe of all combinations of arguments
-DF <- expand.grid(models,
+DF <- expand.grid(TRTs,
                   betas,
+                  evolution, 
+                  trait, 
+                  rate, 
                   num_sims,
                   burn_ins) %>%
   arrange(Var3, desc(Var2))

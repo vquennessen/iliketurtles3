@@ -57,8 +57,8 @@ examples_to_plot <- all_outputs %>%
                                  ~ '(A) Narrow transitional range', 
                                  TRUE ~ '(B) Wide transitional range')) %>% 
   mutate(TRT = factor(TRT)) %>%
-  filter(Trait == 'T_piv') %>%
-  filter(Rate == 'effective')
+  filter(Trait == trait) %>%
+  filter(Rate == rate)
 
 ##### plot 1: hatchling sex ratios #############################################
 
@@ -75,23 +75,11 @@ HSR <- examples_to_plot %>%
   scale_color_manual(values = c('#00BFC4', '#F8766D'),
                      name = 'Emergence \n success') +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  geom_line(aes(x = Year,
-                y = Ideal_PSR,
-                lty = Mating_Function),
-            col = 'black',
-            show.legend = FALSE) +
   geom_path(aes(col = Scenario, 
                 lty = Mating_Function), 
             linewidth = 0.75, 
             show.legend = FALSE) +
   scale_linetype_manual(values = c(1, 2)) +
-  geom_point(data = examples_to_plot %>% filter(Year %% 3 == 0), 
-             aes(x = Year, 
-                 y = Emergence_Success, 
-                 col = Scenario, 
-                 fill = Scenario), 
-             shape = 3,
-             size = 1) +
   facet_grid(cols = vars(TRT)) +
   ylab("(A) Median \n hatchling sex ratio") +
   theme_bw() +

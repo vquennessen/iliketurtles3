@@ -11,7 +11,7 @@ base_model <- function(scenario, beta, yrs, max_age,
                        h2, varGenetic, varPhenotypic, 
                        temp_mu, climate_stochasticity,
                        season_temp_sd, clutch_temp_sd, noise, AC,
-                       conservation_action, frequency, intensity, effect_size) {
+                       conserve, frequency, intensity, effect_size) {
   
   ##### source initialized arrays ##############################################
   # seed <- 1325633
@@ -24,7 +24,7 @@ base_model <- function(scenario, beta, yrs, max_age,
                                    season_temp_sd, clutch_temp_sd, noise, AC, 
                                    evolve, trait, value, 
                                    varGenetic, varPhenotypic,
-                                   conservation_action, frequency)
+                                   conserve, frequency)
   
   N                  <- init_output[[1]]   # population size array
   season_temp_mus    <- init_output[[2]]   # mean temps at the season level
@@ -65,7 +65,7 @@ base_model <- function(scenario, beta, yrs, max_age,
                                evolve, trait, male_probs, contributions,
                                h2, varGenetic, varPhenotypic, 
                                G, P, G_stats, P_stats,
-                               conservation_action, conservation_years, 
+                               conserve, conservation_years, 
                                intensity, effect_size)
     
     # add recruits to population size array

@@ -27,7 +27,7 @@ load("~/Projects/iliketurtles3/output/ideals.Rdata")
 # EDIT #########################################################################
 
 # load data object
-load(paste('~/Projects/iliketurtles3/output/evolution_n', nsims, noise, 
+load(paste('~/Projects/iliketurtles3/output/2025_11_30_evolution_n', nsims, noise, 
            '_all_outputs.Rdata', sep = ''))
 
 # what year to plot
@@ -39,8 +39,8 @@ name_to_use <- paste('evolution', trait, rate, sep = '_')
 # dataframe of data to plot
 DF_to_use <- all_outputs %>% 
   filter(Year == year_to_plot) %>%
-  filter(Trait == 'T_piv') %>%
-  filter(Rate == 'effective') %>% 
+  filter(Trait == trait) %>%
+  filter(Rate == rate) %>% 
   mutate(facet_label = case_when(TRT == 'narrow' 
                                    ~ '(A) Narrow transitional range', 
                                  TRUE ~ '(B) Wide transitional range')) %>%

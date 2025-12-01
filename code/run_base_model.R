@@ -6,36 +6,45 @@ run_base_model <- function(arguments) {
   ###### model inputs ##########################################################
   
   # function arguments
-  noise               <- arguments$Var1
-  TRT                 <- arguments$Var2
-  scenario            <- arguments$Var3
-  beta                <- arguments$Var4
-  yrs                 <- arguments$Var5
-  nsims               <- arguments$Var6
-  evolve              <- arguments$Var7
-  trait               <- arguments$Var8 
-  rate                <- arguments$Var9
-  conservation_action <- arguments$Var10
-  intensity           <- arguments$Var11
-  frequency           <- arguments$Var12
-  folder              <- arguments$Var13
+  noise     <- arguments$Var1
+  TRT       <- arguments$Var2
+  scenario  <- arguments$Var3
+  beta      <- arguments$Var4
+  yrs       <- arguments$Var5
+  nsims     <- arguments$Var6
+  evolve    <- arguments$Var7
+  trait     <- arguments$Var8 
+  rate      <- arguments$Var9
+  conserve  <- arguments$Var10
+  intensity <- arguments$Var11
+  frequency <- arguments$Var12
+  folder    <- arguments$Var13
   
   # load in init age distribution (can't pass it as an argument anymore???)
   load('../output/init_age_distribution.Rdata')
   
   # write to progress text file
-  TIME2 <- lubridate::now()
-  time2 <- format(TIME2)
-  
-  if (evolve == TRUE) {
+  TIME2 <- format(lubridate::now())
+
+  if (evolve == TRUE | conserve == TRUE) {
     
-    update1 <- paste(time2, ' - evolution - ', trait, ' - ', rate, ' - ', 
+    if (evolve == TRUE) {
+    
+    update1 <- paste(TIME2, ' - evolution - ', trait, ' - ', rate, ' - ', 
                      TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
                      ' sims - ', yrs, ' years', sep = '')
     
+    } else {
+      
+      update1 <- paste(TIME2, ' - conservation - i', intensity, ' - F', 
+                       frequency, ' - ', TRT, ' - ', scenario, 'C - beta ', 
+                       beta, ' - ', nsims, ' sims - ', yrs, ' years', sep = '')
+      
+    }
+    
   } else {
   
-  update1 <- paste(time2, ' - ', TRT, ' - ', scenario, 'C - beta ', beta, 
+  update1 <- paste(TIME2, ' - ', TRT, ' - ', scenario, 'C - beta ', beta, 
                    ' - ', nsims, ' sims - ', yrs, ' years', sep = '')
   }
   
@@ -138,6 +147,8 @@ run_base_model <- function(arguments) {
     
     if (trait == 'T_piv') {
       
+      value <- T_piv
+      
       if (rate == 'effective') { 
         h2 <- 0.221
         varGenetic <- 0.926
@@ -146,8 +157,12 @@ run_base_model <- function(arguments) {
         h2 <- 0.576
         varGenetic <- 2.41 }
       
-      # or, if the evolvable trait is the emergence success midpoint (t0)
-    } else {
+    } 
+      
+    # or, if the evolvable trait is the emergence success midpoint (t0)
+    if (trait == 'emergence_success_t0') {
+      
+      value <- emergence_success_t0
       
       if (rate == 'effective') { 
         h2 <- 0.75
@@ -161,21 +176,7 @@ run_base_model <- function(arguments) {
     
     # phenotypic variance, error term for offspring phenotype, one for each year
     varPhenotypic <- varGenetic / h2  
-    
-    # which trait is evolving?
-    value <- ifelse(trait == 'T_piv', 
-                    T_piv, 
-                    emergence_success_t0)
-    
-    # fancy list things to make dimensions match up for year 1
-    # A <- apply(N[, , 1], c(1, 2), rnorm, mean = value, sd = sqrt(varGenetic))
-    # https://stackoverflow.com/questions/43415577/equalizing-the-lengths-of-all-the-lists-within-a-list
-    # G[, , ] <- aperm(array(unlist(lapply(lapply(sapply(A, unlist), 
-    #                                    "length<-", max_N), 
-    #                             as.list)), 
-    #                        dim = c(max_N, 4, max_age)), 
-    #                    c(2, 3, 1))
-    
+
     # genotype and phenotype summary stats, dimensions sex * age * year * # stats
     sims_G_stats <- array(rep(NA, times = 4 * max_age * yrs * 3 * nsims), 
                           dim = c(4, max_age, yrs, 3, nsims))
@@ -199,9 +200,7 @@ run_base_model <- function(arguments) {
   ##### conservation #############################################################
   
   # if conservation is TRUE    
-  effect_size <- ifelse(conservation_action == TRUE,
-                        1.3,
-                        NA)
+  effect_size <- ifelse(conserve == TRUE, 1.3, NA)
   
   ##### initialize output ######################################################
   
@@ -228,8 +227,7 @@ run_base_model <- function(arguments) {
                          h2, varGenetic, varPhenotypic, 
                          temp_mu, climate_stochasticity,
                          season_temp_sd, clutch_temp_sd, noise, AC,
-                         conservation_action, frequency, intensity,
-                         effect_size)
+                         conserve, frequency, intensity, effect_size)
     
     # save the output arrays
     sims_N[, , , i]             <- output[[1]]
@@ -262,13 +260,7 @@ run_base_model <- function(arguments) {
     }
     
   }
-  
-  if (conservation_action == TRUE) {
-    
-    folder2 <- paste('/freq_', frequency, '_intensity_', intensity, sep = '')
-    
-  } else { folder2 <- ''}
-  
+
   # get filepaths to save objects to
   filepath1 = paste('../output/', folder, '/',  TRT, '/', scenario, 'C/beta', 
                     beta, '/', nsims, '_N.Rda', sep = '')
@@ -295,11 +287,22 @@ run_base_model <- function(arguments) {
   TIME3 <- lubridate::now()
   total_time <- format(round(TIME3 - TIME2, 3))
   
-  if (evolve == TRUE) {
+  if (evolve == TRUE | conserve == TRUE) {
+    
+    if (evolve == TRUE) {
     
     update3 <- paste('evolution - ', trait, ' - ', rate, ' - ', TRT, ' - ', 
                      scenario, 'C - beta ', beta, ' - ', nsims, ' sims - ', 
                      yrs, ' years - total time: ', total_time, '\n', sep = '')
+    
+    } else {
+      
+      update3 <- paste('conservation - i', intensity, ' - F', frequency, ' - ', 
+                       TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
+                       ' sims - ', yrs, ' years - total time: ', total_time, 
+                       '\n', sep = '')
+      
+    }
     
   } else {
     update3 <- paste(TRT, ' - ', scenario,

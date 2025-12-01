@@ -7,7 +7,7 @@ initialize_arrays <- function(scenario, yrs, max_age,
                               temp_mu, climate_stochasticity, 
                               season_temp_sd, clutch_temp_sd, noise, AC, 
                               evolve, trait, value, varGenetic, varPhenotypic,
-                              conservation_action, frequency) {
+                              conserve, frequency) {
   
   ##### population size ########################################################
   
@@ -167,7 +167,7 @@ initialize_arrays <- function(scenario, yrs, max_age,
   
   ##### conservation ###########################################################
   
-  if (conservation_action == TRUE) {
+  if (conserve == TRUE) {
     
     conservation_years <- seq(from = 1, by = frequency, length = yrs)
     

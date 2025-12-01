@@ -4,7 +4,7 @@
 rm(list = ls())
 
 # set working directory
-setwd('~/Projects/iliketurtles3/code')
+# setwd('~/Projects/iliketurtles3/code')
 
 # load libraries
 library(matrixStats)
@@ -18,7 +18,7 @@ library(magrittr)
 source('mating function/OSRs_to_betas.R')
 
 # which computer we using
-computer <- 'desktop'
+computer <- 'cluster'
 
 # red noise?
 red_noise <- FALSE
@@ -30,13 +30,13 @@ user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
                       'C:/Users/vique/Box/Quennessen_Thesis/PhD Thesis/model output/iliketurtles3/'))
 
 # name of folder for current runs
-input_folders <- c('2025_11_28_evolution')
+input_folders <- c('2025_11_30_evolution')
 
 # number of sims
 nsims <- 100
 
 # name to save to
-name <- paste('evolution_n', nsims, sep = '')
+name <- paste(input_folders, '_n', nsims, sep = '')
 
 # model(s)
 traits <- c('T_piv', 'emergence_success_t0')

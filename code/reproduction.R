@@ -10,8 +10,7 @@ reproduction <- function(N, M, y, beta, max_age,
                          evolve, trait, male_probs, contributions,
                          h2, varGenetic, varPhenotypic, 
                          G, P, G_stats, P_stats,
-                         conservation_action, conservation_years, 
-                         intensity, effect_size) {
+                         conserve, conservation_years, intensity, effect_size) {
   
   # breeding females this year
   n_available_F <- sum(rbinom(n = max_age, 
@@ -22,12 +21,6 @@ reproduction <- function(N, M, y, beta, max_age,
   n_available_M <- sum(rbinom(n = max_age, 
                         size = N[4, , y], 
                         prob = 1 / M_remigration_int), na.rm = TRUE)
-  
-  # # number of breeding females this year
-  # n_available_F <- sum(as.numeric(available_F), na.rm = TRUE)
-  # 
-  # # number of breeding males this year
-  # n_available_M <- sum(as.numeric(available_M), na.rm = TRUE)
   
   # check that there is at least one available female and one available male
   if (n_available_F < 1 | n_available_M < 1) {
@@ -92,7 +85,7 @@ reproduction <- function(N, M, y, beta, max_age,
         lapply(pmax, 0)
       
       # adjust clutch temperatures based on conservation measures
-      if (conservation_action == TRUE & y %in% conservation_years) {
+      if (conserve == TRUE & y %in% conservation_years) {
         
         clutch_temps <- conservation(initial_temps = clutch_temps, 
                                      intensity = intensity, 
@@ -138,8 +131,6 @@ reproduction <- function(N, M, y, beta, max_age,
              return(a)
            }
          ) %>% lapply(pmax, 0)
-        
-        # v_probs_emerged <- unlist(probs_emerged)
         
         # list of probabilities of developing as male, one for each clutch
         # set.seed(seed)

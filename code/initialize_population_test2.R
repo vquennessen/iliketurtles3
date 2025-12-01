@@ -3,19 +3,28 @@
 initialize_population_test2 <- function(arguments) {
   
   # pull model parameters from arguments list (varies)
-  model              <- arguments$Var1
-  beta               <- arguments$Var2
-  burn_in            <- arguments$Var3
-  temp_stochasticity <- arguments$Var4
-  nsims              <- arguments$Var5
+  # trt                <- arguments$Var1
+  # beta               <- arguments$Var2
+  # evolution          <- arguments$Var3
+  # trait              <- arguments$Var4
+  # rate               <- arguments$Var5
+  # burn_in            <- arguments$Var6
+  # nsims              <- arguments$Var7
+  
+  trt        <- 'narrow'
+  beta       <- 1.17
+  evolve     <- TRUE
+  trait      <- 'T_piv'
+  rate       <- 'high'
+  burn_in    <- 50
+  nsims      <- 2
+  
+  # stricter sample function
+  resample <- function(x, ...) x[sample.int(length(x), ...)]
   
   # model parameters (always the same)
   sexes   <- c('IF', 'IM', 'MF', 'MM')
   S <- length(sexes)
-  
-  # temp stochasticity for file names
-  TS1 <- ifelse(temp_stochasticity == TRUE, ' - TS - ', ' - ')
-  TS2 <- ifelse(temp_stochasticity == TRUE, 'TS_', '')
   
   # model parameters to modulate
   temp_mu <- 31.8                         # base incubation temp mean
@@ -55,10 +64,12 @@ initialize_population_test2 <- function(arguments) {
   T_piv <- 29.4                             # thermal reaction norm midpoint
   T_threshold <- 35                         # lethal temperature threshold
   
+  temp_mu <- 31.8                         # base incubation temp mean
+  season_temp_sd <- 0.364                 # variance in temp at season level
+  clutch_temp_sd <- 0.790                 # variance in temp at clutch level
+  
   # thermal reaction norm values
-  k_piv <- ifelse(model %in% c('P_base', 'P_evol_piv', 'P_evol_piv_high_H', 
-                               'P_evol_threshold', 'P_evol_threshold_high_H', 
-                               'P_conservation'), 
+  k_piv <- ifelse(trt == 'narrow', 
                   -1.54, 
                   -0.77)
   
@@ -67,6 +78,70 @@ initialize_population_test2 <- function(arguments) {
                    mean = age_maturity_mu, 
                    sd = age_maturity_sd), 
              3)  
+  
+  if (evolve == TRUE) {
+    
+    # probabilities of females mating with 1-10 males
+    male_probs <- c(0.188, 0.280, 0.236, 0.150, 0.080, 
+                    0.038, 0.017, 0.007, 0.003, 0.001)
+    
+    # male fertilization contributions
+    raw_contributions <- 0.687 * (c(1:10))^(-1.710)
+    
+    contributions <- list(1)
+    
+    for (i in 2:length(raw_contributions)) {
+      
+      contributions[i] <- list(c(
+        raw_contributions[1:i]/sum(raw_contributions[1:i])))
+      
+    }
+    
+    if (trait == 'T_piv') {
+      
+      if (rate == 'effective') { 
+        h2 <- 0.221
+        varGenetic <- 0.926
+        
+      } else { 
+        h2 <- 0.576
+        varGenetic <- 2.41 }
+      
+    } 
+    
+    # or, if the evolvable trait is the emergence success midpoint (t0)
+    if (trait == 'emergence_success_t0') {
+      
+      if (rate == 'effective') { 
+        h2 <- 0.75
+        varGenetic <- 1.19
+        
+      } else { 
+        h2 <- 0.88
+        varGenetic <- 1.39 }
+      
+    }
+    
+    # phenotypic variance, error term for offspring phenotype, one for each year
+    varPhenotypic <- varGenetic / h2  
+    
+    # which trait is evolving?
+    value <- ifelse(trait == 'T_piv', 
+                    T_piv, 
+                    emergence_success_t0)
+    
+  } else {
+    
+    value                 <- NULL
+    h2                    <- NULL
+    varGenetic            <- NULL
+    varPhenotypic         <- NULL
+    G                     <- NULL
+    P                     <- NULL
+    male_probs            <- NULL
+    contributions         <- NULL
+    
+  }
   
   ##### initialize population ##################################################
   
@@ -77,12 +152,22 @@ initialize_population_test2 <- function(arguments) {
   # immature ogive
   Mi <- 1 - M
   
+  ##### first update ###########################################################
+  
   # write to progress text file
-  start <- lubridate::now()
-  time1 <- format(start)
-  update1 <- paste(time1, ' - ', model, TS1, 'beta ', beta, ' - ', burn_in, 
-                   ' burn-in years - ', nsims, ' sims', sep = '')
+  TIME1 <- format(lubridate::now())
+  
+  if (evolve == TRUE) {
+    update1 <- paste(TIME1, ' - evolution - ', trait, ' - ', rate, ' - ', 
+                     trt, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
+                     ' sims - ', yrs, ' burn-in years', sep = '')
+  } else {
+    update1 <- paste(TIME1, ' - ', trt, ' - ', scenario, 'C - beta ', beta, 
+                     ' - ', nsims, ' sims - ', yrs, ' burn-in years', sep = '')
+  }
   write(update1, file = '../output/SAD_progress.txt', append = TRUE)
+  
+  ##############################################################################
   
   # initial pop size
   N[1, 1, 1] <- 1000
@@ -93,253 +178,161 @@ initialize_population_test2 <- function(arguments) {
   N[4, 2:max_age, 1] <- round(1 * M[2:max_age])
   
   # initialize results dataframe
-  SAD <- data.frame(Model = rep(model, each = S * max_age), 
-                    Beta = rep(beta, each = S * max_age),
-                    Year = rep(1, times = S * max_age),
-                    Sex = rep(sexes, each = max_age),
-                    Age = rep(1:max_age, times = S),
-                    Abundance = NA,
-                    Proportion = NA,
-                    PSR = NA, 
-                    OSR = NA
+  SAD <- data.frame(TRT = NULL, 
+                    Beta = NULL,
+                    Evolution = NULL,
+                    Trait = NULL,
+                    Rate = NULL,
+                    Year = NULL,
+                    Sex = NULL,
+                    Age = NULL,
+                    Abundance = NULL,
+                    Proportion = NULL, 
+                    PSR = NULL,
+                    OSR = NULL, 
+                    G_mean = NULL, 
+                    P_mean = NULL
   )
-  
-  # abundance by age
-  SAD$Abundance <- c(N[1, , 1], N[2, , 1], N[3, , 1], N[4, , 1])
-  
-  # total population size in year 1
-  total <- sum(N[, , 1], na.rm = TRUE)
-  
-  # add proportions to SAD
-  SAD$Proportion <- c(N[1, , 1]/total, 
-                      N[2, , 1]/total, 
-                      N[3, , 1]/total, 
-                      N[4, , 1]/total)
-  
-  SAD$PSR <- rep(sum(N[2, 1, 1], na.rm = TRUE) / 
-                   sum(N[1:2, 1, 1], na.rm = TRUE), 
-                 times = S * max_age)
   
   for (i in 1:nsims) {
     
-    if (temp_stochasticity == FALSE) {
+    # initialize results dataframe
+    sub1_SAD <- data.frame(TRT =        rep(trt, S * max_age), 
+                           Beta =       rep(beta, S * max_age),
+                           Evolution =  rep(evolve, S * max_age),
+                           Trait =      rep(trait, S * max_age),
+                           Rate =       rep(rate, S * max_age),
+                           Year =       rep(1, S * max_age),
+                           Sex =        rep(sexes, each = max_age),
+                           Age =        rep(1:max_age, times = S),
+                           Abundance =  rep(NA, S * max_age),
+                           Proportion = rep(NA, S * max_age), 
+                           PSR =        rep(NA, S * max_age),
+                           OSR =        rep(NA, S * max_age), 
+                           G_mean =     rep(NA, S * max_age),
+                           G_var =      rep(NA, S * max_age),
+                           P_mean =     rep(NA, S * max_age), 
+                           P_var =      rep(NA, S * max_age),
+                           
+    )
+    
+    # abundance by age
+    sub1_SAD$Abundance <- c(N[1, , 1], N[2, , 1], N[3, , 1], N[4, , 1])
+    
+    # total population size in year 1
+    total <- sum(N[, , 1], na.rm = TRUE)
+    
+    # add proportions to SAD
+    sub1_SAD$Proportion <- c(N[1, , 1]/total, 
+                             N[2, , 1]/total, 
+                             N[3, , 1]/total, 
+                             N[4, , 1]/total)
+    
+    sub1_SAD$PSR <- rep(sum(N[2, 1, 1], na.rm = TRUE) / 
+                          sum(N[1:2, 1, 1], na.rm = TRUE), 
+                        times = S * max_age)
+    
+    ##### initialize population ################################################
+    
+    # seasonal average clutch temperatures
+    season_temp_mus <- rnorm(n = burn_in, 
+                             mean = temp_mu, 
+                             sd = season_temp_sd)
+    
+    G <- lapply(t(N[, , 1]), rnorm, mean = value, sd = sqrt(varGenetic))
+    sub1_SAD$G_mean <- unlist(lapply(G, mean, na.rm = TRUE))
+    sub1_SAD$G_var <- unlist(lapply(G, var, na.rm = TRUE))
+    
+    P <- lapply(G, function(x) 
+      rnorm(n = length(unlist(x)), mean = x, sd = sqrt(varPhenotypic)))
+    sub1_SAD$P_mean <- unlist(lapply(P, mean, na.rm = TRUE))
+    sub1_SAD$P_var <- unlist(lapply(P, var, na.rm = TRUE))
+    
+    # move population forward in time burn_in years
+    for (y in 2:burn_in) {  
       
-      # calculate expected emergence success (no temp stochasticity)
-      emergence_success <- emergence_success_A / 
-        (1 + exp(-emergence_success_k * (temp_mu - emergence_success_t0)))
+      # initialize results dataframe
+      sub2_SAD <- data.frame(TRT = rep(trt, S * max_age), 
+                            Beta = rep(beta, S * max_age),
+                            Evolution = rep(evolve, S * max_age),
+                            Trait = rep(trait, S * max_age),
+                            Rate = rep(rate, S * max_age),
+                            Year = rep(y, S * max_age),
+                            Sex = rep(sexes, each = max_age),
+                            Age = rep(1:max_age, times = S),
+                            Abundance = NA,
+                            Proportion = NA, 
+                            PSR = NA,
+                            OSR = NA, 
+                            G_mean = NA, 
+                            G_var = NA,
+                            P_mean = NA, 
+                            P_var = NA,
+      )
       
-      # probability of each hatchling developing as male (no temp stochasticity)
-      probs_male <- 1 / (1 + exp(-k_piv * (temp_mu - (T_piv))))
+      ##### population dynamics ##############################################
       
-      # move population forward in time burn_in years
-      for (y in 2:burn_in) {
-        
-        # initialize results dataframe
-        sub_SAD <- data.frame(Model = rep(model, S * max_age), 
-                              Beta = rep(beta, S * max_age),
-                              Year = rep(y, S * max_age),
-                              Sex = rep(sexes, each = max_age),
-                              Age = rep(1:max_age, times = S),
-                              Abundance = NA, 
-                              Proportion = NA,,
-                              Prop_10yr_median = NA, 
-                              PSR = NA,
-                              OSR = NA
-        )
-        
-        # population dynamics
-        
-        # immature females that survived
-        immature_survived_F <- round(
-          (N[1, 1:(max_age - 1), y - 1]) * IF_survival[1:(max_age - 1)])
-        
-        # immature females that matured
-        new_mature_F <- round(immature_survived_F * M[1:(max_age - 1)])
-        
-        # updated immature female population
-        N[1, 2:max_age, y] <- as.numeric(immature_survived_F) -
-          as.numeric(new_mature_F)
-        
-        # mature females that survived
-        mature_survived_F <- round(N[3, 1:(max_age - 1), y - 1] * MF_survival)
-        
-        # updated mature female population
-        N[3, 2:max_age, y] <- mature_survived_F + new_mature_F
-        
-        # immature males that survived
-        immature_survived_M <- round(
-          (N[2, 1:(max_age - 1), y - 1]) * IM_survival[1:(max_age - 1)])
-        
-        # immature males that matured
-        new_mature_M <- round(immature_survived_M * M[1:(max_age - 1)])
-        
-        # updated immature male population
-        N[2, 2:max_age, y] <- immature_survived_M - new_mature_M
-        
-        # mature males that survived
-        mature_survived_M <- round(N[4, 1:(max_age - 1), y - 1] * MM_survival)
-        
-        # updated mature male population
-        N[4, 2:max_age, y] <- mature_survived_M + new_mature_M
-        
-        # breeding females this year
-        n_available_F <- round(
-          sum(mature_survived_F, na.rm = TRUE) / F_remigration_int)
-        
-        # breeding males this year
-        n_available_M <- round(
-          sum(mature_survived_M, na.rm = TRUE) / M_remigration_int)
-        
-        # check that there are at least 1 available male and female for breeding
-        if (n_available_F < 1 | n_available_M < 1) {
-          
-          female_hatchlings <- 0
-          male_hatchlings <- 0 
-          hatchlings <- 0
-          PSR <- 0
-          
-        } else {
-          
-          # operational sex ratio - proportion of males
-          OSR <- n_available_M / (n_available_M + n_available_F)
-          
-          # calculate reproductive success
-          breeding_success <- pbeta(2 * OSR, shape1 = 1, shape2 = beta) 
-          
-          # how many females actually find a male to mate with and then nest
-          n_breeding_F <- round(n_available_F * breeding_success)
-          
-          # check that there is at least one female that will successfully breed
-          if (n_breeding_F < 1) {
-            
-            female_hatchlings <- 0
-            male_hatchlings <- 0 
-            hatchlings <- 0
-            PSR <- 0
-            
-          } else {
-            
-            # number of clutches total
-            clutches <- sum(round(rep(clutches_mu, times = n_breeding_F)), 
-                            na.rm = TRUE)
-            
-            # number of male hatchlings
-            male_hatchlings <- clutches * round(
-              round(round(eggs_mu) * emergence_success) * probs_male)
-            
-            # number of female hatchlings
-            # female_hatchlings <- sum(hatchlings) - male_hatchlings
-            female_hatchlings <- clutches * round(
-              round(round(eggs_mu) * emergence_success) * (1 - probs_male))
-            
-          }
-          
-        }
-        
-        # add hatchlings to N
-        N[1, 1, y] <- female_hatchlings
-        N[2, 1, y] <- male_hatchlings
-        
-        # add population abundances
-        sub_SAD$Abundance <- c(N[1, , y], N[2, , y], N[3, , y], N[4, , y])
-        
-        # total population size
-        total <- sum(N[, , y], na.rm = TRUE)
-        
-        # add proportions to SAD
-        sub_SAD$Proportion <- c(N[1, , y]/total, 
-                                N[2, , y]/total, 
-                                N[3, , y]/total, 
-                                N[4, , y]/total)
-        
-        sub_SAD$PSR <- rep(male_hatchlings / (male_hatchlings + female_hatchlings), 
-                           times = S * max_age)
-        
-        sub_SAD$OSR <- rep(OSR, times = S * max_age)
-        
-        # add subset to big df
-        SAD <- rbind(SAD, sub_SAD)
-        
-        # print(y)
-        # 10 percent updates
-        # write to progress text file, every 10% done
-        if ((i/nsims*100) %% 1 == 0) {
-          time2 <- format(lubridate::now())
-          update2 <- paste(time2, ' - ', model, ' - beta ', 
-                           beta, ' - ', burn_in, ' burn-in years', ' - ', nsims, 
-                           ' sims - ', i/nsims*100, '% sims done!', sep = '')
-          write(update2, file = '../output/SAD_progress.txt', append = TRUE)      
-          
-          # break out of loop if there are zero males at any age
-          if (sum(N[2, , y], na.rm = TRUE) < 1 & 
-              sum(N[4, , y], na.rm = TRUE) < 1) { break }
-          
-        }
-        
-      }
+      # immature females that survived
+      immature_survived_F <- round(
+        (N[1, 1:(max_age - 1), y - 1]) * IF_survival[1:(max_age - 1)])
       
-      # otherwise, if there is temp stochasticity:
-    } else {
+      # immature females that matured
+      new_mature_F <- round(immature_survived_F * M[1:(max_age - 1)])
       
-      # move population forward in time burn_in years
-      for (y in 2:burn_in) {  
+      # updated immature female population
+      N[1, 2:max_age, y] <- immature_survived_F - new_mature_F
+      
+      # mature females that survived
+      mature_survived_F <- round(N[3, 1:(max_age - 1), y - 1] * MF_survival)
+      
+      # updated mature female population
+      N[3, 2:max_age, y] <- mature_survived_F + new_mature_F
+      
+      # immature males that survived
+      immature_survived_M <- round(
+        (N[2, 1:(max_age - 1), y - 1]) * IM_survival[1:(max_age - 1)])
+      
+      # immature males that matured
+      new_mature_M <- round(immature_survived_M * M[1:(max_age - 1)])
+      
+      # updated immature male population
+      N[2, 2:max_age, y] <- immature_survived_M - new_mature_M
+      
+      # mature males that survived
+      mature_survived_M <- round(N[4, 1:(max_age - 1), y - 1] * MM_survival)
+      
+      # updated mature male population
+      N[4, 2:max_age, y] <- mature_survived_M + new_mature_M
+      
+      # breeding females this year
+      n_available_F <- round(
+        sum(mature_survived_F, na.rm = TRUE) / F_remigration_int)
+      
+      # breeding males this year
+      n_available_M <- round(
+        sum(mature_survived_M, na.rm = TRUE) / M_remigration_int)
+      
+      # check that there are at least 1 available male and female for breeding
+      if (n_available_F < 1 | n_available_M < 1) {
         
-        # initialize results dataframe
-        sub_SAD <- data.frame(Model = rep(model, S * max_age), 
-                              Beta = rep(beta, S * max_age),
-                              Year = rep(y, S * max_age),
-                              Sex = rep(sexes, each = max_age),
-                              Age = rep(1:max_age, times = S),
-                              Abundance = NA,
-                              Proportion = NA, 
-                              PSR = NA,
-                              OSR = NA 
-        )
+        female_hatchlings <- 0
+        male_hatchlings <- 0  
+        hatchlings <- 0
+        PSR <- NA
         
-        # population dynamics
+      } else {
         
-        # immature females that survived
-        immature_survived_F <- round(
-          (N[1, 1:(max_age - 1), y - 1]) * IF_survival[1:(max_age - 1)])
+        # operational sex ratio - proportion of males
+        OSR <- n_available_M / (n_available_M + n_available_F)
         
-        # immature females that matured
-        new_mature_F <- round(immature_survived_F * M[1:(max_age - 1)])
+        # calculate reproductive success
+        breeding_success <- pbeta(2 * OSR, shape1 = 1, shape2 = beta) 
         
-        # updated immature female population
-        N[1, 2:max_age, y] <- immature_survived_F - new_mature_F
+        # how many females actually find a male to mate with and then nest
+        n_breeding_F <- round(n_available_F * breeding_success)
         
-        # mature females that survived
-        mature_survived_F <- round(N[3, 1:(max_age - 1), y - 1] * MF_survival)
-        
-        # updated mature female population
-        N[3, 2:max_age, y] <- mature_survived_F + new_mature_F
-        
-        # immature males that survived
-        immature_survived_M <- round(
-          (N[2, 1:(max_age - 1), y - 1]) * IM_survival[1:(max_age - 1)])
-        
-        # immature males that matured
-        new_mature_M <- round(immature_survived_M * M[1:(max_age - 1)])
-        
-        # updated immature male population
-        N[2, 2:max_age, y] <- immature_survived_M - new_mature_M
-        
-        # mature males that survived
-        mature_survived_M <- round(N[4, 1:(max_age - 1), y - 1] * MM_survival)
-        
-        # updated mature male population
-        N[4, 2:max_age, y] <- mature_survived_M + new_mature_M
-        
-        # breeding females this year
-        n_available_F <- round(
-          sum(mature_survived_F, na.rm = TRUE) / F_remigration_int)
-        
-        # breeding males this year
-        n_available_M <- round(
-          sum(mature_survived_M, na.rm = TRUE) / M_remigration_int)
-        
-        # check that there are at least 1 available male and female for breeding
-        if (n_available_F < 1 | n_available_M < 1) {
+        # check that there is at least one female that will successfully breed
+        if (n_breeding_F < 1) {
           
           female_hatchlings <- 0
           male_hatchlings <- 0  
@@ -348,136 +341,266 @@ initialize_population_test2 <- function(arguments) {
           
         } else {
           
-          # operational sex ratio - proportion of males
-          OSR <- n_available_M / (n_available_M + n_available_F)
+          # number of clutches total
+          clutches <- round(n_breeding_F * clutches_mu)
           
-          # calculate reproductive success
-          breeding_success <- pbeta(2 * OSR, shape1 = 1, shape2 = beta) 
+          # vector of clutch temperatures, one number for each clutch
+          clutch_temps <- rnorm(n = clutches, 
+                                mean = season_temp_mus[y], 
+                                sd = clutch_temp_sd)
           
-          # how many females actually find a male to mate with and then nest
-          n_breeding_F <- round(n_available_F * breeding_success)
+          # calculate expected emergence success
+          emergence_success <- emergence_success_A / 
+            (1 + exp(-emergence_success_k * (
+              clutch_temps - emergence_success_t0)))
           
-          # check that there is at least one female that will successfully breed
-          if (n_breeding_F < 1) {
-            
-            female_hatchlings <- 0
-            male_hatchlings <- 0  
-            hatchlings <- 0
-            PSR <- NA
-            
-          } else {
-            
-            # number of clutches total
-            clutches <- round(n_breeding_F * clutches_mu)
-            
-            # vector of clutch temperatures, one number for each clutch
-            clutch_temps <- rnorm(n = clutches, 
-                                  mean = temp_mu, 
-                                  sd = clutch_temp_sd)
-            
-            # calculate expected emergence success
-            emergence_success <- emergence_success_A / 
-              (1 + exp(-emergence_success_k * (
-                clutch_temps - emergence_success_t0)))
-            
-            # vector of probabilities of developing as male, one for each clutch
-            probs_male <- 1 / (1 + exp(-k_piv * (clutch_temps - (T_piv))))          
-            
-            # eggs vector, one number for each clutch
-            eggs <- round(rep(eggs_mu, clutches))
-            
-            # hatchlings vector, one for each clutch
-            hatchlings <- round(eggs * emergence_success)
-            
-            # number of males
-            male_hatchlings <- sum(round(hatchlings * probs_male), na.rm = TRUE)
-            
-            # number of females
-            female_hatchlings <- sum(hatchlings, na.rm = TRUE) - male_hatchlings
-            
-          }
+          # vector of probabilities of developing as male, one for each clutch
+          probs_male <- 1 / (1 + exp(-k_piv * (clutch_temps - (T_piv))))          
+          
+          # eggs vector, one number for each clutch
+          eggs <- round(rep(eggs_mu, clutches))
+          
+          # hatchlings vector, one for each clutch
+          hatchlings <- round(eggs * emergence_success)
+          
+          # number of males
+          male_hatchlings <- sum(round(hatchlings * probs_male), na.rm = TRUE)
+          
+          # number of females
+          female_hatchlings <- sum(hatchlings, na.rm = TRUE) - male_hatchlings
           
         }
         
-        # add hatchlings to N
-        N[1, 1, y] <- female_hatchlings
-        N[2, 1, y] <- male_hatchlings
+      }
+      
+      # add hatchlings to N
+      N[1, 1, y] <- female_hatchlings
+      N[2, 1, y] <- male_hatchlings
+      
+      # add population abundances
+      sub2_SAD$Abundance <- c(N[1, , y], N[2, , y], N[3, , y], N[4, , y])
+      
+      # total population size 
+      total <- sum(N[, , y], na.rm = TRUE)      
+      PSR <- male_hatchlings / sum(hatchlings, na.rm = TRUE)
+      
+      # add proportions to SAD
+      sub2_SAD$Proportion <- c(N[1, , y]/total, 
+                              N[2, , y]/total, 
+                              N[3, , y]/total, 
+                              N[4, , y]/total)
+      sub2_SAD$PSR <- rep(PSR, times = S * max_age) 
+      sub2_SAD$OSR <- rep(OSR, times = S * max_age) 
+      
+      if (evolve == TRUE) {
         
-        # add population abundances
-        sub_SAD$Abundance <- c(N[1, , y], N[2, , y], N[3, , y], N[4, , y])
+        # extract maternal genotypes
+        GM1 <- resample(unlist(G[(2*max_age + 1):(3*max_age)]), size = n_breeding_F)
         
-        # total population size 
-        total <- sum(N[, , y], na.rm = TRUE)      
-        PSR <- male_hatchlings / sum(hatchlings, na.rm = TRUE)
+        # extract potential paternal genotypes
+        potential_GP <- resample(unlist(G[(3*max_age + 1):(4*max_age)]), size = n_available_M)       
         
-        # add proportions to SAD
-        sub_SAD$Proportion <- c(N[1, , y]/total, 
-                                N[2, , y]/total, 
-                                N[3, , y]/total, 
-                                N[4, , y]/total)
-        sub_SAD$PSR <- rep(PSR, times = S * max_age) 
-        sub_SAD$OSR <- rep(OSR, times = S * max_age) 
+        # how many males does each female mate with
+        nMales <- resample(1:length(male_probs), 
+                                   size = n_breeding_F, 
+                                   prob = male_probs, 
+                                   replace = TRUE)
         
+        # if there are more males assigned to a female than there are available, 
+        # reduce it with the maximum number of males available
+        nMales[nMales > n_available_M] <- n_available_M
         
-        # add subset to big df
-        SAD <- rbind(SAD, sub_SAD)
+        # assign male genotypes to each female
+        GP <- map(nMales, ~ resample(potential_GP, size = .x))
         
-        # print(y)
-        # 10 percent updates
-        # # write to progress text file, every 10% done
-        # if ((y/burn_in*100) %% 10 == 0) {
-        #   time2 <- format(lubridate::now())
-        #   update2 <- paste(time2, ' - ', model, TS1, 'beta ', beta, ' - ', 
-        #                    burn_in, ' burn-in years - ', y/burn_in*100, '% done!', 
-        #                    sep = '')
-        #   write(update2, file = '../output/SAD_progress.txt', append = TRUE)
-        #   
-        # }      
+        GM <- map2(GM1, nMales, ~ rep(.x, each = .y))
         
-        # break out of loop if there are zero males at any age
-        if (sum(N[2, , y], na.rm = TRUE) < 1 & 
-            sum(N[4, , y], na.rm = TRUE) < 1) { break }
+        ########################################################################
+        ##### TO DO: replicate GP and GM for each clutch #######################
+        ########################################################################
+        # GP_eggs <- pmap(list(GP, GM), 
+        #                 ~ as.list(replicate(n = round(clutches_mu),
+        #                                     resample(GP, 
+        #                            size = eggs_mu, 
+        #                            prob = contributions[[.z]]))
+        # 
+        # GM_eggs <- array(rep(unlist(GM), each = round(clutches_mu) * round(eggs_mu)), 
+        #                  dim = c(n_breeding_F, round(clutches_mu), round(eggs_mu)))
+        
+        G_females <- list()
+        G_males <- list()
+        P_females <- list()
+        P_males <- list()
+        
+        for (i in 1:n_breeding_F) {
+          
+          # for each egg in each clutch, assign maternal genotypes to offspring
+          GM_eggs <- lapply(eggs[[i]], function(x) rep(GM[[i]], times = x))
+          
+          # for each egg in each clutch, assign paternal genotypes to offspring
+          GP_eggs <- lapply(eggs[[i]], 
+                            function(x) {
+                              resample(resample(GP[[i]]), 
+                                       size = x, 
+                                       prob = contributions[[nMales[[i]]]], 
+                                       replace = TRUE)
+                            }
+          )
+          
+          # calculate offspring genotypes
+          G_eggs <- lapply(Map('+', GM_eggs, GP_eggs), 
+                           function(x) rnorm(n = length(x), 
+                                             mean = x/2, 
+                                             sd = sqrt(varGenetic / 2)))
+          
+          # calculate offspring phenotypes
+          P_eggs <- lapply(G_eggs, 
+                           function(x) rnorm(n = length(x), 
+                                             mean = x, 
+                                             sd = sqrt(varGenetic*(1 - h2)/h2))
+          )
+          
+          if (trait == 'emergence_success_t0') {
+            
+            # list of probability of emergence, one for each egg 
+            probs_emerged <- map2(clutch_temps[[i]], P_eggs, 
+                                  ~ emergence_success_A / (
+                                    1 + exp(-emergence_success_k * (.x - .y)))) %>%
+              lapply(pmax, 0)
+            
+          } else {
+            
+            probs_emerged <- lapply(
+              clutch_temps[[i]], 
+              function(x) {
+                if (x < T_threshold) {
+                  emergence_success_A / (
+                    1 + exp(-emergence_success_k * (x - emergence_success_t0)))
+                } else { 0 }
+              }
+            ) %>% lapply(pmax, 0)
+            
+          }
+          
+          # which eggs emerge as hatchlings?
+          indices_hatchlings <- map2(eggs[[i]], probs_emerged, 
+                                     ~ as.logical(
+                                       rbinom(n = .x, size = 1, prob = .y)))
+          
+          # how many hatchlings are there?
+          hatchlings <- unlist(lapply(indices_hatchlings, sum, na.rm = TRUE))
+          
+          # hatchling genotypes and phenotypes
+          G_hatchlings <- map2(G_eggs, indices_hatchlings, ~ .x[as.logical(.y)])
+          P_hatchlings <- map2(P_eggs, indices_hatchlings, ~ .x[as.logical(.y)])
+          
+          if (trait == 'T_piv') {
+            
+            # probability of developing as male, one for each egg
+            probs_male <- map2(clutch_temps[[i]], 
+                               P_hatchlings, 
+                               ~ 1 / (1 + exp(-k_piv * (.x - .y)))) %>%
+              lapply(pmax, 0)
+            
+          } else {
+            
+            # list of probability of developing as male, one for each clutch 
+            probs_male <- lapply(clutch_temps[[i]], 
+                                 function(x) {
+                                   1 / (1 + exp(-k_piv * (x - T_piv)))
+                                 }) %>%
+              lapply(pmax, 0)
+            
+          }
+          
+          # which hatchlings developed as male?
+          indices_males <- map2(hatchlings, probs_male, 
+                                ~ as.logical(rbinom(n = .x, size = 1, prob = .y)))
+          indices_females <- map(indices_males, ~ as.logical(Map(`-`, 1, .x)))
+          
+          # genotypes of females and males
+          G_females[[i]] <- map2(G_hatchlings, indices_females, ~ .x[as.logical(.y)])
+          G_males[[i]] <- map2(G_hatchlings, indices_males, ~ .x[as.logical(.y)])
+          
+          # phenotypes of females and males
+          P_females[[i]] <- map2(P_hatchlings, indices_females, ~ .x[as.logical(.y)])
+          P_males[[i]] <- map2(P_hatchlings, indices_males, ~ .x[as.logical(.y)])
+          
+        }
         
       }
       
+      # add inner sub super data frame to outer sub super dataframe
+      sub1_SAD <- rbind(sub1_SAD, sub2_SAD)
+      
+      # print(y)
+      # 10 percent updates
+      # write to progress text file, every 10% done
+      if ((y/burn_in*100) %% 10 == 0) {
+        TIME2 <- format(lubridate::now())
+        
+        if (evolve == TRUE) {
+          update2 <- paste(TIME2, ' - evolution - ', trait, ' - ', rate, ' - ', 
+                           trt, ' - ', scenario, 'C - beta ', beta, ' - ', 
+                           nsims, ' sims - ', yrs, ' burn-in years', 
+                           y/burn_in*100, '% done!', sep = '')
+        } else {
+          update2 <- paste(TIME2, ' - ', trt, ' - ', scenario, 'C - beta ', 
+                           beta, ' - ', nsims, ' sims - ', yrs, 
+                           ' burn-in years', , y/burn_in*100, '% done!',
+                           sep = '')
+        }
+
+        write(update2, file = '../output/SAD_progress.txt', append = TRUE)
+
+      }
+      
+      # break out of loop if there are zero males at any age
+      if (sum(N[2, , y], na.rm = TRUE) < 1 & 
+          sum(N[4, , y], na.rm = TRUE) < 1) { break }
+      
     }
     
-    # write to progress text file, every 10% done
-    if ((i/nsims*100) %% 1 == 0) {
-      time2 <- format(lubridate::now())
-      update2 <- paste(time2, ' - ', model, TS1, 'beta ', beta, ' - ', 
-                       burn_in, ' burn-in years - ', nsims, ' sims - ', 
-                       i/nsims*100, '% sims done!', sep = '')
-      write(update2, file = '../output/SAD_progress.txt', append = TRUE)
-      
-    } 
+    SAD <- rbind(SAD, sub1_SAD)
     
   }
   
-  # add rolling 10 and 100 year median proportion values
-  SADdf <- SAD %>%
-    group_by(Model, Beta, Sex, Age) %>%
-    mutate(Prop_10yr_median = slide_dbl(Proportion, 
-                                        median, 
-                                        .before = 9, 
-                                        .complete = TRUE))%>%
-    mutate(Prop_100yr_median = slide_dbl(Proportion, 
-                                         median, 
-                                         .before = 99, 
-                                         .complete = TRUE))
+  # write to progress text file, every 10% done
+  if ((i/nsims*100) %% 1 == 0) {
+    time2 <- format(lubridate::now())
+    update2 <- paste(time2, ' - ', model, TS1, 'beta ', beta, ' - ', 
+                     burn_in, ' burn-in years - ', nsims, ' sims - ', 
+                     i/nsims*100, '% sims done!', sep = '')
+    write(update2, file = '../output/SAD_progress.txt', append = TRUE)
+    
+  } 
   
-  # save object
-  save(SADdf, 
-       file = paste('../output/SAD_deterministic_', TS2, 'b', 
-                    burn_in, '_', model, '_beta', beta, '_n', nsims, 
-                    '.Rdata', sep = ''))
-  
-  # update progress text file with total time it took to run the thing
-  end <- lubridate::now()
-  total_time <- format(round(end - start, 3))
-  update3 <- paste(model, TS1, 'beta ', beta, ' - ', burn_in, 
-                   ' burn-in years - ', nsims, ' sims - total time: ', 
-                   total_time, '\n', sep = '')
-  write(update3, file = '../output/SAD_progress.txt', append = TRUE)
-  
+}
+
+# add rolling 10 and 100 year median proportion values
+SADdf <- SAD %>%
+  group_by(Model, Beta, Sex, Age) %>%
+  mutate(Prop_10yr_median = slide_dbl(Proportion, 
+                                      median, 
+                                      .before = 9, 
+                                      .complete = TRUE))%>%
+  mutate(Prop_100yr_median = slide_dbl(Proportion, 
+                                       median, 
+                                       .before = 99, 
+                                       .complete = TRUE))
+
+# save object
+save(SADdf, 
+     file = paste('../output/SAD_deterministic_', TS2, 'b', 
+                  burn_in, '_', model, '_beta', beta, '_n', nsims, 
+                  '.Rdata', sep = ''))
+
+# update progress text file with total time it took to run the thing
+end <- lubridate::now()
+total_time <- format(round(end - start, 3))
+update3 <- paste(model, TS1, 'beta ', beta, ' - ', burn_in, 
+                 ' burn-in years - ', nsims, ' sims - total time: ', 
+                 total_time, '\n', sep = '')
+write(update3, file = '../output/SAD_progress.txt', append = TRUE)
+
 }
