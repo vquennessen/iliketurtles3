@@ -11,32 +11,48 @@ library(patchwork)
 library(tidyverse)
 library(ggh4x)
 
-# red noise?
-red_noise <- FALSE
-noise <- ifelse(red_noise == TRUE, '_red_noise', '')
-
 # nsims
 nsims <- 100
 
-# source functions and load data
-source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
-load(paste('~/Projects/iliketurtles3/output/evolution_n', nsims, noise, 
-           '_all_outputs.Rdata', sep = ''))
-load("~/Projects/iliketurtles3/output/ideals.Rdata")
+folder <- '2025_11_30_evolution'
 
 # scenarios
 scenarios <- c(0.5, 4.5)
-# osrs
-osrs <- c(0.1, 0.35)
-betas <- OSRs_to_betas(osrs)
+# betas
+betas <- c(20.63, 3.82)
 
-trait <- 'T_piv'
 rate <- 'effective'
 
+trt <- 'narrow'
+
 # filename
-name <- paste('evolution', trait, rate, sep = '_')
+name <- paste('evolution', rate, sep = '_')
+
+# source functions and load data
+source('~/Projects/iliketurtles3/code/mating function/OSRs_to_betas.R')
+
+load("~/Projects/iliketurtles3/output/ideals.Rdata")
+load("~/Projects/iliketurtles3/output/TS_b800_10y_n10000_all_outputs.Rdata")
+
+base <- all_outputs %>%
+  select(-c(Model, Facet_label)) %>%
+  mutate(Trait = '(i) base') %>%
+  mutate(Rate = rate) %>%
+  mutate(TRT = case_when(TRT == 'Narrow transitional range' ~ 'narrow', 
+                         TRUE ~ 'wide')) %>%
+  filter(TRT == trt)
 
 ##### clean up data ############################################################
+load(paste('~/Projects/iliketurtles3/output/', folder, '_n', nsims, 
+           '_all_outputs.Rdata', sep = ''))
+
+evolution <- all_outputs %>%
+  select(-Facet_label) %>%
+  mutate(Trait = case_when(Trait == 'T_piv' ~ '(ii) pivotal temperature', 
+                           TRUE ~ '(iii) emergence success t0')) %>%
+  select(names(base))
+
+all_data <- rbind(base, evolution)
 
 # add ideals to dataframe
 clean_ideals <- ideals %>%
@@ -46,18 +62,14 @@ clean_ideals <- ideals %>%
                          ~ 'narrow', 
                          TRUE ~ 'wide')) 
 
-examples_to_plot <- all_outputs %>%
+examples_to_plot <- all_data %>%
   mutate(Beta = as.character(Beta))  %>%
   full_join(clean_ideals, relationship = 'many-to-many') %>%
   filter(Scenario %in% scenarios) %>%
-  filter(OSR %in% factor(osrs)) %>%
+  filter(Beta %in% factor(betas)) %>%
+  filter(TRT == trt) %>%
   mutate(Scenario = factor(Scenario, levels = scenarios)) %>%
-  mutate(OSR = factor(OSR, levels = osrs)) %>%
-  mutate(facet_label = case_when(TRT == 'narrow' 
-                                 ~ '(A) Narrow transitional range', 
-                                 TRUE ~ '(B) Wide transitional range')) %>% 
-  mutate(TRT = factor(TRT)) %>%
-  filter(Trait == trait) %>%
+  mutate(Beta = factor(Beta, levels = betas)) %>%
   filter(Rate == rate)
 
 ##### plot 1: hatchling sex ratios #############################################
@@ -80,13 +92,13 @@ HSR <- examples_to_plot %>%
             linewidth = 0.75, 
             show.legend = FALSE) +
   scale_linetype_manual(values = c(1, 2)) +
-  facet_grid(cols = vars(TRT)) +
+  facet_grid(cols = vars(Trait)) +
   ylab("(A) Median \n hatchling sex ratio") +
   theme_bw() +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(), 
         axis.ticks.x = element_blank()) +
-  ggtitle(paste('evolution of ', trait, ' with ', rate, ' heritability', sep = ''))
+  ggtitle(paste('evolution with ', rate, ' heritability', sep = ''))
 
 HSR
 
@@ -106,7 +118,7 @@ HA <- examples_to_plot %>%
               show.legend = FALSE) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  facet_grid(cols = vars(TRT)) +
+  facet_grid(cols = vars(Trait)) +
   # geom_hline(yintercept = ideal_0.1, lty = 2) +
   # geom_hline(yintercept = ideal_0.35, lty = 1) +
   geom_path(linewidth = 0.75) +
@@ -139,10 +151,10 @@ OSR <- examples_to_plot %>%
               show.legend = FALSE) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  facet_grid(cols = vars(TRT)) +
+  facet_grid(cols = vars(Trait)) +
   geom_path(linewidth = 0.75) +
   labs(lty = 'Mating \n function', col = 'Temperature \n increase') +
-  # ylim(0, 10) +
+  ylim(0, 0.4) +
   geom_hline(yintercept = 0.1, lty = 2) +
   geom_hline(yintercept = 0.35, lty = 1) +
   ylab("(B) Median \n operational sex ratio") +
@@ -171,9 +183,7 @@ BS <- examples_to_plot %>%
               show.legend = FALSE) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  facet_grid(cols = vars(TRT)) +
-  # geom_hline(yintercept = ideal_0.1, lty = 2) +
-  # geom_hline(yintercept = ideal_0.35, lty = 1) +
+  facet_grid(cols = vars(Trait)) +
   geom_path(linewidth = 0.75) +
   guides(col = 'none', fill = 'none', lty = 'none') +
   ylab("(C) Median \n breeding success") +
@@ -202,7 +212,7 @@ MA <- examples_to_plot %>%
               show.legend = FALSE) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
-  facet_grid(cols = vars(TRT)) +
+  facet_grid(cols = vars(Trait)) +
   geom_path(linewidth = 0.75) +
   ylab("(E) Median \n mature abundance") +
   guides(col = 'none', fill = 'none', lty = 'none') +
@@ -223,8 +233,7 @@ lambda <- examples_to_plot %>%
              y = Lambda_10yr_median, 
              color = Scenario, 
              linetype = Mating_Function)) + 
-  # facet_grid(cols = vars(TRT), rows = vars(facet_labels)) +
-  facet_grid(cols = vars(TRT)) +
+  facet_grid(cols = vars(Trait)) +
   geom_hline(yintercept = 1) +
   geom_ribbon(aes(ymin = Lambda_10yr_Q25,
                   ymax = Lambda_10yr_Q75, 
@@ -248,11 +257,8 @@ lambda
 final_fig <- HSR / OSR / BS / HA / lambda
 final_fig
 
-# red noise?
-noise <- ifelse(red_noise == TRUE, '_red_noise', '')
-
 # save to file
 ggsave(plot = final_fig,
-       filename = paste(name, nsims, noise, '_sample_outputs.png', sep = ''),
+       filename = paste(name, nsims, '_sample_outputs.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
-       width = 7, height = 10)
+       width = 10, height = 10)

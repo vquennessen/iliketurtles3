@@ -20,9 +20,6 @@ source('mating function/OSRs_to_betas.R')
 # which computer we using
 computer <- 'cluster'
 
-# red noise?
-red_noise <- FALSE
-
 # path based on computer being used
 user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
                ifelse(computer == 'desktop',
@@ -386,10 +383,7 @@ all_outputs <- SDF %>%
   mutate(Lambda_10yr_Q25 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_10yr_Q25)) %>%
   mutate(Lambda_10yr_Q75 = case_when(Persist_mean < cutoff ~ NA, TRUE ~ Lambda_10yr_Q75))
 
-# red noise?
-noise <- ifelse(red_noise == TRUE, '_red_noise', '')
-
 # save to file
 save(all_outputs,
-     file = paste('../output/', name, noise, '_all_outputs.Rdata', 
+     file = paste('../output/', name, '_all_outputs.Rdata', 
                   sep = ''))

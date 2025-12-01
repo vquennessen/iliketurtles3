@@ -2,9 +2,6 @@
 
 rm(list = ls())
 
-# scenario <- 0.5
-# beta <- 1.17
-
 # load libraries
 library(parallel)
 library(dplyr)
@@ -49,9 +46,9 @@ save(init_age_distribution,
 TRT <- c('narrow')
 # TRT <- c('narrow', 'wide')
 scenarios <- c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5)
-# scenarios <- c(0.5, 3.5)
+# scenarios <- c(2.5)
 OSRs <- c(0.49, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05)
-# OSRs <- c(0.45, 0.25)
+# OSRs <- c(0.25)
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
 # evolution
@@ -62,13 +59,15 @@ rate <- c('high')
 # conservation
 conserve <- c(TRUE)
 intensity <- c(0.1, 0.2, 0.3, 0.4, 0.5)
+# intensity <- c(0.1, 0.2)
 frequency <- c(1, 2, 3, 4, 5)
+# frequency <- c(1, 2)
 
 # years to run the model for
 yrs <- 100
 
 # number of simulations to run
-nsims <- c(100)
+nsims <- c(1000)
 
 # white or red noise
 noise <- 'white'
@@ -113,7 +112,7 @@ TIME1 <- lubridate::now()
 result <- tryCatch({})
 mclapply(X = arguments,
          FUN = run_base_model,
-         mc.cores = 50)
+         mc.cores = 25)
 
 # lapply(X = arguments,
 #        FUN = run_base_model)
