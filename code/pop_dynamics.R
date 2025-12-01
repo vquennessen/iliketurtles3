@@ -273,9 +273,9 @@ pop_dynamics <- function(N, max_age, y, M,
     
   } else {
     
-    G       <- NULL
+    G_new   <- NULL
+    P_new   <- NULL
     G_stats <- NULL
-    P       <- NULL
     P_stats <- NULL
     
   }

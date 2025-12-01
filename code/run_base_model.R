@@ -24,19 +24,20 @@ run_base_model <- function(arguments) {
   load('../output/init_age_distribution.Rdata')
   
   # write to progress text file
-  TIME2 <- format(lubridate::now())
+  TIME2 <- lubridate::now()
+  time2 <- format(TIME2)
 
   if (evolve == TRUE | conserve == TRUE) {
     
     if (evolve == TRUE) {
     
-    update1 <- paste(TIME2, ' - evolution - ', trait, ' - ', rate, ' - ', 
+    update1 <- paste(time2, ' - evolution - ', trait, ' - ', rate, ' - ', 
                      TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
                      ' sims - ', yrs, ' years', sep = '')
     
     } else {
       
-      update1 <- paste(TIME2, ' - conservation - i', intensity, ' - F', 
+      update1 <- paste(time2, ' - conservation - i', intensity, ' - F', 
                        frequency, ' - ', TRT, ' - ', scenario, 'C - beta ', 
                        beta, ' - ', nsims, ' sims - ', yrs, ' years', sep = '')
       
@@ -44,7 +45,7 @@ run_base_model <- function(arguments) {
     
   } else {
   
-  update1 <- paste(TIME2, ' - ', TRT, ' - ', scenario, 'C - beta ', beta, 
+  update1 <- paste(time2, ' - ', TRT, ' - ', scenario, 'C - beta ', beta, 
                    ' - ', nsims, ' sims - ', yrs, ' years', sep = '')
   }
   
@@ -242,12 +243,23 @@ run_base_model <- function(arguments) {
     if ((i/nsims*100) %% 10 == 0) {
       time2.5 <- format(lubridate::now())
       
-      if (evolve == TRUE) {
+      if (evolve == TRUE | conserve == TRUE) {
         
-        update2 <- paste(time2.5, ' - evolution - ', trait, ' - ', rate, ' - ', 
+        if (evolve == TRUE) {
+          
+          update2 <- paste(time2.5, ' - evolution - ', trait, ' - ', rate, ' - ', 
                          TRT, ' - ', scenario, 'C - beta ', beta, ' - ', nsims, 
                          ' sims - ', yrs, ' years - ',  i/nsims*100, '% done!', 
                          sep = '')
+          
+        } else {
+          
+          update2 <- paste(time2.5, ' - conservation - i', intensity, 
+                           ' - F', frequency, ' - ', TRT, ' - ', scenario, 
+                           'C - beta ', beta, ' - ', nsims, ' sims - ', yrs, 
+                           ' years - ',  i/nsims*100, '% done!', sep = '')
+          
+        }
         
       } else {
         update2 <- paste(time2.5, ' - ', TRT, ' - ', scenario,

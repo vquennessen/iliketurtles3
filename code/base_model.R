@@ -86,7 +86,7 @@ base_model <- function(scenario, beta, yrs, max_age,
       break 
     }
     
-    # print(y)
+    print(y)
     
   }
   

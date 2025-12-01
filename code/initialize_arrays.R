@@ -160,6 +160,8 @@ initialize_arrays <- function(scenario, yrs, max_age,
     
   } else {
     
+    G <- NULL
+    P <- NULL
     G_stats <- NULL
     P_stats <- NULL
     
