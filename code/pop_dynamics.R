@@ -58,20 +58,20 @@ pop_dynamics <- function(N, max_age, y, M,
 
   
   # number of immature males that survived
-  n_sIM <- unlist(lapply(survived_IM, sum))
+  n_sIM <- unlist(lapply(survived_IM, sum, na.rm = TRUE))
   
   # which males matured
   matured_IM <- map2(n_sIM, M[1:(max_age - 1)], 
                      ~ as.logical(rbinom(n = .x, size = 1, prob = .y)))
   
   # number of males that matured
-  n_mIM <- unlist(lapply(matured_IM, sum))   
+  n_mIM <- unlist(lapply(matured_IM, sum, na.rm = TRUE))   
   
   # which males did not mature
   not_matured_IM <- map(matured_IM, ~ as.logical(Map(`-`, 1, .x)))
   
   # number of males that did not mature
-  n_nmIM <- unlist(lapply(not_matured_IM, sum))
+  n_nmIM <- unlist(lapply(not_matured_IM, sum, na.rm = TRUE))
   
   # new immature males
   N[2, 2:max_age, y] <- n_nmIM
@@ -119,7 +119,7 @@ pop_dynamics <- function(N, max_age, y, M,
       stop('number of phenotypes more than number of IF survived')
     }
     
-    # genotypes of immature females that survived and matured 
+    # genotypes of immature females that survived and matured
     G_mIF <- map2(G_sIF, matured_IF, ~ .x[which(.y)])
     P_mIF <- map2(P_sIF, matured_IF, ~ .x[which(.y)])
     
