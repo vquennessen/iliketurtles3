@@ -112,22 +112,26 @@ ggsave(filename = 'evolution_n100_final_ES_t0_temp_phenotypes.png',
 
 ##### plot phenotypes over time ################################################
 
-evolution_traits_and_persistence %>%
-  # filter(Abundance == 'Hatchlings') %>%
+phenotypes_over_time <- evolution_traits_and_persistence %>%
   filter(TRT == 'narrow') %>%
-  filter(Beta %in% betas) %>%
+  filter(Rate == 'effective') %>%
+  filter(Abundance == 'Hatchlings') %>%
   filter(Scenario %in% scenarios) %>%
+  filter(Beta %in% betas) %>%
+  select(Trait, Scenario, Mating_Function, Year, P_mean, 
+         P_mean_diff, P_lower, P_upper)
+
   ggplot(aes(x = Year, 
              y = P_mean, 
              color = factor(Scenario), 
-             linetype = Mating_Function)) + 
-  facet_grid(rows = vars(Trait), cols = vars(Rate)) +
-  geom_ribbon(aes(ymin = P_lower,
-                  ymax = P_upper, 
-                  col = NULL, 
-                  fill = factor(Scenario)),
-              alpha = 0.25,
-              show.legend = FALSE) +
+             lty = Mating_Function)) + 
+  facet_grid(cols = vars(Trait)) +
+  # geom_ribbon(aes(ymin = P_lower,
+  #                 ymax = P_upper, 
+  #                 col = NULL, 
+  #                 fill = factor(Scenario)),
+  #             alpha = 0.25,
+  #             show.legend = FALSE) +
   geom_path(lwd = 1) +
   scale_color_manual(values = c('#00BFC4', '#F8766D')) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) +
@@ -135,3 +139,63 @@ evolution_traits_and_persistence %>%
   ylab('Mean phenotype value') +
   # guides(col = 'none', fill = 'none', lty = 'none') +
   theme_bw()
+
+##### changes in reaction norms ################################################
+
+load("~/Projects/iliketurtles3/output/evolution_trait_values.Rdata")
+
+emergence_success_A <- 0.86               # logistic by temp - A
+emergence_success_k <- -1.7               # logistic by temp - beta
+emergence_success_t0 <- 32.7              # logistic by temp - t0
+
+T_threshold <- 35                         # lethal temperature threshold
+k_piv <- -1.54  
+T_piv <- 29.4                             # thermal reaction norm midpoint
+
+temperatures = seq(from = 25, to = 35, by = 0.1)
+
+beta_OSR <- all_outputs %>%
+  select(Beta, OSR) %>%
+  distinct()
+
+DF2_to_plot <- traits %>%
+  filter(Year == 100) %>%
+  filter(TRT == 'narrow') %>%
+  filter(Rate == 'effective') %>%
+  full_join(beta_OSR) %>%
+  select(Trait, P_mean, P_var, OSR, Scenario) %>%
+  mutate(Temperature = list(temperatures)) %>%
+  unnest(Temperature) %>%
+  mutate(Trait_value = case_when(Trait == 'T_piv' 
+                                 ~ 1 / (1 + exp(-k_piv * (Temperature - P_mean))), 
+                                 TRUE ~ emergence_success_A / (
+                                   1 + exp(-emergence_success_k * (
+                                     Temperature - P_mean)))))
+
+reference_ES <- data.frame(Temperature = temperatures) %>%
+  mutate(Trait_value = emergence_success_A / (
+    1 + exp(-emergence_success_k * (Temperature - emergence_success_t0)))) %>%
+  mutate(Trait = 'emergence_success_t0')
+
+reference <- data.frame(Temperature = temperatures) %>%
+  mutate(Trait_value = 1 / (1 + exp(-k_piv * (Temperature - T_piv)))) %>%
+  mutate(Trait = 'T_piv') %>%
+  rbind(reference_ES) %>%
+  mutate(Rate = c('effective'))
+
+fig_norms <- ggplot(data = DF2_to_plot, 
+                    aes(x = Temperature, 
+                        y = Trait_value, 
+                        col = factor(Scenario), 
+                        lty = factor(OSR))) +
+  geom_path(alpha = 0.75, lwd = 0.5) +
+  geom_path(data = reference, inherit.aes = FALSE,
+            aes(x = Temperature, y = Trait_value),
+            col = 'black', lwd = 1) +
+  facet_grid(cols = vars(Trait)) +
+  xlab('Incubation temperature (\u00B0C)') +
+  ylab('Trait value') +
+  labs(col = 'Total \n temperature \n increase \n scenario (\u00B0C)', 
+       lty = 'Minimum \n OSR \n needed \n for full \n female \n reproductive \n success') +
+  theme(legend.box = 'horizontal') +
+  theme(strip.text = element_blank())

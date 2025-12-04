@@ -30,7 +30,7 @@ user <- ifelse(computer == 'cluster', '/home/quennessenv/iliketurtles3/output/',
 input_folders <- c('2025_12_01_conservation')
 
 # number of sims
-nsims <- 100
+nsims <- 1000
 
 # name to save to
 name <- paste(input_folders, '_n', nsims, sep = '')

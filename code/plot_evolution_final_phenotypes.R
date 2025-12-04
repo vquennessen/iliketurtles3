@@ -12,6 +12,7 @@ library(patchwork)
 library(gridExtra)
 library(tidyr)
 library(readr)
+library(dplyr)
 
 # EDIT dataframes to load up ###################################################
 
@@ -34,7 +35,7 @@ base <- all_outputs %>%
 # EDIT #########################################################################
 
 # load data object
-load(paste('~/Projects/iliketurtles3/output/2025_11_30_evolution_n', nsims, noise, 
+load(paste('~/Projects/iliketurtles3/output/2025_11_30_evolution_n', nsims, 
            '_all_outputs.Rdata', sep = ''))
 
 # evolution_effective <- all_outputs %>%
@@ -118,7 +119,7 @@ fig4B <- ggplot(data = DF_to_use2, aes(x = OSR,
             lwd = 1.25,
             linetype = 1) +
   scale_fill_brewer(palette = "RdBu", na.value = 'gray') +
-  guides(fill = guide_legend(title = "Final \n median \n growth \n rate", 
+  guides(fill = guide_legend(title = "Final median \n growth rate \n", 
                              reverse = TRUE)) +
   xlab('\n Minimum OSR required for 99% female breeding success (proportion male)') +
   ylab('Temperature increase by year 100 (\u00B0C) \n') +
@@ -144,18 +145,3 @@ ggsave(plot = final_fig,
                         '_final_persistence_and_lambda.png', sep = ''),
        path = '~/Projects/iliketurtles3/figures/',
        width = 10, height = 6)
-
-##### changes in reaction norms ################################################
-
-load("~/Projects/iliketurtles3/output/evolution_trait_values.Rdata")
-
-DF2_to_plot <- traits %>%
-  filter(Year == 100) %>%
-  filter(TRT == 'narrow') %>%
-  select(Trait, P_mean, P_var, Rate, Beta, Scenario)
-
-fig_norms <- ggplot2(data = DF2_to_plot, 
-                     aes(x = Temperature, y = yaxislabs)) +
-  geom_path(data = DF2_to_plot %>% filter(Model == '(A) no evolution'), 
-            aes(x = Temperature, y = ))
-

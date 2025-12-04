@@ -17,7 +17,7 @@ library(abind)
 
 # source functions
 source('mating function/OSRs_to_betas.R')
-source('initialize_population_test2.R')
+source('initialize_population.R')
 
 # stricter sample function
 resample <- function(x, ...) x[sample.int(length(x), ...)]
@@ -26,10 +26,10 @@ resample <- function(x, ...) x[sample.int(length(x), ...)]
 date_to_use <- gsub('-', '_', Sys.Date())
 
 # models
-TRTs <- c('narrow', 'wide')
+TRTs <- c('narrow')
 
 # beta values to get full fertilization of females
-OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
+OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
 # OSRs <- c(0.1)
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
@@ -42,7 +42,7 @@ rates <- c('effective', 'high')
 num_sims <- c(1)
 
 # years to run the model for
-burn_ins <- c(750)
+burn_ins <- c(800)
 
 # make dataframe of all combinations of arguments
 DF <- expand.grid(TRTs,
@@ -69,8 +69,8 @@ for (i in 1:nrow(DF)) {
 
 # cluster runs
 mclapply(X = arguments,
-         FUN = initialize_population_test2,
-         mc.cores = 25)
+         FUN = initialize_population,
+         mc.cores = 40)
 
 # # machine runs
 # tic()
