@@ -28,6 +28,6 @@ arguments <- data.frame(Var1 = 'narrow',
                         Var5 = 'effective', 
                         Var6 = 1, 
                         Var7 = 500, 
-                        Var8 = gsub('-', '_', Sys.Date()))
+                        Var8 = '2025_12_03')
 
 test_initialize_population(arguments)

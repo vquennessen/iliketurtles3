@@ -932,3 +932,11 @@ evolution - emergence_success_t0 - high - narrow - beta 20.63 - 1 sims - 6 burn-
 2025-12-02 03:54:09 - evolution - emergence_success_t0 - high - wide - beta 20.63 - 1 sims - 6 burn-in years - sim 1 out of 1 - 50% done!
 2025-12-02 03:54:11 - evolution - emergence_success_t0 - high - wide - beta 20.63 - 1 sims - 6 burn-in years - sim 1 out of 1 - 100% done!
 evolution - emergence_success_t0 - high - wide - beta 20.63 - 1 sims - 6 burn-in years - 1 sims - total time: 5.62 secs
+2025-12-05 12:37:24 - evolution - emergence_success_t0 - high - narrow - beta 6.64 - 1 sims - 500 burn-in years
+2025-12-05 12:37:37 - evolution - emergence_success_t0 - high - narrow - beta 6.64 - 1 sims - 500 burn-in years - sim 1 out of 1 - 10% done!
+2025-12-05 12:38:00 - evolution - emergence_success_t0 - high - narrow - beta 6.64 - 1 sims - 500 burn-in years - sim 1 out of 1 - 20% done!
+2025-12-05 12:38:46 - evolution - emergence_success_t0 - high - narrow - beta 6.64 - 1 sims - 500 burn-in years - sim 1 out of 1 - 30% done!
+2025-12-05 12:40:56 - evolution - emergence_success_t0 - high - narrow - beta 6.64 - 1 sims - 500 burn-in years - sim 1 out of 1 - 40% done!
+2025-12-05 12:45:39 - evolution - emergence_success_t0 - high - narrow - beta 6.64 - 1 sims - 500 burn-in years - sim 1 out of 1 - 50% done!
+2025-12-05 12:59:43 - evolution - emergence_success_t0 - high - narrow - beta 6.64 - 1 sims - 500 burn-in years - sim 1 out of 1 - 60% done!
+2025-12-05 14:33:49 - evolution - emergence_success_t0 - high - narrow - beta 6.64 - 1 sims - 500 burn-in years - sim 1 out of 1 - 70% done!
