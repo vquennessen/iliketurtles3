@@ -120,19 +120,19 @@ initialize_arrays <- function(scenario, yrs, max_age,
                  c(1, 2))
     
     P[1, ] <- lapply(G[1, ], 
-                     function(x) rnorm(n = length(unlist(x)), 
+                     function(x) rnorm(n = length(x), 
                                        mean = x, 
                                        sd = sqrt(varPhenotypic)))
     P[2, ] <- lapply(G[2, ], 
-                     function(x) rnorm(n = length(unlist(x)), 
+                     function(x) rnorm(n = length(x), 
                                        mean = x, 
                                        sd = sqrt(varPhenotypic)))
     P[3, ] <- lapply(G[3, ], 
-                     function(x) rnorm(n = length(unlist(x)), 
+                     function(x) rnorm(n = length(x), 
                                        mean = x, 
                                        sd = sqrt(varPhenotypic)))
     P[4, ] <- lapply(G[4, ], 
-                     function(x) rnorm(n = length(unlist(x)), 
+                     function(x) rnorm(n = length(x), 
                                        mean = x, 
                                        sd = sqrt(varPhenotypic)))
     

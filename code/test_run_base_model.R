@@ -15,7 +15,7 @@ library(purrr)
 resample <- function(x, ...) x[sample.int(length(x), ...)]
 
 # # set working directory
-# setwd('~/Projects/iliketurtles3/code')
+setwd('~/Projects/iliketurtles3/code')
 
 source('base_model.R')
 source('initialize_arrays.R')
@@ -44,7 +44,7 @@ scenario <- c(3.5)
 beta <- 2.86
 
 # conservation?
-conservation_action <- c(FALSE)
+conserve <- c(FALSE)
 intensity <- c(1)
 frequency <- c(1)
 
@@ -224,7 +224,7 @@ if (evolve == TRUE) {
 ##### conservation #############################################################
 
 # if conservation is TRUE    
-effect_size <- ifelse(conservation_action == TRUE,
+effect_size <- ifelse(conserve == TRUE,
                       1.3,
                       NA)
 

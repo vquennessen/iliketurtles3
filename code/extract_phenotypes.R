@@ -13,6 +13,8 @@ library(ggplot2)
 library(matrixStats)
 library(dplyr)
 library(tidyr)
+library(abind)
+library(zoo)
 
 ##### to modify ################################################################
 
@@ -116,18 +118,37 @@ for (p in 1:P) {
         
       }
       
-      G_stats <- rowMeans(sims_G_stats, dim = c(4))
-      P_stats <- rowMeans(sims_P_stats, dim = c(4))
-      
       # extract mean g stats for hatchlings by year, across simulations
-      sub_DF$G_mean <- colMeans(G_stats[1:2, 1, , 1], dim = c(1), na.rm = TRUE)
-      sub_DF$G_median <- colMeans(G_stats[1:2, 1, , 2], dim = c(1), na.rm = TRUE)
-      sub_DF$G_var <- colMeans(G_stats[1:2, 1, , 3], dim = c(1), na.rm = TRUE)
       
-      # extract mean p stats for hatchlings by year, across simulations
-      sub_DF$P_mean <- colMeans(P_stats[1:2, 1, , 1], dim = c(1), na.rm = TRUE)
-      sub_DF$P_median <- colMeans(P_stats[1:2, 1, , 2], dim = c(1), na.rm = TRUE)
-      sub_DF$P_var <- colMeans(P_stats[1:2, 1, , 3], dim = c(1), na.rm = TRUE)
+      GF_means <- rowMeans(sims_G_stats[1, 1, , 1, ], na.rm = TRUE)
+      GM_means <- rowMeans(sims_G_stats[2, 1, , 1, ], na.rm = TRUE)
+      sub_DF$G_mean <- rowMeans(data.frame(X = GF_means, Y = GM_means), 
+                                na.rm = TRUE)
+      
+      GF_medians <- rowMedians(sims_G_stats[1, 1, , 2, ], na.rm = TRUE)
+      GM_medians <- rowMedians(sims_G_stats[2, 1, , 2, ], na.rm = TRUE)
+      sub_DF$G_median <- rowMeans(data.frame(X = GF_medians, Y = GM_medians), 
+                                    na.rm = TRUE)
+      
+      GF_vars <- rowMeans(sims_G_stats[1, 1, , 3, ], na.rm = TRUE)
+      GM_vars <- rowMeans(sims_G_stats[2, 1, , 3, ], na.rm = TRUE)
+      sub_DF$G_var <- rowMeans(data.frame(X = GF_vars, GY = GM_vars), 
+                               na.rm = TRUE)
+      
+      PF_means <- rowMeans(sims_P_stats[1, 1, , 1, ], na.rm = TRUE)
+      PM_means <- rowMeans(sims_P_stats[2, 1, , 1, ], na.rm = TRUE)
+      sub_DF$P_mean <- rowMeans(data.frame(X = PF_means, Y = PM_means), 
+                                na.rm = TRUE)
+      
+      PF_medians <- rowMedians(sims_P_stats[1, 1, , 2, ], na.rm = TRUE)
+      PM_medians <- rowMedians(sims_P_stats[2, 1, , 2, ], na.rm = TRUE)
+      sub_DF$P_median <- rowMeans(data.frame(X = PF_medians, Y = PM_medians), 
+                                    na.rm = TRUE)
+      
+      PF_vars <- rowMeans(sims_P_stats[1, 1, , 3, ], na.rm = TRUE)
+      PM_vars <- rowMeans(sims_P_stats[2, 1, , 3, ], na.rm = TRUE)
+      sub_DF$P_var <- rowMeans(data.frame(X = PF_vars, Y = PM_vars), 
+                               na.rm = TRUE)
       
       # add DF to SDF
       SDF <- rbind(SDF, sub_DF)
@@ -145,7 +166,19 @@ for (p in 1:P) {
   
 }
 
-traits <- SDF
+traits <- SDF %>%
+  mutate(G_mean_10yr = rollapply(G_mean, width = average_over, mean, 
+                                 na.rm = TRUE, fill = NA, align = 'right')) %>%
+  mutate(G_median_10yr = rollapply(G_median, width = average_over, median, 
+                                   na.rm = TRUE, fill = NA, align = 'right')) %>%
+  mutate(G_var_10yr = rollapply(G_var, width = average_over, mean, 
+                                 na.rm = TRUE, fill = NA, align = 'right')) %>%
+  mutate(P_mean_10yr = rollapply(P_mean, width = average_over, mean, 
+                                 na.rm = TRUE, fill = NA, align = 'right')) %>%
+  mutate(P_median_10yr = rollapply(P_median, width = average_over, median, 
+                                   na.rm = TRUE, fill = NA, align = 'right')) %>% 
+  mutate(P_var_10yr = rollapply(P_var, width = average_over, mean, 
+                                na.rm = TRUE, fill = NA, align = 'right'))
 
 # save dataframe as R object
 save(traits, 

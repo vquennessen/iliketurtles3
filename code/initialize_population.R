@@ -690,10 +690,10 @@ initialize_population <- function(arguments) {
       }
       
       # break out of loop if there are zero males at any age
-      if (sum(N[2, , y], na.rm = TRUE) < 1 & 
-          sum(N[4, , y], na.rm = TRUE) < 1) { break }
+      if (sum(N[c(2, 4), , y], na.rm = TRUE) < 1) { break }
       
-      # print(y)
+      print(paste(format(lubridate::now()), 
+                  ' - year ', y, ' out of ', burn_in, sep = ''))
       
     }
     

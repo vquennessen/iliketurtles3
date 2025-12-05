@@ -17,7 +17,7 @@ library(abind)
 
 # source functions
 source('mating function/OSRs_to_betas.R')
-source('initialize_population.R')
+source('test_initialize_population.R')
 
 # stricter sample function
 resample <- function(x, ...) x[sample.int(length(x), ...)]
@@ -29,20 +29,20 @@ date_to_use <- gsub('-', '_', Sys.Date())
 TRTs <- c('narrow')
 
 # beta values to get full fertilization of females
-OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
-# OSRs <- c(0.1)
+# OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
+OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25)
 betas <- as.numeric(OSRs_to_betas(OSRs))
 
 # evolution
 evolve <- c(TRUE)
-traits <- c('T_piv', 'emergence_success_t0')
+traits <- c('emergence_success_t0')
 rates <- c('effective', 'high')
 
 # number of simulations to run
 num_sims <- c(1)
 
 # years to run the model for
-burn_ins <- c(800)
+burn_ins <- c(500)
 
 # make dataframe of all combinations of arguments
 DF <- expand.grid(TRTs,
@@ -69,7 +69,7 @@ for (i in 1:nrow(DF)) {
 
 # cluster runs
 mclapply(X = arguments,
-         FUN = initialize_population,
+         FUN = test_initialize_population,
          mc.cores = 40)
 
 # # machine runs
@@ -100,6 +100,9 @@ for (bi in 1:length(burn_ins)) {
                       G_mean = NULL, 
                       P_mean = NULL
     )
+    
+    OSRs <- c(0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.49)
+    betas <- as.numeric(OSRs_to_betas(OSRs))
     
     for (b in 1:length(betas)) {
       
